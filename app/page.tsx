@@ -6,7 +6,7 @@ export default function Home() {
       <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-100">
         <h1 className="text-2xl font-bold text-black">Framio</h1>
         <div className="flex items-center gap-4">
-          <a href="#" className="text-gray-600 hover:text-black text-sm">Explore</a>
+          <a href="/photographers" className="text-gray-600 hover:text-black text-sm">Explore</a>
           <a href="#" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
           <button className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
             Sign up
