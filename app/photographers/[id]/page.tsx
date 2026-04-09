@@ -7,7 +7,7 @@ export default function PhotographerProfile() {
         <a href="/" className="text-2xl font-bold text-black">Framio</a>
         <div className="flex items-center gap-4">
           <a href="/photographers" className="text-gray-600 hover:text-black text-sm">Explore</a>
-          <a href="#" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
+          <a href="/photographers/sofia-andersen" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
           <button className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
             Sign up
           </button>
