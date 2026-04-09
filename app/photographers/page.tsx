@@ -102,8 +102,9 @@ export default function Photographers() {
                 <p className="text-gray-500 text-sm mb-4">{p.specialty}</p>
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-black text-sm">{p.price}</span>
-                  <button className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
-                    View Profile
+                  <a href="/photographers/sofia-andersen" className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
+  View Profile
+</a>
                   </button>
                 </div>
               </div>
