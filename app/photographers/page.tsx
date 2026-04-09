@@ -8,6 +8,7 @@ export default function Photographers() {
       initials: "SA",
       rating: "4.9",
       reviews: 48,
+      slug: "sofia-andersen",
     },
     {
       name: "Marco Rossi",
@@ -17,6 +18,7 @@ export default function Photographers() {
       initials: "MR",
       rating: "4.8",
       reviews: 63,
+      slug: "marco-rossi",
     },
     {
       name: "Lena Berg",
@@ -26,6 +28,7 @@ export default function Photographers() {
       initials: "LB",
       rating: "5.0",
       reviews: 31,
+      slug: "lena-berg",
     },
     {
       name: "James Carter",
@@ -35,6 +38,7 @@ export default function Photographers() {
       initials: "JC",
       rating: "4.7",
       reviews: 92,
+      slug: "james-carter",
     },
     {
       name: "Aiko Tanaka",
@@ -44,6 +48,7 @@ export default function Photographers() {
       initials: "AT",
       rating: "4.9",
       reviews: 57,
+      slug: "aiko-tanaka",
     },
     {
       name: "Layla Hassan",
@@ -53,6 +58,7 @@ export default function Photographers() {
       initials: "LH",
       rating: "5.0",
       reviews: 44,
+      slug: "layla-hassan",
     },
   ];
 
@@ -64,7 +70,7 @@ export default function Photographers() {
         <a href="/" className="text-2xl font-bold text-black">Framio</a>
         <div className="flex items-center gap-4">
           <a href="/photographers" className="text-black font-medium text-sm">Explore</a>
-          <a href="/photographers/sofia-andersen" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
+          <a href="#" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
           <button className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
             Sign up
           </button>
@@ -102,9 +108,12 @@ export default function Photographers() {
                 <p className="text-gray-500 text-sm mb-4">{p.specialty}</p>
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-black text-sm">{p.price}</span>
-                  <button className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
+                  
+                    href={`/photographers/${p.slug}`}
+                    className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800"
+                  >
                     View Profile
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
