@@ -116,7 +116,7 @@ export default function PhotographerDashboard() {
           <h2 className="text-lg font-bold text-black mb-4">Quick actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "#" },
+              { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
               { icon: "📅", title: "My bookings", desc: "View and manage booking requests", href: "#" },
               { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "#" },
               { icon: "💰", title: "Earnings", desc: "Track your income and payouts", href: "#" },
