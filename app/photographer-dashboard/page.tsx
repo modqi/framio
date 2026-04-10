@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 export default function PhotographerDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [completion, setCompletion] = useState(0);
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
@@ -32,6 +33,13 @@ export default function PhotographerDashboard() {
         setTasks(updatedTasks);
         const done = updatedTasks.filter(t => t.done).length;
         setCompletion(Math.round((done / updatedTasks.length) * 100));
+
+        const { data } = await supabase
+          .from("bookings")
+          .select("*")
+          .eq("photographer_name", meta?.name)
+          .order("created_at", { ascending: false });
+        setBookings(data || []);
       }
       setLoading(false);
     };
@@ -41,6 +49,22 @@ export default function PhotographerDashboard() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     window.location.href = "/";
+  };
+
+  const handleBookingStatus = async (id: string, status: string) => {
+    await supabase
+      .from("bookings")
+      .update({ status })
+      .eq("id", id);
+    setBookings(prev =>
+      prev.map(b => b.id === id ? { ...b, status } : b)
+    );
+  };
+
+  const getStatusColor = (status: string) => {
+    if (status === "confirmed") return { bg: "#f0fdf4", text: "#15803d" };
+    if (status === "declined") return { bg: "#fef2f2", text: "#dc2626" };
+    return { bg: "#fefce8", text: "#ca8a04" };
   };
 
   if (loading) {
@@ -100,9 +124,9 @@ export default function PhotographerDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           {[
-            { label: "Total bookings", value: "0", desc: "All time" },
-            { label: "This month", value: "0", desc: "Bookings this month" },
-            { label: "Earnings", value: "0 NOK", desc: "Total earnings" },
+            { label: "Total bookings", value: bookings.length.toString(), desc: "All time" },
+            { label: "Pending", value: bookings.filter(b => b.status === "pending").length.toString(), desc: "Awaiting response" },
+            { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length.toString(), desc: "Confirmed sessions" },
             { label: "Rating", value: "—", desc: "Average rating" },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl p-6 border border-gray-100">
@@ -139,40 +163,79 @@ export default function PhotographerDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-10">
-          <h2 className="text-lg font-bold text-black mb-4">Quick actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
-              { icon: "📅", title: "My bookings", desc: "View and manage booking requests", href: "#" },
-              { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "#" },
-              { icon: "💰", title: "Earnings", desc: "Track your income and payouts", href: "#" },
-            ].map((action) => (
-              <a key={action.title} href={action.href} className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-black transition-colors">
-                <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-lg flex-shrink-0">
-                  {action.icon}
-                </div>
-                <div>
-                  <p className="font-medium text-black">{action.title}</p>
-                  <p className="text-gray-400 text-sm">{action.desc}</p>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Booking requests */}
+        {/* Booking Requests */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-black mb-4">Booking requests</h2>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="text-5xl mb-4">📭</div>
-            <p className="text-gray-400 text-sm">No booking requests yet</p>
-            <p className="text-gray-300 text-xs mt-1">Complete your profile to start receiving bookings</p>
-            <a href="/photographer-dashboard/edit-profile" className="mt-6 bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800">
-              Complete my profile
-            </a>
-          </div>
+          <h2 className="text-lg font-bold text-black mb-6">Booking requests</h2>
+
+          {bookings.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="text-5xl mb-4">📭</div>
+              <p className="text-gray-400 text-sm">No booking requests yet</p>
+              <p className="text-gray-300 text-xs mt-1">Complete your profile to start receiving bookings</p>
+              <a href="/photographer-dashboard/edit-profile" className="mt-6 bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800">
+                Complete my profile
+              </a>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {bookings.map((booking) => {
+                const colors = getStatusColor(booking.status);
+                return (
+                  <div key={booking.id} className="border border-gray-100 rounded-xl p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-bold text-black text-lg">{booking.client_name}</p>
+                        <p className="text-gray-500 text-sm">{booking.client_email}</p>
+                      </div>
+                      <span style={{backgroundColor: colors.bg, color: colors.text, fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: "500"}}>
+                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                      <div>
+                        <p className="text-gray-400 text-xs mb-1">Session type</p>
+                        <p className="text-black">{booking.session_type}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-xs mb-1">Date</p>
+                        <p className="text-black">{booking.date || "Not set"}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-xs mb-1">Location</p>
+                        <p className="text-black">{booking.location || "Not set"}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-xs mb-1">Price</p>
+                        <p className="text-black">{booking.price}</p>
+                      </div>
+                    </div>
+                    {booking.message && (
+                      <div className="mb-4 p-3 bg-gray-50 rounded-xl">
+                        <p className="text-gray-400 text-xs mb-1">Message from client</p>
+                        <p className="text-gray-600 text-sm">{booking.message}</p>
+                      </div>
+                    )}
+                    {booking.status === "pending" && (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => handleBookingStatus(booking.id, "confirmed")}
+                          className="flex-1 bg-black text-white py-2 rounded-xl text-sm font-medium hover:bg-gray-800"
+                        >
+                          Accept booking
+                        </button>
+                        <button
+                          onClick={() => handleBookingStatus(booking.id, "declined")}
+                          className="flex-1 bg-white text-black py-2 rounded-xl text-sm font-medium border border-gray-200 hover:bg-gray-50"
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
       </div>
