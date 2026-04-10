@@ -1,225 +1,87 @@
 "use client";
-import { useState } from "react";
-import { supabase } from "../../../lib/supabase";
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 
-export default function PhotographerProfile() {
-  const [sessionType, setSessionType] = useState("Wedding (Full day)");
-  const [date, setDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [booked, setBooked] = useState(false);
-  const [error, setError] = useState("");
+export default function Photographers() {
+  const [photographers, setPhotographers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleBooking = async () => {
-    setLoading(true);
-    setError("");
+  useEffect(() => {
+    const getPhotographers = async () => {
+      const { data } = await supabase
+        .from("photographers")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setPhotographers(data || []);
+      setLoading(false);
+    };
+    getPhotographers();
+  }, []);
 
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      window.location.href = "/login";
-      return;
-    }
-
-    const { error } = await supabase.from("bookings").insert({
-      client_id: user.id,
-      client_name: user.user_metadata?.name || "",
-      client_email: user.email,
-      photographer_name: "Sofia Andersen",
-      photographer_id: null,
-      session_type: sessionType,
-      date: date,
-      location: location,
-      message: message,
-      price: "2,500 NOK",
-      status: "pending",
-    });
-
-    if (error) {
-      setError("Something went wrong. Please try again.");
-    } else {
-      setBooked(true);
-    }
-
-    setLoading(false);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-400">Loading photographers...</p>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white">
-
-      {/* Navigation */}
       <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-100">
         <a href="/" className="text-2xl font-bold text-black" style={{fontFamily: "Georgia, serif"}}>Framio</a>
         <div className="flex items-center gap-4">
-          <a href="/photographers" style={{color: "#888780", fontSize: "14px"}}>Explore</a>
-          <a href="#" style={{color: "#888780", fontSize: "14px"}}>For Photographers</a>
+          <a href="/photographers" className="text-black font-medium text-sm">Explore</a>
+          <a href="#" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
           <a href="/signup" className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">Sign up</a>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-8 py-12">
+      <section className="px-8 py-12 max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-black mb-2">Photographers</h2>
+        <p className="text-gray-500">Discover talented photographers around the world</p>
+      </section>
 
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row gap-8 mb-12">
-          <div className="w-40 h-40 rounded-2xl bg-gray-100 flex items-center justify-center text-4xl font-bold text-gray-400 flex-shrink-0">
-            SA
+      <section className="px-8 pb-24 max-w-6xl mx-auto">
+        {photographers.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="text-6xl mb-4">📸</div>
+            <p className="text-gray-400 text-lg mb-2">No photographers yet</p>
+            <p className="text-gray-300 text-sm mb-8">Be the first photographer to join Framio!</p>
+            <a href="/signup" className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 text-sm">
+              Join as a photographer
+            </a>
           </div>
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-black mb-1">Sofia Andersen</h1>
-                <p className="text-gray-500 mb-1">Bergen, Norway</p>
-                <p className="text-gray-500 mb-3">Weddings & Portraits</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-yellow-500">⭐</span>
-                  <span className="font-medium">4.9</span>
-                  <span className="text-gray-400">(48 reviews)</span>
-                  <span className="ml-2 bg-green-50 text-green-700 text-xs px-3 py-1 rounded-full">Available</span>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {photographers.map((p) => (
+              <div key={p.id} className="border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+                <div className="bg-gray-100 h-56 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-gray-600">
+                    {p.name?.[0] || "?"}
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-bold text-black text-lg">{p.name}</h3>
+                    <span className="text-sm text-gray-600">⭐ {p.rating || "New"}</span>
+                  </div>
+                  <p className="text-gray-500 text-sm mb-1">{p.location || "Location not set"}</p>
+                  <p className="text-gray-500 text-sm mb-4">{p.specialty || "Specialty not set"}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-black text-sm">
+                      {p.price ? `From ${p.price}` : "Price on request"}
+                    </span>
+                    <a href={"/photographers/" + p.id} className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
+                      View Profile
+                    </a>
+                  </div>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-black">2,500 NOK</p>
-                <p className="text-gray-400 text-sm">per session</p>
-              </div>
-            </div>
-            <p className="text-gray-600 mt-4 leading-relaxed">
-              Professional photographer based in Bergen with over 8 years of experience. Specializing in weddings, portraits, and lifestyle photography. I believe every moment deserves to be captured beautifully.
-            </p>
+            ))}
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-          {/* Left — Portfolio & Reviews */}
-          <div className="md:col-span-2">
-            <h2 className="text-xl font-bold mb-4">Portfolio</h2>
-            <div className="grid grid-cols-3 gap-3 mb-10">
-              {[1,2,3,4,5,6].map((i) => (
-                <div key={i} className="aspect-square bg-gray-100 rounded-xl flex items-center justify-center text-gray-300 text-sm">
-                  Photo {i}
-                </div>
-              ))}
-            </div>
-
-            <h2 className="text-xl font-bold mb-4">Reviews</h2>
-            <div className="flex flex-col gap-4">
-              {[
-                { name: "Emma L.", text: "Sofia was absolutely amazing! She made us feel so comfortable and the photos were stunning.", date: "March 2026" },
-                { name: "Anders K.", text: "Booked Sofia for our wedding and couldn't be happier. Professional, creative and so talented.", date: "February 2026" },
-                { name: "Maria S.", text: "Best portrait session I've ever had. Sofia has a real eye for capturing natural moments.", date: "January 2026" },
-              ].map((review) => (
-                <div key={review.name} className="border border-gray-100 rounded-xl p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-black">{review.name}</span>
-                    <span className="text-gray-400 text-sm">{review.date}</span>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">{review.text}</p>
-                  <div className="mt-2 text-yellow-500 text-sm">⭐⭐⭐⭐⭐</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right — Booking Card */}
-          <div className="md:col-span-1">
-            <div className="border border-gray-200 rounded-2xl p-6 sticky top-8">
-
-              {booked ? (
-                <div className="text-center py-8">
-                  <div className="text-5xl mb-4">🎉</div>
-                  <h3 className="text-lg font-bold text-black mb-2">Booking requested!</h3>
-                  <p className="text-gray-500 text-sm mb-4">Sofia will respond within 24 hours. Check your dashboard for updates.</p>
-                  <a href="/dashboard" className="bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800 inline-block">
-                    View my bookings
-                  </a>
-                </div>
-              ) : (
-                <>
-                  <h3 className="text-lg font-bold mb-1">Book Sofia</h3>
-                  <p className="text-gray-400 text-sm mb-6">Choose your session details</p>
-
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Session type</label>
-                    <select
-                      value={sessionType}
-                      onChange={(e) => setSessionType(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
-                    >
-                      <option>Wedding (Full day)</option>
-                      <option>Portrait (2 hours)</option>
-                      <option>Engagement (3 hours)</option>
-                      <option>Family (2 hours)</option>
-                    </select>
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Date</label>
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Location</label>
-                    <input
-                      type="text"
-                      placeholder="Where is the shoot?"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
-                    />
-                  </div>
-
-                  <div className="mb-6">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Message</label>
-                    <textarea
-                      placeholder="Tell Sofia about your vision..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      rows={3}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none resize-none"
-                    />
-                  </div>
-
-                  <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-500">Session fee</span>
-                      <span className="text-black">2,500 NOK</span>
-                    </div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-500">Framio fee</span>
-                      <span className="text-black">250 NOK</span>
-                    </div>
-                    <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between font-bold">
-                      <span>Total</span>
-                      <span>2,750 NOK</span>
-                    </div>
-                  </div>
-
-                  {error && (
-                    <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-600 text-sm">
-                      {error}
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleBooking}
-                    disabled={loading}
-                    className="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    {loading ? "Sending request..." : "Request to Book"}
-                  </button>
-                  <p className="text-center text-gray-400 text-xs mt-3">You won't be charged yet</p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+        )}
+      </section>
     </main>
   );
 }
