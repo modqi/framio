@@ -5,6 +5,14 @@ import { supabase } from "../../lib/supabase";
 export default function PhotographerDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [completion, setCompletion] = useState(0);
+  const [tasks, setTasks] = useState([
+    { task: "Add profile photo", done: false },
+    { task: "Write your bio", done: false },
+    { task: "Add portfolio photos", done: false },
+    { task: "Set your prices", done: false },
+    { task: "Add your location", done: false },
+  ]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -13,6 +21,17 @@ export default function PhotographerDashboard() {
         window.location.href = "/login";
       } else {
         setUser(user);
+        const meta = user.user_metadata;
+        const updatedTasks = [
+          { task: "Add profile photo", done: false },
+          { task: "Write your bio", done: !!meta?.bio },
+          { task: "Add portfolio photos", done: false },
+          { task: "Set your prices", done: !!meta?.price },
+          { task: "Add your location", done: !!meta?.location },
+        ];
+        setTasks(updatedTasks);
+        const done = updatedTasks.filter(t => t.done).length;
+        setCompletion(Math.round((done / updatedTasks.length) * 100));
       }
       setLoading(false);
     };
@@ -63,6 +82,21 @@ export default function PhotographerDashboard() {
           <p className="text-gray-500">Manage your profile, bookings and earnings all in one place.</p>
         </div>
 
+        {/* Profile summary */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6 flex items-center gap-6">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-bold text-gray-400 flex-shrink-0">
+            {user?.user_metadata?.name?.[0] || "?"}
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-black text-lg">{user?.user_metadata?.name || "Your name"}</p>
+            <p className="text-gray-400 text-sm">{user?.user_metadata?.location || "No location set"}</p>
+            <p className="text-gray-400 text-sm">{user?.user_metadata?.specialty || "No specialty set"} {user?.user_metadata?.price ? `— ${user?.user_metadata?.price}` : ""}</p>
+          </div>
+          <a href="/photographer-dashboard/edit-profile" className="text-sm text-black border border-gray-200 px-4 py-2 rounded-full hover:bg-gray-50">
+            Edit profile
+          </a>
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           {[
@@ -86,19 +120,13 @@ export default function PhotographerDashboard() {
               <h2 className="text-lg font-bold mb-1">Complete your profile</h2>
               <p className="text-gray-400 text-sm">A complete profile gets 3x more bookings</p>
             </div>
-            <span className="text-3xl font-bold">20%</span>
+            <span className="text-3xl font-bold">{completion}%</span>
           </div>
           <div className="w-full bg-gray-800 rounded-full h-2 mb-6">
-            <div className="bg-white rounded-full h-2" style={{width: "20%"}}></div>
+            <div className="bg-white rounded-full h-2 transition-all" style={{width: `${completion}%`}}></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {[
-              { task: "Add profile photo", done: false },
-              { task: "Write your bio", done: false },
-              { task: "Add portfolio photos", done: false },
-              { task: "Set your prices", done: false },
-              { task: "Add your location", done: true },
-            ].map((item) => (
+            {tasks.map((item) => (
               <div key={item.task} className="flex items-center gap-3">
                 <div style={{width: "20px", height: "20px", borderRadius: "50%", backgroundColor: item.done ? "white" : "transparent", border: item.done ? "none" : "1px solid #555", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
                   {item.done && <span style={{color: "black", fontSize: "12px"}}>✓</span>}
@@ -141,9 +169,9 @@ export default function PhotographerDashboard() {
             <div className="text-5xl mb-4">📭</div>
             <p className="text-gray-400 text-sm">No booking requests yet</p>
             <p className="text-gray-300 text-xs mt-1">Complete your profile to start receiving bookings</p>
-            <button className="mt-6 bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800">
+            <a href="/photographer-dashboard/edit-profile" className="mt-6 bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800">
               Complete my profile
-            </button>
+            </a>
           </div>
         </div>
 

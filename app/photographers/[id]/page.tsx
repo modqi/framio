@@ -1,30 +1,70 @@
+"use client";
+import { useState } from "react";
+import { supabase } from "../../../lib/supabase";
+
 export default function PhotographerProfile() {
+  const [sessionType, setSessionType] = useState("Wedding (Full day)");
+  const [date, setDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [booked, setBooked] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleBooking = async () => {
+    setLoading(true);
+    setError("");
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
+
+    const { error } = await supabase.from("bookings").insert({
+      client_id: user.id,
+      client_name: user.user_metadata?.name || "",
+      client_email: user.email,
+      photographer_name: "Sofia Andersen",
+      photographer_id: null,
+      session_type: sessionType,
+      date: date,
+      location: location,
+      message: message,
+      price: "2,500 NOK",
+      status: "pending",
+    });
+
+    if (error) {
+      setError("Something went wrong. Please try again.");
+    } else {
+      setBooked(true);
+    }
+
+    setLoading(false);
+  };
+
   return (
     <main className="min-h-screen bg-white">
 
       {/* Navigation */}
       <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-100">
-        <a href="/" className="text-2xl font-bold text-black">Framio</a>
+        <a href="/" className="text-2xl font-bold text-black" style={{fontFamily: "Georgia, serif"}}>Framio</a>
         <div className="flex items-center gap-4">
-          <a href="/photographers" className="text-gray-600 hover:text-black text-sm">Explore</a>
-          <a href="/photographers/sofia-andersen" className="text-gray-600 hover:text-black text-sm">For Photographers</a>
-          <button className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">
-            Sign up
-          </button>
+          <a href="/photographers" style={{color: "#888780", fontSize: "14px"}}>Explore</a>
+          <a href="#" style={{color: "#888780", fontSize: "14px"}}>For Photographers</a>
+          <a href="/signup" className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">Sign up</a>
         </div>
       </nav>
 
       <div className="max-w-5xl mx-auto px-8 py-12">
-        
+
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row gap-8 mb-12">
-          
-          {/* Avatar */}
           <div className="w-40 h-40 rounded-2xl bg-gray-100 flex items-center justify-center text-4xl font-bold text-gray-400 flex-shrink-0">
             SA
           </div>
-
-          {/* Info */}
           <div className="flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -43,8 +83,6 @@ export default function PhotographerProfile() {
                 <p className="text-gray-400 text-sm">per session</p>
               </div>
             </div>
-
-            {/* Bio */}
             <p className="text-gray-600 mt-4 leading-relaxed">
               Professional photographer based in Bergen with over 8 years of experience. Specializing in weddings, portraits, and lifestyle photography. I believe every moment deserves to be captured beautifully.
             </p>
@@ -52,11 +90,9 @@ export default function PhotographerProfile() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
+
           {/* Left — Portfolio & Reviews */}
           <div className="md:col-span-2">
-            
-            {/* Portfolio */}
             <h2 className="text-xl font-bold mb-4">Portfolio</h2>
             <div className="grid grid-cols-3 gap-3 mb-10">
               {[1,2,3,4,5,6].map((i) => (
@@ -66,7 +102,6 @@ export default function PhotographerProfile() {
               ))}
             </div>
 
-            {/* Reviews */}
             <h2 className="text-xl font-bold mb-4">Reviews</h2>
             <div className="flex flex-col gap-4">
               {[
@@ -89,63 +124,100 @@ export default function PhotographerProfile() {
           {/* Right — Booking Card */}
           <div className="md:col-span-1">
             <div className="border border-gray-200 rounded-2xl p-6 sticky top-8">
-              <h3 className="text-lg font-bold mb-1">Book Sofia</h3>
-              <p className="text-gray-400 text-sm mb-6">Choose your session details</p>
 
-              {/* Session Type */}
-              <div className="mb-4">
-                <label className="text-sm font-medium text-gray-700 block mb-2">Session type</label>
-                <select className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none">
-                  <option>Wedding (Full day)</option>
-                  <option>Portrait (2 hours)</option>
-                  <option>Engagement (3 hours)</option>
-                  <option>Family (2 hours)</option>
-                </select>
-              </div>
-
-              {/* Date */}
-              <div className="mb-4">
-                <label className="text-sm font-medium text-gray-700 block mb-2">Date</label>
-                <input
-                  type="date"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
-                />
-              </div>
-
-              {/* Location */}
-              <div className="mb-6">
-                <label className="text-sm font-medium text-gray-700 block mb-2">Location</label>
-                <input
-                  type="text"
-                  placeholder="Where is the shoot?"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
-                />
-              </div>
-
-              {/* Price Summary */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-500">Session fee</span>
-                  <span className="text-black">2,500 NOK</span>
+              {booked ? (
+                <div className="text-center py-8">
+                  <div className="text-5xl mb-4">🎉</div>
+                  <h3 className="text-lg font-bold text-black mb-2">Booking requested!</h3>
+                  <p className="text-gray-500 text-sm mb-4">Sofia will respond within 24 hours. Check your dashboard for updates.</p>
+                  <a href="/dashboard" className="bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800 inline-block">
+                    View my bookings
+                  </a>
                 </div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-500">Framio fee</span>
-                  <span className="text-black">250 NOK</span>
-                </div>
-                <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between font-bold">
-                  <span>Total</span>
-                  <span>2,750 NOK</span>
-                </div>
-              </div>
+              ) : (
+                <>
+                  <h3 className="text-lg font-bold mb-1">Book Sofia</h3>
+                  <p className="text-gray-400 text-sm mb-6">Choose your session details</p>
 
-              {/* Book Button */}
-              <button className="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors">
-                Request to Book
-              </button>
-              <p className="text-center text-gray-400 text-xs mt-3">You won't be charged yet</p>
+                  <div className="mb-4">
+                    <label className="text-sm font-medium text-gray-700 block mb-2">Session type</label>
+                    <select
+                      value={sessionType}
+                      onChange={(e) => setSessionType(e.target.value)}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
+                    >
+                      <option>Wedding (Full day)</option>
+                      <option>Portrait (2 hours)</option>
+                      <option>Engagement (3 hours)</option>
+                      <option>Family (2 hours)</option>
+                    </select>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="text-sm font-medium text-gray-700 block mb-2">Date</label>
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="text-sm font-medium text-gray-700 block mb-2">Location</label>
+                    <input
+                      type="text"
+                      placeholder="Where is the shoot?"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none"
+                    />
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="text-sm font-medium text-gray-700 block mb-2">Message</label>
+                    <textarea
+                      placeholder="Tell Sofia about your vision..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      rows={3}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none resize-none"
+                    />
+                  </div>
+
+                  <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-gray-500">Session fee</span>
+                      <span className="text-black">2,500 NOK</span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-gray-500">Framio fee</span>
+                      <span className="text-black">250 NOK</span>
+                    </div>
+                    <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between font-bold">
+                      <span>Total</span>
+                      <span>2,750 NOK</span>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-600 text-sm">
+                      {error}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleBooking}
+                    disabled={loading}
+                    className="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    {loading ? "Sending request..." : "Request to Book"}
+                  </button>
+                  <p className="text-center text-gray-400 text-xs mt-3">You won't be charged yet</p>
+                </>
+              )}
             </div>
           </div>
-
         </div>
       </div>
     </main>
