@@ -59,7 +59,7 @@ export default function PhotographerProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
+        <p style={{fontSize: "11px", letterSpacing: "4px", color: "#888"}}>LOADING...</p>
       </div>
     );
   }
@@ -68,138 +68,181 @@ export default function PhotographerProfile() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-400 mb-4">Photographer not found</p>
-          <a href="/photographers" className="bg-black text-white px-6 py-3 rounded-full text-sm">Browse photographers</a>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "24px", color: "#2C2C2A", margin: "0 0 12px"}}>Photographer not found</p>
+          <a href="/photographers" style={{backgroundColor: "#2C2C2A", color: "#fff", fontSize: "11px", padding: "12px 32px", textDecoration: "none", letterSpacing: "2px"}}>
+            BACK TO BROWSE
+          </a>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-100">
-        <a href="/" className="text-2xl font-bold text-black" style={{fontFamily: "Georgia, serif"}}>Framio</a>
-        <div className="flex items-center gap-4">
-          <a href="/photographers" style={{color: "#888780", fontSize: "14px"}}>Explore</a>
-          <a href="/signup" className="bg-black text-white text-sm px-4 py-2 rounded-full hover:bg-gray-800">Sign up</a>
+    <main className="min-h-screen" style={{backgroundColor: "#fff"}}>
+
+      {/* Navigation */}
+      <nav style={{borderBottom: "2px solid #2C2C2A", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
+        <div className="flex items-baseline gap-3">
+          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#2C2C2A", letterSpacing: "-1px", textDecoration: "none"}}>
+            Framio
+          </a>
+          <span style={{fontSize: "8px", letterSpacing: "4px", color: "#888", paddingLeft: "8px", borderLeft: "1px solid #ddd"}}>PHOTOGRAPHY</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <a href="/photographers" style={{color: "#888", fontSize: "12px"}}>Explore</a>
+          <a href="/signup" style={{backgroundColor: "#2C2C2A", color: "#fff", fontSize: "12px", padding: "7px 20px", textDecoration: "none"}}>
+            Sign up
+          </a>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-8 py-12">
-
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row gap-8 mb-12">
-          <div className="w-40 h-40 rounded-2xl bg-gray-100 flex items-center justify-center text-4xl font-bold text-gray-400 flex-shrink-0">
-            {photographer.name?.[0] || "?"}
+      {/* Profile Header — dark block */}
+      <section style={{backgroundColor: "#2C2C2A", padding: "48px"}}>
+        <div className="flex items-start justify-between flex-wrap gap-8">
+          <div className="flex items-start gap-8">
+            <div style={{width: "100px", height: "100px", backgroundColor: "#444", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
+              <span style={{fontFamily: "Georgia, serif", fontSize: "40px", fontWeight: "700", color: "#666"}}>{photographer.name?.[0] || "?"}</span>
+            </div>
+            <div>
+              <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 8px"}}>{photographer.specialty?.toUpperCase() || "PHOTOGRAPHER"}</p>
+              <h1 style={{fontFamily: "Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "700", color: "#fff", margin: "0 0 8px", letterSpacing: "-1px"}}>
+                {photographer.name}
+              </h1>
+              <p style={{fontSize: "13px", color: "#888", margin: "0 0 16px", letterSpacing: "1px"}}>{photographer.location}</p>
+              <div className="flex items-center gap-4">
+                <span style={{fontSize: "12px", color: "#888"}}>⭐ {photographer.rating || "New"}</span>
+                <span style={{fontSize: "9px", letterSpacing: "2px", color: "#fff", border: "1px solid #444", padding: "4px 10px"}}>AVAILABLE</span>
+                {photographer.instagram && (
+                  <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "11px", color: "#888", textDecoration: "none", letterSpacing: "1px"}}>
+                    @{photographer.instagram}
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-black mb-1">{photographer.name}</h1>
-                <p className="text-gray-500 mb-1">{photographer.location}</p>
-                <p className="text-gray-500 mb-3">{photographer.specialty}</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-yellow-500">⭐</span>
-                  <span className="font-medium">{photographer.rating || "New"}</span>
-                  <span className="ml-2 bg-green-50 text-green-700 text-xs px-3 py-1 rounded-full">Available</span>
-                </div>
+          <div style={{textAlign: "right"}}>
+            <p style={{fontSize: "9px", letterSpacing: "3px", color: "#888", margin: "0 0 4px"}}>STARTING FROM</p>
+            <p style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#fff", margin: "0", letterSpacing: "-1px"}}>
+              {photographer.price || "On request"}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Bio strip */}
+      {photographer.bio && (
+        <section style={{backgroundColor: "#f5f5f5", padding: "32px 48px", borderBottom: "1px solid #e5e5e5"}}>
+          <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 12px"}}>ABOUT</p>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#2C2C2A", margin: "0", lineHeight: "1.8", maxWidth: "720px", fontStyle: "italic"}}>
+            "{photographer.bio}"
+          </p>
+        </section>
+      )}
+
+      <div className="flex flex-col md:flex-row">
+
+        {/* Left — Portfolio & Reviews */}
+        <div style={{flex: 2, padding: "48px", borderRight: "1px solid #f0f0f0"}}>
+
+          <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 20px"}}>PORTFOLIO</p>
+          <div className="grid grid-cols-3 gap-3 mb-12">
+            {[1,2,3,4,5,6].map((i) => (
+              <div key={i} style={{aspectRatio: "1", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <span style={{fontSize: "11px", letterSpacing: "2px", color: "#ccc"}}>PHOTO {i}</span>
               </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-black">{photographer.price || "On request"}</p>
-                <p className="text-gray-400 text-sm">per session</p>
-              </div>
-            </div>
-            <p className="text-gray-600 mt-4 leading-relaxed">{photographer.bio || "No bio yet."}</p>
-            <div className="flex gap-4 mt-4">
-              {photographer.instagram && (
-                <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" className="text-sm text-gray-500 hover:text-black">
-                  @{photographer.instagram}
-                </a>
-              )}
-              {photographer.website && (
-                <a href={photographer.website} target="_blank" className="text-sm text-gray-500 hover:text-black">
-                  Website
-                </a>
-              )}
-            </div>
+            ))}
+          </div>
+
+          <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 20px"}}>REVIEWS</p>
+          <div style={{borderTop: "1px solid #f0f0f0", paddingTop: "20px"}}>
+            <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No reviews yet</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Right — Booking Card */}
+        <div style={{flex: 1, padding: "48px"}}>
+          <div style={{border: "1px solid #2C2C2A", padding: "32px", position: "sticky", top: "32px"}}>
 
-          {/* Left — Portfolio */}
-          <div className="md:col-span-2">
-            <h2 className="text-xl font-bold mb-4">Portfolio</h2>
-            <div className="grid grid-cols-3 gap-3 mb-10">
-              {[1,2,3,4,5,6].map((i) => (
-                <div key={i} className="aspect-square bg-gray-100 rounded-xl flex items-center justify-center text-gray-300 text-sm">
-                  Photo {i}
+            {booked ? (
+              <div className="text-center py-8">
+                <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 16px"}}>CONFIRMED</p>
+                <p style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#2C2C2A", margin: "0 0 12px"}}>Booking requested!</p>
+                <p style={{fontSize: "13px", color: "#888", margin: "0 0 24px", lineHeight: "1.7"}}>
+                  {photographer.name} will respond within 24 hours.
+                </p>
+                <a href="/dashboard" style={{backgroundColor: "#2C2C2A", color: "#fff", fontSize: "11px", padding: "12px 32px", textDecoration: "none", letterSpacing: "2px", display: "inline-block"}}>
+                  VIEW MY BOOKINGS
+                </a>
+              </div>
+            ) : (
+              <>
+                <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 8px"}}>BOOK</p>
+                <p style={{fontFamily: "Georgia, serif", fontSize: "20px", fontWeight: "700", color: "#2C2C2A", margin: "0 0 24px"}}>
+                  {photographer.name?.split(" ")[0]}
+                </p>
+
+                <div className="mb-4">
+                  <label style={{fontSize: "9px", letterSpacing: "3px", color: "#888", display: "block", marginBottom: "8px"}}>SESSION TYPE</label>
+                  <select value={sessionType} onChange={(e) => setSessionType(e.target.value)} style={{width: "100%", border: "1px solid #2C2C2A", padding: "10px 12px", fontSize: "13px", outline: "none", backgroundColor: "#fff", color: "#2C2C2A"}}>
+                    <option>Portrait (2 hours)</option>
+                    <option>Wedding (Full day)</option>
+                    <option>Engagement (3 hours)</option>
+                    <option>Family (2 hours)</option>
+                    <option>Event (4 hours)</option>
+                  </select>
                 </div>
-              ))}
-            </div>
-            <h2 className="text-xl font-bold mb-4">Reviews</h2>
-            <div className="border border-gray-100 rounded-xl p-8 text-center">
-              <p className="text-gray-400 text-sm">No reviews yet</p>
-            </div>
-          </div>
 
-          {/* Right — Booking Card */}
-          <div className="md:col-span-1">
-            <div className="border border-gray-200 rounded-2xl p-6 sticky top-8">
-              {booked ? (
-                <div className="text-center py-8">
-                  <div className="text-5xl mb-4">🎉</div>
-                  <h3 className="text-lg font-bold text-black mb-2">Booking requested!</h3>
-                  <p className="text-gray-500 text-sm mb-4">{photographer.name} will respond within 24 hours.</p>
-                  <a href="/dashboard" className="bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800 inline-block">
-                    View my bookings
-                  </a>
+                <div className="mb-4">
+                  <label style={{fontSize: "9px", letterSpacing: "3px", color: "#888", display: "block", marginBottom: "8px"}}>DATE</label>
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{width: "100%", border: "1px solid #2C2C2A", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#2C2C2A", backgroundColor: "#fff"}}/>
                 </div>
-              ) : (
-                <>
-                  <h3 className="text-lg font-bold mb-1">Book {photographer.name?.split(" ")[0]}</h3>
-                  <p className="text-gray-400 text-sm mb-6">Choose your session details</p>
 
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Session type</label>
-                    <select value={sessionType} onChange={(e) => setSessionType(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none">
-                      <option>Portrait (2 hours)</option>
-                      <option>Wedding (Full day)</option>
-                      <option>Engagement (3 hours)</option>
-                      <option>Family (2 hours)</option>
-                      <option>Event (4 hours)</option>
-                    </select>
+                <div className="mb-4">
+                  <label style={{fontSize: "9px", letterSpacing: "3px", color: "#888", display: "block", marginBottom: "8px"}}>LOCATION</label>
+                  <input type="text" placeholder="Where is the shoot?" value={location} onChange={(e) => setLocation(e.target.value)} style={{width: "100%", border: "1px solid #2C2C2A", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#2C2C2A", backgroundColor: "#fff"}}/>
+                </div>
+
+                <div className="mb-6">
+                  <label style={{fontSize: "9px", letterSpacing: "3px", color: "#888", display: "block", marginBottom: "8px"}}>MESSAGE</label>
+                  <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #2C2C2A", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#2C2C2A", backgroundColor: "#fff", resize: "none"}}/>
+                </div>
+
+                <div style={{borderTop: "1px solid #f0f0f0", paddingTop: "16px", marginBottom: "20px"}}>
+                  <div className="flex justify-between mb-2">
+                    <span style={{fontSize: "12px", color: "#888"}}>Session fee</span>
+                    <span style={{fontSize: "12px", color: "#2C2C2A"}}>{photographer.price || "On request"}</span>
                   </div>
-
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Date</label>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none"/>
+                  <div className="flex justify-between">
+                    <span style={{fontSize: "12px", color: "#888"}}>Framio fee</span>
+                    <span style={{fontSize: "12px", color: "#2C2C2A"}}>10%</span>
                   </div>
+                </div>
 
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Location</label>
-                    <input type="text" placeholder="Where is the shoot?" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none"/>
+                {error && (
+                  <div style={{marginBottom: "16px", padding: "12px", border: "1px solid #e5e5e5", backgroundColor: "#fff8f8"}}>
+                    <p style={{fontSize: "12px", color: "#cc0000", margin: "0"}}>{error}</p>
                   </div>
+                )}
 
-                  <div className="mb-6">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Message</label>
-                    <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none resize-none"/>
-                  </div>
-
-                  {error && (
-                    <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-600 text-sm">{error}</div>
-                  )}
-
-                  <button onClick={handleBooking} disabled={booking} className="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors">
-                    {booking ? "Sending request..." : "Request to Book"}
-                  </button>
-                  <p className="text-center text-gray-400 text-xs mt-3">You won't be charged yet</p>
-                </>
-              )}
-            </div>
+                <button onClick={handleBooking} disabled={booking} style={{width: "100%", backgroundColor: "#2C2C2A", color: "#fff", fontSize: "11px", padding: "14px", border: "none", cursor: "pointer", letterSpacing: "2px"}}>
+                  {booking ? "SENDING..." : "REQUEST TO BOOK"}
+                </button>
+                <p style={{fontSize: "11px", color: "#aaa", textAlign: "center", margin: "12px 0 0", letterSpacing: "1px"}}>YOU WON'T BE CHARGED YET</p>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "2px solid #2C2C2A", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
+        <div>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#2C2C2A", margin: "0 0 4px", letterSpacing: "-0.5px"}}>Framio</p>
+          <p style={{fontSize: "8px", letterSpacing: "3px", color: "#888", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
+        </div>
+        <p style={{fontSize: "11px", color: "#888", margin: "0", letterSpacing: "1px"}}>© 2026 FRAMIO. ALL RIGHTS RESERVED.</p>
+      </footer>
+
     </main>
   );
 }
