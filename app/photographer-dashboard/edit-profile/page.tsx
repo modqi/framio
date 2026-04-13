@@ -222,13 +222,6 @@ export default function EditProfile() {
             {saving ? "Saving..." : "Save profile"}
           </button>
 
-          
-            href="/photographer-dashboard"
-            style={{textAlign: "center", fontSize: "12px", color: "#888", textDecoration: "none"}}
-          >
-            Back to dashboard
-          </a>
-
         </div>
       </div>
 
