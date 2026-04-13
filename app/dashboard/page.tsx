@@ -31,147 +31,155 @@ export default function Dashboard() {
     window.location.href = "/";
   };
 
-  const getStatusColor = (status: string) => {
-    if (status === "confirmed") return { bg: "#f0fdf4", text: "#15803d" };
-    if (status === "declined") return { bg: "#fef2f2", text: "#dc2626" };
-    return { bg: "#fefce8", text: "#ca8a04" };
+  const getStatusStyle = (status: string) => {
+    if (status === "confirmed") return { backgroundColor: "#f0fdf4", color: "#15803d" };
+    if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
+    return { backgroundColor: "#FDF8F5", color: "#C4907A" };
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
+        <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "0.5px solid #e5e5e5", backgroundColor: "white"}} className="flex items-center justify-between px-8 py-5">
-        <a href="/" className="text-2xl font-bold text-black" style={{fontFamily: "Georgia, serif"}}>
-          Framio
-        </a>
+      <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
+        <div className="flex items-baseline gap-3">
+          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Framio</a>
+          <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
+        </div>
         <div className="flex items-center gap-4">
-          <span className="text-gray-600 text-sm">
-            Hello, {user?.user_metadata?.name || user?.email} 👋
+          <span style={{fontSize: "13px", color: "#888"}}>
+            Hello, {user?.user_metadata?.name?.split(" ")[0] || "there"} 👋
           </span>
-          <button
-            onClick={handleSignOut}
-            className="text-sm text-gray-500 hover:text-black border border-gray-200 px-4 py-2 rounded-full"
-          >
+          <button onClick={handleSignOut} style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}>
             Sign out
           </button>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-8 py-12">
+      <div style={{maxWidth: "1000px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Welcome */}
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-black mb-2">
-            Welcome back, {user?.user_metadata?.name?.split(" ")[0] || "there"}! 👋
+        <div style={{marginBottom: "40px"}}>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>My account</p>
+          <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
+            Welcome back, {user?.user_metadata?.name?.split(" ")[0] || "there"}
           </h1>
-          <p className="text-gray-500">Find and book talented photographers around the world.</p>
+          <p style={{fontSize: "14px", color: "#888", margin: "0"}}>Find and book talented photographers around the world.</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {[
-            { label: "Bookings", value: bookings.length.toString(), desc: "Total bookings made" },
-            { label: "Upcoming", value: bookings.filter(b => b.status === "confirmed").length.toString(), desc: "Confirmed sessions" },
-            { label: "Photographers", value: "6", desc: "Available near you" },
+            { label: "Total bookings", value: bookings.length, desc: "All time" },
+            { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, desc: "Upcoming sessions" },
+            { label: "Pending", value: bookings.filter(b => b.status === "pending").length, desc: "Awaiting response" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl p-6 border border-gray-100">
-              <p className="text-gray-400 text-sm mb-1">{stat.label}</p>
-              <p className="text-4xl font-bold text-black mb-1">{stat.value}</p>
-              <p className="text-gray-400 text-xs">{stat.desc}</p>
+            <div key={stat.label} style={{backgroundColor: "#fff", borderRadius: "12px", padding: "24px", border: "1px solid #f0f0f0"}}>
+              <p style={{fontSize: "12px", color: "#888", margin: "0 0 8px"}}>{stat.label}</p>
+              <p style={{fontFamily: "Georgia, serif", fontSize: "40px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", letterSpacing: "-1px"}}>{stat.value}</p>
+              <p style={{fontSize: "12px", color: "#C4907A", margin: "0"}}>{stat.desc}</p>
             </div>
           ))}
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-10">
-          <h2 className="text-lg font-bold text-black mb-4">Quick actions</h2>
+        {/* Quick actions */}
+        <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0", marginBottom: "32px"}}>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 16px", letterSpacing: "1px"}}>Quick actions</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <a href="/photographers" className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-black transition-colors">
-              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-lg">📸</div>
+            <a href="/photographers" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
+              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>📸</div>
               <div>
-                <p className="font-medium text-black">Find a photographer</p>
-                <p className="text-gray-400 text-sm">Browse all photographers</p>
+                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>Find a photographer</p>
+                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Browse all photographers</p>
               </div>
             </a>
-            <a href="#" className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-black transition-colors">
-              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-lg">⭐</div>
+            <a href="#" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
+              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>⭐</div>
               <div>
-                <p className="font-medium text-black">My reviews</p>
-                <p className="text-gray-400 text-sm">Reviews you have left</p>
+                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>My reviews</p>
+                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Reviews you have left</p>
               </div>
             </a>
           </div>
         </div>
 
         {/* Bookings */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-black mb-6">My bookings</h2>
+        <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0"}}>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>My bookings</p>
+          <h2 style={{fontFamily: "Georgia, serif", fontSize: "22px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 24px", letterSpacing: "-0.5px"}}>
+            Your sessions
+          </h2>
 
           {bookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="text-5xl mb-4">📷</div>
-              <p className="text-gray-400 text-sm">No bookings yet</p>
-              <p className="text-gray-300 text-xs mt-1">Your bookings will appear here</p>
-              <a href="/photographers" className="mt-6 bg-black text-white text-sm px-6 py-3 rounded-full hover:bg-gray-800">
+              <div style={{fontSize: "48px", marginBottom: "16px"}}>📷</div>
+              <p style={{fontFamily: "Georgia, serif", fontSize: "18px", color: "#1a1a1a", margin: "0 0 8px"}}>No bookings yet</p>
+              <p style={{fontSize: "13px", color: "#888", margin: "0 0 24px"}}>Your bookings will appear here once you book a photographer</p>
+              <a href="/photographers" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "24px", textDecoration: "none"}}>
                 Find a photographer
               </a>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {bookings.map((booking) => {
-                const colors = getStatusColor(booking.status);
-                return (
-                  <div key={booking.id} className="border border-gray-100 rounded-xl p-5">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className="font-bold text-black text-lg">{booking.photographer_name}</p>
-                        <p className="text-gray-500 text-sm">{booking.session_type}</p>
-                      </div>
-                      <span style={{backgroundColor: colors.bg, color: colors.text, fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: "500"}}>
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                      </span>
+              {bookings.map((booking) => (
+                <div key={booking.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{booking.photographer_name}</p>
+                      <p style={{fontSize: "13px", color: "#888", margin: "0"}}>{booking.session_type}</p>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <p className="text-gray-400 text-xs mb-1">Date</p>
-                        <p className="text-black">{booking.date || "Not set"}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-xs mb-1">Location</p>
-                        <p className="text-black">{booking.location || "Not set"}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-xs mb-1">Price</p>
-                        <p className="text-black">{booking.price}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-xs mb-1">Booked on</p>
-                        <p className="text-black">{new Date(booking.created_at).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    {booking.message && (
-                      <div className="mt-3 pt-3 border-t border-gray-100">
-                        <p className="text-gray-400 text-xs mb-1">Your message</p>
-                        <p className="text-gray-600 text-sm">{booking.message}</p>
-                      </div>
-                    )}
+                    <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: "500"}}>
+                      {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                    </span>
                   </div>
-                );
-              })}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Date</p>
+                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{booking.date || "Not set"}</p>
+                    </div>
+                    <div>
+                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Location</p>
+                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{booking.location || "Not set"}</p>
+                    </div>
+                    <div>
+                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Price</p>
+                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{booking.price}</p>
+                    </div>
+                    <div>
+                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Booked on</p>
+                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{new Date(booking.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  {booking.message && (
+                    <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0"}}>
+                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Your message</p>
+                      <p style={{fontSize: "13px", color: "#888", margin: "0", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{booking.message}"</p>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
-
       </div>
+
+      {/* Footer */}
+      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+        <div>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Framio</p>
+          <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
+        </div>
+        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Framio. All rights reserved.</p>
+      </footer>
+
     </main>
   );
 }
