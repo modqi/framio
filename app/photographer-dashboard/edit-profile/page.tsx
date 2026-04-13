@@ -42,7 +42,6 @@ export default function EditProfile() {
 
   const handleSave = async () => {
     setSaving(true);
-
     await supabase.auth.updateUser({
       data: {
         bio: form.bio,
@@ -54,41 +53,33 @@ export default function EditProfile() {
         name: form.name,
       }
     });
-
     const { data: existing } = await supabase
       .from("photographers")
       .select("id")
       .eq("user_id", user.id)
       .single();
-
     if (existing) {
-      await supabase
-        .from("photographers")
-        .update({
-          name: form.name,
-          bio: form.bio,
-          specialty: form.specialty,
-          location: form.location,
-          price: form.price,
-          instagram: form.instagram,
-          website: form.website,
-        })
-        .eq("user_id", user.id);
+      await supabase.from("photographers").update({
+        name: form.name,
+        bio: form.bio,
+        specialty: form.specialty,
+        location: form.location,
+        price: form.price,
+        instagram: form.instagram,
+        website: form.website,
+      }).eq("user_id", user.id);
     } else {
-      await supabase
-        .from("photographers")
-        .insert({
-          user_id: user.id,
-          name: form.name,
-          bio: form.bio,
-          specialty: form.specialty,
-          location: form.location,
-          price: form.price,
-          instagram: form.instagram,
-          website: form.website,
-        });
+      await supabase.from("photographers").insert({
+        user_id: user.id,
+        name: form.name,
+        bio: form.bio,
+        specialty: form.specialty,
+        location: form.location,
+        price: form.price,
+        instagram: form.instagram,
+        website: form.website,
+      });
     }
-
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
     setSaving(false);
@@ -97,39 +88,84 @@ export default function EditProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
+        <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
       </div>
     );
   }
 
+  const inputStyle = {
+    width: "100%",
+    border: "1px solid #e5e5e5",
+    borderRadius: "8px",
+    padding: "12px 16px",
+    fontSize: "13px",
+    outline: "none",
+    color: "#1a1a1a",
+    backgroundColor: "#fff",
+    boxSizing: "border-box" as const,
+  };
+
+  const labelStyle = {
+    fontSize: "11px",
+    color: "#888",
+    display: "block",
+    marginBottom: "8px",
+    letterSpacing: "0.5px",
+  };
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      <nav style={{borderBottom: "0.5px solid #e5e5e5", backgroundColor: "white"}} className="flex items-center justify-between px-8 py-5">
-        <a href="/" className="text-2xl font-bold text-black" style={{fontFamily: "Georgia, serif"}}>Framio</a>
-        <a href="/photographer-dashboard" className="text-gray-500 text-sm hover:text-black">Back to dashboard</a>
+    <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
+
+      {/* Navigation */}
+      <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
+        <div className="flex items-baseline gap-3">
+          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Framio</a>
+          <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
+        </div>
+        <a href="/photographer-dashboard" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
+          Back to dashboard
+        </a>
       </nav>
 
-      <div className="max-w-2xl mx-auto px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-black mb-2">Edit your profile</h1>
-          <p className="text-gray-500">A complete profile gets 3x more bookings</p>
+      <div style={{maxWidth: "680px", margin: "0 auto", padding: "48px 32px"}}>
+
+        {/* Header */}
+        <div style={{marginBottom: "40px"}}>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>Your profile</p>
+          <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
+            Edit your profile
+          </h1>
+          <p style={{fontSize: "14px", color: "#888", margin: "0"}}>A complete profile gets 3x more bookings</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-8 flex flex-col gap-6">
+        {/* Profile preview */}
+        <div style={{backgroundColor: "#FDF8F5", borderRadius: "12px", padding: "20px", border: "1px solid #f0e8e0", marginBottom: "32px", display: "flex", alignItems: "center", gap: "16px"}}>
+          <div style={{width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "#fff", border: "1px solid #f0e8e0", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
+            <span style={{fontFamily: "Georgia, serif", fontSize: "22px", fontWeight: "700", color: "#C4907A"}}>{form.name?.[0] || "?"}</span>
+          </div>
+          <div>
+            <p style={{fontFamily: "Georgia, serif", fontSize: "16px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 2px"}}>{form.name || "Your name"}</p>
+            <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 2px"}}>{form.specialty || "Your specialty"}</p>
+            <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{form.location || "Your location"}</p>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0", display: "flex", flexDirection: "column", gap: "24px"}}>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Full name</label>
-            <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} placeholder="Your full name" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-black"/>
+            <label style={labelStyle}>Full name</label>
+            <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} placeholder="Your full name" style={inputStyle}/>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Location</label>
-            <input type="text" value={form.location} onChange={(e) => setForm({...form, location: e.target.value})} placeholder="e.g. Bergen, Norway" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-black"/>
+            <label style={labelStyle}>Location</label>
+            <input type="text" value={form.location} onChange={(e) => setForm({...form, location: e.target.value})} placeholder="e.g. Bergen, Norway" style={inputStyle}/>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Specialty</label>
-            <select value={form.specialty} onChange={(e) => setForm({...form, specialty: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-black">
+            <label style={labelStyle}>Specialty</label>
+            <select value={form.specialty} onChange={(e) => setForm({...form, specialty: e.target.value})} style={inputStyle}>
               <option value="">Select your specialty</option>
               <option>Weddings</option>
               <option>Portraits</option>
@@ -143,41 +179,68 @@ export default function EditProfile() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Starting price</label>
-            <input type="text" value={form.price} onChange={(e) => setForm({...form, price: e.target.value})} placeholder="e.g. 2500 NOK per session" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-black"/>
+            <label style={labelStyle}>Starting price</label>
+            <input type="text" value={form.price} onChange={(e) => setForm({...form, price: e.target.value})} placeholder="e.g. 3,200 NOK per session" style={inputStyle}/>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Bio</label>
-            <textarea value={form.bio} onChange={(e) => setForm({...form, bio: e.target.value})} placeholder="Tell clients about yourself, your style and your experience..." rows={5} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-black resize-none"/>
-            <p className="text-gray-400 text-xs mt-1">{form.bio.length}/500 characters</p>
+            <label style={labelStyle}>Bio</label>
+            <textarea
+              value={form.bio}
+              onChange={(e) => setForm({...form, bio: e.target.value})}
+              placeholder="Tell clients about yourself, your style and your experience..."
+              rows={5}
+              style={{...inputStyle, resize: "none"}}
+            />
+            <p style={{fontSize: "11px", color: form.bio.length > 450 ? "#C4907A" : "#aaa", margin: "6px 0 0", textAlign: "right"}}>{form.bio.length}/500</p>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Instagram handle</label>
-            <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:border-black">
-              <span className="px-4 py-3 bg-gray-50 text-gray-400 text-sm border-r border-gray-200">@</span>
-              <input type="text" value={form.instagram} onChange={(e) => setForm({...form, instagram: e.target.value})} placeholder="yourhandle" className="flex-1 px-4 py-3 text-sm outline-none"/>
+            <label style={labelStyle}>Instagram handle</label>
+            <div style={{display: "flex", alignItems: "center", border: "1px solid #e5e5e5", borderRadius: "8px", overflow: "hidden"}}>
+              <span style={{padding: "12px 16px", backgroundColor: "#FAFAF8", color: "#C4907A", fontSize: "13px", borderRight: "1px solid #e5e5e5", flexShrink: 0}}>@</span>
+              <input type="text" value={form.instagram} onChange={(e) => setForm({...form, instagram: e.target.value})} placeholder="yourhandle" style={{flex: 1, border: "none", outline: "none", padding: "12px 16px", fontSize: "13px", color: "#1a1a1a", backgroundColor: "#fff"}}/>
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Website</label>
-            <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-black"/>
+            <label style={labelStyle}>Website</label>
+            <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" style={inputStyle}/>
           </div>
 
           {saved && (
-            <div className="p-3 rounded-xl bg-green-50 text-green-700 text-sm text-center">
-              Profile saved successfully! ✅
+            <div style={{padding: "12px 16px", borderRadius: "8px", backgroundColor: "#f0fdf4", border: "1px solid #dcfce7", textAlign: "center"}}>
+              <p style={{fontSize: "13px", color: "#15803d", margin: "0"}}>Profile saved successfully ✓</p>
             </div>
           )}
 
-          <button onClick={handleSave} disabled={saving} className="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 transition-colors">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            style={{width: "100%", backgroundColor: "#C4907A", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
+          >
             {saving ? "Saving..." : "Save profile"}
           </button>
 
+          
+            href="/photographer-dashboard"
+            style={{textAlign: "center", fontSize: "12px", color: "#888", textDecoration: "none"}}
+          >
+            Back to dashboard
+          </a>
+
         </div>
       </div>
+
+      {/* Footer */}
+      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+        <div>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Framio</p>
+          <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
+        </div>
+        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Framio. All rights reserved.</p>
+      </footer>
+
     </main>
   );
 }
