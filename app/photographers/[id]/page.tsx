@@ -100,8 +100,25 @@ export default function PhotographerProfile() {
       price: photographer?.price || "Price on request",
       status: "pending",
     });
-    if (error) { setError("Something went wrong. Please try again."); }
-    else { setBooked(true); }
+   if (error) { setError("Something went wrong. Please try again."); }
+    else {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photographerName: photographer?.name,
+          photographerEmail: photographer?.email || "",
+          clientName: user.user_metadata?.name || "",
+          clientEmail: user.email,
+          sessionType,
+          date: selectedDate,
+          location,
+          message,
+          price: photographer?.price || "Price on request",
+        }),
+      });
+      setBooked(true);
+    }
     setBooking(false);
   };
 
