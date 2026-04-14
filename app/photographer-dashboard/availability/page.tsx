@@ -6,7 +6,7 @@ export default function Availability() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [availability, setAvailability] = useState<{[key: string]: boolean}>({});
+  const [blockedDays, setBlockedDays] = useState<Set<string>>(new Set());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [saved, setSaved] = useState(false);
 
@@ -21,11 +21,11 @@ export default function Availability() {
         .from("availability")
         .select("*")
         .eq("photographer_id", user.id)
+        .eq("is_available", false)
         .gte("date", startOfMonth.toISOString().split("T")[0])
         .lte("date", endOfMonth.toISOString().split("T")[0]);
-      const avMap: {[key: string]: boolean} = {};
-      (data || []).forEach((row: any) => { avMap[row.date] = row.is_available; });
-      setAvailability(avMap);
+      const blocked = new Set<string>((data || []).map((row: any) => row.date));
+      setBlockedDays(blocked);
       setLoading(false);
     };
     getUser();
@@ -60,23 +60,28 @@ export default function Availability() {
   const toggleDay = (day: number) => {
     if (isPast(day)) return;
     const dateStr = formatDate(day);
-    setAvailability(prev => ({
-      ...prev,
-      [dateStr]: !prev[dateStr],
-    }));
+    setBlockedDays(prev => {
+      const next = new Set(prev);
+      if (next.has(dateStr)) { next.delete(dateStr); }
+      else { next.add(dateStr); }
+      return next;
+    });
   };
 
   const handleSave = async () => {
     setSaving(true);
-    const entries = Object.entries(availability).map(([date, is_available]) => ({
-      photographer_id: user.id,
-      date,
-      is_available,
-    }));
-    for (const entry of entries) {
-      await supabase.from("availability").upsert(entry, {
-        onConflict: "photographer_id,date",
-      });
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = formatDate(d);
+      if (isPast(d)) continue;
+      const is_available = !blockedDays.has(dateStr);
+      await supabase.from("availability").upsert(
+        { photographer_id: user.id, date: dateStr, is_available },
+        { onConflict: "photographer_id,date" }
+      );
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -88,7 +93,9 @@ export default function Availability() {
 
   const monthName = currentMonth.toLocaleString("default", { month: "long", year: "numeric" });
   const days = getDaysInMonth();
-  const availableCount = Object.values(availability).filter(v => v).length;
+  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+  const blockedCount = blockedDays.size;
+  const availableCount = daysInMonth - blockedCount;
 
   if (loading) return (
     <div className="min-h-screen bg-white flex items-center justify-center">
@@ -119,21 +126,19 @@ export default function Availability() {
             My availability
           </h1>
           <p style={{fontSize: "14px", color: "#888", margin: "0"}}>
-            Tap days to mark them as available — clients can only book available days
+            Tap days to mark them as unavailable — all other days are open for booking
           </p>
         </div>
 
         {/* Stats strip */}
         <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "16px 24px", border: "1px solid #f0f0f0", marginBottom: "24px", display: "flex", gap: "32px"}}>
           <div>
-            <p style={{fontSize: "11px", color: "#888", margin: "0 0 4px"}}>Available this month</p>
-            <p style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#C4907A", margin: "0"}}>{availableCount}</p>
+            <p style={{fontSize: "11px", color: "#888", margin: "0 0 4px"}}>Available days</p>
+            <p style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0"}}>{availableCount}</p>
           </div>
           <div>
-            <p style={{fontSize: "11px", color: "#888", margin: "0 0 4px"}}>Days remaining</p>
-            <p style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0"}}>
-              {new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() - availableCount}
-            </p>
+            <p style={{fontSize: "11px", color: "#888", margin: "0 0 4px"}}>Blocked days</p>
+            <p style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#C4907A", margin: "0"}}>{blockedCount}</p>
           </div>
           <div>
             <p style={{fontSize: "11px", color: "#888", margin: "0 0 4px"}}>Month</p>
@@ -167,7 +172,7 @@ export default function Availability() {
             {days.map((day, index) => {
               if (!day) return <div key={`empty-${index}`}/>;
               const dateStr = formatDate(day);
-              const isAvailable = availability[dateStr] === true;
+              const isBlocked = blockedDays.has(dateStr);
               const past = isPast(day);
               return (
                 <div
@@ -179,10 +184,11 @@ export default function Availability() {
                     fontSize: "13px",
                     borderRadius: "8px",
                     cursor: past ? "not-allowed" : "pointer",
-                    backgroundColor: past ? "#fafafa" : isAvailable ? "#C4907A" : "#fff",
-                    color: past ? "#ccc" : isAvailable ? "#fff" : "#1a1a1a",
-                    border: past ? "1px solid #f5f5f5" : isAvailable ? "1px solid #C4907A" : "1px solid #e5e5e5",
-                    fontWeight: isAvailable ? "600" : "400",
+                    backgroundColor: past ? "#fafafa" : isBlocked ? "#f0f0f0" : "#fff",
+                    color: past ? "#ccc" : isBlocked ? "#bbb" : "#1a1a1a",
+                    border: past ? "1px solid #f5f5f5" : isBlocked ? "1px solid #e5e5e5" : "1px solid #e5e5e5",
+                    fontWeight: isBlocked ? "400" : "500",
+                    textDecoration: isBlocked ? "line-through" : "none",
                     transition: "all 0.15s",
                   }}
                 >
@@ -195,12 +201,12 @@ export default function Availability() {
           {/* Legend */}
           <div style={{display: "flex", gap: "20px", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid #f0f0f0"}}>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
-              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#C4907A"}}></div>
+              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#fff", border: "1px solid #e5e5e5"}}></div>
               <span style={{fontSize: "12px", color: "#888"}}>Available</span>
             </div>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
-              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#fff", border: "1px solid #e5e5e5"}}></div>
-              <span style={{fontSize: "12px", color: "#888"}}>Not available</span>
+              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#f0f0f0", border: "1px solid #e5e5e5"}}></div>
+              <span style={{fontSize: "12px", color: "#888"}}>Unavailable</span>
             </div>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
               <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#fafafa", border: "1px solid #f5f5f5"}}></div>
@@ -214,10 +220,10 @@ export default function Availability() {
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>How it works</p>
           <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
             {[
-              "Tap any future day to mark it as available",
-              "Tap again to mark it as unavailable",
+              "All future days are available by default",
+              "Tap any day to mark it as unavailable",
+              "Tap again to make it available again",
               "Click Save when you are done",
-              "Clients can only book your available days",
             ].map((tip, i) => (
               <div key={i} style={{display: "flex", gap: "10px", alignItems: "flex-start"}}>
                 <span style={{fontSize: "12px", color: "#C4907A", flexShrink: 0}}>0{i + 1}</span>
@@ -236,7 +242,7 @@ export default function Availability() {
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{width: "100%", backgroundColor: "#C4907A", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
+          style={{width: "100%", backgroundColor: "#1a1a1a", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
         >
           {saving ? "Saving..." : "Save availability"}
         </button>

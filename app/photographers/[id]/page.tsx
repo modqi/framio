@@ -7,12 +7,14 @@ export default function PhotographerProfile() {
   const [photos, setPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sessionType, setSessionType] = useState("Portrait (2 hours)");
-  const [date, setDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [location, setLocation] = useState("");
   const [message, setMessage] = useState("");
   const [booking, setBooking] = useState(false);
   const [booked, setBooked] = useState(false);
   const [error, setError] = useState("");
+  const [blockedDays, setBlockedDays] = useState<Set<string>>(new Set());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();
@@ -30,13 +32,58 @@ export default function PhotographerProfile() {
           .eq("photographer_id", photographerData.user_id)
           .order("order_index", { ascending: true });
         setPhotos(photoData || []);
+        const { data: availData } = await supabase
+          .from("availability")
+          .select("*")
+          .eq("photographer_id", photographerData.user_id)
+          .eq("is_available", false);
+        const blocked = new Set<string>((availData || []).map((row: any) => row.date));
+        setBlockedDays(blocked);
       }
       setLoading(false);
     };
     getData();
   }, []);
 
+  const getDaysInMonth = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const days = [];
+    const startDay = firstDay === 0 ? 6 : firstDay - 1;
+    for (let i = 0; i < startDay; i++) days.push(null);
+    for (let i = 1; i <= daysInMonth; i++) days.push(i);
+    return days;
+  };
+
+  const formatDate = (day: number) => {
+    const year = currentMonth.getFullYear();
+    const month = String(currentMonth.getMonth() + 1).padStart(2, "0");
+    const d = String(day).padStart(2, "0");
+    return `${year}-${month}-${d}`;
+  };
+
+  const isPast = (day: number) => {
+    const date = new Date(formatDate(day));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  const isBlocked = (day: number) => blockedDays.has(formatDate(day));
+
+  const handleDayClick = (day: number) => {
+    if (isPast(day) || isBlocked(day)) return;
+    const dateStr = formatDate(day);
+    setSelectedDate(dateStr);
+  };
+
+  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+
   const handleBooking = async () => {
+    if (!selectedDate) { setError("Please select a date first."); return; }
     setBooking(true);
     setError("");
     const { data: { user } } = await supabase.auth.getUser();
@@ -48,7 +95,8 @@ export default function PhotographerProfile() {
       photographer_name: photographer?.name,
       photographer_id: photographer?.user_id,
       session_type: sessionType,
-      date, location, message,
+      date: selectedDate,
+      location, message,
       price: photographer?.price || "Price on request",
       status: "pending",
     });
@@ -69,6 +117,9 @@ export default function PhotographerProfile() {
       <a href="/photographers" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "4px", textDecoration: "none"}}>Back to browse</a>
     </div>
   );
+
+  const days = getDaysInMonth();
+  const monthName = currentMonth.toLocaleString("default", { month: "long", year: "numeric" });
 
   return (
     <main className="min-h-screen" style={{backgroundColor: "#fff"}}>
@@ -138,11 +189,7 @@ export default function PhotographerProfile() {
             ) : (
               photos.map((photo, index) => (
                 <div key={photo.id} style={{aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#f5f5f5"}}>
-                  <img
-                    src={photo.url}
-                    alt={`Portfolio photo ${index + 1}`}
-                    style={{width: "100%", height: "100%", objectFit: "cover"}}
-                  />
+                  <img src={photo.url} alt={`Portfolio photo ${index + 1}`} style={{width: "100%", height: "100%", objectFit: "cover"}}/>
                 </div>
               ))
             )}
@@ -161,7 +208,8 @@ export default function PhotographerProfile() {
               <div className="text-center py-8">
                 <div style={{fontSize: "48px", marginBottom: "16px"}}>🎉</div>
                 <p style={{fontFamily: "Georgia, serif", fontSize: "22px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 12px"}}>Booking requested!</p>
-                <p style={{fontSize: "13px", color: "#888", margin: "0 0 24px", lineHeight: "1.7"}}>{photographer.name} will respond within 24 hours.</p>
+                <p style={{fontSize: "13px", color: "#888", margin: "0 0 8px", lineHeight: "1.7"}}>{photographer.name} will respond within 24 hours.</p>
+                <p style={{fontSize: "13px", color: "#C4907A", margin: "0 0 24px", fontWeight: "500"}}>{selectedDate}</p>
                 <a href="/dashboard" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "4px", textDecoration: "none", display: "inline-block"}}>View my bookings</a>
               </div>
             ) : (
@@ -180,9 +228,71 @@ export default function PhotographerProfile() {
                   </select>
                 </div>
 
+                {/* Calendar */}
                 <div className="mb-4">
-                  <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "6px"}}>Date</label>
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{width: "100%", border: "1px solid #e5e5e5", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1a1a1a", backgroundColor: "#fff"}}/>
+                  <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "8px"}}>
+                    Select a date {selectedDate && <span style={{color: "#C4907A", fontWeight: "600"}}>— {selectedDate}</span>}
+                  </label>
+
+                  <div style={{border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px"}}>
+                    <div className="flex items-center justify-between mb-3">
+                      <button onClick={prevMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#888", padding: "4px 8px"}}>←</button>
+                      <span style={{fontSize: "12px", fontWeight: "600", color: "#1a1a1a"}}>{monthName}</span>
+                      <button onClick={nextMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#888", padding: "4px 8px"}}>→</button>
+                    </div>
+
+                    <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px"}}>
+                      {["M","T","W","T","F","S","S"].map((d, i) => (
+                        <div key={i} style={{textAlign: "center", fontSize: "10px", color: "#aaa", padding: "2px"}}>{d}</div>
+                      ))}
+                    </div>
+
+                    <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px"}}>
+                      {days.map((day, index) => {
+                        if (!day) return <div key={`e-${index}`}/>;
+                        const dateStr = formatDate(day);
+                        const past = isPast(day);
+                        const blocked = isBlocked(day);
+                        const selected = selectedDate === dateStr;
+                        return (
+                          <div
+                            key={day}
+                            onClick={() => handleDayClick(day)}
+                            style={{
+                              textAlign: "center",
+                              padding: "6px 2px",
+                              fontSize: "12px",
+                              borderRadius: "6px",
+                              cursor: past || blocked ? "not-allowed" : "pointer",
+                              backgroundColor: selected ? "#1a1a1a" : past || blocked ? "#f5f5f5" : "#fff",
+                              color: selected ? "#fff" : past || blocked ? "#ccc" : "#1a1a1a",
+                              textDecoration: blocked && !past ? "line-through" : "none",
+                              fontWeight: selected ? "600" : "400",
+                              border: selected ? "1px solid #1a1a1a" : "1px solid #f0f0f0",
+                              transition: "all 0.1s",
+                            }}
+                          >
+                            {day}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div style={{display: "flex", gap: "12px", marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #f0f0f0"}}>
+                      <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
+                        <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: "#fff", border: "1px solid #e5e5e5"}}></div>
+                        <span style={{fontSize: "10px", color: "#aaa"}}>Available</span>
+                      </div>
+                      <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
+                        <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: "#f5f5f5"}}></div>
+                        <span style={{fontSize: "10px", color: "#aaa"}}>Unavailable</span>
+                      </div>
+                      <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
+                        <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: "#1a1a1a"}}></div>
+                        <span style={{fontSize: "10px", color: "#aaa"}}>Selected</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mb-4">
@@ -212,8 +322,8 @@ export default function PhotographerProfile() {
                   </div>
                 )}
 
-                <button onClick={handleBooking} disabled={booking} style={{width: "100%", backgroundColor: "#C4907A", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600", marginBottom: "12px"}}>
-                  {booking ? "Sending request..." : "Request to Book"}
+                <button onClick={handleBooking} disabled={booking} style={{width: "100%", backgroundColor: selectedDate ? "#C4907A" : "#e5e5e5", color: selectedDate ? "#fff" : "#aaa", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: selectedDate ? "pointer" : "not-allowed", fontWeight: "600", marginBottom: "12px", transition: "all 0.2s"}}>
+                  {booking ? "Sending request..." : selectedDate ? `Request to Book — ${selectedDate}` : "Select a date first"}
                 </button>
                 <p style={{fontSize: "11px", color: "#aaa", textAlign: "center", margin: "0"}}>You won't be charged yet</p>
               </>
