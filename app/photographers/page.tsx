@@ -85,9 +85,9 @@ export default function Photographers() {
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p style={{fontFamily: "Georgia, serif", fontSize: "24px", color: "#1a1a1a", margin: "0 0 12px"}}>No photographers yet</p>
             <p style={{fontSize: "13px", color: "#888", margin: "0 0 24px"}}>Be the first photographer to join Framio</p>
-            <a href="/signup" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "4px", textDecoration: "none"}}>
-              Join as a photographer
-            </a>
+           <a href="/join" style={{backgroundColor: "#C4907A", color: "#fff", fontSize: "13px", padding: "16px 40px", borderRadius: "4px", textDecoration: "none", fontWeight: "600", flexShrink: 0, whiteSpace: "nowrap"}}>
+  Join as a photographer
+</a>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
