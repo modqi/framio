@@ -82,26 +82,33 @@ export default function PhotographerProfile() {
   const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
 
-  const handleBooking = async () => {
+ const handleBooking = async () => {
     if (!selectedDate) { setError("Please select a date first."); return; }
     setBooking(true);
     setError("");
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { window.location.href = "/login"; return; }
-    const { error } = await supabase.from("bookings").insert({
-      client_id: user.id,
-      client_name: user.user_metadata?.name || "",
-      client_email: user.email,
-      photographer_name: photographer?.name,
-      photographer_id: photographer?.user_id,
-      session_type: sessionType,
-      date: selectedDate,
-      location, message,
-      price: photographer?.price || "Price on request",
-      status: "pending",
-    });
-   if (error) { setError("Something went wrong. Please try again."); }
-    else {
+
+    try {
+      const { error: bookingError } = await supabase.from("bookings").insert({
+        client_id: user.id,
+        client_name: user.user_metadata?.name || "",
+        client_email: user.email,
+        photographer_name: photographer?.name,
+        photographer_id: photographer?.user_id,
+        session_type: sessionType,
+        date: selectedDate,
+        location, message,
+        price: photographer?.price || "Price on request",
+        status: "pending",
+      });
+
+      if (bookingError) {
+        setError("Something went wrong. Please try again.");
+        setBooking(false);
+        return;
+      }
+
       await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,11 +124,35 @@ export default function PhotographerProfile() {
           price: photographer?.price || "Price on request",
         }),
       });
-      setBooked(true);
+
+      const response = await fetch("/api/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photographerName: photographer?.name,
+          sessionType,
+          price: photographer?.price || "3200",
+          date: selectedDate,
+          location,
+          photographerId: photographer?.user_id,
+          clientId: user.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setBooked(true);
+      }
+
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     }
+
     setBooking(false);
   };
-
   if (loading) return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
