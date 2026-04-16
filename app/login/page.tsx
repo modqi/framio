@@ -28,7 +28,7 @@ export default function Login() {
       <nav style={{borderBottom: "2px solid #2C2C2A", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <div className="flex items-baseline gap-3">
           <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#2C2C2A", letterSpacing: "-1px", textDecoration: "none"}}>
-            Framio
+            Frameyou
           </a>
           <span style={{fontSize: "8px", letterSpacing: "4px", color: "#888", paddingLeft: "8px", borderLeft: "1px solid #ddd"}}>PHOTOGRAPHY</span>
         </div>
@@ -99,7 +99,7 @@ export default function Login() {
           <p style={{fontSize: "12px", color: "#888", textAlign: "center", margin: "0"}}>
             Don't have an account?{" "}
             <a href="/signup" style={{color: "#2C2C2A", textDecoration: "none", borderBottom: "1px solid #2C2C2A", paddingBottom: "1px"}}>
-              Join Framio
+              Join Frameyou
             </a>
           </p>
         </div>

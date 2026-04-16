@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Framio",
+  title: "Frameyou",
   description: "Connect with photographers worldwide",
 };
 
