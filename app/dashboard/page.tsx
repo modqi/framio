@@ -131,7 +131,7 @@ export default function Dashboard() {
             <div className="flex flex-col gap-4">
               {bookings.map((booking) => (
                 <div key={booking.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3">
                     <div>
                       <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{booking.photographer_name}</p>
                       <p style={{fontSize: "13px", color: "#888", margin: "0"}}>{booking.session_type}</p>
@@ -162,6 +162,13 @@ export default function Dashboard() {
                     <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0"}}>
                       <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Your message</p>
                       <p style={{fontSize: "13px", color: "#888", margin: "0", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{booking.message}"</p>
+                    </div>
+                  )}
+                  {booking.status === "confirmed" && (
+                    <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0"}}>
+                      <a href={`/review/${booking.id}`} style={{fontSize: "13px", color: "#C4907A", textDecoration: "none", border: "1px solid #C4907A", padding: "8px 20px", borderRadius: "20px", display: "inline-block"}}>
+                        Leave a review ⭐
+                      </a>
                     </div>
                   )}
                 </div>

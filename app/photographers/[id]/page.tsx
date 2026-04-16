@@ -243,11 +243,33 @@ export default function PhotographerProfile() {
             )}
           </div>
 
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 20px", letterSpacing: "1px"}}>Reviews</p>
-          <div style={{borderTop: "1px solid #f0f0f0", paddingTop: "20px"}}>
-            <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No reviews yet</p>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 20px", letterSpacing: "1px"}}>
+  Reviews {reviews.length > 0 && `— ${reviews.length}`}
+</p>
+<div style={{borderTop: "1px solid #f0f0f0", paddingTop: "20px"}}>
+  {reviews.length === 0 ? (
+    <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No reviews yet</p>
+  ) : (
+    <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
+      {reviews.map((review: any) => (
+        <div key={review.id} style={{padding: "16px", border: "1px solid #f0f0f0", borderRadius: "12px", backgroundColor: "#FAFAF8"}}>
+          <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
+            <div>
+              <p style={{fontFamily: "Georgia, serif", fontSize: "14px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 2px"}}>{review.client_name}</p>
+              <p style={{fontSize: "11px", color: "#888", margin: "0"}}>{new Date(review.created_at).toLocaleDateString()}</p>
+            </div>
+            <div style={{display: "flex", gap: "2px"}}>
+              {[1,2,3,4,5].map(star => (
+                <span key={star} style={{fontSize: "14px", opacity: star <= review.rating ? 1 : 0.2}}>⭐</span>
+              ))}
+            </div>
           </div>
+          <p style={{fontSize: "13px", color: "#555", margin: "0", lineHeight: "1.7", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{review.comment}"</p>
         </div>
+      ))}
+    </div>
+  )}
+</div>
 
         {/* Right — Booking Card */}
         <div style={{flex: 1, padding: "48px"}}>
