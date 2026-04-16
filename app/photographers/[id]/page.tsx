@@ -5,6 +5,7 @@ import { supabase } from "../../../lib/supabase";
 export default function PhotographerProfile() {
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sessionType, setSessionType] = useState("Portrait (2 hours)");
   const [selectedDate, setSelectedDate] = useState("");
@@ -39,6 +40,12 @@ export default function PhotographerProfile() {
           .eq("is_available", false);
         const blocked = new Set<string>((availData || []).map((row: any) => row.date));
         setBlockedDays(blocked);
+        const { data: reviewData } = await supabase
+          .from("reviews")
+          .select("*")
+          .eq("photographer_id", photographerData.user_id)
+          .order("created_at", { ascending: false });
+        setReviews(reviewData || []);
       }
       setLoading(false);
     };
@@ -75,20 +82,18 @@ export default function PhotographerProfile() {
 
   const handleDayClick = (day: number) => {
     if (isPast(day) || isBlocked(day)) return;
-    const dateStr = formatDate(day);
-    setSelectedDate(dateStr);
+    setSelectedDate(formatDate(day));
   };
 
   const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
 
- const handleBooking = async () => {
+  const handleBooking = async () => {
     if (!selectedDate) { setError("Please select a date first."); return; }
     setBooking(true);
     setError("");
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { window.location.href = "/login"; return; }
-
     try {
       const { error: bookingError } = await supabase.from("bookings").insert({
         client_id: user.id,
@@ -102,13 +107,7 @@ export default function PhotographerProfile() {
         price: photographer?.price || "Price on request",
         status: "pending",
       });
-
-      if (bookingError) {
-        setError("Something went wrong. Please try again.");
-        setBooking(false);
-        return;
-      }
-
+      if (bookingError) { setError("Something went wrong. Please try again."); setBooking(false); return; }
       await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -119,12 +118,10 @@ export default function PhotographerProfile() {
           clientEmail: user.email,
           sessionType,
           date: selectedDate,
-          location,
-          message,
+          location, message,
           price: photographer?.price || "Price on request",
         }),
       });
-
       const response = await fetch("/api/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -138,21 +135,15 @@ export default function PhotographerProfile() {
           clientId: user.id,
         }),
       });
-
       const data = await response.json();
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setBooked(true);
-      }
-
+      if (data.url) { window.location.href = data.url; }
+      else { setBooked(true); }
     } catch (err) {
       setError("Something went wrong. Please try again.");
     }
-
     setBooking(false);
   };
+
   if (loading) return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
@@ -172,7 +163,6 @@ export default function PhotographerProfile() {
   return (
     <main className="min-h-screen" style={{backgroundColor: "#fff"}}>
 
-      {/* Navigation */}
       <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <div className="flex items-baseline gap-3">
           <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Framio</a>
@@ -184,7 +174,6 @@ export default function PhotographerProfile() {
         </div>
       </nav>
 
-      {/* Profile Header */}
       <section style={{backgroundColor: "#FDF8F5", padding: "48px", borderBottom: "1px solid #f0e8e0"}}>
         <div className="flex items-start justify-between flex-wrap gap-8">
           <div className="flex items-start gap-8">
@@ -197,6 +186,7 @@ export default function PhotographerProfile() {
               <p style={{fontSize: "13px", color: "#888", margin: "0 0 16px"}}>{photographer.location}</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <span style={{fontSize: "13px", color: "#888"}}>⭐ {photographer.rating || "New"}</span>
+                {reviews.length > 0 && <span style={{fontSize: "12px", color: "#888"}}>({reviews.length} reviews)</span>}
                 <span style={{fontSize: "12px", color: "#fff", backgroundColor: "#C4907A", padding: "4px 12px", borderRadius: "20px"}}>Available</span>
                 {photographer.instagram && (
                   <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "12px", color: "#C4907A", textDecoration: "none"}}>@{photographer.instagram}</a>
@@ -211,7 +201,6 @@ export default function PhotographerProfile() {
         </div>
       </section>
 
-      {/* Bio */}
       {photographer.bio && (
         <section style={{backgroundColor: "#fff", padding: "32px 48px", borderBottom: "1px solid #f0f0f0"}}>
           <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#555", margin: "0", lineHeight: "1.8", maxWidth: "720px", fontStyle: "italic"}}>
@@ -221,8 +210,6 @@ export default function PhotographerProfile() {
       )}
 
       <div className="flex flex-col md:flex-row">
-
-        {/* Left — Portfolio & Reviews */}
         <div style={{flex: 2, padding: "48px", borderRight: "1px solid #f0f0f0"}}>
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 20px", letterSpacing: "1px"}}>
             Portfolio {photos.length > 0 && `— ${photos.length} photos`}
@@ -244,34 +231,34 @@ export default function PhotographerProfile() {
           </div>
 
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 20px", letterSpacing: "1px"}}>
-  Reviews {reviews.length > 0 && `— ${reviews.length}`}
-</p>
-<div style={{borderTop: "1px solid #f0f0f0", paddingTop: "20px"}}>
-  {reviews.length === 0 ? (
-    <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No reviews yet</p>
-  ) : (
-    <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-      {reviews.map((review: any) => (
-        <div key={review.id} style={{padding: "16px", border: "1px solid #f0f0f0", borderRadius: "12px", backgroundColor: "#FAFAF8"}}>
-          <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
-            <div>
-              <p style={{fontFamily: "Georgia, serif", fontSize: "14px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 2px"}}>{review.client_name}</p>
-              <p style={{fontSize: "11px", color: "#888", margin: "0"}}>{new Date(review.created_at).toLocaleDateString()}</p>
-            </div>
-            <div style={{display: "flex", gap: "2px"}}>
-              {[1,2,3,4,5].map(star => (
-                <span key={star} style={{fontSize: "14px", opacity: star <= review.rating ? 1 : 0.2}}>⭐</span>
-              ))}
-            </div>
+            Reviews {reviews.length > 0 && `— ${reviews.length}`}
+          </p>
+          <div style={{borderTop: "1px solid #f0f0f0", paddingTop: "20px"}}>
+            {reviews.length === 0 ? (
+              <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No reviews yet</p>
+            ) : (
+              <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
+                {reviews.map((review: any) => (
+                  <div key={review.id} style={{padding: "16px", border: "1px solid #f0f0f0", borderRadius: "12px", backgroundColor: "#FAFAF8"}}>
+                    <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
+                      <div>
+                        <p style={{fontFamily: "Georgia, serif", fontSize: "14px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 2px"}}>{review.client_name}</p>
+                        <p style={{fontSize: "11px", color: "#888", margin: "0"}}>{new Date(review.created_at).toLocaleDateString()}</p>
+                      </div>
+                      <div style={{display: "flex", gap: "2px"}}>
+                        {[1,2,3,4,5].map(star => (
+                          <span key={star} style={{fontSize: "14px", opacity: star <= review.rating ? 1 : 0.2}}>⭐</span>
+                        ))}
+                      </div>
+                    </div>
+                    <p style={{fontSize: "13px", color: "#555", margin: "0", lineHeight: "1.7", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{review.comment}"</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <p style={{fontSize: "13px", color: "#555", margin: "0", lineHeight: "1.7", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{review.comment}"</p>
         </div>
-      ))}
-    </div>
-  )}
-</div>
 
-        {/* Right — Booking Card */}
         <div style={{flex: 1, padding: "48px"}}>
           <div style={{border: "1px solid #e5e5e5", borderRadius: "12px", padding: "32px", position: "sticky", top: "32px", boxShadow: "0 2px 16px rgba(0,0,0,0.06)"}}>
             {booked ? (
@@ -298,25 +285,21 @@ export default function PhotographerProfile() {
                   </select>
                 </div>
 
-                {/* Calendar */}
                 <div className="mb-4">
                   <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "8px"}}>
                     Select a date {selectedDate && <span style={{color: "#C4907A", fontWeight: "600"}}>— {selectedDate}</span>}
                   </label>
-
                   <div style={{border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px"}}>
                     <div className="flex items-center justify-between mb-3">
                       <button onClick={prevMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#888", padding: "4px 8px"}}>←</button>
                       <span style={{fontSize: "12px", fontWeight: "600", color: "#1a1a1a"}}>{monthName}</span>
                       <button onClick={nextMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#888", padding: "4px 8px"}}>→</button>
                     </div>
-
                     <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px"}}>
                       {["M","T","W","T","F","S","S"].map((d, i) => (
                         <div key={i} style={{textAlign: "center", fontSize: "10px", color: "#aaa", padding: "2px"}}>{d}</div>
                       ))}
                     </div>
-
                     <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px"}}>
                       {days.map((day, index) => {
                         if (!day) return <div key={`e-${index}`}/>;
@@ -325,29 +308,12 @@ export default function PhotographerProfile() {
                         const blocked = isBlocked(day);
                         const selected = selectedDate === dateStr;
                         return (
-                          <div
-                            key={day}
-                            onClick={() => handleDayClick(day)}
-                            style={{
-                              textAlign: "center",
-                              padding: "6px 2px",
-                              fontSize: "12px",
-                              borderRadius: "6px",
-                              cursor: past || blocked ? "not-allowed" : "pointer",
-                              backgroundColor: selected ? "#1a1a1a" : past || blocked ? "#f5f5f5" : "#fff",
-                              color: selected ? "#fff" : past || blocked ? "#ccc" : "#1a1a1a",
-                              textDecoration: blocked && !past ? "line-through" : "none",
-                              fontWeight: selected ? "600" : "400",
-                              border: selected ? "1px solid #1a1a1a" : "1px solid #f0f0f0",
-                              transition: "all 0.1s",
-                            }}
-                          >
+                          <div key={day} onClick={() => handleDayClick(day)} style={{textAlign: "center", padding: "6px 2px", fontSize: "12px", borderRadius: "6px", cursor: past || blocked ? "not-allowed" : "pointer", backgroundColor: selected ? "#1a1a1a" : past || blocked ? "#f5f5f5" : "#fff", color: selected ? "#fff" : past || blocked ? "#ccc" : "#1a1a1a", textDecoration: blocked && !past ? "line-through" : "none", fontWeight: selected ? "600" : "400", border: selected ? "1px solid #1a1a1a" : "1px solid #f0f0f0", transition: "all 0.1s"}}>
                             {day}
                           </div>
                         );
                       })}
                     </div>
-
                     <div style={{display: "flex", gap: "12px", marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #f0f0f0"}}>
                       <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
                         <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: "#fff", border: "1px solid #e5e5e5"}}></div>
@@ -402,7 +368,6 @@ export default function PhotographerProfile() {
         </div>
       </div>
 
-      {/* Footer */}
       <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
         <div>
           <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Framio</p>
