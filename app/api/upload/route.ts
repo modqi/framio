@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       cloudinary.uploader.upload_stream(
         {
           resource_type: "image",
-          folder: "framio/portfolios",
+          folder: "frameyou/portfolios",
           transformation: [
             { width: 1200, height: 1600, crop: "limit" },
             { quality: "auto" },

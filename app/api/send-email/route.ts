@@ -19,14 +19,14 @@ export async function POST(request: NextRequest) {
     } = body;
 
     await resend.emails.send({
-      from: "Framio <onboarding@resend.dev>",
+      from: "Frameyou <onboarding@resend.dev>",
       to: "muhannadsedqi@gmail.com",
       subject: `New booking request from ${clientName}!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
           
           <div style="text-align: center; margin-bottom: 40px;">
-            <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Framio</h1>
+            <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Frameyou</h1>
             <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
           </div>
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           </div>
 
           <div style="text-align: center; margin-bottom: 32px;">
-            <a href="https://framio-alpha.vercel.app/photographer-dashboard" 
+            <a href="https://frameyou-alpha.vercel.app/photographer-dashboard" 
                style="background: #1a1a1a; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
               View booking request
             </a>
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
           </div>
 
           <div style="text-align: center; margin-top: 32px;">
-            <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Framio. All rights reserved.</p>
+            <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Frameyou. All rights reserved.</p>
           </div>
 
         </div>
@@ -98,14 +98,14 @@ export async function POST(request: NextRequest) {
     });
 
     await resend.emails.send({
-      from: "Framio <onboarding@resend.dev>",
+      from: "Frameyou <onboarding@resend.dev>",
       to: clientEmail,
       subject: `Your booking request to ${photographerName} has been sent!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
           
           <div style="text-align: center; margin-bottom: 40px;">
-            <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Framio</h1>
+            <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Frameyou</h1>
             <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
           </div>
 
@@ -143,14 +143,14 @@ export async function POST(request: NextRequest) {
           </div>
 
           <div style="text-align: center; margin-bottom: 32px;">
-            <a href="https://framio-alpha.vercel.app/dashboard" 
+            <a href="https://frameyou-alpha.vercel.app/dashboard" 
                style="background: #C4907A; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
               View my bookings
             </a>
           </div>
 
           <div style="text-align: center; margin-top: 32px;">
-            <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Framio. All rights reserved.</p>
+            <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Frameyou. All rights reserved.</p>
           </div>
 
         </div>
