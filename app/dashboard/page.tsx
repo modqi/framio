@@ -133,7 +133,9 @@ export default function Dashboard() {
                 <div key={booking.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{booking.photographer_name}</p>
+ <a href={`/photographers/${booking.photographer_id}`} style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", textDecoration: "none"}}>
+  {booking.photographer_name} →
+</a>
                       <p style={{fontSize: "13px", color: "#888", margin: "0"}}>{booking.session_type}</p>
                     </div>
                     <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: "500"}}>
