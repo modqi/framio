@@ -6,7 +6,7 @@ export default function Home() {
       <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <div className="flex items-baseline gap-3">
           <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>
-            Frameyou
+            Lomissa
           </a>
           <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
         </div>
@@ -88,7 +88,7 @@ export default function Home() {
         <div style={{maxWidth: "900px", margin: "0 auto", textAlign: "center"}}>
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>Simple process</p>
           <h2 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 56px", letterSpacing: "-1px"}}>
-            How Frameyou works
+            How Lomissa works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
@@ -117,7 +117,7 @@ export default function Home() {
               Grow your photography business
             </h2>
             <p style={{fontSize: "14px", color: "#888", margin: "0", maxWidth: "400px", lineHeight: "1.7"}}>
-              Join hundreds of photographers already using Frameyou to reach new clients, manage bookings and grow their business.
+              Join hundreds of photographers already using Lomissa to reach new clients, manage bookings and grow their business.
             </p>
           </div>
           <a href="/signup" style={{backgroundColor: "#C4907A", color: "#fff", fontSize: "13px", padding: "16px 40px", borderRadius: "4px", textDecoration: "none", fontWeight: "600", flexShrink: 0, whiteSpace: "nowrap"}}>
@@ -146,7 +146,7 @@ export default function Home() {
       {/* Footer */}
       <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
         <div>
-          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", letterSpacing: "-0.5px"}}>Frameyou</p>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", letterSpacing: "-0.5px"}}>Lomissa</p>
           <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
         </div>
         <div className="flex gap-8">
@@ -154,7 +154,7 @@ export default function Home() {
           <a href="/signup" style={{fontSize: "12px", color: "#888", textDecoration: "none"}}>Sign up</a>
           <a href="/login" style={{fontSize: "12px", color: "#888", textDecoration: "none"}}>Login</a>
         </div>
-        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Frameyou. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

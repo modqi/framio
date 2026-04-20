@@ -39,7 +39,7 @@ export default function SignUp() {
       <nav style={{borderBottom: "2px solid #2C2C2A", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <div className="flex items-baseline gap-3">
           <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#2C2C2A", letterSpacing: "-1px", textDecoration: "none"}}>
-            Frameyou
+            Lomissa
           </a>
           <span style={{fontSize: "8px", letterSpacing: "4px", color: "#888", paddingLeft: "8px", borderLeft: "1px solid #ddd"}}>PHOTOGRAPHY</span>
         </div>
@@ -56,7 +56,7 @@ export default function SignUp() {
         {/* Left — dark block */}
         <div style={{flex: 1, backgroundColor: "#2C2C2A", padding: "64px 48px", display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
           <div>
-            <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 24px"}}>JOIN FRAMEYOU</p>
+            <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 24px"}}>JOIN Lomissa</p>
             <h1 style={{fontFamily: "Georgia, serif", fontSize: "clamp(32px, 3vw, 48px)", fontWeight: "700", color: "#fff", margin: "0 0 24px", letterSpacing: "-1px", lineHeight: "1.1"}}>
               The world's finest photography marketplace
             </h1>
@@ -100,7 +100,7 @@ export default function SignUp() {
             <>
               <p style={{fontSize: "9px", letterSpacing: "5px", color: "#888", margin: "0 0 16px"}}>CREATE ACCOUNT</p>
               <h2 style={{fontFamily: "Georgia, serif", fontSize: "32px", fontWeight: "700", color: "#2C2C2A", margin: "0 0 32px", letterSpacing: "-1px"}}>
-                Join Frameyou
+                Join Lomissa
               </h2>
 
               {/* Role selector */}

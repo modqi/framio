@@ -46,7 +46,7 @@ export default function JoinAsPhotographer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          photographerName: "Frameyou Team",
+          photographerName: "Lomissa Team",
           photographerEmail: "muhannadsedqi@gmail.com",
           clientName: form.name,
           clientEmail: "muhannadsedqi@gmail.com",
@@ -87,7 +87,7 @@ export default function JoinAsPhotographer() {
       <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
         <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
           <div className="flex items-baseline gap-3">
-            <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Frameyou</a>
+            <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
             <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
           </div>
         </nav>
@@ -98,7 +98,7 @@ export default function JoinAsPhotographer() {
             Thank you, {form.name}!
           </h1>
           <p style={{fontSize: "15px", color: "#888", margin: "0 0 32px", lineHeight: "1.8"}}>
-            We have received your application to join Frameyou. Our team will review your portfolio and get back to you within 3 business days.
+            We have received your application to join Lomissa. Our team will review your portfolio and get back to you within 3 business days.
           </p>
           <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "24px", border: "1px solid #f0f0f0", marginBottom: "32px", textAlign: "left"}}>
             <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>WHAT HAPPENS NEXT</p>
@@ -106,7 +106,7 @@ export default function JoinAsPhotographer() {
               "We review your portfolio and experience",
               "We check your Instagram and website",
               "You receive an email with our decision",
-              "If approved your profile goes live on Frameyou",
+              "If approved your profile goes live on Lomissa",
             ].map((step, i) => (
               <div key={i} style={{display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "12px"}}>
                 <span style={{fontSize: "12px", color: "#C4907A", flexShrink: 0, fontWeight: "600"}}>0{i + 1}</span>
@@ -115,7 +115,7 @@ export default function JoinAsPhotographer() {
             ))}
           </div>
           <a href="/" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "8px", textDecoration: "none", display: "inline-block"}}>
-            Back to Frameyou
+            Back to Lomissa
           </a>
         </div>
       </main>
@@ -128,7 +128,7 @@ export default function JoinAsPhotographer() {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <div className="flex items-baseline gap-3">
-          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Frameyou</a>
+          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
           <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
         </div>
         <a href="/" style={{fontSize: "12px", color: "#888", textDecoration: "none"}}>Back to home</a>
@@ -136,12 +136,12 @@ export default function JoinAsPhotographer() {
 
       {/* Hero */}
       <section style={{backgroundColor: "#1a1a1a", padding: "64px 48px", textAlign: "center"}}>
-        <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 16px", letterSpacing: "1px"}}>JOIN FRAMEYOU</p>
+        <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 16px", letterSpacing: "1px"}}>JOIN Lomissa</p>
         <h1 style={{fontFamily: "Georgia, serif", fontSize: "clamp(32px, 5vw, 52px)", fontWeight: "700", color: "#fff", margin: "0 0 16px", letterSpacing: "-1px", lineHeight: "1.1"}}>
           Apply to join as<br/>a photographer
         </h1>
         <p style={{fontSize: "15px", color: "#888", margin: "0 auto", maxWidth: "480px", lineHeight: "1.8"}}>
-          We hand-pick every photographer on Frameyou. Tell us about yourself and your work — we'll be in touch within 3 business days.
+          We hand-pick every photographer on Lomissa. Tell us about yourself and your work — we'll be in touch within 3 business days.
         </p>
       </section>
 
@@ -151,7 +151,7 @@ export default function JoinAsPhotographer() {
           {[
             { value: "3 days", label: "Average response time" },
             { value: "10%", label: "Commission only" },
-            { value: "Free", label: "To join Frameyou" },
+            { value: "Free", label: "To join Lomissa" },
           ].map((stat) => (
             <div key={stat.label} style={{textAlign: "center"}}>
               <p style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{stat.value}</p>
@@ -237,7 +237,7 @@ export default function JoinAsPhotographer() {
               <textarea
                 value={form.about}
                 onChange={(e) => setForm({...form, about: e.target.value})}
-                placeholder="Tell us about your experience, your photography style, the kind of clients you work with and why you want to join Frameyou..."
+                placeholder="Tell us about your experience, your photography style, the kind of clients you work with and why you want to join Lomissa..."
                 rows={6}
                 style={{...inputStyle, resize: "none"}}
               />
@@ -260,7 +260,7 @@ export default function JoinAsPhotographer() {
           </button>
 
           <p style={{fontSize: "12px", color: "#aaa", textAlign: "center", margin: "0", lineHeight: "1.7"}}>
-            By applying you agree to Frameyou's terms. We review every application manually and will contact you within 3 business days.
+            By applying you agree to Lomissa's terms. We review every application manually and will contact you within 3 business days.
           </p>
 
         </div>
@@ -269,10 +269,10 @@ export default function JoinAsPhotographer() {
       {/* Footer */}
       <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <div>
-          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Frameyou</p>
+          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Lomissa</p>
           <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
         </div>
-        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Frameyou. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>
