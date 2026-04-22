@@ -197,7 +197,10 @@ export default function Home() {
         </div>
         <div style={{maxWidth: "1100px", margin: "32px auto 0", paddingTop: "32px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
           <p style={{fontSize: "12px", color: "#aaa", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
-          <p style={{fontSize: "12px", color: "#aaa", margin: "0"}}>Made with ❤️ for photographers everywhere</p>
+          <div style={{display: "flex", gap: "24px"}}>
+  <a href="/privacy" style={{fontSize: "12px", color: "#aaa", textDecoration: "none"}}>Privacy Policy</a>
+  <a href="/terms" style={{fontSize: "12px", color: "#aaa", textDecoration: "none"}}>Terms of Service</a>
+</div>
         </div>
       </footer>
 
