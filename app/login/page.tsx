@@ -3,7 +3,6 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 
 export default function Signup() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("client");
@@ -13,7 +12,7 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignup = async () => {
-    if (!name || !email || !password) { setError("Please fill in all fields."); return; }
+    if (!email || !password) { setError("Please fill in all fields."); return; }
     if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
     setLoading(true);
     setError("");
@@ -21,7 +20,7 @@ export default function Signup() {
       email,
       password,
       options: {
-        data: { name, role },
+        data: { role },
         emailRedirectTo: "https://lomissa.com/auth/confirm",
       },
     });
@@ -94,17 +93,6 @@ export default function Signup() {
         </div>
 
         <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-
-          <div>
-            <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "6px"}}>Full name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your full name"
-              style={{width: "100%", border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px 16px", fontSize: "13px", outline: "none", color: "#1a1a1a", backgroundColor: "#fff", boxSizing: "border-box"}}
-            />
-          </div>
 
           <div>
             <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "6px"}}>Email address</label>
