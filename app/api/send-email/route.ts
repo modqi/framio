@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
     } = body;
 
     await resend.emails.send({
-      from: "Lomissa <onboarding@resend.dev>",
-      to: "muhannadsedqi@gmail.com",
+      from: "Lomissa <hello@lomissa.com>",
+      to: "hello@lomissa.com",
       subject: `New booking request from ${clientName}!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
