@@ -72,7 +72,9 @@ export default function Login() {
           </div>
 
           <div className="mb-8">
-            <label style={{fontSize: "9px", letterSpacing: "3px", color: "#888", display: "block", marginBottom: "8px"}}>PASSWORD</label>
+           <div style={{textAlign: "right", marginTop: "6px"}}>
+  <a href="/reset-password" style={{fontSize: "12px", color: "#C4907A", textDecoration: "none"}}>Forgot your password?</a>
+</div>
             <input
               type="password"
               value={password}
