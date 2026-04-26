@@ -16,8 +16,9 @@ export default function Login() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError("Invalid email or password. Please try again."); setLoading(false); return; }
     const user = data.user;
-    const role = user?.user_metadata?.role;
+  const role = user?.user_metadata?.role;
     if (role === "photographer") { window.location.href = "/photographer-dashboard"; }
+    else if (role === "pending_photographer") { window.location.href = "/pending"; }
     else { window.location.href = "/dashboard"; }
     setLoading(false);
   };
