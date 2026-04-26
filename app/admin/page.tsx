@@ -18,7 +18,7 @@ export default function AdminPanel() {
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { window.location.href = "/login"; return; }
+      if (!user) { window.location.href = "/studio-access"; return; }
 
       const { data: adminData } = await supabase
         .from("admin_users")
@@ -26,7 +26,7 @@ export default function AdminPanel() {
         .eq("email", user.email)
         .single();
 
-      if (!adminData) { window.location.href = "/"; return; }
+      if (!adminData) { window.location.href = "/studio-access"; return; }
       setAuthorized(true);
 
       const [
@@ -117,8 +117,8 @@ export default function AdminPanel() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <p style={{fontSize: "13px", color: "#C4907A"}}>Loading admin panel...</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#1a1a1a"}}>
+      <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
     </div>
   );
 
@@ -139,7 +139,7 @@ export default function AdminPanel() {
     fontSize: "11px",
     padding: "4px 12px",
     borderRadius: "20px",
-    fontWeight: "500",
+    fontWeight: "500" as const,
     backgroundColor: status === "approved" ? "#f0fdf4" : status === "rejected" ? "#fef2f2" : "#FDF8F5",
     color: status === "approved" ? "#15803d" : status === "rejected" ? "#dc2626" : "#C4907A",
   });
@@ -156,7 +156,7 @@ export default function AdminPanel() {
         <div className="flex items-center gap-4">
           <a href="/" style={{fontSize: "12px", color: "#888", textDecoration: "none"}}>View site</a>
           <button
-            onClick={() => supabase.auth.signOut().then(() => window.location.href = "/")}
+            onClick={() => supabase.auth.signOut().then(() => window.location.href = "/studio-access")}
             style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}
           >
             Sign out
