@@ -148,40 +148,40 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#1a1a1a", padding: "48px"}}>
+      <footer style={{backgroundColor: "#fff", padding: "48px", borderTop: "1px solid #f0f0f0"}}>
         <div style={{maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "32px"}}>
           <div>
-            <p style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#fff", margin: "0 0 8px", letterSpacing: "-1px"}}>Lomissa</p>
-            <p style={{fontSize: "12px", color: "rgba(255,255,255,0.4)", margin: "0", maxWidth: "280px", lineHeight: "1.7"}}>The photography marketplace connecting clients with hand-picked photographers worldwide.</p>
+            <p style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>Lomissa</p>
+            <p style={{fontSize: "12px", color: "#888", margin: "0", maxWidth: "280px", lineHeight: "1.7"}}>The photography marketplace connecting clients with hand-picked photographers worldwide.</p>
           </div>
           <div style={{display: "flex", gap: "48px", flexWrap: "wrap"}}>
             <div>
               <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>PLATFORM</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/photographers" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>Find photographers</a>
-                <a href="/signup" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>Create account</a>
-                <a href="/login" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>Log in</a>
+                <a href="/photographers" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Find photographers</a>
+                <a href="/signup" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Create account</a>
+                <a href="/login" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Log in</a>
               </div>
             </div>
             <div>
               <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>LEGAL</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/privacy" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>Privacy Policy</a>
-                <a href="/terms" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>Terms of Service</a>
+                <a href="/privacy" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Privacy Policy</a>
+                <a href="/terms" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Terms of Service</a>
               </div>
             </div>
             <div>
               <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>PHOTOGRAPHERS</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/join" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>Apply to join</a>
-                <a href="mailto:hello@lomissa.com" style={{fontSize: "13px", color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>hello@lomissa.com</a>
+                <a href="/join" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Apply to join</a>
+                <a href="mailto:hello@lomissa.com" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>hello@lomissa.com</a>
               </div>
             </div>
           </div>
         </div>
-        <div style={{maxWidth: "1100px", margin: "32px auto 0", paddingTop: "32px", borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
-          <p style={{fontSize: "12px", color: "rgba(255,255,255,0.3)", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
-          <p style={{fontSize: "12px", color: "rgba(255,255,255,0.3)", margin: "0"}}>Made with ❤️ for photographers everywhere</p>
+        <div style={{maxWidth: "1100px", margin: "32px auto 0", paddingTop: "32px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
+          <p style={{fontSize: "12px", color: "#aaa", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
+          <p style={{fontSize: "12px", color: "#aaa", margin: "0"}}>Made with ❤️ for photographers everywhere</p>
         </div>
       </footer>
 
