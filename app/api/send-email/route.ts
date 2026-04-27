@@ -18,6 +18,112 @@ export async function POST(request: NextRequest) {
       price,
     } = body;
 
+    // Photographer approval email
+    if (sessionType === "Your application has been approved!") {
+      await resend.emails.send({
+        from: "Lomissa <hello@lomissa.com>",
+        to: clientEmail,
+        subject: `Welcome to Lomissa, ${clientName}! 🎉`,
+        html: `
+          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
+            
+            <div style="text-align: center; margin-bottom: 40px;">
+              <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Lomissa</h1>
+              <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
+            </div>
+
+            <div style="background: #1a1a1a; border-radius: 12px; padding: 40px 32px; text-align: center; margin-bottom: 24px;">
+              <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">YOU HAVE BEEN SELECTED</p>
+              <h2 style="font-family: Georgia, serif; font-size: 32px; color: #fff; margin: 0 0 16px; letter-spacing: -1px;">
+                Welcome to Lomissa, ${clientName}!
+              </h2>
+              <p style="font-size: 15px; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.8;">
+                Your application has been reviewed and approved. You are now part of our hand-picked community of photographers.
+              </p>
+            </div>
+
+            <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
+              <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">WHAT HAPPENS NEXT</p>
+              ${[
+                "Log in to your photographer dashboard",
+                "Complete your profile — add your bio and set your price",
+                "Upload your best portfolio photos",
+                "Set your availability calendar",
+                "Start receiving booking requests from clients",
+              ].map((step, i) => `
+                <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;">
+                  <span style="font-size: 12px; color: #C4907A; font-weight: 600; flex-shrink: 0; min-width: 24px;">0${i + 1}</span>
+                  <span style="font-size: 14px; color: #555;">${step}</span>
+                </div>
+              `).join("")}
+            </div>
+
+            <div style="text-align: center; margin-bottom: 32px;">
+              <a href="https://lomissa.com/login" 
+                 style="background: #C4907A; color: #fff; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">
+                Log in to Lomissa →
+              </a>
+            </div>
+
+            <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
+              <p style="font-size: 13px; color: #888; margin: 0 0 4px;">Questions? We are here to help.</p>
+              <a href="mailto:hello@lomissa.com" style="font-size: 13px; color: #C4907A; text-decoration: none;">hello@lomissa.com</a>
+            </div>
+
+            <div style="text-align: center;">
+              <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
+            </div>
+
+          </div>
+        `,
+      });
+
+      return NextResponse.json({ success: true });
+    }
+
+    // Photographer rejection email
+    if (sessionType === "Your Lomissa application") {
+      await resend.emails.send({
+        from: "Lomissa <hello@lomissa.com>",
+        to: clientEmail,
+        subject: `Your Lomissa application — ${clientName}`,
+        html: `
+          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
+            
+            <div style="text-align: center; margin-bottom: 40px;">
+              <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Lomissa</h1>
+              <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
+            </div>
+
+            <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
+              <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 16px;">
+                Thank you for applying, ${clientName}
+              </h2>
+              <p style="font-size: 14px; color: #555; margin: 0 0 16px; line-height: 1.8;">
+                After carefully reviewing your application we have decided not to move forward at this time.
+              </p>
+              <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.8;">
+                ${message}
+              </p>
+            </div>
+
+            <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
+              <p style="font-size: 13px; color: #888; margin: 0 0 4px;">You are welcome to reapply in the future.</p>
+              <a href="https://lomissa.com/signup" style="font-size: 13px; color: #C4907A; text-decoration: none;">lomissa.com/signup</a>
+            </div>
+
+            <div style="text-align: center;">
+              <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
+            </div>
+
+          </div>
+        `,
+      });
+
+      return NextResponse.json({ success: true });
+    }
+
+    // Booking notification to photographer
     await resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
       to: "hello@lomissa.com",
@@ -84,12 +190,7 @@ export async function POST(request: NextRequest) {
             </a>
           </div>
 
-          <div style="background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #f0f0f0; text-align: center;">
-            <p style="font-size: 13px; color: #888; margin: 0 0 4px;">Log in to your dashboard to accept or decline</p>
-            <p style="font-size: 12px; color: #aaa; margin: 0;">You must respond within 24 hours</p>
-          </div>
-
-          <div style="text-align: center; margin-top: 32px;">
+          <div style="text-align: center;">
             <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
           </div>
 
@@ -97,8 +198,9 @@ export async function POST(request: NextRequest) {
       `,
     });
 
+    // Booking confirmation to client
     await resend.emails.send({
-      from: "Lomissa <onboarding@resend.dev>",
+      from: "Lomissa <hello@lomissa.com>",
       to: clientEmail,
       subject: `Your booking request to ${photographerName} has been sent!`,
       html: `
@@ -149,7 +251,7 @@ export async function POST(request: NextRequest) {
             </a>
           </div>
 
-          <div style="text-align: center; margin-top: 32px;">
+          <div style="text-align: center;">
             <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
           </div>
 
