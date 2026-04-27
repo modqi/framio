@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Application notification to admin
-    if (sessionType && sessionType.startsWith("New photographer application from")) {
+    if (sessionType === "photographer_application") {
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: "hello@lomissa.com",
