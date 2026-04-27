@@ -50,7 +50,7 @@ export default function Signup() {
     setLoading(true);
     setError("");
 
-    const { data, error: signupError } = await supabase.auth.signUp({
+    const { error: signupError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -126,14 +126,14 @@ export default function Signup() {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAFAF8"}}>
         <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "48px 32px", border: "1px solid #f0f0f0", textAlign: "center", maxWidth: "480px"}}>
-          <div style={{fontSize: "48px", marginBottom: "24px"}}>📧</div>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>CHECK YOUR EMAIL</p>
-          <h1 style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 16px"}}>Almost there!</h1>
+          <div style={{fontSize: "48px", marginBottom: "24px"}}>🎉</div>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>WELCOME TO LOMISSA</p>
+          <h1 style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 16px"}}>Account created!</h1>
           <p style={{fontSize: "14px", color: "#888", margin: "0 0 32px", lineHeight: "1.7"}}>
-            We sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account.
+            Your account has been created successfully. You can now log in and start booking photographers.
           </p>
           <a href="/login" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "8px", textDecoration: "none", display: "inline-block"}}>
-            Back to login
+            Log in now
           </a>
         </div>
       </main>
