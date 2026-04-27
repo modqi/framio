@@ -91,7 +91,7 @@ export default function Signup() {
         photographerEmail: "hello@lomissa.com",
         clientName: name,
         clientEmail: "hello@lomissa.com",
-        sessionType: `New photographer application from ${name}`,
+        sessionType: "photographer_application",
         date: new Date().toLocaleDateString(),
         location,
         message: `${about}\n\nInstagram: ${instagram}\nPortfolio: ${portfolio}\nExperience: ${experience}`,
