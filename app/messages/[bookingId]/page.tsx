@@ -1,3 +1,4 @@
+ 
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
@@ -26,13 +27,13 @@ export default function Conversation({ params }: { params: { bookingId: string }
       if (!booking) { window.location.href = "/messages"; return; }
       setBooking(booking);
 
-      const { data: messages } = await supabase
+      const { data: msgs } = await supabase
         .from("messages")
         .select("*")
         .eq("booking_id", params.bookingId)
         .order("created_at", { ascending: true });
 
-      setMessages(messages || []);
+      setMessages(msgs || []);
 
       await supabase
         .from("messages")
@@ -43,14 +44,14 @@ export default function Conversation({ params }: { params: { bookingId: string }
       setLoading(false);
 
       const channel = supabase
-        .channel(`messages:${params.bookingId}`)
+        .channel("messages:" + params.bookingId)
         .on("postgres_changes", {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: `booking_id=eq.${params.bookingId}`,
-        }, (payload) => {
-          setMessages(prev => [...prev, payload.new]);
+          filter: "booking_id=eq." + params.bookingId,
+        }, (payload: any) => {
+          setMessages((prev: any[]) => [...prev, payload.new]);
         })
         .subscribe();
 
@@ -66,9 +67,7 @@ export default function Conversation({ params }: { params: { bookingId: string }
   const sendMessage = async () => {
     if (!newMessage.trim() || !user || !booking) return;
     setSending(true);
-
     const receiverId = user.id === booking.client_id ? booking.photographer_id : booking.client_id;
-
     const { error } = await supabase.from("messages").insert({
       booking_id: params.bookingId,
       sender_id: user.id,
@@ -76,26 +75,7 @@ export default function Conversation({ params }: { params: { bookingId: string }
       content: newMessage.trim(),
       read: false,
     });
-
-    if (!error) {
-      setNewMessage("");
-      await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          photographerName: booking.photographer_name,
-          photographerEmail: booking.photographer_email || "hello@lomissa.com",
-          clientName: booking.client_name,
-          clientEmail: booking.client_email,
-          sessionType: "new_message",
-          date: booking.date,
-          location: booking.location,
-          message: newMessage.trim(),
-          price: booking.price,
-          senderName: user.user_metadata?.name || user.email,
-        }),
-      });
-    }
+    if (!error) { setNewMessage(""); }
     setSending(false);
   };
 
@@ -133,7 +113,7 @@ export default function Conversation({ params }: { params: { bookingId: string }
             <div style={{textAlign: "center", padding: "48px 0"}}>
               <p style={{fontSize: "14px", color: "#aaa", fontStyle: "italic"}}>No messages yet — start the conversation!</p>
             </div>
-          ) : messages.map((msg) => {
+          ) : messages.map((msg: any) => {
             const isMe = msg.sender_id === user?.id;
             return (
               <div key={msg.id} style={{display: "flex", justifyContent: isMe ? "flex-end" : "flex-start"}}>
