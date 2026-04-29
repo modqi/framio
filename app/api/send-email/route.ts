@@ -16,7 +16,49 @@ export async function POST(request: NextRequest) {
       location,
       message,
       price,
+      senderName,
     } = body;
+
+    // New message notification
+    if (sessionType === "new_message") {
+      const isClientSender = senderName === clientName;
+      const recipientEmail = isClientSender ? photographerEmail : clientEmail;
+      const recipientName = isClientSender ? photographerName : clientName;
+
+      await resend.emails.send({
+        from: "Lomissa <hello@lomissa.com>",
+        to: recipientEmail || "hello@lomissa.com",
+        subject: `New message from ${senderName} on Lomissa`,
+        html: `
+          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
+            <div style="text-align: center; margin-bottom: 40px;">
+              <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Lomissa</h1>
+              <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
+            </div>
+            <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
+              <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">NEW MESSAGE</p>
+              <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 16px;">
+                ${senderName} sent you a message
+              </h2>
+              <div style="background: #FDF8F5; border-radius: 8px; padding: 16px; border: 1px solid #f0e8e0; margin-bottom: 24px;">
+                <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${message}"</p>
+              </div>
+              <p style="font-size: 13px; color: #888; margin: 0;">Regarding your booking on ${date}</p>
+            </div>
+            <div style="text-align: center; margin-bottom: 32px;">
+              <a href="https://lomissa.com/messages"
+                 style="background: #C4907A; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
+                Reply on Lomissa →
+              </a>
+            </div>
+            <div style="text-align: center;">
+              <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
+            </div>
+          </div>
+        `,
+      });
+      return NextResponse.json({ success: true });
+    }
 
     // Application notification to admin
     if (sessionType === "photographer_application") {
