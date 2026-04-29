@@ -80,6 +80,9 @@ export default function PhotographerDashboard() {
         </div>
         <div className="flex items-center gap-4">
           <span style={{fontSize: "13px", color: "#888"}}>{user?.user_metadata?.name} 📸</span>
+          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
+            💬 Messages
+          </a>
           <button onClick={handleSignOut} style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}>
             Sign out
           </button>
@@ -159,9 +162,9 @@ export default function PhotographerDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
-              { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "#" },
+              { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "/photographer-dashboard/portfolio" },
               { icon: "📅", title: "My availability", desc: "Set your available days", href: "/photographer-dashboard/availability" },
-              { icon: "💰", title: "Earnings", desc: "Track your income and payouts", href: "#" },
+              { icon: "💬", title: "Messages", desc: "Chat with your clients", href: "/messages" },
             ].map((action) => (
               <a key={action.title} href={action.href} style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
                 <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>
@@ -227,16 +230,21 @@ export default function PhotographerDashboard() {
                       <p style={{fontSize: "13px", color: "#888", margin: "0", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
-                  {booking.status === "pending" && (
-                    <div className="flex gap-3">
-                      <button onClick={() => handleBookingStatus(booking.id, "confirmed")} style={{flex: 1, backgroundColor: "#1a1a1a", color: "#fff", padding: "10px", borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: "600"}}>
-                        Accept booking
-                      </button>
-                      <button onClick={() => handleBookingStatus(booking.id, "declined")} style={{flex: 1, backgroundColor: "#fff", color: "#1a1a1a", padding: "10px", borderRadius: "8px", border: "1px solid #e5e5e5", cursor: "pointer", fontSize: "13px"}}>
-                        Decline
-                      </button>
-                    </div>
-                  )}
+                  <div style={{display: "flex", gap: "12px", flexWrap: "wrap"}}>
+                    {booking.status === "pending" && (
+                      <>
+                        <button onClick={() => handleBookingStatus(booking.id, "confirmed")} style={{flex: 1, backgroundColor: "#1a1a1a", color: "#fff", padding: "10px", borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: "600"}}>
+                          Accept booking
+                        </button>
+                        <button onClick={() => handleBookingStatus(booking.id, "declined")} style={{flex: 1, backgroundColor: "#fff", color: "#1a1a1a", padding: "10px", borderRadius: "8px", border: "1px solid #e5e5e5", cursor: "pointer", fontSize: "13px"}}>
+                          Decline
+                        </button>
+                      </>
+                    )}
+                    <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "8px 20px", borderRadius: "20px", display: "inline-block"}}>
+                      💬 Message client
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>
