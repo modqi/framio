@@ -4,26 +4,25 @@ import { supabase } from "../../lib/supabase";
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getUser = async () => {
+    const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        window.location.href = "/login";
-      } else {
-        setUser(user);
-        const { data } = await supabase
-          .from("bookings")
-          .select("*")
-          .eq("client_id", user.id)
-          .order("created_at", { ascending: false });
-        setBookings(data || []);
-      }
+      if (!user) { window.location.href = "/login"; return; }
+      setUser(user);
+
+      const { data: bookings } = await supabase
+        .from("bookings")
+        .select("*")
+        .eq("client_id", user.id)
+        .order("created_at", { ascending: false });
+
+      setBookings(bookings || []);
       setLoading(false);
     };
-    getUser();
+    init();
   }, []);
 
   const handleSignOut = async () => {
@@ -32,18 +31,19 @@ export default function Dashboard() {
   };
 
   const getStatusStyle = (status: string) => {
-    if (status === "confirmed") return { backgroundColor: "#f0fdf4", color: "#15803d" };
-    if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
-    return { backgroundColor: "#FDF8F5", color: "#C4907A" };
+    switch (status) {
+      case "confirmed": return { backgroundColor: "#f0fdf4", color: "#15803d" };
+      case "pending": return { backgroundColor: "#FDF8F5", color: "#C4907A" };
+      case "declined": return { backgroundColor: "#fef2f2", color: "#dc2626" };
+      default: return { backgroundColor: "#f5f5f5", color: "#888" };
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAFAF8"}}>
+      <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
+    </div>
+  );
 
   return (
     <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
@@ -58,6 +58,9 @@ export default function Dashboard() {
           <span style={{fontSize: "13px", color: "#888"}}>
             Hello, {user?.user_metadata?.name?.split(" ")[0] || "there"} 👋
           </span>
+          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
+            💬 Messages
+          </a>
           <button onClick={handleSignOut} style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}>
             Sign out
           </button>
@@ -70,7 +73,7 @@ export default function Dashboard() {
         <div style={{marginBottom: "40px"}}>
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>My account</p>
           <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
-            Welcome back, {user?.user_metadata?.name?.split(" ")[0] || "there"}
+            Welcome back
           </h1>
           <p style={{fontSize: "14px", color: "#888", margin: "0"}}>Find and book talented photographers around the world.</p>
         </div>
@@ -101,11 +104,11 @@ export default function Dashboard() {
                 <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Browse all photographers</p>
               </div>
             </a>
-            <a href="#" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
-              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>⭐</div>
+            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
+              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>💬</div>
               <div>
-                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>My reviews</p>
-                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Reviews you have left</p>
+                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>Messages</p>
+                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Chat with your photographers</p>
               </div>
             </a>
           </div>
@@ -133,9 +136,9 @@ export default function Dashboard() {
                 <div key={booking.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
                   <div className="flex items-start justify-between mb-3">
                     <div>
- <a href={`/photographers/${booking.photographer_id}`} style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", textDecoration: "none"}}>
-  {booking.photographer_name} →
-</a>
+                      <a href={`/photographers/${booking.photographer_id}`} style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", textDecoration: "none"}}>
+                        {booking.photographer_name} →
+                      </a>
                       <p style={{fontSize: "13px", color: "#888", margin: "0"}}>{booking.session_type}</p>
                     </div>
                     <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: "500"}}>
@@ -166,13 +169,16 @@ export default function Dashboard() {
                       <p style={{fontSize: "13px", color: "#888", margin: "0", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
-                  {booking.status === "confirmed" && (
-                    <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0"}}>
+                  <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0", display: "flex", gap: "12px", flexWrap: "wrap"}}>
+                    <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "8px 20px", borderRadius: "20px", display: "inline-block"}}>
+                      💬 Message photographer
+                    </a>
+                    {booking.status === "confirmed" && (
                       <a href={`/review/${booking.id}`} style={{fontSize: "13px", color: "#C4907A", textDecoration: "none", border: "1px solid #C4907A", padding: "8px 20px", borderRadius: "20px", display: "inline-block"}}>
                         Leave a review ⭐
                       </a>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
