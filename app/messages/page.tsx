@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 
@@ -61,8 +61,6 @@ export default function Messages() {
 
   return (
     <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
-
-      {/* Navigation */}
       <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
         <div className="flex items-center gap-6">
@@ -70,13 +68,11 @@ export default function Messages() {
           <a href={isPhotographer ? "/photographer-dashboard" : "/dashboard"} style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "8px 20px", borderRadius: "24px", textDecoration: "none"}}>My account</a>
         </div>
       </nav>
-
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 32px"}}>
         <div style={{marginBottom: "32px"}}>
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>INBOX</p>
           <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0", letterSpacing: "-1px"}}>Messages</h1>
         </div>
-
         {conversations.length === 0 ? (
           <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "48px", border: "1px solid #f0f0f0", textAlign: "center"}}>
             <div style={{fontSize: "48px", marginBottom: "16px"}}>💬</div>
@@ -86,11 +82,7 @@ export default function Messages() {
         ) : (
           <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
             {conversations.map((conv) => (
-              
-                key={conv.id}
-                href={`/messages/${conv.id}`}
-                style={{textDecoration: "none", backgroundColor: "#fff", borderRadius: "12px", padding: "20px 24px", border: conv.unreadCount > 0 ? "1px solid #C4907A" : "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px"}}
-              >
+              <a key={conv.id} href={`/messages/${conv.id}`} style={{textDecoration: "none", backgroundColor: "#fff", borderRadius: "12px", padding: "20px 24px", border: conv.unreadCount > 0 ? "1px solid #C4907A" : "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px"}}>
                 <div style={{flex: 1, minWidth: 0}}>
                   <div style={{display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px"}}>
                     <p style={{fontFamily: "Georgia, serif", fontSize: "16px", fontWeight: "700", color: "#1a1a1a", margin: "0"}}>
@@ -117,12 +109,10 @@ export default function Messages() {
           </div>
         )}
       </div>
-
       <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0"}}>Lomissa</p>
         <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
-
     </main>
   );
 }
