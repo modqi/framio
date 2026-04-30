@@ -68,7 +68,25 @@ export default function Conversation({ params }: { params: any }) {
       content: newMessage.trim(),
       read: false,
     });
-    if (!error) { setNewMessage(""); }
+    if (!error) {
+  setNewMessage("");
+  await fetch("/api/send-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      photographerName: booking.photographer_name,
+      photographerEmail: booking.photographer_email || "hello@lomissa.com",
+      clientName: booking.client_name,
+      clientEmail: booking.client_email,
+      sessionType: "new_message",
+      date: booking.date,
+      location: booking.location,
+      message: newMessage.trim(),
+      price: booking.price,
+      senderName: user.user_metadata?.name || user.email,
+    }),
+  });
+}
     setSending(false);
   };
 
