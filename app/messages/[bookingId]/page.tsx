@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { use } from "react";
 import { supabase } from "../../../lib/supabase";
 
-export default function Conversation({ params }: { params: { bookingId: string } }) {
+export default function Conversation({ params }: { params: Promise<{ bookingId: string }> }) {
+  const { bookingId } = use(params);
   const [user, setUser] = useState<any>(null);
   const [booking, setBooking] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -20,7 +22,7 @@ export default function Conversation({ params }: { params: { bookingId: string }
       const { data: booking } = await supabase
         .from("bookings")
         .select("*")
-        .eq("id", params.bookingId)
+        .eq("id", bookingId)
         .single();
 
       if (!booking) { window.location.href = "/messages"; return; }
@@ -29,19 +31,19 @@ export default function Conversation({ params }: { params: { bookingId: string }
       const { data: msgs } = await supabase
         .from("messages")
         .select("*")
-        .eq("booking_id", params.bookingId)
+        .eq("booking_id", bookingId)
         .order("created_at", { ascending: true });
 
       setMessages(msgs || []);
       setLoading(false);
 
       const channel = supabase
-        .channel("messages:" + params.bookingId)
+        .channel("messages:" + bookingId)
         .on("postgres_changes", {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: "booking_id=eq." + params.bookingId,
+          filter: "booking_id=eq." + bookingId,
         }, (payload: any) => {
           setMessages((prev: any[]) => [...prev, payload.new]);
         })
@@ -50,7 +52,7 @@ export default function Conversation({ params }: { params: { bookingId: string }
       return () => { supabase.removeChannel(channel); };
     };
     init();
-  }, [params.bookingId]);
+  }, [bookingId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,7 +63,7 @@ export default function Conversation({ params }: { params: { bookingId: string }
     setSending(true);
     const receiverId = user.id === booking.client_id ? booking.photographer_id : booking.client_id;
     const { error } = await supabase.from("messages").insert({
-      booking_id: params.bookingId,
+      booking_id: bookingId,
       sender_id: user.id,
       receiver_id: receiverId,
       content: newMessage.trim(),
