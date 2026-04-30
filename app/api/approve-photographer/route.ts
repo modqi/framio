@@ -18,12 +18,13 @@ export async function POST(request: NextRequest) {
       user_metadata: { role: "photographer", name },
     });
     await supabase.from("photographers").upsert({
-      user_id: user.id,
-      name,
-      location: location || "",
-      specialty: specialty || "",
-      price: "Price on request",
-    }, { onConflict: "user_id" });
+  user_id: user.id,
+  name,
+  email: email,
+  location: location || "",
+  specialty: specialty || "",
+  price: "Price on request",
+}, { onConflict: "user_id" });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Approve error:", error);
