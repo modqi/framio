@@ -21,13 +21,12 @@ export async function POST(request: NextRequest) {
 
     // New message notification
     if (sessionType === "new_message") {
-      const isClientSender = senderName === clientName;
-      const recipientEmail = isClientSender ? photographerEmail : clientEmail;
-      const recipientName = isClientSender ? photographerName : clientName;
+      const isClientSender = senderName === clientName || senderName === clientEmail;
+      const recipientEmail = isClientSender ? (photographerEmail || "hello@lomissa.com") : clientEmail;
 
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
-        to: recipientEmail || "hello@lomissa.com",
+        to: recipientEmail,
         subject: `New message from ${senderName} on Lomissa`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
