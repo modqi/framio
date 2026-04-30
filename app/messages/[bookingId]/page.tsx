@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { use } from "react";
 import { supabase } from "../../../lib/supabase";
 
-export default function Conversation({ params }: { params: Promise<{ bookingId: string }> }) {
-  const { bookingId } = use(params);
+export default function Conversation({ params }: { params: any }) {
+  const bookingId = params?.bookingId;
   const [user, setUser] = useState<any>(null);
   const [booking, setBooking] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
