@@ -1,4 +1,3 @@
- 
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
@@ -34,13 +33,6 @@ export default function Conversation({ params }: { params: { bookingId: string }
         .order("created_at", { ascending: true });
 
       setMessages(msgs || []);
-
-      await supabase
-        .from("messages")
-        .update({ read: true })
-        .eq("booking_id", params.bookingId)
-        .eq("receiver_id", user.id);
-
       setLoading(false);
 
       const channel = supabase
@@ -89,42 +81,29 @@ export default function Conversation({ params }: { params: { bookingId: string }
 
   return (
     <main className="min-h-screen flex flex-col" style={{backgroundColor: "#FAFAF8"}}>
-
-      {/* Navigation */}
       <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
         <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
-        <a href="/messages" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>← Back to messages</a>
+        <a href="/messages" style={{fontSize: "13px", color: "#888", textDecoration: "none"}}>Back to messages</a>
       </nav>
-
-      {/* Conversation header */}
       <div style={{backgroundColor: "#fff", borderBottom: "1px solid #f0f0f0", padding: "16px 32px"}}>
         <div style={{maxWidth: "720px", margin: "0 auto"}}>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 4px", letterSpacing: "1px"}}>{booking?.session_type} — {booking?.date}</p>
+          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 4px", letterSpacing: "1px"}}>{booking?.session_type} - {booking?.date}</p>
           <h2 style={{fontFamily: "Georgia, serif", fontSize: "20px", fontWeight: "700", color: "#1a1a1a", margin: "0"}}>
             {isPhotographer ? booking?.client_name || "Client" : booking?.photographer_name}
           </h2>
         </div>
       </div>
-
-      {/* Messages */}
       <div style={{flex: 1, overflowY: "auto", padding: "24px 32px"}}>
         <div style={{maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px"}}>
           {messages.length === 0 ? (
             <div style={{textAlign: "center", padding: "48px 0"}}>
-              <p style={{fontSize: "14px", color: "#aaa", fontStyle: "italic"}}>No messages yet — start the conversation!</p>
+              <p style={{fontSize: "14px", color: "#aaa", fontStyle: "italic"}}>No messages yet - start the conversation!</p>
             </div>
           ) : messages.map((msg: any) => {
             const isMe = msg.sender_id === user?.id;
             return (
               <div key={msg.id} style={{display: "flex", justifyContent: isMe ? "flex-end" : "flex-start"}}>
-                <div style={{
-                  maxWidth: "70%",
-                  backgroundColor: isMe ? "#1a1a1a" : "#fff",
-                  color: isMe ? "#fff" : "#1a1a1a",
-                  padding: "12px 16px",
-                  borderRadius: isMe ? "12px 12px 0 12px" : "12px 12px 12px 0",
-                  border: isMe ? "none" : "1px solid #f0f0f0",
-                }}>
+                <div style={{maxWidth: "70%", backgroundColor: isMe ? "#1a1a1a" : "#fff", color: isMe ? "#fff" : "#1a1a1a", padding: "12px 16px", borderRadius: isMe ? "12px 12px 0 12px" : "12px 12px 12px 0", border: isMe ? "none" : "1px solid #f0f0f0"}}>
                   <p style={{fontSize: "14px", margin: "0 0 4px", lineHeight: "1.6"}}>{msg.content}</p>
                   <p style={{fontSize: "11px", margin: "0", color: isMe ? "rgba(255,255,255,0.5)" : "#aaa"}}>
                     {new Date(msg.created_at).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
@@ -136,8 +115,6 @@ export default function Conversation({ params }: { params: { bookingId: string }
           <div ref={bottomRef}/>
         </div>
       </div>
-
-      {/* Message input */}
       <div style={{backgroundColor: "#fff", borderTop: "1px solid #f0f0f0", padding: "16px 32px"}}>
         <div style={{maxWidth: "720px", margin: "0 auto", display: "flex", gap: "12px", alignItems: "flex-end"}}>
           <textarea
@@ -157,7 +134,6 @@ export default function Conversation({ params }: { params: { bookingId: string }
           </button>
         </div>
       </div>
-
     </main>
   );
 }
