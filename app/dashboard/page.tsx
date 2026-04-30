@@ -6,6 +6,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const init = async () => {
@@ -20,6 +21,14 @@ export default function Dashboard() {
         .order("created_at", { ascending: false });
 
       setBookings(bookings || []);
+
+      const { count } = await supabase
+        .from("messages")
+        .select("*", { count: "exact", head: true })
+        .eq("receiver_id", user.id)
+        .eq("read", false);
+
+      setUnreadCount(count || 0);
       setLoading(false);
     };
     init();
@@ -58,8 +67,13 @@ export default function Dashboard() {
           <span style={{fontSize: "13px", color: "#888"}}>
             Hello, {user?.user_metadata?.name?.split(" ")[0] || "there"} 👋
           </span>
-          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
+          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", position: "relative", display: "inline-flex", alignItems: "center", gap: "6px"}}>
             💬 Messages
+            {unreadCount > 0 && (
+              <span style={{backgroundColor: "#C4907A", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "20px"}}>
+                {unreadCount}
+              </span>
+            )}
           </a>
           <button onClick={handleSignOut} style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}>
             Sign out
@@ -104,11 +118,18 @@ export default function Dashboard() {
                 <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Browse all photographers</p>
               </div>
             </a>
-            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
-              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>💬</div>
+            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: unreadCount > 0 ? "1px solid #C4907A" : "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
+              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0, position: "relative"}}>
+                💬
+                {unreadCount > 0 && (
+                  <span style={{position: "absolute", top: "-4px", right: "-4px", backgroundColor: "#dc2626", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 5px", borderRadius: "20px"}}>
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
               <div>
                 <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>Messages</p>
-                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Chat with your photographers</p>
+                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your photographers"}</p>
               </div>
             </a>
           </div>

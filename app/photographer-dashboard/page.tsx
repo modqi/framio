@@ -6,6 +6,7 @@ export default function PhotographerDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [completion, setCompletion] = useState(0);
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
@@ -33,12 +34,20 @@ export default function PhotographerDashboard() {
         setTasks(updatedTasks);
         const done = updatedTasks.filter(t => t.done).length;
         setCompletion(Math.round((done / updatedTasks.length) * 100));
+
         const { data } = await supabase
           .from("bookings")
           .select("*")
           .eq("photographer_name", meta?.name)
           .order("created_at", { ascending: false });
         setBookings(data || []);
+
+        const { count } = await supabase
+          .from("messages")
+          .select("*", { count: "exact", head: true })
+          .eq("receiver_id", user.id)
+          .eq("read", false);
+        setUnreadCount(count || 0);
       }
       setLoading(false);
     };
@@ -80,8 +89,13 @@ export default function PhotographerDashboard() {
         </div>
         <div className="flex items-center gap-4">
           <span style={{fontSize: "13px", color: "#888"}}>{user?.user_metadata?.name} 📸</span>
-          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
+          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", position: "relative", display: "inline-flex", alignItems: "center", gap: "6px"}}>
             💬 Messages
+            {unreadCount > 0 && (
+              <span style={{backgroundColor: "#C4907A", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "20px"}}>
+                {unreadCount}
+              </span>
+            )}
           </a>
           <button onClick={handleSignOut} style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}>
             Sign out
@@ -121,7 +135,7 @@ export default function PhotographerDashboard() {
             { label: "Total bookings", value: bookings.length, desc: "All time" },
             { label: "Pending", value: bookings.filter(b => b.status === "pending").length, desc: "Awaiting response" },
             { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, desc: "Confirmed sessions" },
-            { label: "Rating", value: "—", desc: "Average rating" },
+            { label: "Unread messages", value: unreadCount, desc: "New messages" },
           ].map((stat) => (
             <div key={stat.label} style={{backgroundColor: "#fff", borderRadius: "12px", padding: "20px", border: "1px solid #f0f0f0"}}>
               <p style={{fontSize: "11px", color: "#888", margin: "0 0 8px"}}>{stat.label}</p>
@@ -164,7 +178,6 @@ export default function PhotographerDashboard() {
               { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
               { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "/photographer-dashboard/portfolio" },
               { icon: "📅", title: "My availability", desc: "Set your available days", href: "/photographer-dashboard/availability" },
-              { icon: "💬", title: "Messages", desc: "Chat with your clients", href: "/messages" },
             ].map((action) => (
               <a key={action.title} href={action.href} style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
                 <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>
@@ -176,6 +189,20 @@ export default function PhotographerDashboard() {
                 </div>
               </a>
             ))}
+            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: unreadCount > 0 ? "1px solid #C4907A" : "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
+              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0, position: "relative"}}>
+                💬
+                {unreadCount > 0 && (
+                  <span style={{position: "absolute", top: "-4px", right: "-4px", backgroundColor: "#dc2626", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 5px", borderRadius: "20px"}}>
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
+              <div>
+                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>Messages</p>
+                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your clients"}</p>
+              </div>
+            </a>
           </div>
         </div>
 
