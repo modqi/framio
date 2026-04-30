@@ -3,16 +3,36 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 
 export default function Conversation({ params }: { params: any }) {
-  const bookingId = params?.bookingId;
+  const resolvedParams = typeof params?.then === "function" 
+    ? null 
+    : params;
+  const bookingId = resolvedParams?.bookingId;
+
   const [user, setUser] = useState<any>(null);
   const [booking, setBooking] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [resolvedBookingId, setResolvedBookingId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const resolveParams = async () => {
+      let id;
+      if (typeof params?.then === "function") {
+        const resolved = await params;
+        id = resolved?.bookingId;
+      } else {
+        id = params?.bookingId;
+      }
+      setResolvedBookingId(id);
+    };
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!resolvedBookingId) return;
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { window.location.href = "/login"; return; }
@@ -21,7 +41,7 @@ export default function Conversation({ params }: { params: any }) {
       const { data: booking } = await supabase
         .from("bookings")
         .select("*")
-        .eq("id", bookingId)
+        .eq("id", resolvedBookingId)
         .single();
 
       if (!booking) { window.location.href = "/messages"; return; }
@@ -30,19 +50,19 @@ export default function Conversation({ params }: { params: any }) {
       const { data: msgs } = await supabase
         .from("messages")
         .select("*")
-        .eq("booking_id", bookingId)
+        .eq("booking_id", resolvedBookingId)
         .order("created_at", { ascending: true });
 
       setMessages(msgs || []);
       setLoading(false);
 
       const channel = supabase
-        .channel("messages:" + bookingId)
+        .channel("messages:" + resolvedBookingId)
         .on("postgres_changes", {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: "booking_id=eq." + bookingId,
+          filter: "booking_id=eq." + resolvedBookingId,
         }, (payload: any) => {
           setMessages((prev: any[]) => [...prev, payload.new]);
         })
@@ -51,42 +71,42 @@ export default function Conversation({ params }: { params: any }) {
       return () => { supabase.removeChannel(channel); };
     };
     init();
-  }, [bookingId]);
+  }, [resolvedBookingId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !user || !booking) return;
+    if (!newMessage.trim() || !user || !booking || !resolvedBookingId) return;
     setSending(true);
     const receiverId = user.id === booking.client_id ? booking.photographer_id : booking.client_id;
     const { error } = await supabase.from("messages").insert({
-      booking_id: bookingId,
+      booking_id: resolvedBookingId,
       sender_id: user.id,
       receiver_id: receiverId,
       content: newMessage.trim(),
       read: false,
     });
     if (!error) {
-  setNewMessage("");
-  await fetch("/api/send-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      photographerName: booking.photographer_name,
-      photographerEmail: booking.photographer_email || "hello@lomissa.com",
-      clientName: booking.client_name,
-      clientEmail: booking.client_email,
-      sessionType: "new_message",
-      date: booking.date,
-      location: booking.location,
-      message: newMessage.trim(),
-      price: booking.price,
-      senderName: user.user_metadata?.name || user.email,
-    }),
-  });
-}
+      setNewMessage("");
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photographerName: booking.photographer_name,
+          photographerEmail: booking.photographer_email || "hello@lomissa.com",
+          clientName: booking.client_name,
+          clientEmail: booking.client_email,
+          sessionType: "new_message",
+          date: booking.date,
+          location: booking.location,
+          message: newMessage.trim(),
+          price: booking.price,
+          senderName: user.user_metadata?.name || user.email,
+        }),
+      });
+    }
     setSending(false);
   };
 
