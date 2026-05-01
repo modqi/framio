@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import { LomissaLogo } from "./components/Logo";
+import Logo from "./components/Logo";
 
 export default function Home() {
   const [photographers, setPhotographers] = useState<any[]>([]);
@@ -23,9 +23,7 @@ export default function Home() {
 
       {/* Navigation */}
       <nav style={{position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
-        <a href="/" style={{textDecoration: "none"}}>
-          <LomissaLogo width={100}/>
-        </a>
+        <Logo size="sm" />
         <div className="flex items-center gap-6">
           <a href="/photographers" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Photographers</a>
           <a href="/login" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Log in</a>
@@ -37,6 +35,9 @@ export default function Home() {
       <section style={{minHeight: "100vh", backgroundColor: "#FAF7F1", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 48px 80px", textAlign: "center", position: "relative", overflow: "hidden"}}>
         <div style={{position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 20% 50%, rgba(184,85,40,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(193,98,47,0.04) 0%, transparent 40%)", pointerEvents: "none"}}/>
         <div style={{position: "relative", zIndex: 1, maxWidth: "800px"}}>
+          <div style={{display: "flex", justifyContent: "center", marginBottom: "48px"}}>
+            <Logo size="xl" asLink={false} />
+          </div>
           <div style={{display: "inline-block", backgroundColor: "rgba(184,85,40,0.08)", border: "1px solid rgba(184,85,40,0.2)", borderRadius: "999px", padding: "6px 16px", marginBottom: "40px"}}>
             <p style={{fontSize: "12px", color: "#B85528", margin: "0", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>NOW LAUNCHING WORLDWIDE</p>
           </div>
@@ -146,8 +147,8 @@ export default function Home() {
       <footer style={{backgroundColor: "#FAF7F1", padding: "48px", borderTop: "1px solid #E4D8C4"}}>
         <div style={{maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "32px"}}>
           <div>
-            <LomissaLogo width={120}/>
-            <p style={{fontSize: "12px", color: "#9E7250", margin: "12px 0 0", maxWidth: "280px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>The photography marketplace connecting clients with hand-picked photographers worldwide.</p>
+            <Logo size="md" asLink={false} />
+            <p style={{fontSize: "12px", color: "#9E7250", margin: "16px 0 0", maxWidth: "280px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>The photography marketplace connecting clients with hand-picked photographers worldwide.</p>
           </div>
           <div style={{display: "flex", gap: "48px", flexWrap: "wrap"}}>
             <div>
