@@ -9,97 +9,99 @@ interface LogoProps {
 }
 
 const SIZES: Record<LogoSize, { fontSize: string; sunW: number; sunH: number; gap: number }> = {
-  sm: { fontSize: '1.25rem',  sunW: 14, sunH: 12, gap: 2 },
-  md: { fontSize: '1.875rem', sunW: 20, sunH: 17, gap: 3 },
-  lg: { fontSize: '2.5rem',   sunW: 26, sunH: 22, gap: 4 },
-  xl: { fontSize: '3.5rem',   sunW: 36, sunH: 30, gap: 5 },
+  sm: { fontSize: '1.375rem', sunW: 22, sunH: 18, gap: 6  },
+  md: { fontSize: '2rem',     sunW: 32, sunH: 26, gap: 10 },
+  lg: { fontSize: '2.75rem',  sunW: 44, sunH: 36, gap: 14 },
+  xl: { fontSize: '3.75rem',  sunW: 58, sunH: 48, gap: 18 },
 }
 
 function SunMark({ sunW, sunH, gap }: { sunW: number; sunH: number; gap: number }) {
-  const C = '#C1622F'
-  const SW = 1.5
+  const C  = '#C1622F'
+  const SW = 1.8
+
+  const ray = (angleDeg: number): [number, number, number, number] => {
+    const rad = (angleDeg * Math.PI) / 180
+    const innerR = 6.5
+    const outerR = 14
+    const x1 = 20 + innerR * Math.cos(rad)
+    const y1 = 20 - innerR * Math.sin(rad)
+    const x2 = 20 + outerR * Math.cos(rad)
+    const y2 = 20 - outerR * Math.sin(rad)
+    return [x1, y1, x2, y2]
+  }
+
+  const rays = [165, 135, 110, 90, 70, 45, 15]
 
   return (
     <svg
       width={sunW}
       height={sunH}
-      viewBox="0 0 20 18"
+      viewBox="0 0 40 32"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      style={{
-        position:      'absolute',
-        bottom:        `calc(100% + ${gap}px)`,
-        left:          '50%',
-        transform:     'translateX(-50%)',
-        overflow:      'visible',
-        pointerEvents: 'none',
-        display:       'block',
-      }}
+      style={{ display: 'block', marginBottom: gap }}
     >
-      <line x1="5.8"  y1="13"   x2="1"    y2="13"  stroke={C} strokeWidth={SW} strokeLinecap="round" />
-      <line x1="7.0"  y1="10.0" x2="3.6"  y2="6.6" stroke={C} strokeWidth={SW} strokeLinecap="round" />
-      <line x1="10"   y1="8.8"  x2="10"   y2="4"   stroke={C} strokeWidth={SW} strokeLinecap="round" />
-      <line x1="13.0" y1="10.0" x2="16.4" y2="6.6" stroke={C} strokeWidth={SW} strokeLinecap="round" />
-      <line x1="14.2" y1="13"   x2="19"   y2="13"  stroke={C} strokeWidth={SW} strokeLinecap="round" />
-      <circle cx="10" cy="13" r="3" fill={C} />
+      {rays.map((angle) => {
+        const [x1, y1, x2, y2] = ray(angle)
+        return (
+          <line
+            key={angle}
+            x1={x1} y1={y1}
+            x2={x2} y2={y2}
+            stroke={C}
+            strokeWidth={SW}
+            strokeLinecap="round"
+          />
+        )
+      })}
+      <circle cx="20" cy="20" r="4" fill={C} />
     </svg>
   )
 }
 
-function Wordmark({ size }: { size: LogoSize }) {
+function LogoMark({ size }: { size: LogoSize }) {
   const { fontSize, sunW, sunH, gap } = SIZES[size]
 
   return (
     <span
-      aria-label="lomissa"
       style={{
-        display:       'inline-flex',
-        alignItems:    'baseline',
-        fontFamily:    "'Cormorant Garamond', Georgia, serif",
-        fontSize,
-        fontWeight:    400,
-        fontStyle:     'normal',
-        color:         '#2B1D12',
-        letterSpacing: '-0.015em',
-        lineHeight:    1,
-        userSelect:    'none',
+        display:        'inline-flex',
+        flexDirection:  'column',
+        alignItems:     'center',
+        textDecoration: 'none',
       }}
     >
-      <span aria-hidden="true">lom</span>
+      <SunMark sunW={sunW} sunH={sunH} gap={gap} />
       <span
-        aria-hidden="true"
         style={{
-          position:      'relative',
-          display:       'inline-block',
-          verticalAlign: 'baseline',
+          fontFamily:    "'Cormorant Garamond', Georgia, serif",
+          fontSize,
+          fontWeight:    500,
+          fontStyle:     'normal',
+          color:         '#2B1D12',
+          letterSpacing: '-0.02em',
+          lineHeight:    1,
+          userSelect:    'none',
         }}
       >
-        <SunMark sunW={sunW} sunH={sunH} gap={gap} />
-        i
+        lomissa
       </span>
-      <span aria-hidden="true">ssa</span>
     </span>
   )
 }
 
 export default function Logo({ size = 'md', asLink = true, href = '/' }: LogoProps) {
-  const mark = <Wordmark size={size} />
-
   if (!asLink) {
-    return (
-      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-        {mark}
-      </div>
-    )
+    return <LogoMark size={size} />
   }
 
   return (
     <Link
       href={href}
       aria-label="Lomissa — go to homepage"
-      style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
+      style={{ display: 'inline-flex', textDecoration: 'none' }}
     >
-      {mark}
+      <LogoMark size={size} />
     </Link>
   )
 }
@@ -109,9 +111,5 @@ export function LomissaLogo({ width = 160, className = '' }: { width?: number, c
 }
 
 export function LomissaLogoWhite({ width = 160, className = '' }: { width?: number, className?: string }) {
-  return (
-    <span style={{filter: 'brightness(10)'}}>
-      <Logo size="md" asLink={false} />
-    </span>
-  )
+  return <Logo size="md" asLink={false} />
 }
