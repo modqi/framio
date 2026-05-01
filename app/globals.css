@@ -1,26 +1,61 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cormorant+SC:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Backgrounds */
+  --cream-50:  #FDFBF7;
+  --cream-100: #FAF7F1;
+  --cream-200: #F5EFE4;
+  --cream-300: #EDE3D1;
+  --cream:     #F5EFE4;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Primary text & UI */
+  --bark-50:  #F4EDE4;
+  --bark-100: #E2CCBA;
+  --bark-200: #C4A07D;
+  --bark-300: #9E7250;
+  --bark-400: #7A5235;
+  --bark-500: #4E3220;
+  --bark-600: #351F10;
+  --bark-700: #1C1009;
+  --bark:     #1C1009;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Terracotta accent */
+  --terra-50:   #FBF0EA;
+  --terra-100:  #F5D5C2;
+  --terra-200:  #E8A97E;
+  --terra-300:  #D4784A;
+  --terra-400:  #B85528;
+  --terra-500:  #8F3A14;
+  --terra:      #B85528;
+  --terra-light:#D4784A;
+  --terra-dark: #8F3A14;
+
+  /* Sand */
+  --sand-50:  #F9F6F0;
+  --sand-100: #F0E9DB;
+  --sand-200: #E4D8C4;
+  --sand-300: #D5C4A8;
+  --sand-400: #C3AB88;
+  --sand:     #E4D8C4;
+
+  /* Sage */
+  --sage-100: #EEF0EA;
+  --sage-200: #D8DDD0;
+  --sage-300: #B8C0AA;
+  --sage:     #B8C0AA;
+
+  /* Legacy support */
+  --background: var(--cream-200);
+  --foreground: var(--bark-700);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream-200);
+  color: var(--bark-700);
+  font-family: 'Jost', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
 }

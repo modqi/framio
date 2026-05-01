@@ -101,6 +101,7 @@ export default function PhotographerProfile() {
         client_email: user.email,
         photographer_name: photographer?.name,
         photographer_id: photographer?.user_id,
+photographer_email: photographer?.email || "",
         session_type: sessionType,
         date: selectedDate,
         location, message,
