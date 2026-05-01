@@ -8,13 +8,13 @@ export function LomissaLogo({ width = 160, className = '' }: { width?: number, c
       role="img"
       aria-label="Lomissa"
     >
-      <g transform="translate(80, 18)">
-        <line x1="0"    y1="-5"   x2="0"    y2="-11"  stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="-3.5" y1="-3.5" x2="-7.5" y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="5"    y1="0"    x2="11"   y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="3.5"  y1="-3.5" x2="7.5"  y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="-5"   y1="0"    x2="-11"  y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="0" cy="0" r="3.5" fill="#C1622F" />
+      <g transform="translate(90, 22)">
+        <line x1="0"    y1="-5"   x2="0"    y2="-11"  stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="-3.5" y1="-3.5" x2="-7.5" y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="-5"   y1="0"    x2="-11"  y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="3.5"  y1="-3.5" x2="7.5"  y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="5"    y1="0"    x2="11"   y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <circle cx="0" cy="0" r="3.5" fill="#C1622F"/>
       </g>
       <text
         x="80"
@@ -42,13 +42,13 @@ export function LomissaLogoWhite({ width = 160, className = '' }: { width?: numb
       role="img"
       aria-label="Lomissa"
     >
-      <g transform="translate(80, 18)">
-        <line x1="0"    y1="-5"   x2="0"    y2="-11"  stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="-3.5" y1="-3.5" x2="-7.5" y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="5"    y1="0"    x2="11"   y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="3.5"  y1="-3.5" x2="7.5"  y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="-5"   y1="0"    x2="-11"  y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="0" cy="0" r="3.5" fill="#C1622F" />
+      <g transform="translate(90, 22)">
+        <line x1="0"    y1="-5"   x2="0"    y2="-11"  stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="-3.5" y1="-3.5" x2="-7.5" y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="-5"   y1="0"    x2="-11"  y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="3.5"  y1="-3.5" x2="7.5"  y2="-7.5" stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="5"    y1="0"    x2="11"   y2="0"    stroke="#C1622F" strokeWidth="1.5" strokeLinecap="round"/>
+        <circle cx="0" cy="0" r="3.5" fill="#C1622F"/>
       </g>
       <text
         x="80"
