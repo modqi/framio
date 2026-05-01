@@ -74,7 +74,7 @@ function LogoMark({ size }: { size: LogoSize }) {
       <SunMark sunW={sunW} sunH={sunH} gap={gap} />
       <span
         style={{
-          fontFamily:    "'Cormorant Garamond', Georgia, serif",
+          fontFamily:    "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
           fontSize,
           fontWeight:    500,
           fontStyle:     'normal',
