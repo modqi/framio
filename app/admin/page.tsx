@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
+import Logo from "../components/Logo";
 
 export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
@@ -82,7 +83,7 @@ export default function AdminPanel() {
           sessionType: "Your application has been approved!",
           date: new Date().toLocaleDateString(),
           location: app.location,
-          message: `Congratulations ${app.name}! Your application to join Lomissa has been approved. You can now log in at https://lomissa.com/login and start setting up your profile. Welcome to the team!`,
+          message: `Congratulations ${app.name}! Your application to join Lomissa has been approved.`,
           price: "Approved",
         }),
       });
@@ -105,59 +106,56 @@ export default function AdminPanel() {
         sessionType: "Your Lomissa application",
         date: new Date().toLocaleDateString(),
         location: app.location,
-        message: `Thank you for applying to Lomissa. After reviewing your application we have decided not to move forward at this time.\n\nYou are welcome to reapply in the future with an updated portfolio.\n\nWe wish you all the best with your photography.`,
+        message: `Thank you for applying to Lomissa. After reviewing your application we have decided not to move forward at this time.`,
         price: "Application",
       }),
     });
   };
 
-  const togglePhotographer = async (id: string, current: boolean) => {
-    await supabase.from("photographers").update({ active: !current }).eq("id", id);
-    setPhotographers(prev => prev.map(p => p.id === id ? { ...p, active: !current } : p));
-  };
-
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#1a1a1a"}}>
-      <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
+      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
     </div>
   );
 
   if (!authorized) return null;
 
-  const tabStyle = (t: string) => ({
+  const tabStyle = (t: string): React.CSSProperties => ({
     padding: "8px 20px",
-    borderRadius: "20px",
+    borderRadius: "999px",
     fontSize: "13px",
     cursor: "pointer",
     border: "none",
-    backgroundColor: tab === t ? "#1a1a1a" : "transparent",
-    color: tab === t ? "#fff" : "#888",
-    fontWeight: tab === t ? "600" : "400",
+    backgroundColor: tab === t ? "#B85528" : "transparent",
+    color: tab === t ? "#FAF7F1" : "#7A5235",
+    fontWeight: tab === t ? "500" : "400",
+    fontFamily: "'Jost', sans-serif",
   });
 
-  const statusBadge = (status: string) => ({
+  const statusBadge = (status: string): React.CSSProperties => ({
     fontSize: "11px",
     padding: "4px 12px",
-    borderRadius: "20px",
-    fontWeight: "500" as const,
-    backgroundColor: status === "approved" ? "#f0fdf4" : status === "rejected" ? "#fef2f2" : "#FDF8F5",
-    color: status === "approved" ? "#15803d" : status === "rejected" ? "#dc2626" : "#C4907A",
+    borderRadius: "999px",
+    fontWeight: "500",
+    fontFamily: "'Jost', sans-serif",
+    backgroundColor: status === "approved" ? "#f0fdf4" : status === "rejected" ? "#fef2f2" : "#FBF0EA",
+    color: status === "approved" ? "#15803d" : status === "rejected" ? "#dc2626" : "#B85528",
   });
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
-        <div className="flex items-baseline gap-3">
-          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
-          <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>ADMIN</span>
+      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+        <div className="flex items-center gap-4">
+          <Logo size="sm" />
+          <span style={{fontSize: "11px", letterSpacing: "0.15em", color: "#B85528", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADMIN</span>
         </div>
         <div className="flex items-center gap-4">
-          <a href="/" style={{fontSize: "12px", color: "#888", textDecoration: "none"}}>View site</a>
+          <a href="/" style={{fontSize: "12px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>View site</a>
           <button
             onClick={() => supabase.auth.signOut().then(() => window.location.href = "/studio-access")}
-            style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}
+            style={{fontSize: "12px", color: "#7A5235", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
           >
             Sign out
           </button>
@@ -168,29 +166,29 @@ export default function AdminPanel() {
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>Admin panel</p>
-          <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADMIN PANEL</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             Lomissa HQ
           </h1>
-          <p style={{fontSize: "14px", color: "#888", margin: "0"}}>Manage your platform from one place</p>
+          <p style={{fontSize: "14px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your platform from one place</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10">
           {[
-            { label: "Total bookings", value: stats.totalBookings, color: "#1a1a1a" },
-            { label: "Photographers", value: stats.totalPhotographers, color: "#1a1a1a" },
-            { label: "Pending applications", value: stats.pendingApplications, color: "#C4907A" },
+            { label: "Total bookings", value: stats.totalBookings },
+            { label: "Photographers", value: stats.totalPhotographers },
+            { label: "Pending applications", value: stats.pendingApplications },
           ].map((stat) => (
-            <div key={stat.label} style={{backgroundColor: "#fff", borderRadius: "12px", padding: "24px", border: "1px solid #f0f0f0"}}>
-              <p style={{fontSize: "12px", color: "#888", margin: "0 0 8px"}}>{stat.label}</p>
-              <p style={{fontFamily: "Georgia, serif", fontSize: "40px", fontWeight: "700", color: stat.color, margin: "0", letterSpacing: "-1px"}}>{stat.value}</p>
+            <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
+              <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0", letterSpacing: "-0.02em"}}>{stat.value}</p>
             </div>
           ))}
         </div>
 
         {/* Tabs */}
-        <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#fff", padding: "8px", borderRadius: "32px", border: "1px solid #f0f0f0", width: "fit-content"}}>
+        <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F5EFE4", padding: "4px", borderRadius: "999px", width: "fit-content"}}>
           {[
             { key: "overview", label: "Overview" },
             { key: "applications", label: `Applications (${stats.pendingApplications})` },
@@ -204,38 +202,38 @@ export default function AdminPanel() {
         {/* Overview */}
         {tab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "24px", border: "1px solid #f0f0f0"}}>
-              <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 16px", letterSpacing: "1px"}}>Recent applications</p>
+            <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
+              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>RECENT APPLICATIONS</p>
               {applications.slice(0, 3).length === 0 ? (
-                <p style={{fontSize: "13px", color: "#aaa", fontStyle: "italic"}}>No applications yet</p>
+                <p style={{fontSize: "13px", color: "#C3AB88", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No applications yet</p>
               ) : applications.slice(0, 3).map((app) => (
-                <div key={app.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f0f0f0"}}>
+                <div key={app.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E4D8C4"}}>
                   <div>
-                    <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>{app.name}</p>
-                    <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{app.specialty} — {app.location}</p>
+                    <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{app.name}</p>
+                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{app.specialty} — {app.location}</p>
                   </div>
                   <span style={statusBadge(app.status)}>{app.status}</span>
                 </div>
               ))}
-              <button onClick={() => setTab("applications")} style={{marginTop: "16px", fontSize: "12px", color: "#C4907A", background: "none", border: "none", cursor: "pointer", padding: "0"}}>
+              <button onClick={() => setTab("applications")} style={{marginTop: "16px", fontSize: "12px", color: "#B85528", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}>
                 View all applications →
               </button>
             </div>
 
-            <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "24px", border: "1px solid #f0f0f0"}}>
-              <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 16px", letterSpacing: "1px"}}>Recent bookings</p>
+            <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
+              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>RECENT BOOKINGS</p>
               {bookings.slice(0, 3).length === 0 ? (
-                <p style={{fontSize: "13px", color: "#aaa", fontStyle: "italic"}}>No bookings yet</p>
+                <p style={{fontSize: "13px", color: "#C3AB88", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No bookings yet</p>
               ) : bookings.slice(0, 3).map((booking) => (
-                <div key={booking.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f0f0f0"}}>
+                <div key={booking.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E4D8C4"}}>
                   <div>
-                    <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>{booking.client_name || "Client"}</p>
-                    <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{booking.photographer_name} — {booking.date}</p>
+                    <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{booking.client_name || "Client"}</p>
+                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.photographer_name} — {booking.date}</p>
                   </div>
                   <span style={statusBadge(booking.status)}>{booking.status}</span>
                 </div>
               ))}
-              <button onClick={() => setTab("bookings")} style={{marginTop: "16px", fontSize: "12px", color: "#C4907A", background: "none", border: "none", cursor: "pointer", padding: "0"}}>
+              <button onClick={() => setTab("bookings")} style={{marginTop: "16px", fontSize: "12px", color: "#B85528", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}>
                 View all bookings →
               </button>
             </div>
@@ -244,51 +242,42 @@ export default function AdminPanel() {
 
         {/* Applications */}
         {tab === "applications" && (
-          <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0"}}>
-            <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 24px", letterSpacing: "1px"}}>All applications — {applications.length} total</p>
+          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL APPLICATIONS — {applications.length} TOTAL</p>
             {applications.length === 0 ? (
-              <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No applications yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No applications yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
                 {applications.map((app) => (
-                  <div key={app.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
+                  <div key={app.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px"}}>
                       <div>
-                        <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{app.name}</p>
-                        <p style={{fontSize: "13px", color: "#888", margin: "0 0 8px"}}>{app.email} — {app.location}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{app.name}</p>
+                        <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{app.email} — {app.location}</p>
                         <div style={{display: "flex", gap: "8px", flexWrap: "wrap"}}>
-                          {app.specialty && <span style={{fontSize: "11px", color: "#C4907A", border: "1px solid #f0e8e0", padding: "2px 10px", borderRadius: "20px"}}>{app.specialty}</span>}
-                          {app.experience && <span style={{fontSize: "11px", color: "#888", border: "1px solid #f0f0f0", padding: "2px 10px", borderRadius: "20px"}}>{app.experience}</span>}
+                          {app.specialty && <span style={{fontSize: "11px", color: "#B85528", border: "1px solid #E4D8C4", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.specialty}</span>}
+                          {app.experience && <span style={{fontSize: "11px", color: "#9E7250", border: "1px solid #E4D8C4", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.experience}</span>}
                         </div>
                       </div>
                       <span style={statusBadge(app.status)}>{app.status}</span>
                     </div>
-
                     {app.about && (
-                      <p style={{fontSize: "13px", color: "#555", margin: "12px 0", fontStyle: "italic", fontFamily: "Georgia, serif", lineHeight: "1.7"}}>"{app.about}"</p>
+                      <p style={{fontSize: "14px", color: "#7A5235", margin: "12px 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.7"}}>"{app.about}"</p>
                     )}
-
                     <div style={{display: "flex", gap: "16px", flexWrap: "wrap", marginTop: "8px"}}>
                       {app.instagram && (
-                        <a href={`https://instagram.com/${app.instagram}`} target="_blank" style={{fontSize: "12px", color: "#C4907A", textDecoration: "none"}}>@{app.instagram} ↗</a>
+                        <a href={`https://instagram.com/${app.instagram}`} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{app.instagram} ↗</a>
                       )}
                       {app.portfolio_link && (
-                        <a href={app.portfolio_link} target="_blank" style={{fontSize: "12px", color: "#C4907A", textDecoration: "none"}}>Portfolio ↗</a>
+                        <a href={app.portfolio_link} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Portfolio ↗</a>
                       )}
                     </div>
-
                     {app.status === "pending" && (
                       <div style={{display: "flex", gap: "8px", marginTop: "16px"}}>
-                        <button
-                          onClick={() => handleApprove(app)}
-                          style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
-                        >
+                        <button onClick={() => handleApprove(app)} style={{backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
                           Approve ✓
                         </button>
-                        <button
-                          onClick={() => handleReject(app)}
-                          style={{backgroundColor: "#fff", color: "#dc2626", fontSize: "12px", padding: "8px 20px", border: "1px solid #fce8e8", borderRadius: "8px", cursor: "pointer"}}
-                        >
+                        <button onClick={() => handleReject(app)} style={{backgroundColor: "transparent", color: "#dc2626", fontSize: "12px", padding: "8px 20px", border: "1px solid #fce8e8", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
                           Reject ✗
                         </button>
                       </div>
@@ -302,30 +291,22 @@ export default function AdminPanel() {
 
         {/* Photographers */}
         {tab === "photographers" && (
-          <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0"}}>
-            <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 24px", letterSpacing: "1px"}}>All photographers — {photographers.length} total</p>
+          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL PHOTOGRAPHERS — {photographers.length} TOTAL</p>
             {photographers.length === 0 ? (
-              <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No photographers yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No photographers yet</p>
             ) : (
-              <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
+              <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
                 {photographers.map((p) => (
-                  <div key={p.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px"}}>
+                  <div key={p.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px"}}>
                     <div>
-                      <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{p.name}</p>
-                      <p style={{fontSize: "13px", color: "#888", margin: "0 0 4px"}}>{p.location} — {p.specialty}</p>
-                      <p style={{fontSize: "13px", color: "#C4907A", margin: "0"}}>{p.price} — ⭐ {p.rating || "New"}</p>
+                      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{p.name}</p>
+                      <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{p.location} — {p.specialty}</p>
+                      <p style={{fontSize: "13px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{p.price} — ⭐ {p.rating || "New"}</p>
                     </div>
-                    <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
-                      <a href={`/photographers/${p.id}`} target="_blank" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
-                        View profile ↗
-                      </a>
-                      <button
-                        onClick={() => togglePhotographer(p.id, p.active)}
-                        style={{fontSize: "12px", padding: "6px 16px", borderRadius: "20px", border: "none", cursor: "pointer", backgroundColor: p.active === false ? "#f0fdf4" : "#fef2f2", color: p.active === false ? "#15803d" : "#dc2626", fontWeight: "500"}}
-                      >
-                        {p.active === false ? "Activate" : "Deactivate"}
-                      </button>
-                    </div>
+                    <a href={`/photographers/${p.id}`} target="_blank" style={{fontSize: "12px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
+                      View profile →
+                    </a>
                   </div>
                 ))}
               </div>
@@ -335,37 +316,22 @@ export default function AdminPanel() {
 
         {/* Bookings */}
         {tab === "bookings" && (
-          <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0"}}>
-            <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 24px", letterSpacing: "1px"}}>All bookings — {bookings.length} total</p>
+          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL BOOKINGS — {bookings.length} TOTAL</p>
             {bookings.length === 0 ? (
-              <p style={{fontFamily: "Georgia, serif", fontSize: "16px", color: "#aaa", fontStyle: "italic"}}>No bookings yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No bookings yet</p>
             ) : (
-              <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-                {bookings.map((b) => (
-                  <div key={b.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
+              <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
+                {bookings.map((booking) => (
+                  <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "12px"}}>
                       <div>
-                        <p style={{fontFamily: "Georgia, serif", fontSize: "16px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>{b.client_name || "Client"} → {b.photographer_name}</p>
-                        <p style={{fontSize: "13px", color: "#888", margin: "0"}}>{b.session_type} — {b.date}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{booking.client_name} → {booking.photographer_name}</p>
+                        <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type} — {booking.date} — {booking.location}</p>
                       </div>
-                      <span style={statusBadge(b.status)}>{b.status}</span>
-                    </div>
-                    <div style={{display: "flex", gap: "24px", flexWrap: "wrap"}}>
-                      <div>
-                        <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 2px"}}>Price</p>
-                        <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{b.price}</p>
-                      </div>
-                      <div>
-                        <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 2px"}}>Location</p>
-                        <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{b.location || "Not set"}</p>
-                      </div>
-                      <div>
-                        <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 2px"}}>Client email</p>
-                        <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{b.client_email}</p>
-                      </div>
-                      <div>
-                        <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 2px"}}>Booked on</p>
-                        <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{new Date(b.created_at).toLocaleDateString()}</p>
+                      <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                        <span style={statusBadge(booking.status)}>{booking.status}</span>
+                        <span style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price}</span>
                       </div>
                     </div>
                   </div>
@@ -377,12 +343,9 @@ export default function AdminPanel() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
-        <div>
-          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Lomissa</p>
-          <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>ADMIN PANEL</p>
-        </div>
-        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
+      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+        <Logo size="sm" asLink={false} />
+        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>
