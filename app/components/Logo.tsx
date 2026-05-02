@@ -28,7 +28,7 @@ function LogoSVG({ color = '#3a2418', accent = '#c45a2c', scale = 1 }: { color?:
       aria-hidden="true"
     >
       {/* Sunburst above the 'i' */}
-      <g transform="translate(120, 22)">
+      <g transform="translate(113, 22)">
         <circle cx="0" cy="0" r="5" fill={accent} />
         {[-60, -30, 0, 30, 60].map((deg) => {
           const rad = (deg * Math.PI) / 180
