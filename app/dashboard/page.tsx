@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
+import Logo from "../components/Logo";
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
@@ -42,40 +43,37 @@ export default function Dashboard() {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case "confirmed": return { backgroundColor: "#f0fdf4", color: "#15803d" };
-      case "pending": return { backgroundColor: "#FDF8F5", color: "#C4907A" };
+      case "pending": return { backgroundColor: "#FBF0EA", color: "#B85528" };
       case "declined": return { backgroundColor: "#fef2f2", color: "#dc2626" };
-      default: return { backgroundColor: "#f5f5f5", color: "#888" };
+      default: return { backgroundColor: "#F5EFE4", color: "#7A5235" };
     }
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAFAF8"}}>
-      <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
+      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
     </div>
   );
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
-        <div className="flex items-baseline gap-3">
-          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
-          <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
-        </div>
+      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+        <Logo size="sm" />
         <div className="flex items-center gap-4">
-          <span style={{fontSize: "13px", color: "#888"}}>
+          <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>
             Hello, {user?.user_metadata?.name?.split(" ")[0] || "there"} 👋
           </span>
-          <a href="/messages" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", position: "relative", display: "inline-flex", alignItems: "center", gap: "6px"}}>
+          <a href="/messages" style={{fontSize: "12px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "'Jost', sans-serif"}}>
             💬 Messages
             {unreadCount > 0 && (
-              <span style={{backgroundColor: "#C4907A", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "20px"}}>
+              <span style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "999px"}}>
                 {unreadCount}
               </span>
             )}
           </a>
-          <button onClick={handleSignOut} style={{fontSize: "12px", color: "#888", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px", backgroundColor: "#fff", cursor: "pointer"}}>
+          <button onClick={handleSignOut} style={{fontSize: "12px", color: "#7A5235", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
             Sign out
           </button>
         </div>
@@ -85,11 +83,11 @@ export default function Dashboard() {
 
         {/* Welcome */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>My account</p>
-          <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY ACCOUNT</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             Welcome back
           </h1>
-          <p style={{fontSize: "14px", color: "#888", margin: "0"}}>Find and book talented photographers around the world.</p>
+          <p style={{fontSize: "14px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Find and book talented photographers around the world.</p>
         </div>
 
         {/* Stats */}
@@ -99,103 +97,103 @@ export default function Dashboard() {
             { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, desc: "Upcoming sessions" },
             { label: "Pending", value: bookings.filter(b => b.status === "pending").length, desc: "Awaiting response" },
           ].map((stat) => (
-            <div key={stat.label} style={{backgroundColor: "#fff", borderRadius: "12px", padding: "24px", border: "1px solid #f0f0f0"}}>
-              <p style={{fontSize: "12px", color: "#888", margin: "0 0 8px"}}>{stat.label}</p>
-              <p style={{fontFamily: "Georgia, serif", fontSize: "40px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", letterSpacing: "-1px"}}>{stat.value}</p>
-              <p style={{fontSize: "12px", color: "#C4907A", margin: "0"}}>{stat.desc}</p>
+            <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
+              <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0 0 4px", letterSpacing: "-0.02em"}}>{stat.value}</p>
+              <p style={{fontSize: "12px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{stat.desc}</p>
             </div>
           ))}
         </div>
 
         {/* Quick actions */}
-        <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0", marginBottom: "32px"}}>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 16px", letterSpacing: "1px"}}>Quick actions</p>
+        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "32px"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>QUICK ACTIONS</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <a href="/photographers" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
-              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>📸</div>
+            <a href="/photographers" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #E4D8C4", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FAF7F1"}}>
+              <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#B85528", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>📸</div>
               <div>
-                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>Find a photographer</p>
-                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>Browse all photographers</p>
+                <p style={{fontSize: "14px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>Find a photographer</p>
+                <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>Browse all photographers</p>
               </div>
             </a>
-            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: unreadCount > 0 ? "1px solid #C4907A" : "1px solid #f0f0f0", borderRadius: "8px", textDecoration: "none", backgroundColor: "#FAFAF8"}}>
-              <div style={{width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#C4907A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0, position: "relative"}}>
+            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: unreadCount > 0 ? "1px solid #B85528" : "1px solid #E4D8C4", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FAF7F1"}}>
+              <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#B85528", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0, position: "relative"}}>
                 💬
                 {unreadCount > 0 && (
-                  <span style={{position: "absolute", top: "-4px", right: "-4px", backgroundColor: "#dc2626", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 5px", borderRadius: "20px"}}>
+                  <span style={{position: "absolute", top: "-4px", right: "-4px", backgroundColor: "#dc2626", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 5px", borderRadius: "999px"}}>
                     {unreadCount}
                   </span>
                 )}
               </div>
               <div>
-                <p style={{fontSize: "14px", fontWeight: "600", color: "#1a1a1a", margin: "0 0 2px"}}>Messages</p>
-                <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your photographers"}</p>
+                <p style={{fontSize: "14px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>Messages</p>
+                <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your photographers"}</p>
               </div>
             </a>
           </div>
         </div>
 
         {/* Bookings */}
-        <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0"}}>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>My bookings</p>
-          <h2 style={{fontFamily: "Georgia, serif", fontSize: "22px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 24px", letterSpacing: "-0.5px"}}>
+        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY BOOKINGS</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1C1009", margin: "0 0 24px", letterSpacing: "-0.02em"}}>
             Your sessions
           </h2>
 
           {bookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div style={{fontSize: "48px", marginBottom: "16px"}}>📷</div>
-              <p style={{fontFamily: "Georgia, serif", fontSize: "18px", color: "#1a1a1a", margin: "0 0 8px"}}>No bookings yet</p>
-              <p style={{fontSize: "13px", color: "#888", margin: "0 0 24px"}}>Your bookings will appear here once you book a photographer</p>
-              <a href="/photographers" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "24px", textDecoration: "none"}}>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1C1009", margin: "0 0 8px"}}>No bookings yet</p>
+              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>Your bookings will appear here once you book a photographer</p>
+              <a href="/photographers" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
                 Find a photographer
               </a>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
               {bookings.map((booking) => (
-                <div key={booking.id} style={{border: "1px solid #f0f0f0", borderRadius: "12px", padding: "20px", backgroundColor: "#FAFAF8"}}>
+                <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <a href={`/photographers/${booking.photographer_id}`} style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px", textDecoration: "none"}}>
+                      <a href={`/photographers/${booking.photographer_id}`} style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px", textDecoration: "none", display: "block"}}>
                         {booking.photographer_name} →
                       </a>
-                      <p style={{fontSize: "13px", color: "#888", margin: "0"}}>{booking.session_type}</p>
+                      <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type}</p>
                     </div>
-                    <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: "500"}}>
+                    <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
                       {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Date</p>
-                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{booking.date || "Not set"}</p>
+                      <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Date</p>
+                      <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.date || "Not set"}</p>
                     </div>
                     <div>
-                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Location</p>
-                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{booking.location || "Not set"}</p>
+                      <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Location</p>
+                      <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.location || "Not set"}</p>
                     </div>
                     <div>
-                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Price</p>
-                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{booking.price}</p>
+                      <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Price</p>
+                      <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.price}</p>
                     </div>
                     <div>
-                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Booked on</p>
-                      <p style={{fontSize: "13px", color: "#1a1a1a", margin: "0"}}>{new Date(booking.created_at).toLocaleDateString()}</p>
+                      <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Booked on</p>
+                      <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(booking.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                   {booking.message && (
-                    <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0"}}>
-                      <p style={{fontSize: "11px", color: "#C4907A", margin: "0 0 4px"}}>Your message</p>
-                      <p style={{fontSize: "13px", color: "#888", margin: "0", fontStyle: "italic", fontFamily: "Georgia, serif"}}>"{booking.message}"</p>
+                    <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E4D8C4"}}>
+                      <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Your message</p>
+                      <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
-                  <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f0f0f0", display: "flex", gap: "12px", flexWrap: "wrap"}}>
-                    <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "8px 20px", borderRadius: "20px", display: "inline-block"}}>
+                  <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E4D8C4", display: "flex", gap: "12px", flexWrap: "wrap"}}>
+                    <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message photographer
                     </a>
                     {booking.status === "confirmed" && (
-                      <a href={`/review/${booking.id}`} style={{fontSize: "13px", color: "#C4907A", textDecoration: "none", border: "1px solid #C4907A", padding: "8px 20px", borderRadius: "20px", display: "inline-block"}}>
+                      <a href={`/review/${booking.id}`} style={{fontSize: "13px", color: "#B85528", textDecoration: "none", border: "1px solid #B85528", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                         Leave a review ⭐
                       </a>
                     )}
@@ -208,12 +206,9 @@ export default function Dashboard() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
-        <div>
-          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Lomissa</p>
-          <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
-        </div>
-        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
+      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+        <Logo size="sm" asLink={false} />
+        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>
