@@ -6,91 +6,74 @@ interface LogoProps {
   size?:   LogoSize
   asLink?: boolean
   href?:   string
+  color?:  string
+  accent?: string
 }
 
-const SIZES: Record<LogoSize, { textSize: number; sunScale: number; gap: number }> = {
-  sm: { textSize: 22, sunScale: 0.55, gap: 4 },
-  md: { textSize: 32, sunScale: 0.80, gap: 6 },
-  lg: { textSize: 44, sunScale: 1.10, gap: 8 },
-  xl: { textSize: 60, sunScale: 1.50, gap: 12 },
+const SCALE: Record<LogoSize, number> = {
+  sm: 0.6,
+  md: 0.9,
+  lg: 1.2,
+  xl: 1.6,
 }
 
-function SunMark({ scale }: { scale: number }) {
-  const C = '#C1622F'
-  const SW = 1.8
-
-  const ray = (angleDeg: number) => {
-    const rad = (angleDeg * Math.PI) / 180
-    const ir = 6.5
-    const or = 14
-    return {
-      x1: 20 + ir * Math.cos(rad),
-      y1: 20 - ir * Math.sin(rad),
-      x2: 20 + or * Math.cos(rad),
-      y2: 20 - or * Math.sin(rad),
-    }
-  }
-
-  const rays = [165, 135, 110, 90, 70, 45, 15]
-  const w = 40 * scale
-  const h = 32 * scale
+function LogoSVG({ color = '#3a2418', accent = '#c45a2c', scale = 1 }: { color?: string; accent?: string; scale?: number }) {
+  const size = 56 * scale
 
   return (
     <svg
-      width={w}
-      height={h}
-      viewBox="0 0 40 32"
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 320 100"
+      height={size}
+      style={{ display: 'block', overflow: 'visible' }}
       aria-hidden="true"
-      style={{ display: 'block' }}
     >
-      {rays.map((angle) => {
-        const r = ray(angle)
-        return (
-          <line
-            key={angle}
-            x1={r.x1} y1={r.y1}
-            x2={r.x2} y2={r.y2}
-            stroke={C}
-            strokeWidth={SW}
-            strokeLinecap="round"
-          />
-        )
-      })}
-      <circle cx="20" cy="20" r="4" fill={C} />
+      {/* Sunburst above the 'i' */}
+      <g transform="translate(120, 22)">
+        <circle cx="0" cy="0" r="5" fill={accent} />
+        {[-60, -30, 0, 30, 60].map((deg) => {
+          const rad = (deg * Math.PI) / 180
+          return (
+            <line
+              key={deg}
+              x1={Math.sin(rad) * 9}  y1={-Math.cos(rad) * 9}
+              x2={Math.sin(rad) * 14} y2={-Math.cos(rad) * 14}
+              stroke={accent}
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          )
+        })}
+      </g>
+
+      {/* Wordmark */}
+      <text
+        x="0"
+        y="78"
+        fill={color}
+        style={{
+          fontFamily: '"Fraunces", "Cormorant Garamond", Georgia, serif',
+          fontSize: 64,
+          fontWeight: 400,
+          fontStyle: 'italic',
+          letterSpacing: '-0.025em',
+        }}
+      >
+        lomissa
+      </text>
     </svg>
   )
 }
 
-function LogoMark({ size }: { size: LogoSize }) {
-  const { textSize, sunScale, gap } = SIZES[size]
-
-  return (
-    <span style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
-      <SunMark scale={sunScale} />
-      <span style={{ display: 'block', height: gap }} />
-      <span
-        style={{
-          fontFamily:    "'Cormorant Garamond', Georgia, serif",
-          fontSize:      textSize,
-          fontWeight:    500,
-          color:         '#2B1D12',
-          letterSpacing: '-0.02em',
-          lineHeight:    1,
-          userSelect:    'none',
-        }}
-      >
-        lomissa
-      </span>
-    </span>
-  )
+function LogoMark({ size, color, accent }: { size: LogoSize; color?: string; accent?: string }) {
+  const scale = SCALE[size]
+  return <LogoSVG color={color} accent={accent} scale={scale} />
 }
 
-export default function Logo({ size = 'md', asLink = true, href = '/' }: LogoProps) {
-  if (!asLink) return <LogoMark size={size} />
+export default function Logo({ size = 'md', asLink = true, href = '/', color, accent }: LogoProps) {
+  if (!asLink) return <LogoMark size={size} color={color} accent={accent} />
   return (
     <Link href={href} aria-label="Lomissa" style={{ display: 'inline-flex', textDecoration: 'none' }}>
-      <LogoMark size={size} />
+      <LogoMark size={size} color={color} accent={accent} />
     </Link>
   )
 }
@@ -100,5 +83,5 @@ export function LomissaLogo({ width = 160, className = '' }: { width?: number, c
 }
 
 export function LomissaLogoWhite({ width = 160, className = '' }: { width?: number, className?: string }) {
-  return <Logo size="md" asLink={false} />
+  return <Logo size="md" asLink={false} color="#FAF7F1" accent="#C1622F" />
 }
