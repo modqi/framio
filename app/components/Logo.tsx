@@ -28,7 +28,7 @@ function LogoSVG({ color = '#3a2418', accent = '#c45a2c', scale = 1 }: { color?:
       aria-hidden="true"
     >
       {/* Sunburst above the 'i' */}
-      <g transform="translate(113, 22)">
+      <g transform="translate(173, 30)">
         <circle cx="0" cy="0" r="5" fill={accent} />
         {[-60, -30, 0, 30, 60].map((deg) => {
           const rad = (deg * Math.PI) / 180
@@ -47,11 +47,12 @@ function LogoSVG({ color = '#3a2418', accent = '#c45a2c', scale = 1 }: { color?:
 
       {/* Wordmark */}
       <text
-        x="0"
+        x="160"
         y="78"
+        textAnchor="middle"
         fill={color}
         style={{
-          fontFamily: '"Fraunces", "Cormorant Garamond", Georgia, serif',
+          fontFamily: '"Cormorant Garamond", Georgia, serif',
           fontSize: 64,
           fontWeight: 400,
           fontStyle: 'italic',
