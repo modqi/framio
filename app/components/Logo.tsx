@@ -8,46 +8,49 @@ interface LogoProps {
   href?:   string
 }
 
-const SIZES: Record<LogoSize, { fontSize: string; sunW: number; sunH: number; gap: number }> = {
-  sm: { fontSize: '1.375rem', sunW: 22, sunH: 18, gap: 6  },
-  md: { fontSize: '2rem',     sunW: 32, sunH: 26, gap: 10 },
-  lg: { fontSize: '2.75rem',  sunW: 44, sunH: 36, gap: 14 },
-  xl: { fontSize: '3.75rem',  sunW: 58, sunH: 48, gap: 18 },
+const SIZES: Record<LogoSize, { textSize: number; sunScale: number; gap: number }> = {
+  sm: { textSize: 22, sunScale: 0.55, gap: 4 },
+  md: { textSize: 32, sunScale: 0.80, gap: 6 },
+  lg: { textSize: 44, sunScale: 1.10, gap: 8 },
+  xl: { textSize: 60, sunScale: 1.50, gap: 12 },
 }
 
-function SunMark({ sunW, sunH, gap }: { sunW: number; sunH: number; gap: number }) {
-  const C  = '#C1622F'
+function SunMark({ scale }: { scale: number }) {
+  const C = '#C1622F'
   const SW = 1.8
 
-  const ray = (angleDeg: number): [number, number, number, number] => {
+  const ray = (angleDeg: number) => {
     const rad = (angleDeg * Math.PI) / 180
-    const innerR = 6.5
-    const outerR = 14
-    const x1 = 20 + innerR * Math.cos(rad)
-    const y1 = 20 - innerR * Math.sin(rad)
-    const x2 = 20 + outerR * Math.cos(rad)
-    const y2 = 20 - outerR * Math.sin(rad)
-    return [x1, y1, x2, y2]
+    const ir = 6.5
+    const or = 14
+    return {
+      x1: 20 + ir * Math.cos(rad),
+      y1: 20 - ir * Math.sin(rad),
+      x2: 20 + or * Math.cos(rad),
+      y2: 20 - or * Math.sin(rad),
+    }
   }
 
   const rays = [165, 135, 110, 90, 70, 45, 15]
+  const w = 40 * scale
+  const h = 32 * scale
 
   return (
     <svg
-      width={sunW}
-      height={sunH}
+      width={w}
+      height={h}
       viewBox="0 0 40 32"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      style={{ display: 'block', marginBottom: gap }}
+      style={{ display: 'block' }}
     >
       {rays.map((angle) => {
-        const [x1, y1, x2, y2] = ray(angle)
+        const r = ray(angle)
         return (
           <line
             key={angle}
-            x1={x1} y1={y1}
-            x2={x2} y2={y2}
+            x1={r.x1} y1={r.y1}
+            x2={r.x2} y2={r.y2}
             stroke={C}
             strokeWidth={SW}
             strokeLinecap="round"
@@ -60,24 +63,17 @@ function SunMark({ sunW, sunH, gap }: { sunW: number; sunH: number; gap: number 
 }
 
 function LogoMark({ size }: { size: LogoSize }) {
-  const { fontSize, sunW, sunH, gap } = SIZES[size]
+  const { textSize, sunScale, gap } = SIZES[size]
 
   return (
-    <span
-      style={{
-        display:        'inline-flex',
-        flexDirection:  'column',
-        alignItems:     'center',
-        textDecoration: 'none',
-      }}
-    >
-      <SunMark sunW={sunW} sunH={sunH} gap={gap} />
+    <span style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
+      <SunMark scale={sunScale} />
+      <span style={{ display: 'block', height: gap }} />
       <span
         style={{
-          fontFamily:    "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
-          fontSize,
+          fontFamily:    "'Cormorant Garamond', Georgia, serif",
+          fontSize:      textSize,
           fontWeight:    500,
-          fontStyle:     'normal',
           color:         '#2B1D12',
           letterSpacing: '-0.02em',
           lineHeight:    1,
@@ -91,16 +87,9 @@ function LogoMark({ size }: { size: LogoSize }) {
 }
 
 export default function Logo({ size = 'md', asLink = true, href = '/' }: LogoProps) {
-  if (!asLink) {
-    return <LogoMark size={size} />
-  }
-
+  if (!asLink) return <LogoMark size={size} />
   return (
-    <Link
-      href={href}
-      aria-label="Lomissa — go to homepage"
-      style={{ display: 'inline-flex', textDecoration: 'none' }}
-    >
+    <Link href={href} aria-label="Lomissa" style={{ display: 'inline-flex', textDecoration: 'none' }}>
       <LogoMark size={size} />
     </Link>
   )
