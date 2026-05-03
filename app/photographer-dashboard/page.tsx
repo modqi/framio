@@ -13,6 +13,7 @@ export default function PhotographerDashboard() {
   const [actionError, setActionError] = useState("");
   const [stripeOnboarded, setStripeOnboarded] = useState<boolean | null>(null);
   const [connectLoading, setConnectLoading] = useState(false);
+  const [connectError, setConnectError] = useState<string | null>(null);
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -81,14 +82,24 @@ export default function PhotographerDashboard() {
 
   const handleCompleteStripeSetup = async () => {
     setConnectLoading(true);
-    const { data: { session } } = await supabase.auth.getSession();
-    const res = await fetch("/api/stripe-connect/onboarding-link", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
-    });
-    const { url } = await res.json();
-    if (url) window.location.href = url;
-    else setConnectLoading(false);
+    setConnectError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/stripe-connect/onboarding-link", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setConnectError(data.error ?? "Could not generate onboarding link. Please try again.");
+        setConnectLoading(false);
+      }
+    } catch {
+      setConnectError("Something went wrong. Please try again.");
+      setConnectLoading(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -147,18 +158,25 @@ export default function PhotographerDashboard() {
 
       {/* Stripe onboarding banner — shown until payout setup is complete */}
       {stripeOnboarded === false && (
-        <div style={{backgroundColor: "#1C1009", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
-          <div>
-            <p style={{fontSize: "13px", color: "#FAF7F1", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
-            <p style={{fontSize: "12px", color: "rgba(250,247,241,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>Connect your bank account to go live and start receiving payouts.</p>
+        <div style={{backgroundColor: "#1C1009", padding: "16px 32px"}}>
+          <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
+            <div>
+              <p style={{fontSize: "13px", color: "#FAF7F1", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
+              <p style={{fontSize: "12px", color: "rgba(250,247,241,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>Connect your bank account to go live and start receiving payouts.</p>
+            </div>
+            <button
+              onClick={handleCompleteStripeSetup}
+              disabled={connectLoading}
+              style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
+            >
+              {connectLoading ? "Loading…" : "Connect bank account →"}
+            </button>
           </div>
-          <button
-            onClick={handleCompleteStripeSetup}
-            disabled={connectLoading}
-            style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
-          >
-            {connectLoading ? "Loading…" : "Connect bank account →"}
-          </button>
+          {connectError && (
+            <p style={{fontSize: "12px", color: "#f87171", margin: "10px 0 0", fontFamily: "'Jost', sans-serif"}}>
+              {connectError}
+            </p>
+          )}
         </div>
       )}
 
