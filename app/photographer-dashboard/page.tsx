@@ -14,6 +14,7 @@ export default function PhotographerDashboard() {
   const [stripeOnboarded, setStripeOnboarded] = useState<boolean | null>(null);
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
+  const [connectIncomplete, setConnectIncomplete] = useState(false);
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -21,6 +22,20 @@ export default function PhotographerDashboard() {
     { task: "Set your prices", done: false },
     { task: "Add your location", done: false },
   ]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const connectStatus = params.get("connect");
+    if (connectStatus === "incomplete") {
+      setConnectIncomplete(true);
+    } else if (connectStatus === "error") {
+      const msg = params.get("msg");
+      setConnectError(msg ? `Setup error: ${msg}` : "Setup failed — please try again.");
+    }
+    if (connectStatus) {
+      window.history.replaceState({}, "", "/photographer-dashboard");
+    }
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -162,14 +177,18 @@ export default function PhotographerDashboard() {
           <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
             <div>
               <p style={{fontSize: "13px", color: "#FAF7F1", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
-              <p style={{fontSize: "12px", color: "rgba(250,247,241,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>Connect your bank account to go live and start receiving payouts.</p>
+              <p style={{fontSize: "12px", color: "rgba(250,247,241,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                {connectIncomplete
+                  ? "Stripe onboarding was not completed. Please finish setting up your account."
+                  : "Connect your bank account to go live and start receiving payouts."}
+              </p>
             </div>
             <button
               onClick={handleCompleteStripeSetup}
               disabled={connectLoading}
               style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
             >
-              {connectLoading ? "Loading…" : "Connect bank account →"}
+              {connectLoading ? "Loading…" : connectIncomplete ? "Resume setup →" : "Connect bank account →"}
             </button>
           </div>
           {connectError && (

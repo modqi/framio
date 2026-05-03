@@ -33,7 +33,12 @@ export async function GET(request: NextRequest) {
 
     const account = await stripe.accounts.retrieve(accountId);
 
-    if (account.charges_enabled) {
+    // details_submitted becomes true as soon as the photographer finishes the
+    // Stripe form — this is the right completion signal. charges_enabled
+    // activates asynchronously and can be false in test mode even after the
+    // form is fully submitted, which would cause the photographer to never
+    // appear on the browse page.
+    if (account.details_submitted) {
       await serviceClient
         .from("photographers")
         .update({ stripe_onboarding_completed: true })
@@ -41,10 +46,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${base}/photographer-dashboard/payout-setup-complete`);
     }
 
-    // Onboarding started but not fully verified yet (e.g. docs pending review)
+    // Photographer started but did not finish the Stripe form
     return NextResponse.redirect(`${base}/photographer-dashboard?connect=incomplete`);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Connect callback error:", error);
-    return NextResponse.redirect(`${base}/photographer-dashboard`);
+    const msg = encodeURIComponent(error?.message ?? "Unknown error");
+    return NextResponse.redirect(`${base}/photographer-dashboard?connect=error&msg=${msg}`);
   }
 }
