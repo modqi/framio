@@ -1,4 +1,7 @@
+"use client";
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../lib/supabase'
 
 type LogoSize = 'sm' | 'md' | 'lg' | 'xl'
 
@@ -70,10 +73,21 @@ function LogoMark({ size, color, accent }: { size: LogoSize; color?: string; acc
   return <LogoSVG color={color} accent={accent} scale={scale} />
 }
 
-export default function Logo({ size = 'md', asLink = true, href = '/', color, accent }: LogoProps) {
+export default function Logo({ size = 'md', asLink = true, href, color, accent }: LogoProps) {
+  const [resolvedHref, setResolvedHref] = useState(href ?? '/')
+
+  useEffect(() => {
+    if (!asLink || href) return
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      const role = user.user_metadata?.role
+      setResolvedHref(role === 'photographer' ? '/photographer-dashboard' : '/dashboard')
+    })
+  }, [asLink, href])
+
   if (!asLink) return <LogoMark size={size} color={color} accent={accent} />
   return (
-    <Link href={href} aria-label="Lomissa" style={{ display: 'inline-flex', textDecoration: 'none' }}>
+    <Link href={resolvedHref} aria-label="Lomissa" style={{ display: 'inline-flex', textDecoration: 'none' }}>
       <LogoMark size={size} color={color} accent={accent} />
     </Link>
   )
