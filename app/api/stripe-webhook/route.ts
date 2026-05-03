@@ -23,15 +23,21 @@ export async function POST(request: NextRequest) {
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");
 
+  console.log("[webhook] sig present:", !!sig);
+  console.log("[webhook] STRIPE_WEBHOOK_SECRET set:", !!process.env.STRIPE_WEBHOOK_SECRET);
+  console.log("[webhook] STRIPE_WEBHOOK_SECRET prefix:", process.env.STRIPE_WEBHOOK_SECRET?.slice(0, 12));
+
   if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+    console.error("[webhook] Aborting — missing sig or secret. sig:", !!sig, "secret:", !!process.env.STRIPE_WEBHOOK_SECRET);
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  } catch (err: any) {
+    console.error("[webhook] constructEvent failed:", err?.message);
+    return NextResponse.json({ error: "Invalid signature", detail: err?.message }, { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {
