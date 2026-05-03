@@ -1,12 +1,25 @@
+"use client";
+import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 
 export default function Pending() {
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
+
   return (
     <main className="min-h-screen flex flex-col" style={{backgroundColor: "#FAF7F1"}}>
 
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
+        <button
+          onClick={handleSignOut}
+          style={{fontSize: "13px", color: "#7A5235", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+        >
+          Sign out
+        </button>
       </nav>
 
       <div className="flex flex-col items-center justify-center flex-1" style={{padding: "48px 32px"}}>

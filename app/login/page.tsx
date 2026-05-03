@@ -20,7 +20,10 @@ export default function Login() {
     const role = user?.user_metadata?.role;
     if (role === "photographer") { window.location.href = "/photographer-dashboard"; }
     else if (role === "pending_photographer") { window.location.href = "/pending"; }
-    else { window.location.href = "/dashboard"; }
+    else {
+      const redirect = new URLSearchParams(window.location.search).get("redirect");
+      window.location.href = (redirect && redirect.startsWith("/")) ? redirect : "/dashboard";
+    }
     setLoading(false);
   };
 

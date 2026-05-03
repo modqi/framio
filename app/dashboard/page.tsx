@@ -8,6 +8,8 @@ export default function Dashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const init = async () => {
@@ -19,17 +21,52 @@ export default function Dashboard() {
         .from("bookings")
         .select("*")
         .eq("client_id", user.id)
+        .neq("status", "awaiting_payment")
         .order("created_at", { ascending: false });
 
       setBookings(bookings || []);
 
-      const { count } = await supabase
-        .from("messages")
-        .select("*", { count: "exact", head: true })
-        .eq("receiver_id", user.id)
-        .eq("read", false);
+      const bookingIds = (bookings || []).map((b) => b.id);
+      if (bookingIds.length > 0) {
+        const { data: reviews } = await supabase
+          .from("reviews")
+          .select("booking_id")
+          .in("booking_id", bookingIds)
+          .eq("client_id", user.id);
+        setReviewedBookingIds(new Set((reviews || []).map((r: any) => r.booking_id)));
+      }
+
+      // Fetch deletion timestamps so we exclude messages that arrived before
+      // the user deleted the conversation (WhatsApp-style hidden conversations).
+      const [{ data: unreadMsgs }, { data: deletions }] = await Promise.all([
+        bookingIds.length > 0
+          ? supabase
+              .from("messages")
+              .select("booking_id, created_at")
+              .in("booking_id", bookingIds)
+              .eq("receiver_id", user.id)
+              .eq("read", false)
+          : Promise.resolve({ data: [] }),
+        supabase
+          .from("conversation_deletions")
+          .select("booking_id, deleted_at")
+          .eq("user_id", user.id),
+      ]);
+
+      const deletionMap = new Map(
+        (deletions ?? []).map((d: any) => [d.booking_id, d.deleted_at])
+      );
+      const count = (unreadMsgs ?? []).filter((m: any) => {
+        const deletedAt = deletionMap.get(m.booking_id);
+        if (!deletedAt) return true;
+        return new Date(m.created_at) > new Date(deletedAt);
+      }).length;
 
       setUnreadCount(count || 0);
+      if (window.location.search.includes("booking=success")) {
+        setShowPaymentSuccess(true);
+        window.history.replaceState({}, "", "/dashboard");
+      }
       setLoading(false);
     };
     init();
@@ -47,6 +84,14 @@ export default function Dashboard() {
       case "declined": return { backgroundColor: "#fef2f2", color: "#dc2626" };
       default: return { backgroundColor: "#F5EFE4", color: "#7A5235" };
     }
+  };
+
+  const isPastDate = (dateStr: string) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr + "T00:00:00");
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return d < now;
   };
 
   if (loading) return (
@@ -78,6 +123,15 @@ export default function Dashboard() {
           </button>
         </div>
       </nav>
+
+      {showPaymentSuccess && (
+        <div style={{backgroundColor: "#f0fdf4", borderBottom: "1px solid #bbf7d0", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+          <p style={{fontSize: "14px", color: "#15803d", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+            ✓ Payment confirmed — your booking request has been sent to the photographer.
+          </p>
+          <button onClick={() => setShowPaymentSuccess(false)} style={{background: "none", border: "none", cursor: "pointer", fontSize: "16px", color: "#15803d", padding: "0", lineHeight: "1"}}>×</button>
+        </div>
+      )}
 
       <div style={{maxWidth: "1000px", margin: "0 auto", padding: "48px 32px"}}>
 
@@ -192,7 +246,9 @@ export default function Dashboard() {
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message photographer
                     </a>
-                    {booking.status === "confirmed" && (
+                    {booking.status === "confirmed" &&
+                     isPastDate(booking.date) &&
+                     !reviewedBookingIds.has(booking.id) && (
                       <a href={`/review/${booking.id}`} style={{fontSize: "13px", color: "#B85528", textDecoration: "none", border: "1px solid #B85528", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                         Leave a review ⭐
                       </a>

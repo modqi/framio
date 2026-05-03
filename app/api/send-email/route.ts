@@ -1,12 +1,22 @@
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const esc = (s: unknown): string =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
+      type,
       photographerEmail,
       photographerName,
       clientName,
@@ -17,17 +27,48 @@ export async function POST(request: NextRequest) {
       message,
       price,
       senderName,
+      senderId,
+      clientId,
+      bookingId,
     } = body;
 
     // New message notification
-    if (sessionType === "new_message") {
-      const isClientSender = senderName === clientName || senderName === clientEmail;
+    if (type === "new_message") {
+      const authHeader = request.headers.get("authorization");
+      const token = authHeader?.replace("Bearer ", "").trim();
+      if (!token) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const authClient = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data: { user: caller } } = await authClient.auth.getUser(token);
+      if (!caller) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      // Throttle: skip the email if this sender already triggered one in the last 3 minutes.
+      // The current message is already in the DB, so >= 2 rows means there was a prior one.
+      const windowStart = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+      const { data: recentMessages } = await authClient
+        .from("messages")
+        .select("id")
+        .eq("booking_id", bookingId)
+        .eq("sender_id", senderId)
+        .gte("created_at", windowStart);
+
+      if ((recentMessages?.length ?? 0) >= 2) {
+        return NextResponse.json({ success: true });
+      }
+
+      const isClientSender = senderId === clientId;
       const recipientEmail = isClientSender ? (photographerEmail || "hello@lomissa.com") : clientEmail;
 
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: recipientEmail,
-        subject: `New message from ${senderName} on Lomissa`,
+        subject: `New message from ${esc(senderName)} on Lomissa`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -37,15 +78,15 @@ export async function POST(request: NextRequest) {
             <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
               <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">NEW MESSAGE</p>
               <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 16px;">
-                ${senderName} sent you a message
+                ${esc(senderName)} sent you a message
               </h2>
               <div style="background: #FDF8F5; border-radius: 8px; padding: 16px; border: 1px solid #f0e8e0; margin-bottom: 24px;">
-                <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${message}"</p>
+                <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${esc(message)}"</p>
               </div>
-              <p style="font-size: 13px; color: #888; margin: 0;">Regarding your booking on ${date}</p>
+              <p style="font-size: 13px; color: #888; margin: 0;">Regarding your booking on ${esc(date)}</p>
             </div>
             <div style="text-align: center; margin-bottom: 32px;">
-              <a href="https://lomissa.com/messages"
+              <a href="https://lomissa.com/messages/${bookingId}"
                  style="background: #C4907A; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
                 Reply on Lomissa →
               </a>
@@ -60,11 +101,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Application notification to admin
-    if (sessionType === "photographer_application") {
+    if (type === "photographer_application") {
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: "hello@lomissa.com",
-        subject: `New photographer application — ${clientName}`,
+        subject: `New photographer application — ${esc(clientName)}`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -74,34 +115,34 @@ export async function POST(request: NextRequest) {
             <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
               <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">NEW APPLICATION</p>
               <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 24px;">
-                ${clientName} wants to join Lomissa!
+                ${esc(clientName)} wants to join Lomissa!
               </h2>
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">NAME</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${clientName}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(clientName)}</span>
                   </td>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">EMAIL</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${clientEmail}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(clientEmail)}</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">LOCATION</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${location || "Not specified"}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(location || "Not specified")}</span>
                   </td>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${date}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(date)}</span>
                   </td>
                 </tr>
               </table>
               ${message ? `
               <div style="margin-top: 20px; padding: 16px; background: #FDF8F5; border-radius: 8px; border: 1px solid #f0e8e0;">
                 <p style="font-size: 11px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">APPLICATION DETAILS</p>
-                <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">${message}</p>
+                <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">${esc(message)}</p>
               </div>
               ` : ""}
             </div>
@@ -121,11 +162,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Photographer approval email
-    if (sessionType === "Your application has been approved!") {
+    if (type === "photographer_approved") {
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: clientEmail,
-        subject: `Welcome to Lomissa, ${clientName}! 🎉`,
+        subject: `Welcome to Lomissa, ${esc(clientName)}! 🎉`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -135,7 +176,7 @@ export async function POST(request: NextRequest) {
             <div style="background: #1a1a1a; border-radius: 12px; padding: 40px 32px; text-align: center; margin-bottom: 24px;">
               <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">YOU HAVE BEEN SELECTED</p>
               <h2 style="font-family: Georgia, serif; font-size: 32px; color: #fff; margin: 0 0 16px; letter-spacing: -1px;">
-                Welcome to Lomissa, ${clientName}!
+                Welcome to Lomissa, ${esc(clientName)}!
               </h2>
               <p style="font-size: 15px; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.8;">
                 Your application has been reviewed and approved. You are now part of our hand-picked community of photographers.
@@ -176,11 +217,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Photographer rejection email
-    if (sessionType === "Your Lomissa application") {
+    if (type === "photographer_rejected") {
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: clientEmail,
-        subject: `Your Lomissa application — ${clientName}`,
+        subject: `Your Lomissa application — ${esc(clientName)}`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -189,13 +230,13 @@ export async function POST(request: NextRequest) {
             </div>
             <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
               <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 16px;">
-                Thank you for applying, ${clientName}
+                Thank you for applying, ${esc(clientName)}
               </h2>
               <p style="font-size: 14px; color: #555; margin: 0 0 16px; line-height: 1.8;">
                 After carefully reviewing your application we have decided not to move forward at this time.
               </p>
               <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.8;">
-                ${message}
+                ${esc(message)}
               </p>
             </div>
             <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
@@ -211,11 +252,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Booking notification to admin
+    // Booking notification to admin + confirmation to client
+    if (type !== "booking_request") {
+      return NextResponse.json({ error: "Unknown email type" }, { status: 400 });
+    }
+
     await resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
       to: "hello@lomissa.com",
-      subject: `New booking request from ${clientName}!`,
+      subject: `New booking request from ${esc(clientName)}!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
           <div style="text-align: center; margin-bottom: 40px;">
@@ -225,44 +270,44 @@ export async function POST(request: NextRequest) {
           <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
             <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">NEW BOOKING REQUEST</p>
             <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 24px;">
-              ${clientName} wants to book you!
+              ${esc(clientName)} wants to book you!
             </h2>
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">CLIENT</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${clientName}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(clientName)}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">EMAIL</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${clientEmail}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(clientEmail)}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">SESSION</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${sessionType}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(sessionType)}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${date || "Not specified"}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(date || "Not specified")}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">LOCATION</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${location || "Not specified"}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(location || "Not specified")}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PRICE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${price}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(price)}</span>
                 </td>
               </tr>
             </table>
             ${message ? `
             <div style="margin-top: 20px; padding: 16px; background: #FDF8F5; border-radius: 8px; border: 1px solid #f0e8e0;">
               <p style="font-size: 11px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">MESSAGE FROM CLIENT</p>
-              <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${message}"</p>
+              <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${esc(message)}"</p>
             </div>
             ` : ""}
           </div>
@@ -283,7 +328,7 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
       to: clientEmail,
-      subject: `Your booking request to ${photographerName} has been sent!`,
+      subject: `Your booking request to ${esc(photographerName)} has been sent!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
           <div style="text-align: center; margin-bottom: 40px;">
@@ -296,27 +341,27 @@ export async function POST(request: NextRequest) {
               Your request has been sent!
             </h2>
             <p style="font-size: 14px; color: #888; margin: 0 0 24px; line-height: 1.7;">
-              ${photographerName} will respond to your booking request within 24 hours.
+              ${esc(photographerName)} will respond to your booking request within 24 hours.
             </p>
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PHOTOGRAPHER</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${photographerName}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(photographerName)}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">SESSION</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${sessionType}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(sessionType)}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${date || "Not specified"}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(date || "Not specified")}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PRICE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${price}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(price)}</span>
                 </td>
               </tr>
             </table>

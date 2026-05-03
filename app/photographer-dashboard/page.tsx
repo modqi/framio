@@ -9,6 +9,8 @@ export default function PhotographerDashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [completion, setCompletion] = useState(0);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState("");
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -22,13 +24,21 @@ export default function PhotographerDashboard() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = "/login";
+      } else if (user.user_metadata?.role !== "photographer") {
+        window.location.href = "/dashboard";
       } else {
         setUser(user);
         const meta = user.user_metadata;
+
+        const { count: photoCount } = await supabase
+          .from("portfolio_photos")
+          .select("*", { count: "exact", head: true })
+          .eq("photographer_id", user.id);
+
         const updatedTasks = [
           { task: "Add profile photo", done: false },
           { task: "Write your bio", done: !!meta?.bio },
-          { task: "Add portfolio photos", done: false },
+          { task: "Add portfolio photos", done: (photoCount || 0) > 0 },
           { task: "Set your prices", done: !!meta?.price },
           { task: "Add your location", done: !!meta?.location },
         ];
@@ -39,15 +49,20 @@ export default function PhotographerDashboard() {
         const { data } = await supabase
           .from("bookings")
           .select("*")
-          .eq("photographer_name", meta?.name)
+          .eq("photographer_id", user.id)
+          .neq("status", "awaiting_payment")
           .order("created_at", { ascending: false });
         setBookings(data || []);
 
-        const { count } = await supabase
-          .from("messages")
-          .select("*", { count: "exact", head: true })
-          .eq("receiver_id", user.id)
-          .eq("read", false);
+        const bookingIds = data?.map((b: any) => b.id) ?? [];
+        const { count } = bookingIds.length > 0
+          ? await supabase
+              .from("messages")
+              .select("*", { count: "exact", head: true })
+              .in("booking_id", bookingIds)
+              .eq("receiver_id", user.id)
+              .eq("read", false)
+          : { count: 0 };
         setUnreadCount(count || 0);
       }
       setLoading(false);
@@ -61,8 +76,16 @@ export default function PhotographerDashboard() {
   };
 
   const handleBookingStatus = async (id: string, status: string) => {
-    await supabase.from("bookings").update({ status }).eq("id", id);
+    setProcessingId(id);
+    setActionError("");
+    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    if (error) {
+      setActionError("Failed to update booking. Please try again.");
+      setProcessingId(null);
+      return;
+    }
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
+    setProcessingId(null);
   };
 
   const getStatusStyle = (status: string) => {
@@ -250,13 +273,26 @@ export default function PhotographerDashboard() {
                       <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
+                  {actionError && (
+                    <div style={{marginBottom: "12px", padding: "10px 14px", borderRadius: "8px", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E"}}>
+                      <p style={{fontSize: "12px", color: "#8F3A14", margin: "0", fontFamily: "'Jost', sans-serif"}}>{actionError}</p>
+                    </div>
+                  )}
                   <div style={{display: "flex", gap: "12px", flexWrap: "wrap"}}>
                     {booking.status === "pending" && (
                       <>
-                        <button onClick={() => handleBookingStatus(booking.id, "confirmed")} style={{flex: 1, backgroundColor: "#1C1009", color: "#FAF7F1", padding: "10px", borderRadius: "999px", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
-                          Accept booking
+                        <button
+                          onClick={() => handleBookingStatus(booking.id, "confirmed")}
+                          disabled={processingId === booking.id}
+                          style={{flex: 1, backgroundColor: processingId === booking.id ? "#9E7250" : "#1C1009", color: "#FAF7F1", padding: "10px", borderRadius: "999px", border: "none", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
+                        >
+                          {processingId === booking.id ? "Processing..." : "Accept booking"}
                         </button>
-                        <button onClick={() => handleBookingStatus(booking.id, "declined")} style={{flex: 1, backgroundColor: "transparent", color: "#1C1009", padding: "10px", borderRadius: "999px", border: "1px solid #E4D8C4", cursor: "pointer", fontSize: "13px", fontFamily: "'Jost', sans-serif"}}>
+                        <button
+                          onClick={() => handleBookingStatus(booking.id, "declined")}
+                          disabled={processingId === booking.id}
+                          style={{flex: 1, backgroundColor: "transparent", color: "#1C1009", padding: "10px", borderRadius: "999px", border: "1px solid #E4D8C4", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontFamily: "'Jost', sans-serif", opacity: processingId === booking.id ? 0.5 : 1}}
+                        >
                           Decline
                         </button>
                       </>

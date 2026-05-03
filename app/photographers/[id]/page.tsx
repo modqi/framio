@@ -48,6 +48,16 @@ export default function PhotographerProfile() {
           .order("created_at", { ascending: false });
         setReviews(reviewData || []);
       }
+      // Restore date/sessionType saved before login redirect
+      const pending = localStorage.getItem("lomissa_pending_booking");
+      if (pending) {
+        try {
+          const { date, sessionType: st } = JSON.parse(pending);
+          if (date) setSelectedDate(date);
+          if (st) setSessionType(st);
+          localStorage.removeItem("lomissa_pending_booking");
+        } catch {}
+      }
       setLoading(false);
     };
     getData();
@@ -94,52 +104,56 @@ export default function PhotographerProfile() {
     setBooking(true);
     setError("");
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { window.location.href = "/login"; return; }
+    if (!user) {
+      const id = window.location.pathname.split("/").pop();
+      localStorage.setItem("lomissa_pending_booking", JSON.stringify({ date: selectedDate, sessionType }));
+      window.location.href = `/login?redirect=/photographers/${id}`;
+      return;
+    }
+    const { data: { session } } = await supabase.auth.getSession();
     try {
-      const { error: bookingError } = await supabase.from("bookings").insert({
-        client_id: user.id,
-        client_name: user.user_metadata?.name || "",
-        client_email: user.email,
-        photographer_name: photographer?.name,
-        photographer_id: photographer?.user_id,
-        photographer_email: photographer?.email || "",
-        session_type: sessionType,
-        date: selectedDate,
-        location, message,
-        price: photographer?.price || "Price on request",
-        status: "pending",
-      });
-      if (bookingError) { setError("Something went wrong. Please try again."); setBooking(false); return; }
-      await fetch("/api/send-email", {
+      // Booking is created server-side inside create-payment to ensure
+      // it only enters the DB after auth is verified and before Stripe redirect.
+      const response = await fetch("/api/create-payment", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
         body: JSON.stringify({
           photographerName: photographer?.name,
           photographerEmail: photographer?.email || "",
-          clientName: user.user_metadata?.name || "",
-          clientEmail: user.email,
+          photographerId: photographer?.user_id,
           sessionType,
-          date: selectedDate,
-          location, message,
           price: photographer?.price || "Price on request",
-        }),
-      });
-      const response = await fetch("/api/create-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          photographerName: photographer?.name,
-          sessionType,
-          price: photographer?.price || "3200",
           date: selectedDate,
           location,
-          photographerId: photographer?.user_id,
-          clientId: user.id,
+          message,
         }),
       });
       const data = await response.json();
-      if (data.url) { window.location.href = data.url; }
-      else { setBooked(true); }
+      if (data.url) {
+        // Priced session: redirect to Stripe; webhook sends email after payment
+        window.location.href = data.url;
+      } else {
+        // Price on request: booking already inserted as "pending" server-side
+        await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "booking_request",
+            photographerName: photographer?.name,
+            photographerEmail: photographer?.email || "",
+            clientName: user.user_metadata?.name || "",
+            clientEmail: user.email,
+            sessionType,
+            date: selectedDate,
+            location, message,
+            price: photographer?.price || "Price on request",
+          }),
+        });
+        setBooked(true);
+      }
     } catch (err) {
       setError("Something went wrong. Please try again.");
     }
@@ -161,6 +175,16 @@ export default function PhotographerProfile() {
 
   const days = getDaysInMonth();
   const monthName = currentMonth.toLocaleString("default", { month: "long", year: "numeric" });
+
+  // Photographer is "available" only if at least one of the next 30 days is not blocked
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isCurrentMonth = currentMonth.getFullYear() === today.getFullYear() && currentMonth.getMonth() === today.getMonth();
+  const isAvailable = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }).some(dateStr => !blockedDays.has(dateStr));
 
   return (
     <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
@@ -188,7 +212,7 @@ export default function PhotographerProfile() {
               <div className="flex items-center gap-3 flex-wrap">
                 <span style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>⭐ {photographer.rating || "New"}</span>
                 {reviews.length > 0 && <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>({reviews.length} reviews)</span>}
-                <span style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#B85528", padding: "4px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>Available</span>
+                {isAvailable && <span style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#B85528", padding: "4px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>Available</span>}
                 {photographer.instagram && (
                   <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{photographer.instagram}</a>
                 )}
@@ -296,7 +320,7 @@ export default function PhotographerProfile() {
                   </label>
                   <div style={{border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px", backgroundColor: "#FAF7F1"}}>
                     <div className="flex items-center justify-between mb-3">
-                      <button onClick={prevMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#9E7250", padding: "4px 8px"}}>←</button>
+                      <button onClick={prevMonth} disabled={isCurrentMonth} style={{border: "none", backgroundColor: "transparent", cursor: isCurrentMonth ? "not-allowed" : "pointer", fontSize: "16px", color: isCurrentMonth ? "#C3AB88" : "#9E7250", padding: "4px 8px", opacity: isCurrentMonth ? 0.4 : 1}}>←</button>
                       <span style={{fontSize: "12px", fontWeight: "500", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{monthName}</span>
                       <button onClick={nextMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#9E7250", padding: "4px 8px"}}>→</button>
                     </div>

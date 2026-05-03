@@ -25,7 +25,21 @@ export default function LeaveReview() {
         .select("*")
         .eq("id", bookingId)
         .single();
+
+      if (!data || data.client_id !== user.id) {
+        window.location.href = "/dashboard";
+        return;
+      }
+
+      const { data: existing } = await supabase
+        .from("reviews")
+        .select("id")
+        .eq("booking_id", bookingId)
+        .eq("client_id", user.id)
+        .maybeSingle();
+
       setBooking(data);
+      if (existing) setDone(true);
       setLoading(false);
     };
     getData();
@@ -36,6 +50,19 @@ export default function LeaveReview() {
     if (!comment) { setError("Please write a short review."); return; }
     setSaving(true);
     setError("");
+
+    const { data: existing } = await supabase
+      .from("reviews")
+      .select("id")
+      .eq("booking_id", booking.id)
+      .eq("client_id", user.id)
+      .maybeSingle();
+
+    if (existing) {
+      setDone(true);
+      setSaving(false);
+      return;
+    }
 
     const { error } = await supabase.from("reviews").insert({
       booking_id: booking.id,
@@ -173,6 +200,7 @@ export default function LeaveReview() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder={`Tell others about your experience with ${booking.photographer_name}...`}
+              maxLength={500}
               rows={5}
               style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", resize: "none", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
             />

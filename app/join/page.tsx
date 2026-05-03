@@ -50,7 +50,7 @@ export default function JoinAsPhotographer() {
           photographerEmail: "muhannadsedqi@gmail.com",
           clientName: form.name,
           clientEmail: "muhannadsedqi@gmail.com",
-          sessionType: `New application from ${form.name}`,
+          type: "photographer_application",
           date: new Date().toLocaleDateString(),
           location: form.location,
           message: `${form.about}\n\nInstagram: ${form.instagram}\nPortfolio: ${form.portfolio_link}\nExperience: ${form.experience}`,
@@ -238,6 +238,7 @@ export default function JoinAsPhotographer() {
                 value={form.about}
                 onChange={(e) => setForm({...form, about: e.target.value})}
                 placeholder="Tell us about your experience, your photography style, the kind of clients you work with and why you want to join Lomissa..."
+                maxLength={500}
                 rows={6}
                 style={{...inputStyle, resize: "none"}}
               />

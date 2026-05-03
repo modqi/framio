@@ -42,19 +42,28 @@ export default function Photographers() {
       );
     }
 
+    const parsePrice = (p: string | undefined): number | null => {
+      const n = parseFloat((p || "").replace(/[^0-9.]/g, ""));
+      return isNaN(n) || n <= 0 ? null : n;
+    };
+
     if (sortBy === "rating") {
       results = results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     } else if (sortBy === "price_low") {
       results = results.sort((a, b) => {
-        const aPrice = parseFloat(a.price?.replace(/[^0-9.]/g, "") || "0");
-        const bPrice = parseFloat(b.price?.replace(/[^0-9.]/g, "") || "0");
-        return aPrice - bPrice;
+        const aP = parsePrice(a.price), bP = parsePrice(b.price);
+        if (aP === null && bP === null) return 0;
+        if (aP === null) return 1;
+        if (bP === null) return -1;
+        return aP - bP;
       });
     } else if (sortBy === "price_high") {
       results = results.sort((a, b) => {
-        const aPrice = parseFloat(a.price?.replace(/[^0-9.]/g, "") || "0");
-        const bPrice = parseFloat(b.price?.replace(/[^0-9.]/g, "") || "0");
-        return bPrice - aPrice;
+        const aP = parsePrice(a.price), bP = parsePrice(b.price);
+        if (aP === null && bP === null) return 0;
+        if (aP === null) return 1;
+        if (bP === null) return -1;
+        return bP - aP;
       });
     }
 

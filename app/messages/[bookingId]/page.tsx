@@ -10,8 +10,11 @@ export default function Conversation({ params }: { params: any }) {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [resolvedBookingId, setResolvedBookingId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const userRef = useRef<any>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const resolveParams = async () => {
@@ -29,10 +32,13 @@ export default function Conversation({ params }: { params: any }) {
 
   useEffect(() => {
     if (!resolvedBookingId) return;
+    let channel: any;
+
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { window.location.href = "/login"; return; }
       setUser(user);
+      userRef.current = user;
 
       const { data: booking } = await supabase
         .from("bookings")
@@ -41,6 +47,10 @@ export default function Conversation({ params }: { params: any }) {
         .single();
 
       if (!booking) { window.location.href = "/messages"; return; }
+      if (booking.client_id !== user.id && booking.photographer_id !== user.id) {
+        window.location.href = "/messages";
+        return;
+      }
       setBooking(booking);
 
       const { data: msgs } = await supabase
@@ -52,58 +62,154 @@ export default function Conversation({ params }: { params: any }) {
       setMessages(msgs || []);
       setLoading(false);
 
-      const channel = supabase
+      // Mark unread messages as read in the DB immediately — before the channel
+      // connects — so navigating back to the inbox always sees the correct count.
+      const hasUnread = (msgs || []).some((m: any) => m.receiver_id === user.id && !m.read);
+      if (hasUnread) {
+        await supabase
+          .from("messages")
+          .update({ read: true })
+          .eq("booking_id", resolvedBookingId)
+          .eq("receiver_id", user.id)
+          .eq("read", false);
+
+        setMessages((prev) => prev.map((m) =>
+          m.receiver_id === user.id ? { ...m, read: true } : m
+        ));
+      }
+
+      // Set up channel. The broadcast must only fire once the WebSocket is
+      // SUBSCRIBED — calling channel.send() before that silently drops the
+      // message because the socket handshake hasn't completed yet.
+      channel = supabase
         .channel("messages:" + resolvedBookingId)
+        .on("broadcast", { event: "read" }, ({ payload }: any) => {
+          // Fast-path: other party sent a broadcast right after subscribing
+          setMessages((prev) => prev.map((m) =>
+            m.receiver_id === payload.readerId ? { ...m, read: true } : m
+          ));
+        })
         .on("postgres_changes", {
           event: "INSERT",
           schema: "public",
           table: "messages",
           filter: "booking_id=eq." + resolvedBookingId,
         }, (payload: any) => {
-          setMessages((prev: any[]) => [...prev, payload.new]);
+          const incoming = payload.new;
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === incoming.id)) return prev;
+            if (incoming.receiver_id === userRef.current?.id) {
+              // Auto-mark as read since we're in the conversation; channel is
+              // already SUBSCRIBED here so send() will deliver.
+              supabase.from("messages").update({ read: true }).eq("id", incoming.id);
+              channel.send({ type: "broadcast", event: "read", payload: { readerId: userRef.current.id } });
+              return [...prev, { ...incoming, read: true }];
+            }
+            return [...prev, incoming];
+          });
         })
-        .subscribe();
-
-      return () => { supabase.removeChannel(channel); };
+        .on("postgres_changes", {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter: "booking_id=eq." + resolvedBookingId,
+        }, (payload: any) => {
+          // Reliable DB-driven path (requires REPLICA IDENTITY FULL on messages).
+          // Fires when the other party marks our messages as read, even if the
+          // broadcast was dropped.
+          const updated = payload.new;
+          if (updated.read) {
+            setMessages((prev) => prev.map((m) =>
+              m.id === updated.id ? { ...m, read: true } : m
+            ));
+          }
+        })
+        .subscribe((status) => {
+          if (status === "SUBSCRIBED" && hasUnread) {
+            // Channel is now connected — safe to broadcast read receipt.
+            channel.send({ type: "broadcast", event: "read", payload: { readerId: user.id } });
+          }
+        });
     };
+
     init();
+    return () => { if (channel) supabase.removeChannel(channel); };
   }, [resolvedBookingId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 160) + "px";
+  }, [newMessage]);
+
   const sendMessage = async () => {
     if (!newMessage.trim() || !user || !booking || !resolvedBookingId) return;
     setSending(true);
+    setSendError(null);
     const receiverId = user.id === booking.client_id ? booking.photographer_id : booking.client_id;
-    const { error } = await supabase.from("messages").insert({
+    const content = newMessage.trim();
+    const { data: inserted, error } = await supabase.from("messages").insert({
       booking_id: resolvedBookingId,
       sender_id: user.id,
       receiver_id: receiverId,
-      content: newMessage.trim(),
+      content,
       read: false,
-    });
-    if (!error) {
+    }).select().single();
+    if (!error && inserted) {
+      // Add immediately; the INSERT subscription deduplicates by id
+      setMessages((prev) => [...prev, inserted]);
       setNewMessage("");
+      const { data: { session } } = await supabase.auth.getSession();
       await fetch("/api/send-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
         body: JSON.stringify({
+          type: "new_message",
           photographerName: booking.photographer_name,
           photographerEmail: booking.photographer_email || "hello@lomissa.com",
           clientName: booking.client_name,
           clientEmail: booking.client_email,
-          sessionType: "new_message",
+          sessionType: booking.session_type,
           date: booking.date,
           location: booking.location,
-          message: newMessage.trim(),
+          message: content,
           price: booking.price,
           senderName: user.user_metadata?.name || user.email,
+          senderId: user.id,
+          clientId: booking.client_id,
+          bookingId: resolvedBookingId,
         }),
       });
+    } else if (error) {
+      setSendError("Message failed to send. Please try again.");
     }
     setSending(false);
+  };
+
+  const formatTimestamp = (iso: string) => {
+    const date = new Date(iso);
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfYesterday = new Date(startOfToday.getTime() - 86400000);
+    const startOfWeek = new Date(startOfToday.getTime() - 6 * 86400000);
+
+    if (date >= startOfToday) {
+      return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } else if (date >= startOfYesterday) {
+      return "Yesterday";
+    } else if (date >= startOfWeek) {
+      return date.toLocaleDateString([], { weekday: "long" });
+    } else {
+      return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+    }
   };
 
   const isPhotographer = user?.user_metadata?.role === "photographer";
@@ -153,9 +259,26 @@ export default function Conversation({ params }: { params: any }) {
                   border: isMe ? "none" : "1px solid #E4D8C4",
                 }}>
                   <p style={{fontSize: "14px", margin: "0 0 4px", lineHeight: "1.6", fontFamily: "'Jost', sans-serif"}}>{msg.content}</p>
-                  <p style={{fontSize: "11px", margin: "0", color: isMe ? "rgba(250,247,241,0.4)" : "#C3AB88", fontFamily: "'Jost', sans-serif"}}>
-                    {new Date(msg.created_at).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
-                  </p>
+                  <div style={{display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px"}}>
+                    <p style={{fontSize: "11px", margin: "0", color: isMe ? "rgba(250,247,241,0.4)" : "#C3AB88", fontFamily: "'Jost', sans-serif"}}>
+                      {formatTimestamp(msg.created_at)}
+                    </p>
+                    {isMe && (
+                      <span
+                        title={msg.read ? "Read" : "Sent"}
+                        style={{
+                          fontSize: "11px",
+                          lineHeight: "1",
+                          color: msg.read ? "#B85528" : "rgba(250,247,241,0.35)",
+                          letterSpacing: msg.read ? "-3px" : "-1px",
+                          paddingRight: msg.read ? "3px" : "0",
+                          userSelect: "none",
+                        }}
+                      >
+                        {msg.read ? "✓✓" : "✓"}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -166,14 +289,19 @@ export default function Conversation({ params }: { params: any }) {
 
       {/* Message input */}
       <div style={{backgroundColor: "#FDFBF7", borderTop: "1px solid #E4D8C4", padding: "16px 32px"}}>
-        <div style={{maxWidth: "720px", margin: "0 auto", display: "flex", gap: "12px", alignItems: "flex-end"}}>
+        <div style={{maxWidth: "720px", margin: "0 auto"}}>
+          {sendError && (
+            <p style={{fontSize: "12px", color: "#dc2626", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{sendError}</p>
+          )}
+        <div style={{display: "flex", gap: "12px", alignItems: "flex-end"}}>
           <textarea
+            ref={textareaRef}
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={(e) => { setNewMessage(e.target.value); if (sendError) setSendError(null); }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
             placeholder="Type a message..."
             rows={1}
-            style={{flex: 1, border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", resize: "none", fontFamily: "'Jost', sans-serif"}}
+            style={{flex: 1, border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", resize: "none", fontFamily: "'Jost', sans-serif", overflow: "hidden"}}
           />
           <button
             onClick={sendMessage}
@@ -182,6 +310,7 @@ export default function Conversation({ params }: { params: any }) {
           >
             {sending ? "..." : "Send"}
           </button>
+        </div>
         </div>
       </div>
 

@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
     if (!error && data?.user) {
       const role = data.user.user_metadata?.role;
 
-      if (role === "photographer" || role === "pending_photographer") {
+      if (role === "photographer") {
+        return NextResponse.redirect(new URL("/photographer-dashboard", request.url));
+      } else if (role === "pending_photographer") {
         return NextResponse.redirect(new URL("/pending", request.url));
       } else {
         return NextResponse.redirect(new URL("/dashboard", request.url));

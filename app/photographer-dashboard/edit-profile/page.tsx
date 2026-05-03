@@ -1,12 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
+import Logo from "../../components/Logo";
 
 export default function EditProfile() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [form, setForm] = useState({
     name: "",
     bio: "",
@@ -22,6 +24,8 @@ export default function EditProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = "/login";
+      } else if (user.user_metadata?.role !== "photographer") {
+        window.location.href = "/dashboard";
       } else {
         setUser(user);
         const meta = user.user_metadata;
@@ -42,7 +46,8 @@ export default function EditProfile() {
 
   const handleSave = async () => {
     setSaving(true);
-    await supabase.auth.updateUser({
+    setSaveError("");
+    const { error: authError } = await supabase.auth.updateUser({
       data: {
         bio: form.bio,
         specialty: form.specialty,
@@ -53,32 +58,28 @@ export default function EditProfile() {
         name: form.name,
       }
     });
+    if (authError) {
+      setSaveError("Failed to save profile. Please try again.");
+      setSaving(false);
+      return;
+    }
     const { data: existing } = await supabase
       .from("photographers")
       .select("id")
       .eq("user_id", user.id)
       .single();
-    if (existing) {
-      await supabase.from("photographers").update({
-        name: form.name,
-        bio: form.bio,
-        specialty: form.specialty,
-        location: form.location,
-        price: form.price,
-        instagram: form.instagram,
-        website: form.website,
-      }).eq("user_id", user.id);
-    } else {
-      await supabase.from("photographers").insert({
-        user_id: user.id,
-        name: form.name,
-        bio: form.bio,
-        specialty: form.specialty,
-        location: form.location,
-        price: form.price,
-        instagram: form.instagram,
-        website: form.website,
-      });
+    const dbPayload = {
+      name: form.name, bio: form.bio, specialty: form.specialty,
+      location: form.location, price: form.price,
+      instagram: form.instagram, website: form.website,
+    };
+    const { error: dbError } = existing
+      ? await supabase.from("photographers").update(dbPayload).eq("user_id", user.id)
+      : await supabase.from("photographers").insert({ user_id: user.id, ...dbPayload });
+    if (dbError) {
+      setSaveError("Profile metadata saved but failed to update public profile. Please try again.");
+      setSaving(false);
+      return;
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -95,63 +96,60 @@ export default function EditProfile() {
 
   const inputStyle = {
     width: "100%",
-    border: "1px solid #e5e5e5",
+    border: "1px solid #E4D8C4",
     borderRadius: "8px",
     padding: "12px 16px",
     fontSize: "13px",
     outline: "none",
-    color: "#1a1a1a",
-    backgroundColor: "#fff",
+    color: "#1C1009",
+    backgroundColor: "#FAF7F1",
     boxSizing: "border-box" as const,
+    fontFamily: "'Jost', sans-serif",
   };
 
   const labelStyle = {
     fontSize: "11px",
-    color: "#888",
+    color: "#7A5235",
     display: "block",
     marginBottom: "8px",
-    letterSpacing: "0.5px",
+    letterSpacing: "0.05em",
+    fontFamily: "'Jost', sans-serif",
   };
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
-        <div className="flex items-baseline gap-3">
-          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
-          <span style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", paddingLeft: "8px", borderLeft: "1px solid #f0f0f0"}}>PHOTOGRAPHY</span>
-        </div>
-        <a href="/photographer-dashboard" style={{fontSize: "12px", color: "#888", textDecoration: "none", border: "1px solid #e5e5e5", padding: "6px 16px", borderRadius: "20px"}}>
-          Back to dashboard
-        </a>
+      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+        <Logo size="sm" />
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
       </nav>
 
       <div style={{maxWidth: "680px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 8px", letterSpacing: "1px"}}>Your profile</p>
-          <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR PROFILE</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             Edit your profile
           </h1>
-          <p style={{fontSize: "14px", color: "#888", margin: "0"}}>A complete profile gets 3x more bookings</p>
+          <p style={{fontSize: "14px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>A complete profile gets 3x more bookings</p>
         </div>
 
         {/* Profile preview */}
-        <div style={{backgroundColor: "#FDF8F5", borderRadius: "12px", padding: "20px", border: "1px solid #f0e8e0", marginBottom: "32px", display: "flex", alignItems: "center", gap: "16px"}}>
-          <div style={{width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "#fff", border: "1px solid #f0e8e0", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
-            <span style={{fontFamily: "Georgia, serif", fontSize: "22px", fontWeight: "700", color: "#C4907A"}}>{form.name?.[0] || "?"}</span>
+        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "20px", border: "1px solid #E4D8C4", marginBottom: "32px", display: "flex", alignItems: "center", gap: "16px"}}>
+          <div style={{width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
+            <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: "400", color: "#B85528"}}>{form.name?.[0] || "?"}</span>
           </div>
           <div>
-            <p style={{fontFamily: "Georgia, serif", fontSize: "16px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 2px"}}>{form.name || "Your name"}</p>
-            <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 2px"}}>{form.specialty || "Your specialty"}</p>
-            <p style={{fontSize: "12px", color: "#888", margin: "0"}}>{form.location || "Your location"}</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{form.name || "Your name"}</p>
+            <p style={{fontSize: "12px", color: "#B85528", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{form.specialty || "Your specialty"}</p>
+            <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{form.location || "Your location"}</p>
           </div>
         </div>
 
         {/* Form */}
-        <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "32px", border: "1px solid #f0f0f0", display: "flex", flexDirection: "column", gap: "24px"}}>
+        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", display: "flex", flexDirection: "column", gap: "24px"}}>
 
           <div>
             <label style={labelStyle}>Full name</label>
@@ -189,17 +187,18 @@ export default function EditProfile() {
               value={form.bio}
               onChange={(e) => setForm({...form, bio: e.target.value})}
               placeholder="Tell clients about yourself, your style and your experience..."
+              maxLength={500}
               rows={5}
               style={{...inputStyle, resize: "none"}}
             />
-            <p style={{fontSize: "11px", color: form.bio.length > 450 ? "#C4907A" : "#aaa", margin: "6px 0 0", textAlign: "right"}}>{form.bio.length}/500</p>
+            <p style={{fontSize: "11px", color: form.bio.length > 450 ? "#B85528" : "#C3AB88", margin: "6px 0 0", textAlign: "right", fontFamily: "'Jost', sans-serif"}}>{form.bio.length}/500</p>
           </div>
 
           <div>
             <label style={labelStyle}>Instagram handle</label>
-            <div style={{display: "flex", alignItems: "center", border: "1px solid #e5e5e5", borderRadius: "8px", overflow: "hidden"}}>
-              <span style={{padding: "12px 16px", backgroundColor: "#FAFAF8", color: "#C4907A", fontSize: "13px", borderRight: "1px solid #e5e5e5", flexShrink: 0}}>@</span>
-              <input type="text" value={form.instagram} onChange={(e) => setForm({...form, instagram: e.target.value})} placeholder="yourhandle" style={{flex: 1, border: "none", outline: "none", padding: "12px 16px", fontSize: "13px", color: "#1a1a1a", backgroundColor: "#fff"}}/>
+            <div style={{display: "flex", alignItems: "center", border: "1px solid #E4D8C4", borderRadius: "8px", overflow: "hidden"}}>
+              <span style={{padding: "12px 16px", backgroundColor: "#F5EFE4", color: "#B85528", fontSize: "13px", borderRight: "1px solid #E4D8C4", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>@</span>
+              <input type="text" value={form.instagram} onChange={(e) => setForm({...form, instagram: e.target.value})} placeholder="yourhandle" style={{flex: 1, border: "none", outline: "none", padding: "12px 16px", fontSize: "13px", color: "#1C1009", backgroundColor: "#FAF7F1", fontFamily: "'Jost', sans-serif"}}/>
             </div>
           </div>
 
@@ -208,6 +207,11 @@ export default function EditProfile() {
             <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" style={inputStyle}/>
           </div>
 
+          {saveError && (
+            <div style={{padding: "12px 16px", borderRadius: "8px", backgroundColor: "#fff8f8", border: "1px solid #fce8e8"}}>
+              <p style={{fontSize: "13px", color: "#cc0000", margin: "0"}}>{saveError}</p>
+            </div>
+          )}
           {saved && (
             <div style={{padding: "12px 16px", borderRadius: "8px", backgroundColor: "#f0fdf4", border: "1px solid #dcfce7", textAlign: "center"}}>
               <p style={{fontSize: "13px", color: "#15803d", margin: "0"}}>Profile saved successfully ✓</p>
@@ -217,7 +221,7 @@ export default function EditProfile() {
           <button
             onClick={handleSave}
             disabled={saving}
-            style={{width: "100%", backgroundColor: "#C4907A", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
+            style={{width: "100%", backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}
           >
             {saving ? "Saving..." : "Save profile"}
           </button>
@@ -226,12 +230,9 @@ export default function EditProfile() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
-        <div>
-          <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 4px"}}>Lomissa</p>
-          <p style={{fontSize: "8px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>PHOTOGRAPHY MARKETPLACE</p>
-        </div>
-        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
+      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+        <Logo size="sm" asLink={false} />
+        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

@@ -21,7 +21,7 @@ export default function Signup() {
   const [about, setAbout] = useState("");
 
   const handleClientSignup = async () => {
-    if (!email || !password) { setError("Please fill in all fields."); return; }
+    if (!name || !email || !password) { setError("Please fill in all fields."); return; }
     if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
     setLoading(true);
     setError("");
@@ -29,7 +29,7 @@ export default function Signup() {
       email,
       password,
       options: {
-        data: { role: "client" },
+        data: { role: "client", name },
         emailRedirectTo: "https://lomissa.com/auth/confirm",
       },
     });
@@ -76,7 +76,7 @@ export default function Signup() {
         photographerEmail: "hello@lomissa.com",
         clientName: name,
         clientEmail: "hello@lomissa.com",
-        sessionType: "photographer_application",
+        type: "photographer_application",
         date: new Date().toLocaleDateString(),
         location,
         message: `${about}\n\nInstagram: ${instagram}\nPortfolio: ${portfolio}\nExperience: ${experience}`,
@@ -234,6 +234,10 @@ export default function Signup() {
         {/* Client form */}
         {role === "client" && (
           <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
+            <div>
+              <label style={labelStyle}>Full name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" onKeyDown={(e) => e.key === "Enter" && handleClientSignup()} style={inputStyle}/>
+            </div>
             <div>
               <label style={labelStyle}>Email address</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" onKeyDown={(e) => e.key === "Enter" && handleClientSignup()} style={inputStyle}/>

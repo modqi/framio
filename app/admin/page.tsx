@@ -7,6 +7,8 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [tab, setTab] = useState("overview");
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 20;
   const [applications, setApplications] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
   const [photographers, setPhotographers] = useState<any[]>([]);
@@ -58,9 +60,13 @@ export default function AdminPanel() {
     setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: "approved" } : a));
     setStats(prev => ({ ...prev, pendingApplications: prev.pendingApplications - 1 }));
 
+    const { data: { session } } = await supabase.auth.getSession();
     const response = await fetch("/api/approve-photographer", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session?.access_token ?? ""}`,
+      },
       body: JSON.stringify({
         email: app.email,
         name: app.name,
@@ -80,7 +86,7 @@ export default function AdminPanel() {
           photographerEmail: app.email,
           clientName: app.name,
           clientEmail: app.email,
-          sessionType: "Your application has been approved!",
+          type: "photographer_approved",
           date: new Date().toLocaleDateString(),
           location: app.location,
           message: `Congratulations ${app.name}! Your application to join Lomissa has been approved.`,
@@ -103,7 +109,7 @@ export default function AdminPanel() {
         photographerEmail: app.email,
         clientName: app.name,
         clientEmail: app.email,
-        sessionType: "Your Lomissa application",
+        type: "photographer_rejected",
         date: new Date().toLocaleDateString(),
         location: app.location,
         message: `Thank you for applying to Lomissa. After reviewing your application we have decided not to move forward at this time.`,
@@ -195,7 +201,7 @@ export default function AdminPanel() {
             { key: "photographers", label: "Photographers" },
             { key: "bookings", label: "Bookings" },
           ].map((t) => (
-            <button key={t.key} onClick={() => setTab(t.key)} style={tabStyle(t.key)}>{t.label}</button>
+            <button key={t.key} onClick={() => { setTab(t.key); setPage(0); }} style={tabStyle(t.key)}>{t.label}</button>
           ))}
         </div>
 
@@ -248,7 +254,7 @@ export default function AdminPanel() {
               <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No applications yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-                {applications.map((app) => (
+                {applications.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((app) => (
                   <div key={app.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px"}}>
                       <div>
@@ -286,6 +292,13 @@ export default function AdminPanel() {
                 ))}
               </div>
             )}
+            {applications.length > PAGE_SIZE && (
+              <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(applications.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= applications.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= applications.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= applications.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+              </div>
+            )}
           </div>
         )}
 
@@ -297,7 +310,7 @@ export default function AdminPanel() {
               <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No photographers yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
-                {photographers.map((p) => (
+                {photographers.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((p) => (
                   <div key={p.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px"}}>
                     <div>
                       <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{p.name}</p>
@@ -311,6 +324,13 @@ export default function AdminPanel() {
                 ))}
               </div>
             )}
+            {photographers.length > PAGE_SIZE && (
+              <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(photographers.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= photographers.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= photographers.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= photographers.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+              </div>
+            )}
           </div>
         )}
 
@@ -322,7 +342,7 @@ export default function AdminPanel() {
               <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No bookings yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
-                {bookings.map((booking) => (
+                {bookings.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((booking) => (
                   <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "12px"}}>
                       <div>
@@ -336,6 +356,13 @@ export default function AdminPanel() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+            {bookings.length > PAGE_SIZE && (
+              <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(bookings.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= bookings.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= bookings.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= bookings.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
               </div>
             )}
           </div>
