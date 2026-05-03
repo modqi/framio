@@ -25,6 +25,7 @@ export default function PhotographerProfile() {
         .from("photographers")
         .select("*")
         .eq("id", id)
+        .eq("stripe_onboarding_completed", true)
         .single();
       setPhotographer(photographerData);
       if (photographerData?.user_id) {
