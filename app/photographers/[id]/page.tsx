@@ -134,7 +134,7 @@ export default function PhotographerProfile() {
       if (!response.ok) {
         setError(data.error === "price_on_request"
           ? "This photographer hasn't set a price yet. Please message them to discuss rates before booking."
-          : (data.error || "Something went wrong. Please try again."));
+          : "Something went wrong. Please try again.");
         setBooking(false);
         return;
       }

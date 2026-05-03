@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     if (!photographer?.stripe_account_id) {
       console.error("Photographer has no Stripe Connect account:", photographerId);
-      return NextResponse.json({ error: "Photographer payment account not set up" }, { status: 400 });
+      return NextResponse.json({ error: "no_payment_account" }, { status: 400 });
     }
 
     // Insert booking — only after all pre-checks pass
