@@ -89,8 +89,7 @@ export default function AdminPanel() {
           type: "photographer_approved",
           date: new Date().toLocaleDateString(),
           location: app.location,
-          message: `Congratulations ${app.name}! Your application to join Lomissa has been approved.`,
-          price: "Approved",
+          onboardingUrl: result.onboardingUrl,
         }),
       });
     }

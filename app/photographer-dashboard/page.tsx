@@ -11,6 +11,8 @@ export default function PhotographerDashboard() {
   const [completion, setCompletion] = useState(0);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState("");
+  const [stripeOnboarded, setStripeOnboarded] = useState<boolean | null>(null);
+  const [connectLoading, setConnectLoading] = useState(false);
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -46,6 +48,13 @@ export default function PhotographerDashboard() {
         const done = updatedTasks.filter(t => t.done).length;
         setCompletion(Math.round((done / updatedTasks.length) * 100));
 
+        const { data: photographerRow } = await supabase
+          .from("photographers")
+          .select("stripe_onboarding_completed")
+          .eq("user_id", user.id)
+          .single();
+        setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
+
         const { data } = await supabase
           .from("bookings")
           .select("*")
@@ -69,6 +78,18 @@ export default function PhotographerDashboard() {
     };
     getUser();
   }, []);
+
+  const handleCompleteStripeSetup = async () => {
+    setConnectLoading(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch("/api/stripe-connect/onboarding-link", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+    else setConnectLoading(false);
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -123,6 +144,23 @@ export default function PhotographerDashboard() {
           </button>
         </div>
       </nav>
+
+      {/* Stripe onboarding banner — shown until payout setup is complete */}
+      {stripeOnboarded === false && (
+        <div style={{backgroundColor: "#1C1009", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
+          <div>
+            <p style={{fontSize: "13px", color: "#FAF7F1", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
+            <p style={{fontSize: "12px", color: "rgba(250,247,241,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>Connect your bank account to go live and start receiving payouts.</p>
+          </div>
+          <button
+            onClick={handleCompleteStripeSetup}
+            disabled={connectLoading}
+            style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
+          >
+            {connectLoading ? "Loading…" : "Connect bank account →"}
+          </button>
+        </div>
+      )}
 
       <div style={{maxWidth: "1000px", margin: "0 auto", padding: "48px 32px"}}>
 

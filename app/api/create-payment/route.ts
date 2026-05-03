@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
       message,
     } = await request.json();
 
-    const priceInOre = Math.round(parseFloat(price.replace(/[^0-9.]/g, "")) * 100);
-    const isPriceOnRequest = isNaN(priceInOre) || priceInOre <= 0;
+    const priceAmount = Math.round(parseFloat(price.replace(/[^0-9.]/g, "")) * 100);
+    const isPriceOnRequest = isNaN(priceAmount) || priceAmount <= 0;
 
     // Insert booking — server-side so it only exists after a verified auth check
     const { data: booking, error: insertError } = await serviceClient
@@ -66,23 +66,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ url: null });
     }
 
-    // Priced session: create Stripe checkout, webhook will flip status + send email
+    // Look up the photographer's Connect account for payout routing + currency
+    const { data: photographer } = await serviceClient
+      .from("photographers")
+      .select("stripe_account_id")
+      .eq("user_id", photographerId)
+      .single();
+
+    if (!photographer?.stripe_account_id) {
+      console.error("Photographer has no Stripe Connect account:", photographerId);
+      return NextResponse.json({ error: "Photographer payment account not set up" }, { status: 400 });
+    }
+
+    // Use the photographer's Stripe account currency so the client is charged
+    // in the correct local currency — Stripe Connect handles multi-currency.
+    const stripeAccount = await stripe.accounts.retrieve(photographer.stripe_account_id);
+    const currency = stripeAccount.default_currency || "usd";
+
+    const feeAmount = Math.round(priceAmount * 0.10);
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
-            currency: "nok",
+            currency,
             product_data: {
               name: `Photography session with ${photographerName}`,
               description: `${sessionType} — ${date} — ${location}`,
             },
-            unit_amount: priceInOre,
+            unit_amount: priceAmount,
           },
           quantity: 1,
         },
       ],
       mode: "payment",
+      payment_intent_data: {
+        application_fee_amount: feeAmount,
+        transfer_data: {
+          destination: photographer.stripe_account_id,
+        },
+      },
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?booking=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/photographers`,
       metadata: {

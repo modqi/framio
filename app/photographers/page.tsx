@@ -17,6 +17,7 @@ export default function Photographers() {
       const { data } = await supabase
         .from("photographers")
         .select("*")
+        .eq("stripe_onboarding_completed", true)
         .order("created_at", { ascending: false });
       setPhotographers(data || []);
       setFiltered(data || []);

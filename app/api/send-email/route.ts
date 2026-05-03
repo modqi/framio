@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       senderId,
       clientId,
       bookingId,
+      onboardingUrl,
     } = body;
 
     // New message notification
@@ -163,10 +164,11 @@ export async function POST(request: NextRequest) {
 
     // Photographer approval email
     if (type === "photographer_approved") {
+      const ctaUrl = onboardingUrl || "https://lomissa.com/login";
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: clientEmail,
-        subject: `Welcome to Lomissa, ${esc(clientName)}! 🎉`,
+        subject: `Welcome to Lomissa, ${esc(clientName)}!`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -183,25 +185,34 @@ export async function POST(request: NextRequest) {
               </p>
             </div>
             <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
-              <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">WHAT HAPPENS NEXT</p>
+              <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">ONE STEP BEFORE YOU GO LIVE</p>
+              <p style="font-size: 14px; color: #555; margin: 0 0 20px; line-height: 1.7;">
+                To receive payouts from your bookings, you need to connect your bank account via Stripe. This takes about 5 minutes and your profile will go live automatically once complete.
+              </p>
+              <div style="background: #FDF8F5; border-radius: 8px; padding: 16px; border: 1px solid #f0e8e0; margin-bottom: 20px;">
+                <p style="font-size: 12px; color: #C4907A; margin: 0 0 4px; letter-spacing: 1px;">NOTE</p>
+                <p style="font-size: 13px; color: #888; margin: 0; line-height: 1.6;">This link expires in 24 hours. If it expires, log in to your dashboard to generate a new one.</p>
+              </div>
+            </div>
+            <div style="text-align: center; margin-bottom: 24px;">
+              <a href="${esc(ctaUrl)}"
+                 style="background: #C4907A; color: #fff; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">
+                Connect your bank account →
+              </a>
+            </div>
+            <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
+              <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">AFTER YOU CONNECT</p>
               ${[
-                "Log in to your photographer dashboard",
-                "Complete your profile — add your bio and set your price",
-                "Upload your best portfolio photos",
+                "Your profile goes live — clients can browse and book you",
+                "Complete your profile: add bio, portfolio photos, and set your price",
                 "Set your availability calendar",
-                "Start receiving booking requests from clients",
+                "Accept bookings and receive 90% of every session fee",
               ].map((step, i) => `
                 <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;">
                   <span style="font-size: 12px; color: #C4907A; font-weight: 600; flex-shrink: 0; min-width: 24px;">0${i + 1}</span>
                   <span style="font-size: 14px; color: #555;">${step}</span>
                 </div>
               `).join("")}
-            </div>
-            <div style="text-align: center; margin-bottom: 32px;">
-              <a href="https://lomissa.com/login"
-                 style="background: #C4907A; color: #fff; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">
-                Log in to Lomissa →
-              </a>
             </div>
             <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
               <p style="font-size: 13px; color: #888; margin: 0 0 4px;">Questions? We are here to help.</p>

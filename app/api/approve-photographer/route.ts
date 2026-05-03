@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const serviceClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -44,21 +47,49 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     const user = found;
+
     await serviceClient.auth.admin.updateUserById(user.id, {
       user_metadata: { role: "photographer", name },
     });
+
     await serviceClient.from("photographers").upsert({
       user_id: user.id,
       name,
-      email: email,
+      email,
       location: location || "",
       specialty: specialty || "",
       price: "Price on request",
     }, { onConflict: "user_id" });
+
+    // Create a Stripe Express account so this photographer can receive payouts
+    const account = await stripe.accounts.create({
+      type: "express",
+      email,
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+      metadata: { user_id: user.id },
+    });
+
+    await serviceClient
+      .from("photographers")
+      .update({ stripe_account_id: account.id })
+      .eq("user_id", user.id);
+
+    const base = process.env.NEXT_PUBLIC_BASE_URL!;
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: `${base}/photographer-dashboard`,
+      return_url: `${base}/api/stripe-connect/callback?account=${account.id}&userId=${user.id}`,
+      type: "account_onboarding",
+    });
+
     // Invalidate existing sessions so the photographer's next login issues a
     // fresh JWT containing role: "photographer" rather than "pending_photographer".
     await serviceClient.auth.admin.signOut(user.id, "global");
-    return NextResponse.json({ success: true });
+
+    return NextResponse.json({ success: true, onboardingUrl: accountLink.url });
   } catch (error) {
     console.error("Approve error:", error);
     return NextResponse.json({ error: "Failed to approve" }, { status: 500 });
