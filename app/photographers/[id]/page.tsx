@@ -112,8 +112,6 @@ export default function PhotographerProfile() {
     }
     const { data: { session } } = await supabase.auth.getSession();
     try {
-      // Booking is created server-side inside create-payment to ensure
-      // it only enters the DB after auth is verified and before Stripe redirect.
       const response = await fetch("/api/create-payment", {
         method: "POST",
         headers: {
@@ -125,36 +123,23 @@ export default function PhotographerProfile() {
           photographerEmail: photographer?.email || "",
           photographerId: photographer?.user_id,
           sessionType,
-          price: photographer?.price || "Price on request",
+          price: photographer?.price || "",
           date: selectedDate,
           location,
           message,
         }),
       });
       const data = await response.json();
-      if (data.url) {
-        // Priced session: redirect to Stripe; webhook sends email after payment
-        window.location.href = data.url;
-      } else {
-        // Price on request: booking already inserted as "pending" server-side
-        await fetch("/api/send-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "booking_request",
-            photographerName: photographer?.name,
-            photographerEmail: photographer?.email || "",
-            clientName: user.user_metadata?.name || "",
-            clientEmail: user.email,
-            sessionType,
-            date: selectedDate,
-            location, message,
-            price: photographer?.price || "Price on request",
-          }),
-        });
-        setBooked(true);
+      if (!response.ok) {
+        setError(data.error === "price_on_request"
+          ? "This photographer hasn't set a price yet. Please message them to discuss rates before booking."
+          : (data.error || "Something went wrong. Please try again."));
+        setBooking(false);
+        return;
       }
-    } catch (err) {
+      // Redirect to Stripe checkout — webhook flips booking to pending after payment
+      window.location.href = data.url;
+    } catch {
       setError("Something went wrong. Please try again.");
     }
     setBooking(false);
@@ -368,16 +353,27 @@ export default function PhotographerProfile() {
                   <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", resize: "none", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
-                <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "20px"}}>
-                  <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
-                    <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Session fee</span>
-                    <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{photographer.price || "On request"}</span>
-                  </div>
-                  <div style={{display: "flex", justifyContent: "space-between"}}>
-                    <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Lomissa fee</span>
-                    <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>10%</span>
-                  </div>
-                </div>
+                {(() => {
+                  const priceNum = parseFloat((photographer.price || "").replace(/[^0-9.]/g, ""));
+                  const hasPricing = !isNaN(priceNum) && priceNum > 0;
+                  return hasPricing ? (
+                    <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "20px"}}>
+                      <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
+                        <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Session fee</span>
+                        <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{photographer.price}</span>
+                      </div>
+                      <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Lomissa fee</span>
+                        <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>10%</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", borderRadius: "8px", padding: "16px", marginBottom: "20px"}}>
+                      <p style={{fontSize: "13px", color: "#8F3A14", margin: "0 0 4px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>Price not set</p>
+                      <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>This photographer hasn't listed a price yet. Send them a message to discuss rates before booking.</p>
+                    </div>
+                  );
+                })()}
 
                 {error && (
                   <div style={{marginBottom: "16px", padding: "12px", borderRadius: "8px", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E"}}>
@@ -385,10 +381,22 @@ export default function PhotographerProfile() {
                   </div>
                 )}
 
-                <button onClick={handleBooking} disabled={booking} style={{width: "100%", backgroundColor: selectedDate ? "#B85528" : "#E4D8C4", color: selectedDate ? "#FAF7F1" : "#C3AB88", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}>
-                  {booking ? "Sending request..." : selectedDate ? `Request to Book — ${selectedDate}` : "Select a date first"}
-                </button>
-                <p style={{fontSize: "11px", color: "#C3AB88", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You won't be charged yet</p>
+                {(() => {
+                  const priceNum = parseFloat((photographer.price || "").replace(/[^0-9.]/g, ""));
+                  const hasPricing = !isNaN(priceNum) && priceNum > 0;
+                  return hasPricing ? (
+                    <>
+                      <button onClick={handleBooking} disabled={booking} style={{width: "100%", backgroundColor: selectedDate ? "#B85528" : "#E4D8C4", color: selectedDate ? "#FAF7F1" : "#C3AB88", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}>
+                        {booking ? "Redirecting to payment…" : selectedDate ? `Book & Pay — ${selectedDate}` : "Select a date first"}
+                      </button>
+                      <p style={{fontSize: "11px", color: "#C3AB88", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
+                    </>
+                  ) : (
+                    <a href={`/messages`} style={{display: "block", width: "100%", backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginBottom: "12px", textAlign: "center", textDecoration: "none", fontFamily: "'Jost', sans-serif", boxSizing: "border-box"}}>
+                      Message photographer
+                    </a>
+                  );
+                })()}
               </>
             )}
           </div>

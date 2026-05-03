@@ -10,7 +10,6 @@ const serviceClient = createClient(
 );
 
 export async function POST(request: NextRequest) {
-  // Verify the caller is an authenticated user
   const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -36,7 +35,25 @@ export async function POST(request: NextRequest) {
     const priceAmount = Math.round(parseFloat(price.replace(/[^0-9.]/g, "")) * 100);
     const isPriceOnRequest = isNaN(priceAmount) || priceAmount <= 0;
 
-    // Insert booking — server-side so it only exists after a verified auth check
+    // Reject before touching the DB — no booking row should exist without payment
+    if (isPriceOnRequest) {
+      return NextResponse.json({ error: "price_on_request" }, { status: 400 });
+    }
+
+    // Look up the photographer's Connect account before inserting the booking
+    // so we don't create an orphaned awaiting_payment row if it's missing
+    const { data: photographer } = await serviceClient
+      .from("photographers")
+      .select("stripe_account_id")
+      .eq("user_id", photographerId)
+      .single();
+
+    if (!photographer?.stripe_account_id) {
+      console.error("Photographer has no Stripe Connect account:", photographerId);
+      return NextResponse.json({ error: "Photographer payment account not set up" }, { status: 400 });
+    }
+
+    // Insert booking — only after all pre-checks pass
     const { data: booking, error: insertError } = await serviceClient
       .from("bookings")
       .insert({
@@ -51,7 +68,7 @@ export async function POST(request: NextRequest) {
         location,
         message,
         price,
-        status: isPriceOnRequest ? "pending" : "awaiting_payment",
+        status: "awaiting_payment",
       })
       .select("id")
       .single();
@@ -61,28 +78,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
     }
 
-    // Price on request: no payment needed, caller sends email client-side
-    if (isPriceOnRequest) {
-      return NextResponse.json({ url: null });
-    }
-
-    // Look up the photographer's Connect account for payout routing + currency
-    const { data: photographer } = await serviceClient
-      .from("photographers")
-      .select("stripe_account_id")
-      .eq("user_id", photographerId)
-      .single();
-
-    if (!photographer?.stripe_account_id) {
-      console.error("Photographer has no Stripe Connect account:", photographerId);
-      return NextResponse.json({ error: "Photographer payment account not set up" }, { status: 400 });
-    }
-
     // Use the photographer's Stripe account currency so the client is charged
     // in the correct local currency — Stripe Connect handles multi-currency.
     const stripeAccount = await stripe.accounts.retrieve(photographer.stripe_account_id);
     const currency = stripeAccount.default_currency || "usd";
-
     const feeAmount = Math.round(priceAmount * 0.10);
 
     const session = await stripe.checkout.sessions.create({
@@ -103,15 +102,11 @@ export async function POST(request: NextRequest) {
       mode: "payment",
       payment_intent_data: {
         application_fee_amount: feeAmount,
-        transfer_data: {
-          destination: photographer.stripe_account_id,
-        },
+        transfer_data: { destination: photographer.stripe_account_id },
       },
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?booking=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/photographers`,
-      metadata: {
-        bookingId: booking.id,
-      },
+      metadata: { bookingId: booking.id },
     });
 
     return NextResponse.json({ url: session.url });

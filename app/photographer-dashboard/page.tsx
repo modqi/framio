@@ -133,6 +133,26 @@ export default function PhotographerDashboard() {
     }
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
     setProcessingId(null);
+
+    if (status === "confirmed") {
+      const booking = bookings.find(b => b.id === id);
+      if (booking?.client_email) {
+        fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "booking_confirmed",
+            clientEmail: booking.client_email,
+            clientName: booking.client_name,
+            photographerName: booking.photographer_name,
+            sessionType: booking.session_type,
+            date: booking.date,
+            location: booking.location,
+            price: booking.price,
+          }),
+        });
+      }
+    }
   };
 
   const getStatusStyle = (status: string) => {
