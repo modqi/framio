@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     // so we don't create an orphaned awaiting_payment row if it's missing
     const { data: photographer } = await serviceClient
       .from("photographers")
-      .select("stripe_account_id")
+      .select("stripe_account_id, cancellation_policy")
       .eq("user_id", photographerId)
       .single();
 
@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
         message,
         price,
         status: "awaiting_payment",
+        cancellation_policy_snapshot: photographer.cancellation_policy || "moderate",
       })
       .select("id")
       .single();

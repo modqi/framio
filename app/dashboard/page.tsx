@@ -10,6 +10,9 @@ export default function Dashboard() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -82,8 +85,47 @@ export default function Dashboard() {
       case "confirmed": return { backgroundColor: "#f0fdf4", color: "#15803d" };
       case "pending": return { backgroundColor: "#FBF0EA", color: "#B85528" };
       case "declined": return { backgroundColor: "#fef2f2", color: "#dc2626" };
+      case "cancelled": return { backgroundColor: "#fef2f2", color: "#dc2626" };
       default: return { backgroundColor: "#F5EFE4", color: "#7A5235" };
     }
+  };
+
+  const getRefundEligibility = (booking: any): string => {
+    if (booking.status === "pending") return "Full refund guaranteed";
+    if (booking.status !== "confirmed") return "";
+    const policy = booking.cancellation_policy_snapshot || "moderate";
+    if (policy === "strict") return "No refund (strict policy)";
+    const hours = policy === "flexible" ? 24 : 48;
+    if (!booking.date) return `Full refund if cancelled ${hours}h before session`;
+    const hoursUntil = (new Date(booking.date + "T00:00:00").getTime() - Date.now()) / (1000 * 60 * 60);
+    return hoursUntil > hours
+      ? `Full refund available (cancel more than ${hours}h before session)`
+      : `No refund — session is within ${hours}h`;
+  };
+
+  const handleCancel = async (bookingId: string) => {
+    setCancellingId(bookingId);
+    setCancelError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/cancel-booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ bookingId }),
+      });
+      if (!res.ok) {
+        setCancelError("Failed to cancel. Please try again.");
+      } else {
+        setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "cancelled" } : b));
+        setConfirmCancelId(null);
+      }
+    } catch {
+      setCancelError("Something went wrong. Please try again.");
+    }
+    setCancellingId(null);
   };
 
   const isPastDate = (dateStr: string) => {
@@ -242,7 +284,7 @@ export default function Dashboard() {
                       <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
-                  <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E4D8C4", display: "flex", gap: "12px", flexWrap: "wrap"}}>
+                  <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E4D8C4", display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center"}}>
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message photographer
                     </a>
@@ -252,6 +294,36 @@ export default function Dashboard() {
                       <a href={`/review/${booking.id}`} style={{fontSize: "13px", color: "#B85528", textDecoration: "none", border: "1px solid #B85528", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                         Leave a review ⭐
                       </a>
+                    )}
+                    {(booking.status === "pending" || (booking.status === "confirmed" && !isPastDate(booking.date))) && (
+                      confirmCancelId === booking.id ? (
+                        <div style={{display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap"}}>
+                          <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                            {getRefundEligibility(booking)} — confirm cancel?
+                          </p>
+                          <button
+                            onClick={() => handleCancel(booking.id)}
+                            disabled={cancellingId === booking.id}
+                            style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#dc2626", border: "none", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", opacity: cancellingId === booking.id ? 0.6 : 1}}
+                          >
+                            {cancellingId === booking.id ? "Cancelling…" : "Yes, cancel"}
+                          </button>
+                          <button
+                            onClick={() => { setConfirmCancelId(null); setCancelError(""); }}
+                            style={{fontSize: "12px", color: "#7A5235", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                          >
+                            Keep booking
+                          </button>
+                          {cancelError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{cancelError}</p>}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => { setConfirmCancelId(booking.id); setCancelError(""); }}
+                          style={{fontSize: "13px", color: "#9E7250", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                        >
+                          Cancel booking
+                        </button>
+                      )
                     )}
                   </div>
                 </div>

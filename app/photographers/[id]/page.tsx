@@ -376,6 +376,22 @@ export default function PhotographerProfile() {
                   );
                 })()}
 
+                {(() => {
+                  const policy = photographer.cancellation_policy || "moderate";
+                  const policyMap: Record<string, { label: string; desc: string; color: string; bg: string }> = {
+                    flexible: { label: "Flexible cancellation", desc: "Full refund up to 24 hours before the session", color: "#15803d", bg: "#f0fdf4" },
+                    moderate: { label: "Moderate cancellation", desc: "Full refund up to 48 hours before the session", color: "#B85528", bg: "#FBF0EA" },
+                    strict:   { label: "Strict cancellation", desc: "No refund once the booking is confirmed", color: "#dc2626", bg: "#fef2f2" },
+                  };
+                  const p = policyMap[policy] || policyMap.moderate;
+                  return (
+                    <div style={{backgroundColor: p.bg, borderRadius: "8px", padding: "12px 14px", marginBottom: "16px"}}>
+                      <p style={{fontSize: "11px", fontWeight: "600", color: p.color, margin: "0 0 2px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{p.label.toUpperCase()}</p>
+                      <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>{p.desc}</p>
+                    </div>
+                  );
+                })()}
+
                 {error && (
                   <div style={{marginBottom: "16px", padding: "12px", borderRadius: "8px", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E"}}>
                     <p style={{fontSize: "12px", color: "#8F3A14", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>

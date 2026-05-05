@@ -15,6 +15,13 @@ export default function PhotographerDashboard() {
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [connectIncomplete, setConnectIncomplete] = useState(false);
+  const [cancellationPolicy, setCancellationPolicy] = useState("moderate");
+  const [savingPolicy, setSavingPolicy] = useState(false);
+  const [policySaved, setPolicySaved] = useState(false);
+  const [policyError, setPolicyError] = useState("");
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState("");
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -66,10 +73,11 @@ export default function PhotographerDashboard() {
 
         const { data: photographerRow } = await supabase
           .from("photographers")
-          .select("stripe_onboarding_completed")
+          .select("stripe_onboarding_completed, cancellation_policy")
           .eq("user_id", user.id)
           .single();
         setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
+        setCancellationPolicy(photographerRow?.cancellation_policy || "moderate");
 
         const { data } = await supabase
           .from("bookings")
@@ -158,7 +166,49 @@ export default function PhotographerDashboard() {
   const getStatusStyle = (status: string) => {
     if (status === "confirmed") return { backgroundColor: "#f0fdf4", color: "#15803d" };
     if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
+    if (status === "cancelled") return { backgroundColor: "#fef2f2", color: "#dc2626" };
     return { backgroundColor: "#FBF0EA", color: "#B85528" };
+  };
+
+  const savePolicy = async () => {
+    setSavingPolicy(true);
+    setPolicyError("");
+    const { error } = await supabase
+      .from("photographers")
+      .update({ cancellation_policy: cancellationPolicy })
+      .eq("user_id", user.id);
+    setSavingPolicy(false);
+    if (error) {
+      setPolicyError("Failed to save. Please try again.");
+    } else {
+      setPolicySaved(true);
+      setTimeout(() => setPolicySaved(false), 3000);
+    }
+  };
+
+  const handleCancelBooking = async (id: string) => {
+    setCancellingId(id);
+    setCancelError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/cancel-booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ bookingId: id }),
+      });
+      if (!res.ok) {
+        setCancelError("Failed to cancel. Please try again.");
+      } else {
+        setBookings(prev => prev.map(b => b.id === id ? { ...b, status: "cancelled" } : b));
+        setConfirmCancelId(null);
+      }
+    } catch {
+      setCancelError("Something went wrong. Please try again.");
+    }
+    setCancellingId(null);
   };
 
   if (loading) {
@@ -322,6 +372,43 @@ export default function PhotographerDashboard() {
           </div>
         </div>
 
+        {/* Cancellation policy */}
+        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "32px"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>CANCELLATION POLICY</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>Refund policy for clients</h2>
+          <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 20px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>This policy is shown to clients before they book and applies to all new bookings.</p>
+          <div style={{display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px"}}>
+            {[
+              { value: "flexible", label: "Flexible", desc: "Full refund up to 24 hours before the session" },
+              { value: "moderate", label: "Moderate", desc: "Full refund up to 48 hours before the session" },
+              { value: "strict", label: "Strict", desc: "No refund once the booking is confirmed" },
+            ].map((opt) => (
+              <label key={opt.value} style={{display: "flex", alignItems: "flex-start", gap: "12px", padding: "14px 16px", border: `1px solid ${cancellationPolicy === opt.value ? "#B85528" : "#E4D8C4"}`, borderRadius: "10px", cursor: "pointer", backgroundColor: cancellationPolicy === opt.value ? "#FBF0EA" : "#FAF7F1"}}>
+                <input
+                  type="radio"
+                  name="cancellation_policy"
+                  value={opt.value}
+                  checked={cancellationPolicy === opt.value}
+                  onChange={() => setCancellationPolicy(opt.value)}
+                  style={{marginTop: "2px", accentColor: "#B85528"}}
+                />
+                <div>
+                  <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{opt.label}</p>
+                  <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{opt.desc}</p>
+                </div>
+              </label>
+            ))}
+          </div>
+          {policyError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0 0 12px", fontFamily: "'Jost', sans-serif"}}>{policyError}</p>}
+          <button
+            onClick={savePolicy}
+            disabled={savingPolicy}
+            style={{backgroundColor: policySaved ? "#15803d" : "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "10px 28px", border: "none", borderRadius: "999px", cursor: savingPolicy ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: savingPolicy ? 0.7 : 1}}
+          >
+            {policySaved ? "✓ Saved" : savingPolicy ? "Saving…" : "Save policy"}
+          </button>
+        </div>
+
         {/* Booking requests */}
         <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
           <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>INCOMING</p>
@@ -373,7 +460,7 @@ export default function PhotographerDashboard() {
                       <p style={{fontSize: "12px", color: "#8F3A14", margin: "0", fontFamily: "'Jost', sans-serif"}}>{actionError}</p>
                     </div>
                   )}
-                  <div style={{display: "flex", gap: "12px", flexWrap: "wrap"}}>
+                  <div style={{display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center"}}>
                     {booking.status === "pending" && (
                       <>
                         <button
@@ -391,6 +478,36 @@ export default function PhotographerDashboard() {
                           Decline
                         </button>
                       </>
+                    )}
+                    {booking.status === "confirmed" && (
+                      confirmCancelId === booking.id ? (
+                        <div style={{display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap"}}>
+                          <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                            Cancelling issues a full refund to the client. Confirm?
+                          </p>
+                          <button
+                            onClick={() => handleCancelBooking(booking.id)}
+                            disabled={cancellingId === booking.id}
+                            style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#dc2626", border: "none", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", opacity: cancellingId === booking.id ? 0.6 : 1}}
+                          >
+                            {cancellingId === booking.id ? "Cancelling…" : "Yes, cancel"}
+                          </button>
+                          <button
+                            onClick={() => { setConfirmCancelId(null); setCancelError(""); }}
+                            style={{fontSize: "12px", color: "#7A5235", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                          >
+                            Keep booking
+                          </button>
+                          {cancelError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{cancelError}</p>}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => { setConfirmCancelId(booking.id); setCancelError(""); }}
+                          style={{fontSize: "13px", color: "#9E7250", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                        >
+                          Cancel booking
+                        </button>
+                      )
                     )}
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message client

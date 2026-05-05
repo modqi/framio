@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Flip status so the booking becomes visible to both parties
     const { data: booking } = await serviceClient
       .from("bookings")
-      .update({ status: "pending" })
+      .update({ status: "pending", stripe_payment_intent_id: session.payment_intent as string })
       .eq("id", bookingId)
       .eq("status", "awaiting_payment")
       .select("*")
