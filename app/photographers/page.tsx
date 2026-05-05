@@ -9,18 +9,19 @@ export default function Photographers() {
   const [search, setSearch] = useState("");
   const [specialty, setSpecialty] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
+  const [authUser, setAuthUser] = useState<any>(null);
 
   const specialties = ["All", "Portraits", "Weddings", "Events", "Travel", "Fashion", "Commercial", "Street", "Nature"];
 
   useEffect(() => {
     const getData = async () => {
-      const { data } = await supabase
-        .from("photographers")
-        .select("*")
-        .eq("stripe_onboarding_completed", true)
-        .order("created_at", { ascending: false });
+      const [{ data }, { data: { user } }] = await Promise.all([
+        supabase.from("photographers").select("*").eq("stripe_onboarding_completed", true).order("created_at", { ascending: false }),
+        supabase.auth.getUser(),
+      ]);
       setPhotographers(data || []);
       setFiltered(data || []);
+      setAuthUser(user);
       setLoading(false);
     };
     getData();
@@ -86,8 +87,24 @@ export default function Photographers() {
           <div style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: "400", color: "#1C1009", letterSpacing: "-0.02em"}}>lomissa</div>
         </a>
         <div className="flex items-center gap-6">
-          <a href="/" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Home</a>
-          <a href="/signup" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+          {authUser ? (
+            <>
+              <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>
+                {authUser.user_metadata?.name?.split(" ")[0] || "Hi"}
+              </span>
+              <a
+                href={authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
+                style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+              >
+                My dashboard
+              </a>
+            </>
+          ) : (
+            <>
+              <a href="/login" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
+              <a href="/signup" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+            </>
+          )}
         </div>
       </nav>
 
