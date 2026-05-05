@@ -3,6 +3,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 
+const parsePrice = (price: unknown): number => {
+  const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
+  return isNaN(n) ? 0 : n;
+};
+
+const fmtMoney = (amount: number, currency = "usd"): string => {
+  try {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: currency.toUpperCase() }).format(amount);
+  } catch {
+    return amount.toFixed(2);
+  }
+};
+
 export default function PhotographerDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +35,10 @@ export default function PhotographerDashboard() {
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState("");
+  const [activeTab, setActiveTab] = useState<"overview" | "earnings">("overview");
+  const [earningsData, setEarningsData] = useState<any>(null);
+  const [earningsLoading, setEarningsLoading] = useState(false);
+  const [earningsError, setEarningsError] = useState("");
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -186,6 +203,28 @@ export default function PhotographerDashboard() {
     }
   };
 
+  const loadEarnings = async () => {
+    if (earningsData !== null || earningsLoading) return;
+    setEarningsLoading(true);
+    setEarningsError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/photographer-earnings", {
+        headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+      });
+      if (res.ok) {
+        setEarningsData(await res.json());
+      } else {
+        setEarningsError("Could not load Stripe data. Your booking totals are still shown below.");
+        setEarningsData({});
+      }
+    } catch {
+      setEarningsError("Something went wrong loading Stripe data.");
+      setEarningsData({});
+    }
+    setEarningsLoading(false);
+  };
+
   const handleCancelBooking = async (id: string) => {
     setCancellingId(id);
     setCancelError("");
@@ -279,6 +318,25 @@ export default function PhotographerDashboard() {
           </h1>
           <p style={{fontSize: "14px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your profile, bookings and earnings all in one place.</p>
         </div>
+
+        {/* Tab navigation */}
+        <div style={{display: "flex", borderBottom: "1px solid #E4D8C4", marginBottom: "32px"}}>
+          {([
+            { id: "overview", label: "Overview" },
+            { id: "earnings", label: "Earnings" },
+          ] as const).map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => { setActiveTab(tab.id); if (tab.id === "earnings") loadEarnings(); }}
+              style={{padding: "12px 24px", fontSize: "13px", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "none", cursor: "pointer", backgroundColor: "transparent", color: activeTab === tab.id ? "#B85528" : "#9E7250", borderBottom: `2px solid ${activeTab === tab.id ? "#B85528" : "transparent"}`, marginBottom: "-1px", transition: "color 0.15s"}}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Overview tab */}
+        <div style={{display: activeTab === "overview" ? "block" : "none"}}>
 
         {/* Profile card */}
         <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4", marginBottom: "24px", display: "flex", alignItems: "center", gap: "20px"}}>
@@ -518,6 +576,195 @@ export default function PhotographerDashboard() {
             </div>
           )}
         </div>
+        </div>
+        {/* /Overview tab */}
+
+        {/* Earnings tab */}
+        {activeTab === "earnings" && (() => {
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+          const confirmedBookings = bookings.filter(b => b.status === "confirmed");
+          const completedBookings = confirmedBookings.filter(b => b.date && new Date(b.date + "T00:00:00") < now);
+          const upcomingBookings = confirmedBookings.filter(b => !b.date || new Date(b.date + "T00:00:00") >= now);
+          const totalEarned = completedBookings.reduce((s, b) => s + parsePrice(b.price) * 0.9, 0);
+          const pendingEarnings = upcomingBookings.reduce((s, b) => s + parsePrice(b.price) * 0.9, 0);
+          const currency = earningsData?.currency ?? "usd";
+
+          const payoutStatusStyle = (s: string) => {
+            if (s === "paid") return { backgroundColor: "#f0fdf4", color: "#15803d" };
+            if (s === "in_transit") return { backgroundColor: "#eff6ff", color: "#1d4ed8" };
+            if (s === "failed") return { backgroundColor: "#fef2f2", color: "#dc2626" };
+            return { backgroundColor: "#FBF0EA", color: "#B85528" };
+          };
+
+          const earningRows = bookings.filter(b =>
+            b.status === "confirmed" || b.status === "cancelled"
+          );
+
+          return (
+            <div>
+              {earningsLoading ? (
+                <div style={{textAlign: "center", padding: "48px 0"}}>
+                  <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading Stripe data…</p>
+                </div>
+              ) : (
+                <>
+                  {earningsError && (
+                    <div style={{marginBottom: "24px", padding: "12px 16px", borderRadius: "8px", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E"}}>
+                      <p style={{fontSize: "12px", color: "#8F3A14", margin: "0", fontFamily: "'Jost', sans-serif"}}>{earningsError}</p>
+                    </div>
+                  )}
+
+                  {/* 4 stat cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    {[
+                      {
+                        label: "Total earned",
+                        value: `~${fmtMoney(totalEarned, currency)}`,
+                        desc: `${completedBookings.length} completed session${completedBookings.length !== 1 ? "s" : ""}`,
+                        note: "After 10% Lomissa fee",
+                      },
+                      {
+                        label: "Pending earnings",
+                        value: `~${fmtMoney(pendingEarnings, currency)}`,
+                        desc: `${upcomingBookings.length} upcoming session${upcomingBookings.length !== 1 ? "s" : ""}`,
+                        note: "Awaiting completion",
+                      },
+                      {
+                        label: "Available for payout",
+                        value: earningsData?.noStripeAccount ? "—" : fmtMoney(earningsData?.stripeAvailable ?? 0, currency),
+                        desc: earningsData?.noStripeAccount ? "Connect Stripe to view" : "Ready to pay out",
+                        note: "From Stripe balance",
+                      },
+                      {
+                        label: "In transit",
+                        value: earningsData?.noStripeAccount ? "—" : fmtMoney(earningsData?.stripePending ?? 0, currency),
+                        desc: earningsData?.noStripeAccount ? "Connect Stripe to view" : "Processing (2–7 days)",
+                        note: "From Stripe balance",
+                      },
+                    ].map((stat) => (
+                      <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "20px", border: "1px solid #E4D8C4"}}>
+                        <p style={{fontSize: "11px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label.toUpperCase()}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "400", color: "#1C1009", margin: "0 0 4px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>{stat.value}</p>
+                        <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{stat.desc}</p>
+                        <p style={{fontSize: "10px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>{stat.note}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Payout history */}
+                  <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "24px"}}>
+                    <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PAYOUT HISTORY</p>
+                    <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 20px", letterSpacing: "-0.02em"}}>
+                      Bank payouts
+                    </h2>
+                    {earningsData?.noStripeAccount ? (
+                      <p style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>
+                        Connect your Stripe account to see payout history.
+                      </p>
+                    ) : !earningsData?.payouts?.length ? (
+                      <p style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>
+                        No payouts yet — payouts appear here once Stripe transfers funds to your bank.
+                      </p>
+                    ) : (
+                      <div style={{overflowX: "auto"}}>
+                        <table style={{width: "100%", borderCollapse: "collapse"}}>
+                          <thead>
+                            <tr style={{borderBottom: "1px solid #E4D8C4"}}>
+                              {["Arrival date", "Amount", "Status", "Reference"].map(h => (
+                                <th key={h} style={{textAlign: "left", padding: "8px 12px 12px 0", fontSize: "11px", color: "#9E7250", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{h.toUpperCase()}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(earningsData.payouts as any[]).map((payout: any) => {
+                              const s = payoutStatusStyle(payout.status);
+                              return (
+                                <tr key={payout.id} style={{borderBottom: "1px solid #F5EFE4"}}>
+                                  <td style={{padding: "12px 12px 12px 0", fontSize: "13px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>
+                                    {new Date(payout.arrival_date * 1000).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                                  </td>
+                                  <td style={{padding: "12px 12px 12px 0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#1C1009"}}>
+                                    {fmtMoney(payout.amount, payout.currency)}
+                                  </td>
+                                  <td style={{padding: "12px 12px 12px 0"}}>
+                                    <span style={{...s, fontSize: "11px", padding: "3px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                                      {payout.status.replace("_", " ").charAt(0).toUpperCase() + payout.status.replace("_", " ").slice(1)}
+                                    </span>
+                                  </td>
+                                  <td style={{padding: "12px 0 12px 0", fontSize: "11px", color: "#C3AB88", fontFamily: "'Jost', sans-serif"}}>
+                                    {payout.id}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Per-booking breakdown */}
+                  <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+                    <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BREAKDOWN</p>
+                    <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 4px", letterSpacing: "-0.02em"}}>
+                      Earnings by booking
+                    </h2>
+                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>
+                      Showing confirmed and cancelled bookings. Lomissa retains 10% of each session fee.
+                    </p>
+                    {earningRows.length === 0 ? (
+                      <p style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>No bookings to show yet.</p>
+                    ) : (
+                      <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
+                        {earningRows.map((booking) => {
+                          const gross = parsePrice(booking.price);
+                          const fee = gross * 0.1;
+                          const net = gross * 0.9;
+                          const isPast = booking.date && new Date(booking.date + "T00:00:00") < now;
+                          const rowStatus = booking.status === "cancelled"
+                            ? { label: "Cancelled", bg: "#fef2f2", color: "#dc2626" }
+                            : isPast
+                            ? { label: "Earned", bg: "#f0fdf4", color: "#15803d" }
+                            : { label: "Upcoming", bg: "#FBF0EA", color: "#B85528" };
+                          return (
+                            <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FAF7F1"}}>
+                              <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "12px"}}>
+                                <div>
+                                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "17px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{booking.client_name}</p>
+                                  <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type}{booking.date ? ` — ${booking.date}` : ""}</p>
+                                </div>
+                                <span style={{...rowStatus, fontSize: "11px", padding: "3px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", flexShrink: 0}}>
+                                  {rowStatus.label}
+                                </span>
+                              </div>
+                              <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", borderTop: "1px solid #E4D8C4", paddingTop: "12px"}}>
+                                <div>
+                                  <p style={{fontSize: "10px", color: "#C3AB88", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>SESSION FEE</p>
+                                  <p style={{fontSize: "15px", color: "#1C1009", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price || "—"}</p>
+                                </div>
+                                <div>
+                                  <p style={{fontSize: "10px", color: "#C3AB88", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOMISSA FEE (10%)</p>
+                                  <p style={{fontSize: "15px", color: "#dc2626", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>−{fee.toFixed(2)}</p>
+                                </div>
+                                <div>
+                                  <p style={{fontSize: "10px", color: "#C3AB88", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>YOU RECEIVE</p>
+                                  <p style={{fontSize: "15px", color: booking.status === "cancelled" ? "#C3AB88" : "#15803d", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: "500"}}>{booking.status === "cancelled" ? "—" : net.toFixed(2)}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })()}
+        {/* /Earnings tab */}
+
       </div>
 
       {/* Footer */}
