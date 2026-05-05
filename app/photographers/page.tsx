@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
+import Logo from "../components/Logo";
 
 export default function Photographers() {
   const [photographers, setPhotographers] = useState<any[]>([]);
@@ -83,9 +84,7 @@ export default function Photographers() {
 
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
-        <a href="/" style={{textDecoration: "none"}}>
-          <div style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: "400", color: "#1C1009", letterSpacing: "-0.02em"}}>lomissa</div>
-        </a>
+        <Logo size="sm" />
         <div className="flex items-center gap-6">
           {authUser ? (
             <>
@@ -208,7 +207,7 @@ export default function Photographers() {
 
       {/* Footer */}
       <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
-        <div style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "400", color: "#1C1009"}}>lomissa</div>
+        <Logo size="sm" asLink={false} />
         <div style={{display: "flex", gap: "24px"}}>
           <a href="/privacy" style={{fontSize: "12px", color: "#9E7250", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Privacy</a>
           <a href="/terms" style={{fontSize: "12px", color: "#9E7250", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Terms</a>
