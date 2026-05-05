@@ -23,21 +23,33 @@ export async function POST(request: NextRequest) {
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");
 
-  console.log("[webhook] sig present:", !!sig);
-  console.log("[webhook] STRIPE_WEBHOOK_SECRET set:", !!process.env.STRIPE_WEBHOOK_SECRET);
-  console.log("[webhook] STRIPE_WEBHOOK_SECRET prefix:", process.env.STRIPE_WEBHOOK_SECRET?.slice(0, 12));
+  const secretSet = !!process.env.STRIPE_WEBHOOK_SECRET;
+  const secretPrefix = process.env.STRIPE_WEBHOOK_SECRET?.slice(0, 14) ?? "(not set)";
 
-  if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
-    console.error("[webhook] Aborting — missing sig or secret. sig:", !!sig, "secret:", !!process.env.STRIPE_WEBHOOK_SECRET);
-    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+  console.log("[webhook] sig present:", !!sig);
+  console.log("[webhook] body length:", body.length);
+  console.log("[webhook] STRIPE_WEBHOOK_SECRET set:", secretSet, "| prefix:", secretPrefix);
+
+  if (!sig) {
+    console.error("[webhook] No stripe-signature header");
+    return NextResponse.json({ error: "missing_sig_header", message: "No stripe-signature header received" }, { status: 400 });
+  }
+
+  if (!secretSet) {
+    console.error("[webhook] STRIPE_WEBHOOK_SECRET env var is not set on this deployment");
+    return NextResponse.json({ error: "missing_secret", message: "STRIPE_WEBHOOK_SECRET is not configured in environment variables" }, { status: 400 });
   }
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err: any) {
-    console.error("[webhook] constructEvent failed:", err?.message);
-    return NextResponse.json({ error: "Invalid signature", detail: err?.message }, { status: 400 });
+    console.error("[webhook] constructEvent failed:", err?.message, "| secret prefix used:", secretPrefix);
+    return NextResponse.json({
+      error: "signature_mismatch",
+      message: err?.message,
+      hint: "The STRIPE_WEBHOOK_SECRET in your environment does not match the signing secret for this webhook endpoint. Get the correct secret from Stripe Dashboard → Webhooks → click endpoint → Reveal signing secret.",
+    }, { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {
