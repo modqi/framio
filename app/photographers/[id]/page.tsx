@@ -221,6 +221,35 @@ export default function PhotographerProfile() {
         </section>
       )}
 
+      {/* What's included */}
+      {(photographer.photos_delivered || photographer.delivery_time || photographer.copyright_ownership || photographer.editing_style || photographer.revisions_included) && (() => {
+        const terms = [
+          { icon: "📷", label: "Photos delivered", value: photographer.photos_delivered },
+          { icon: "⏱️", label: "Delivery time",    value: photographer.delivery_time },
+          { icon: "⚖️", label: "Copyright",        value: photographer.copyright_ownership },
+          { icon: "🎨", label: "Editing style",    value: photographer.editing_style },
+          { icon: "✏️", label: "Revisions",        value: photographer.revisions_included },
+        ].filter(t => t.value);
+        return (
+          <section style={{backgroundColor: "#FDFBF7", padding: "32px 48px", borderBottom: "1px solid #E4D8C4"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WHAT'S INCLUDED</p>
+            <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "16px"}}>
+              {terms.map((t) => (
+                <div key={t.label} style={{display: "flex", alignItems: "flex-start", gap: "12px"}}>
+                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>
+                    {t.icon}
+                  </div>
+                  <div>
+                    <p style={{fontSize: "10px", color: "#B85528", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t.label.toUpperCase()}</p>
+                    <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{t.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
+
       <div className="flex flex-col md:flex-row">
 
         {/* Left — portfolio & reviews */}

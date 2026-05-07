@@ -17,6 +17,11 @@ export default function EditProfile() {
     price: "",
     instagram: "",
     website: "",
+    photos_delivered: "",
+    delivery_time: "",
+    copyright_ownership: "",
+    editing_style: "",
+    revisions_included: "",
   });
 
   useEffect(() => {
@@ -29,6 +34,11 @@ export default function EditProfile() {
       } else {
         setUser(user);
         const meta = user.user_metadata;
+        const { data: row } = await supabase
+          .from("photographers")
+          .select("photos_delivered, delivery_time, copyright_ownership, editing_style, revisions_included")
+          .eq("user_id", user.id)
+          .single();
         setForm({
           name: meta?.name || "",
           bio: meta?.bio || "",
@@ -37,6 +47,11 @@ export default function EditProfile() {
           price: meta?.price || "",
           instagram: meta?.instagram || "",
           website: meta?.website || "",
+          photos_delivered: row?.photos_delivered || "",
+          delivery_time: row?.delivery_time || "",
+          copyright_ownership: row?.copyright_ownership || "",
+          editing_style: row?.editing_style || "",
+          revisions_included: row?.revisions_included || "",
         });
       }
       setLoading(false);
@@ -72,6 +87,11 @@ export default function EditProfile() {
       name: form.name, bio: form.bio, specialty: form.specialty,
       location: form.location, price: form.price,
       instagram: form.instagram, website: form.website,
+      photos_delivered: form.photos_delivered || null,
+      delivery_time: form.delivery_time || null,
+      copyright_ownership: form.copyright_ownership || null,
+      editing_style: form.editing_style || null,
+      revisions_included: form.revisions_included || null,
     };
     const { error: dbError } = existing
       ? await supabase.from("photographers").update(dbPayload).eq("user_id", user.id)
@@ -205,6 +225,76 @@ export default function EditProfile() {
           <div>
             <label style={labelStyle}>Website</label>
             <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" style={inputStyle}/>
+          </div>
+
+          {/* Divider */}
+          <div style={{borderTop: "1px solid #E4D8C4", paddingTop: "24px"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>SESSION TERMS</p>
+            <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>Shown to clients on your profile before they book. Leave blank to hide.</p>
+          </div>
+
+          <div>
+            <label style={labelStyle}>Photos delivered</label>
+            <input
+              type="text"
+              value={form.photos_delivered}
+              onChange={(e) => setForm({...form, photos_delivered: e.target.value})}
+              placeholder="e.g. 30–50 fully edited photos"
+              style={inputStyle}
+            />
+          </div>
+
+          <div>
+            <label style={labelStyle}>Delivery time</label>
+            <input
+              type="text"
+              value={form.delivery_time}
+              onChange={(e) => setForm({...form, delivery_time: e.target.value})}
+              placeholder="e.g. 2 weeks after the session"
+              style={inputStyle}
+            />
+          </div>
+
+          <div>
+            <label style={labelStyle}>Copyright ownership</label>
+            <select
+              value={form.copyright_ownership}
+              onChange={(e) => setForm({...form, copyright_ownership: e.target.value})}
+              style={inputStyle}
+            >
+              <option value="">Select copyright policy</option>
+              <option value="Photographer retains copyright, client gets personal use license">
+                Photographer retains copyright, client gets personal use license
+              </option>
+              <option value="Client receives full copyright after payment">
+                Client receives full copyright after payment
+              </option>
+              <option value="Photographer keeps portfolio rights, client gets full usage rights">
+                Photographer keeps portfolio rights, client gets full usage rights
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label style={labelStyle}>Editing style</label>
+            <input
+              type="text"
+              value={form.editing_style}
+              onChange={(e) => setForm({...form, editing_style: e.target.value})}
+              placeholder="e.g. Natural and light, film-inspired"
+              style={inputStyle}
+            />
+          </div>
+
+          <div>
+            <label style={labelStyle}>Revisions included</label>
+            <input
+              type="text"
+              value={form.revisions_included}
+              onChange={(e) => setForm({...form, revisions_included: e.target.value})}
+              placeholder="e.g. 2 rounds of revisions included"
+              style={inputStyle}
+            />
           </div>
 
           {saveError && (
