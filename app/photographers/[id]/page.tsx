@@ -7,8 +7,12 @@ export default function PhotographerProfile() {
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [packages, setPackages] = useState<any[]>([]);
+  const [addons, setAddons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sessionType, setSessionType] = useState("Portrait (2 hours)");
+
+  const [selectedPackage, setSelectedPackage] = useState<any>(null);
+  const [addonQty, setAddonQty] = useState<Record<string, number>>({});
   const [selectedDate, setSelectedDate] = useState("");
   const [location, setLocation] = useState("");
   const [message, setMessage] = useState("");
@@ -27,38 +31,49 @@ export default function PhotographerProfile() {
         .eq("id", id)
         .eq("stripe_onboarding_completed", true)
         .single();
+
       setPhotographer(photographerData);
-      if (photographerData?.user_id) {
-        const { data: photoData } = await supabase
-          .from("portfolio_photos")
-          .select("*")
-          .eq("photographer_id", photographerData.user_id)
-          .order("order_index", { ascending: true });
+
+      if (photographerData) {
+        const [
+          { data: photoData },
+          { data: availData },
+          { data: reviewData },
+          { data: pkgData },
+          { data: addonData },
+        ] = await Promise.all([
+          supabase.from("portfolio_photos").select("*").eq("photographer_id", photographerData.user_id).order("order_index", { ascending: true }),
+          supabase.from("availability").select("*").eq("photographer_id", photographerData.user_id).eq("is_available", false),
+          supabase.from("reviews").select("*").eq("photographer_id", photographerData.user_id).order("created_at", { ascending: false }),
+          supabase.from("photographer_packages").select("*").eq("photographer_id", photographerData.id).order("sort_order").order("created_at"),
+          supabase.from("photographer_addons").select("*").eq("photographer_id", photographerData.id).order("sort_order").order("created_at"),
+        ]);
+
         setPhotos(photoData || []);
-        const { data: availData } = await supabase
-          .from("availability")
-          .select("*")
-          .eq("photographer_id", photographerData.user_id)
-          .eq("is_available", false);
-        const blocked = new Set<string>((availData || []).map((row: any) => row.date));
-        setBlockedDays(blocked);
-        const { data: reviewData } = await supabase
-          .from("reviews")
-          .select("*")
-          .eq("photographer_id", photographerData.user_id)
-          .order("created_at", { ascending: false });
+        setBlockedDays(new Set<string>((availData || []).map((row: any) => row.date)));
         setReviews(reviewData || []);
+
+        const pkgs = pkgData || [];
+        const ads = addonData || [];
+        setPackages(pkgs);
+        setAddons(ads);
+        if (pkgs.length > 0) setSelectedPackage(pkgs[0]);
+
+        // Restore pending booking saved before login redirect
+        const pending = localStorage.getItem("lomissa_pending_booking");
+        if (pending) {
+          try {
+            const { date, pendingPackageId } = JSON.parse(pending);
+            if (date) setSelectedDate(date);
+            if (pendingPackageId) {
+              const match = pkgs.find((p: any) => p.id === pendingPackageId);
+              if (match) setSelectedPackage(match);
+            }
+            localStorage.removeItem("lomissa_pending_booking");
+          } catch {}
+        }
       }
-      // Restore date/sessionType saved before login redirect
-      const pending = localStorage.getItem("lomissa_pending_booking");
-      if (pending) {
-        try {
-          const { date, sessionType: st } = JSON.parse(pending);
-          if (date) setSelectedDate(date);
-          if (st) setSessionType(st);
-          localStorage.removeItem("lomissa_pending_booking");
-        } catch {}
-      }
+
       setLoading(false);
     };
     getData();
@@ -69,7 +84,7 @@ export default function PhotographerProfile() {
     const month = currentMonth.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const days = [];
+    const days: (number | null)[] = [];
     const startDay = firstDay === 0 ? 6 : firstDay - 1;
     for (let i = 0; i < startDay; i++) days.push(null);
     for (let i = 1; i <= daysInMonth; i++) days.push(i);
@@ -100,17 +115,39 @@ export default function PhotographerProfile() {
   const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
 
+  const setAddonQuantity = (addonId: string, qty: number) => {
+    setAddonQty(prev => ({ ...prev, [addonId]: Math.max(0, qty) }));
+  };
+
+  const total = selectedPackage
+    ? selectedPackage.price + Object.entries(addonQty)
+        .filter(([, qty]) => (qty as number) > 0)
+        .reduce((sum, [id, qty]) => {
+          const addon = addons.find((a: any) => a.id === id);
+          return sum + (addon ? addon.price * (qty as number) : 0);
+        }, 0)
+    : 0;
+
+  const selectedAddonsList = addons.filter(a => (addonQty[a.id] || 0) > 0);
+
   const handleBooking = async () => {
+    if (!selectedPackage) { setError("Please select a package first."); return; }
     if (!selectedDate) { setError("Please select a date first."); return; }
+
     setBooking(true);
     setError("");
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       const id = window.location.pathname.split("/").pop();
-      localStorage.setItem("lomissa_pending_booking", JSON.stringify({ date: selectedDate, sessionType }));
+      localStorage.setItem("lomissa_pending_booking", JSON.stringify({
+        date: selectedDate,
+        pendingPackageId: selectedPackage.id,
+      }));
       window.location.href = `/login?redirect=/photographers/${id}`;
       return;
     }
+
     const { data: { session } } = await supabase.auth.getSession();
     try {
       const response = await fetch("/api/create-payment", {
@@ -123,8 +160,10 @@ export default function PhotographerProfile() {
           photographerName: photographer?.name,
           photographerEmail: photographer?.email || "",
           photographerId: photographer?.user_id,
-          sessionType,
-          price: photographer?.price || "",
+          packageId: selectedPackage.id,
+          addons: Object.entries(addonQty)
+            .filter(([, qty]) => (qty as number) > 0)
+            .map(([id, quantity]) => ({ id, quantity })),
           date: selectedDate,
           location,
           message,
@@ -132,13 +171,10 @@ export default function PhotographerProfile() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error === "price_on_request"
-          ? "This photographer hasn't set a price yet. Please message them to discuss rates before booking."
-          : "Something went wrong. Please try again.");
+        setError("Something went wrong. Please try again.");
         setBooking(false);
         return;
       }
-      // Redirect to Stripe checkout — webhook flips booking to pending after payment
       window.location.href = data.url;
     } catch {
       setError("Something went wrong. Please try again.");
@@ -161,8 +197,6 @@ export default function PhotographerProfile() {
 
   const days = getDaysInMonth();
   const monthName = currentMonth.toLocaleString("default", { month: "long", year: "numeric" });
-
-  // Photographer is "available" only if at least one of the next 30 days is not blocked
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const isCurrentMonth = currentMonth.getFullYear() === today.getFullYear() && currentMonth.getMonth() === today.getMonth();
@@ -171,6 +205,16 @@ export default function PhotographerProfile() {
     d.setDate(today.getDate() + i);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }).some(dateStr => !blockedDays.has(dateStr));
+
+  const minPackagePrice = packages.length > 0 ? Math.min(...packages.map(p => p.price)) : null;
+
+  const policy = photographer.cancellation_policy || "moderate";
+  const policyMap: Record<string, { label: string; desc: string; color: string; bg: string }> = {
+    flexible: { label: "Flexible cancellation", desc: "Full refund up to 24h before", color: "#15803d", bg: "#f0fdf4" },
+    moderate: { label: "Moderate cancellation", desc: "Full refund up to 48h before", color: "#B85528", bg: "#FBF0EA" },
+    strict:   { label: "Strict cancellation",   desc: "No refund once confirmed",     color: "#dc2626", bg: "#fef2f2" },
+  };
+  const policyInfo = policyMap[policy] || policyMap.moderate;
 
   return (
     <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
@@ -205,10 +249,12 @@ export default function PhotographerProfile() {
               </div>
             </div>
           </div>
-          <div style={{textAlign: "right"}}>
-            <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Starting from</p>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1C1009", margin: "0", letterSpacing: "-0.02em"}}>{photographer.price || "On request"}</p>
-          </div>
+          {minPackagePrice !== null && (
+            <div style={{textAlign: "right"}}>
+              <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>From</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1C1009", margin: "0", letterSpacing: "-0.02em"}}>{minPackagePrice.toLocaleString()} NOK</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -221,14 +267,13 @@ export default function PhotographerProfile() {
         </section>
       )}
 
-      {/* What's included */}
-      {(photographer.photos_delivered || photographer.delivery_time || photographer.copyright_ownership || photographer.editing_style || photographer.revisions_included) && (() => {
+      {/* Photographer terms (delivery, copyright, etc.) */}
+      {(photographer.delivery_time || photographer.copyright_ownership || photographer.editing_style || photographer.revisions_included) && (() => {
         const terms = [
-          { icon: "📷", label: "Photos delivered", value: photographer.photos_delivered },
-          { icon: "⏱️", label: "Delivery time",    value: photographer.delivery_time },
-          { icon: "⚖️", label: "Copyright",        value: photographer.copyright_ownership },
-          { icon: "🎨", label: "Editing style",    value: photographer.editing_style },
-          { icon: "✏️", label: "Revisions",        value: photographer.revisions_included },
+          { icon: "⏱️", label: "Delivery time",  value: photographer.delivery_time },
+          { icon: "⚖️", label: "Copyright",      value: photographer.copyright_ownership },
+          { icon: "🎨", label: "Editing style",  value: photographer.editing_style },
+          { icon: "✏️", label: "Revisions",      value: photographer.revisions_included },
         ].filter(t => t.value);
         return (
           <section style={{backgroundColor: "#FDFBF7", padding: "32px 48px", borderBottom: "1px solid #E4D8C4"}}>
@@ -236,9 +281,7 @@ export default function PhotographerProfile() {
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "16px"}}>
               {terms.map((t) => (
                 <div key={t.label} style={{display: "flex", alignItems: "flex-start", gap: "12px"}}>
-                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>
-                    {t.icon}
-                  </div>
+                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>{t.icon}</div>
                   <div>
                     <p style={{fontSize: "10px", color: "#B85528", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t.label.toUpperCase()}</p>
                     <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{t.value}</p>
@@ -313,25 +356,77 @@ export default function PhotographerProfile() {
                 <p style={{fontSize: "13px", color: "#B85528", margin: "0 0 24px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>{selectedDate}</p>
                 <a href="/dashboard" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>View my bookings</a>
               </div>
+            ) : packages.length === 0 ? (
+              <div>
+                <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#C3AB88", fontStyle: "italic", margin: "0 0 16px"}}>No packages yet</p>
+                <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 24px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>This photographer hasn't listed any packages yet. Send them a message to discuss rates and availability.</p>
+                <a href="/messages" style={{display: "block", textAlign: "center", backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Message photographer</a>
+              </div>
             ) : (
               <>
                 <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 24px"}}>{photographer.name?.split(" ")[0]}</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 20px"}}>{photographer.name?.split(" ")[0]}</p>
 
-                <div style={{marginBottom: "16px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Session type</label>
-                  <select value={sessionType} onChange={(e) => setSessionType(e.target.value)} style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", backgroundColor: "#FAF7F1", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>
-                    <option>Portrait (2 hours)</option>
-                    <option>Wedding (Full day)</option>
-                    <option>Engagement (3 hours)</option>
-                    <option>Family (2 hours)</option>
-                    <option>Event (4 hours)</option>
-                  </select>
+                {/* Package selector */}
+                <div style={{marginBottom: "20px"}}>
+                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CHOOSE A PACKAGE</label>
+                  <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+                    {packages.map((pkg) => {
+                      const selected = selectedPackage?.id === pkg.id;
+                      return (
+                        <button
+                          key={pkg.id}
+                          onClick={() => setSelectedPackage(pkg)}
+                          style={{border: `1px solid ${selected ? "#B85528" : "#E4D8C4"}`, borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", backgroundColor: selected ? "#FBF0EA" : "#FAF7F1", width: "100%", transition: "all 0.1s"}}
+                        >
+                          <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px"}}>
+                            <div style={{flex: 1}}>
+                              <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0 0 3px", fontFamily: "'Jost', sans-serif"}}>{pkg.name}</p>
+                              <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
+                              {pkg.description && <p style={{fontSize: "11px", color: "#7A5235", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
+                            </div>
+                            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: selected ? "#B85528" : "#1C1009", margin: "0", flexShrink: 0}}>{pkg.price.toLocaleString()} NOK</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
+                {/* Add-ons */}
+                {addons.length > 0 && (
+                  <div style={{marginBottom: "20px"}}>
+                    <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADD-ONS (OPTIONAL)</label>
+                    <div style={{display: "flex", flexDirection: "column", gap: "6px"}}>
+                      {addons.map((addon) => {
+                        const qty = addonQty[addon.id] || 0;
+                        return (
+                          <div key={addon.id} style={{border: `1px solid ${qty > 0 ? "#B85528" : "#E4D8C4"}`, borderRadius: "8px", padding: "10px 12px", backgroundColor: qty > 0 ? "#FBF0EA" : "#FAF7F1", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", transition: "all 0.1s"}}>
+                            <div style={{flex: 1}}>
+                              <p style={{fontSize: "13px", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
+                              <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK {addon.unit}</p>
+                            </div>
+                            {qty === 0 ? (
+                              <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#B85528", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>Add</button>
+                            ) : (
+                              <div style={{display: "flex", alignItems: "center", gap: "8px", flexShrink: 0}}>
+                                <button onClick={() => setAddonQuantity(addon.id, qty - 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #E4D8C4", backgroundColor: "#FAF7F1", cursor: "pointer", fontSize: "14px", color: "#1C1009", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>−</button>
+                                <span style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", fontFamily: "'Jost', sans-serif", minWidth: "16px", textAlign: "center"}}>{qty}</span>
+                                <button onClick={() => setAddonQuantity(addon.id, qty + 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #B85528", backgroundColor: "#B85528", cursor: "pointer", fontSize: "14px", color: "#FAF7F1", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>+</button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Date picker */}
                 <div style={{marginBottom: "16px"}}>
                   <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
-                    Select a date {selectedDate && <span style={{color: "#B85528", fontWeight: "600"}}>— {selectedDate}</span>}
+                    SELECT A DATE {selectedDate && <span style={{color: "#B85528", fontWeight: "600"}}>— {selectedDate}</span>}
                   </label>
                   <div style={{border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px", backgroundColor: "#FAF7F1"}}>
                     <div className="flex items-center justify-between mb-3">
@@ -350,20 +445,16 @@ export default function PhotographerProfile() {
                         const dateStr = formatDate(day);
                         const past = isPast(day);
                         const blocked = isBlocked(day);
-                        const selected = selectedDate === dateStr;
+                        const sel = selectedDate === dateStr;
                         return (
-                          <div key={day} onClick={() => handleDayClick(day)} style={{textAlign: "center", padding: "6px 2px", fontSize: "12px", borderRadius: "6px", cursor: past || blocked ? "not-allowed" : "pointer", backgroundColor: selected ? "#B85528" : past || blocked ? "#F5EFE4" : "#FDFBF7", color: selected ? "#FAF7F1" : past || blocked ? "#C3AB88" : "#1C1009", textDecoration: blocked && !past ? "line-through" : "none", fontWeight: selected ? "500" : "400", border: selected ? "1px solid #B85528" : "1px solid #E4D8C4", transition: "all 0.1s", fontFamily: "'Jost', sans-serif"}}>
+                          <div key={day} onClick={() => handleDayClick(day)} style={{textAlign: "center", padding: "6px 2px", fontSize: "12px", borderRadius: "6px", cursor: past || blocked ? "not-allowed" : "pointer", backgroundColor: sel ? "#B85528" : past || blocked ? "#F5EFE4" : "#FDFBF7", color: sel ? "#FAF7F1" : past || blocked ? "#C3AB88" : "#1C1009", textDecoration: blocked && !past ? "line-through" : "none", fontWeight: sel ? "500" : "400", border: sel ? "1px solid #B85528" : "1px solid #E4D8C4", transition: "all 0.1s", fontFamily: "'Jost', sans-serif"}}>
                             {day}
                           </div>
                         );
                       })}
                     </div>
                     <div style={{display: "flex", gap: "12px", marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #E4D8C4"}}>
-                      {[
-                        { color: "#FDFBF7", border: "1px solid #E4D8C4", label: "Available" },
-                        { color: "#F5EFE4", border: "none", label: "Unavailable" },
-                        { color: "#B85528", border: "none", label: "Selected" },
-                      ].map((item) => (
+                      {[{color: "#FDFBF7", border: "1px solid #E4D8C4", label: "Available"}, {color: "#F5EFE4", border: "none", label: "Unavailable"}, {color: "#B85528", border: "none", label: "Selected"}].map(item => (
                         <div key={item.label} style={{display: "flex", alignItems: "center", gap: "4px"}}>
                           <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: item.color, border: item.border}}></div>
                           <span style={{fontSize: "10px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>{item.label}</span>
@@ -373,53 +464,44 @@ export default function PhotographerProfile() {
                   </div>
                 </div>
 
+                {/* Location */}
                 <div style={{marginBottom: "16px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Location</label>
+                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOCATION</label>
                   <input type="text" placeholder="Where is the shoot?" value={location} onChange={(e) => setLocation(e.target.value)} style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
-                <div style={{marginBottom: "24px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Message</label>
+                {/* Message */}
+                <div style={{marginBottom: "20px"}}>
+                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>MESSAGE</label>
                   <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", resize: "none", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
-                {(() => {
-                  const priceNum = parseFloat((photographer.price || "").replace(/[^0-9.]/g, ""));
-                  const hasPricing = !isNaN(priceNum) && priceNum > 0;
-                  return hasPricing ? (
-                    <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "20px"}}>
-                      <div style={{display: "flex", justifyContent: "space-between", marginBottom: "8px"}}>
-                        <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Session fee</span>
-                        <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{photographer.price}</span>
-                      </div>
-                      <div style={{display: "flex", justifyContent: "space-between"}}>
-                        <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Lomissa fee</span>
-                        <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>10%</span>
-                      </div>
+                {/* Order summary */}
+                {selectedPackage && (
+                  <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "16px"}}>
+                    <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 10px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ORDER SUMMARY</p>
+                    <div style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
+                      <span style={{fontSize: "12px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.name}</span>
+                      <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.price.toLocaleString()} NOK</span>
                     </div>
-                  ) : (
-                    <div style={{backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", borderRadius: "8px", padding: "16px", marginBottom: "20px"}}>
-                      <p style={{fontSize: "13px", color: "#8F3A14", margin: "0 0 4px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>Price not set</p>
-                      <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>This photographer hasn't listed a price yet. Send them a message to discuss rates before booking.</p>
+                    {selectedAddonsList.map(addon => (
+                      <div key={addon.id} style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
+                        <span style={{fontSize: "12px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>{addon.name} ×{addonQty[addon.id]}</span>
+                        <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>+{(addon.price * addonQty[addon.id]).toLocaleString()} NOK</span>
+                      </div>
+                    ))}
+                    <div style={{borderTop: "1px solid #E4D8C4", marginTop: "8px", paddingTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                      <span style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>Total</span>
+                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1C1009"}}>{total.toLocaleString()} NOK</span>
                     </div>
-                  );
-                })()}
+                  </div>
+                )}
 
-                {(() => {
-                  const policy = photographer.cancellation_policy || "moderate";
-                  const policyMap: Record<string, { label: string; desc: string; color: string; bg: string }> = {
-                    flexible: { label: "Flexible cancellation", desc: "Full refund up to 24 hours before the session", color: "#15803d", bg: "#f0fdf4" },
-                    moderate: { label: "Moderate cancellation", desc: "Full refund up to 48 hours before the session", color: "#B85528", bg: "#FBF0EA" },
-                    strict:   { label: "Strict cancellation", desc: "No refund once the booking is confirmed", color: "#dc2626", bg: "#fef2f2" },
-                  };
-                  const p = policyMap[policy] || policyMap.moderate;
-                  return (
-                    <div style={{backgroundColor: p.bg, borderRadius: "8px", padding: "12px 14px", marginBottom: "16px"}}>
-                      <p style={{fontSize: "11px", fontWeight: "600", color: p.color, margin: "0 0 2px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{p.label.toUpperCase()}</p>
-                      <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>{p.desc}</p>
-                    </div>
-                  );
-                })()}
+                {/* Cancellation policy */}
+                <div style={{backgroundColor: policyInfo.bg, borderRadius: "8px", padding: "12px 14px", marginBottom: "16px"}}>
+                  <p style={{fontSize: "11px", fontWeight: "600", color: policyInfo.color, margin: "0 0 2px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{policyInfo.label.toUpperCase()}</p>
+                  <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>{policyInfo.desc}</p>
+                </div>
 
                 {error && (
                   <div style={{marginBottom: "16px", padding: "12px", borderRadius: "8px", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E"}}>
@@ -427,22 +509,14 @@ export default function PhotographerProfile() {
                   </div>
                 )}
 
-                {(() => {
-                  const priceNum = parseFloat((photographer.price || "").replace(/[^0-9.]/g, ""));
-                  const hasPricing = !isNaN(priceNum) && priceNum > 0;
-                  return hasPricing ? (
-                    <>
-                      <button onClick={handleBooking} disabled={booking} style={{width: "100%", backgroundColor: selectedDate ? "#B85528" : "#E4D8C4", color: selectedDate ? "#FAF7F1" : "#C3AB88", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}>
-                        {booking ? "Redirecting to payment…" : selectedDate ? `Book & Pay — ${selectedDate}` : "Select a date first"}
-                      </button>
-                      <p style={{fontSize: "11px", color: "#C3AB88", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
-                    </>
-                  ) : (
-                    <a href={`/messages`} style={{display: "block", width: "100%", backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginBottom: "12px", textAlign: "center", textDecoration: "none", fontFamily: "'Jost', sans-serif", boxSizing: "border-box"}}>
-                      Message photographer
-                    </a>
-                  );
-                })()}
+                <button
+                  onClick={handleBooking}
+                  disabled={booking || !selectedDate || !selectedPackage}
+                  style={{width: "100%", backgroundColor: selectedDate && selectedPackage ? "#B85528" : "#E4D8C4", color: selectedDate && selectedPackage ? "#FAF7F1" : "#C3AB88", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate && selectedPackage ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate && selectedPackage ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}
+                >
+                  {booking ? "Redirecting to payment…" : selectedDate && selectedPackage ? `Book & Pay — ${total.toLocaleString()} NOK` : "Select a package and date"}
+                </button>
+                <p style={{fontSize: "11px", color: "#C3AB88", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
               </>
             )}
           </div>

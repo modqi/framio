@@ -432,6 +432,7 @@ export default function PhotographerDashboard() {
               { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
               { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "/photographer-dashboard/portfolio" },
               { icon: "📅", title: "My availability", desc: "Set your available days", href: "/photographer-dashboard/availability" },
+              { icon: "📦", title: "My packages", desc: "Manage your sessions and add-ons", href: "/photographer-dashboard/packages" },
             ].map((action) => (
               <a key={action.title} href={action.href} style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #E4D8C4", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FAF7F1"}}>
                 <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#B85528", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>

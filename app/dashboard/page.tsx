@@ -290,6 +290,11 @@ export default function Dashboard() {
                         {booking.photographer_name} →
                       </a>
                       <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type}</p>
+                      {booking.package_snapshot && (
+                        <p style={{fontSize: "11px", color: "#C3AB88", margin: "2px 0 0", fontFamily: "'Jost', sans-serif"}}>
+                          {booking.package_snapshot.duration} · {booking.package_snapshot.photos_delivered} photos
+                        </p>
+                      )}
                     </div>
                     <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
                       {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}

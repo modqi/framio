@@ -17,11 +17,16 @@ export default function Photographers() {
   useEffect(() => {
     const getData = async () => {
       const [{ data }, { data: { user } }] = await Promise.all([
-        supabase.from("photographers").select("*").eq("stripe_onboarding_completed", true).order("created_at", { ascending: false }),
+        supabase
+          .from("photographers")
+          .select("*, photographer_packages(id, price)")
+          .eq("stripe_onboarding_completed", true)
+          .order("created_at", { ascending: false }),
         supabase.auth.getUser(),
       ]);
-      setPhotographers(data || []);
-      setFiltered(data || []);
+      const withPackages = (data || []).filter((p: any) => p.photographer_packages?.length > 0);
+      setPhotographers(withPackages);
+      setFiltered(withPackages);
       setAuthUser(user);
       setLoading(false);
     };
@@ -45,16 +50,16 @@ export default function Photographers() {
       );
     }
 
-    const parsePrice = (p: string | undefined): number | null => {
-      const n = parseFloat((p || "").replace(/[^0-9.]/g, ""));
-      return isNaN(n) || n <= 0 ? null : n;
+    const minPkg = (p: any): number | null => {
+      const prices = (p.photographer_packages || []).map((pkg: any) => pkg.price).filter((n: number) => n > 0);
+      return prices.length > 0 ? Math.min(...prices) : null;
     };
 
     if (sortBy === "rating") {
       results = results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     } else if (sortBy === "price_low") {
       results = results.sort((a, b) => {
-        const aP = parsePrice(a.price), bP = parsePrice(b.price);
+        const aP = minPkg(a), bP = minPkg(b);
         if (aP === null && bP === null) return 0;
         if (aP === null) return 1;
         if (bP === null) return -1;
@@ -62,7 +67,7 @@ export default function Photographers() {
       });
     } else if (sortBy === "price_high") {
       results = results.sort((a, b) => {
-        const aP = parsePrice(a.price), bP = parsePrice(b.price);
+        const aP = minPkg(a), bP = minPkg(b);
         if (aP === null && bP === null) return 0;
         if (aP === null) return 1;
         if (bP === null) return -1;
@@ -193,7 +198,12 @@ export default function Photographers() {
                   <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{photographer.location}</p>
                   <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px"}}>
                     <span style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>⭐ {photographer.rating || "New"}</span>
-                    <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009"}}>{photographer.price}</span>
+                    <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009"}}>
+                      {(() => {
+                        const prices = (photographer.photographer_packages || []).map((p: any) => p.price).filter((n: number) => n > 0);
+                        return prices.length > 0 ? `From ${Math.min(...prices).toLocaleString()} NOK` : "";
+                      })()}
+                    </span>
                   </div>
                   <div style={{display: "block", textAlign: "center", backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "10px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
                     View profile

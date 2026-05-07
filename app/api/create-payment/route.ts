@@ -25,33 +25,57 @@ export async function POST(request: NextRequest) {
       photographerName,
       photographerEmail,
       photographerId,
-      sessionType,
-      price,
+      packageId,
+      addons: selectedAddons, // [{id: string, quantity: number}]
       date,
       location,
       message,
     } = await request.json();
 
-    const priceAmount = Math.round(parseFloat(price.replace(/[^0-9.]/g, "")) * 100);
-    const isPriceOnRequest = isNaN(priceAmount) || priceAmount <= 0;
-
-    // Reject before touching the DB — no booking row should exist without payment
-    if (isPriceOnRequest) {
-      return NextResponse.json({ error: "price_on_request" }, { status: 400 });
+    if (!packageId) {
+      return NextResponse.json({ error: "no_package_selected" }, { status: 400 });
     }
 
-    // Look up the photographer's Connect account before inserting the booking
-    // so we don't create an orphaned awaiting_payment row if it's missing
+    // Look up the photographer before touching DB — bail early if no Connect account
     const { data: photographer } = await serviceClient
       .from("photographers")
-      .select("stripe_account_id, cancellation_policy, photos_delivered, delivery_time, copyright_ownership, editing_style, revisions_included")
+      .select("id, stripe_account_id, cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included")
       .eq("user_id", photographerId)
       .single();
 
     if (!photographer?.stripe_account_id) {
-      console.error("Photographer has no Stripe Connect account:", photographerId);
       return NextResponse.json({ error: "no_payment_account" }, { status: 400 });
     }
+
+    // Fetch and verify the selected package belongs to this photographer
+    const { data: pkg } = await serviceClient
+      .from("photographer_packages")
+      .select("*")
+      .eq("id", packageId)
+      .single();
+
+    if (!pkg || pkg.photographer_id !== photographer.id) {
+      return NextResponse.json({ error: "Invalid package" }, { status: 400 });
+    }
+
+    // Fetch and verify each add-on belongs to this photographer
+    const resolvedAddons: Array<{id: string; name: string; price: number; unit: string; quantity: number}> = [];
+    for (const { id, quantity } of (selectedAddons || [])) {
+      if (!quantity || quantity < 1) continue;
+      const { data: addon } = await serviceClient
+        .from("photographer_addons")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (addon && addon.photographer_id === photographer.id) {
+        resolvedAddons.push({ id: addon.id, name: addon.name, price: addon.price, unit: addon.unit, quantity });
+      }
+    }
+
+    // Compute total server-side
+    const addonTotal = resolvedAddons.reduce((sum, a) => sum + a.price * a.quantity, 0);
+    const total = pkg.price + addonTotal;
+    const priceDisplay = `${total.toLocaleString()} NOK`;
 
     // Insert booking — only after all pre-checks pass
     const { data: booking, error: insertError } = await serviceClient
@@ -63,20 +87,29 @@ export async function POST(request: NextRequest) {
         photographer_name: photographerName,
         photographer_id: photographerId,
         photographer_email: photographerEmail,
-        session_type: sessionType,
+        session_type: pkg.name,
         date,
         location,
         message,
-        price,
+        price: priceDisplay,
         status: "awaiting_payment",
         cancellation_policy_snapshot: photographer.cancellation_policy || "moderate",
         terms_snapshot: {
-          photos_delivered: photographer.photos_delivered || null,
+          photos_delivered: `${pkg.photos_delivered} photos`,
           delivery_time: photographer.delivery_time || null,
           copyright_ownership: photographer.copyright_ownership || null,
           editing_style: photographer.editing_style || null,
           revisions_included: photographer.revisions_included || null,
         },
+        package_snapshot: {
+          id: pkg.id,
+          name: pkg.name,
+          duration: pkg.duration,
+          photos_delivered: pkg.photos_delivered,
+          price: pkg.price,
+          description: pkg.description || null,
+        },
+        addons_snapshot: resolvedAddons,
       })
       .select("id")
       .single();
@@ -89,21 +122,32 @@ export async function POST(request: NextRequest) {
     const stripeAccount = await stripe.accounts.retrieve(photographer.stripe_account_id);
     const currency = stripeAccount.default_currency || "usd";
 
+    // Build line items: one per package + one per add-on (shows clean breakdown on Stripe receipt)
+    const lineItems = [
+      {
+        price_data: {
+          currency,
+          product_data: {
+            name: `${pkg.name} with ${photographerName}`,
+            description: `${pkg.duration} · ${pkg.photos_delivered} photos${date ? ` — ${date}` : ""}`,
+          },
+          unit_amount: pkg.price * 100,
+        },
+        quantity: 1,
+      },
+      ...resolvedAddons.map(a => ({
+        price_data: {
+          currency,
+          product_data: { name: `${a.name} (${a.unit})` },
+          unit_amount: a.price * 100,
+        },
+        quantity: a.quantity,
+      })),
+    ];
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency,
-            product_data: {
-              name: `Photography session with ${photographerName}`,
-              description: `${sessionType} — ${date} — ${location}`,
-            },
-            unit_amount: priceAmount,
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: "payment",
       payment_intent_data: {
         transfer_group: booking.id,
