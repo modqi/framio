@@ -18,10 +18,9 @@ export default function EditProfile() {
     name: "",
     bio: "",
     location: "",
-    price: "",
     instagram: "",
     website: "",
-    photos_delivered: "",
+    cancellation_policy: "moderate",
     delivery_time: "",
     copyright_ownership: "",
     editing_style: "",
@@ -40,17 +39,16 @@ export default function EditProfile() {
         const meta = user.user_metadata;
         const { data: row } = await supabase
           .from("photographers")
-          .select("photos_delivered, delivery_time, copyright_ownership, editing_style, revisions_included, specialities")
+          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities")
           .eq("user_id", user.id)
           .single();
         setForm({
           name: meta?.name || "",
           bio: meta?.bio || "",
           location: meta?.location || "",
-          price: meta?.price || "",
           instagram: meta?.instagram || "",
           website: meta?.website || "",
-          photos_delivered: row?.photos_delivered || "",
+          cancellation_policy: row?.cancellation_policy || "moderate",
           delivery_time: row?.delivery_time || "",
           copyright_ownership: row?.copyright_ownership || "",
           editing_style: row?.editing_style || "",
@@ -79,7 +77,6 @@ export default function EditProfile() {
         bio: form.bio,
         specialty: primarySpecialty,
         location: form.location,
-        price: form.price,
         instagram: form.instagram,
         website: form.website,
         name: form.name,
@@ -99,9 +96,9 @@ export default function EditProfile() {
       name: form.name, bio: form.bio,
       specialty: primarySpecialty || null,
       specialities: finalSpecialities,
-      location: form.location, price: form.price,
+      location: form.location,
       instagram: form.instagram, website: form.website,
-      photos_delivered: form.photos_delivered || null,
+      cancellation_policy: form.cancellation_policy,
       delivery_time: form.delivery_time || null,
       copyright_ownership: form.copyright_ownership || null,
       editing_style: form.editing_style || null,
@@ -218,11 +215,6 @@ export default function EditProfile() {
           </div>
 
           <div>
-            <label style={labelStyle}>Starting price</label>
-            <input type="text" value={form.price} onChange={(e) => setForm({...form, price: e.target.value})} placeholder="e.g. 3,200 NOK per session" style={inputStyle}/>
-          </div>
-
-          <div>
             <label style={labelStyle}>Bio</label>
             <textarea
               value={form.bio}
@@ -248,21 +240,38 @@ export default function EditProfile() {
             <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" style={inputStyle}/>
           </div>
 
-          {/* Divider */}
+          {/* Cancellation policy */}
+          <div style={{borderTop: "1px solid #E4D8C4", paddingTop: "24px"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>CANCELLATION POLICY</p>
+            <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>Shown to clients before they book. Applies to all new bookings.</p>
+            <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+              {[
+                { value: "flexible", label: "Flexible", desc: "Full refund up to 24 hours before the session" },
+                { value: "moderate", label: "Moderate", desc: "Full refund up to 48 hours before the session" },
+                { value: "strict", label: "Strict", desc: "No refund once the booking is confirmed" },
+              ].map((opt) => (
+                <label key={opt.value} style={{display: "flex", alignItems: "flex-start", gap: "12px", padding: "12px 14px", border: `1px solid ${form.cancellation_policy === opt.value ? "#B85528" : "#E4D8C4"}`, borderRadius: "8px", cursor: "pointer", backgroundColor: form.cancellation_policy === opt.value ? "#FBF0EA" : "#FAF7F1"}}>
+                  <input
+                    type="radio"
+                    name="cancellation_policy"
+                    value={opt.value}
+                    checked={form.cancellation_policy === opt.value}
+                    onChange={() => setForm({...form, cancellation_policy: opt.value})}
+                    style={{marginTop: "2px", accentColor: "#B85528"}}
+                  />
+                  <div>
+                    <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{opt.label}</p>
+                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{opt.desc}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Session terms */}
           <div style={{borderTop: "1px solid #E4D8C4", paddingTop: "24px"}}>
             <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>SESSION TERMS</p>
             <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>Shown to clients on your profile before they book. Leave blank to hide.</p>
-          </div>
-
-          <div>
-            <label style={labelStyle}>Photos delivered</label>
-            <input
-              type="text"
-              value={form.photos_delivered}
-              onChange={(e) => setForm({...form, photos_delivered: e.target.value})}
-              placeholder="e.g. 30–50 fully edited photos"
-              style={inputStyle}
-            />
           </div>
 
           <div>

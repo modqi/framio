@@ -30,10 +30,6 @@ export default function PhotographerDashboard() {
   const [connectIncomplete, setConnectIncomplete] = useState(false);
   const [markingDeliveredId, setMarkingDeliveredId] = useState<string | null>(null);
   const [deliverError, setDeliverError] = useState("");
-  const [cancellationPolicy, setCancellationPolicy] = useState("moderate");
-  const [savingPolicy, setSavingPolicy] = useState(false);
-  const [policySaved, setPolicySaved] = useState(false);
-  const [policyError, setPolicyError] = useState("");
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState("");
@@ -45,7 +41,7 @@ export default function PhotographerDashboard() {
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
     { task: "Add portfolio photos", done: false },
-    { task: "Set your prices", done: false },
+    { task: "Add packages", done: false },
     { task: "Add your location", done: false },
   ]);
 
@@ -83,7 +79,7 @@ export default function PhotographerDashboard() {
           { task: "Add profile photo", done: false },
           { task: "Write your bio", done: !!meta?.bio },
           { task: "Add portfolio photos", done: (photoCount || 0) > 0 },
-          { task: "Set your prices", done: !!meta?.price },
+          { task: "Add packages", done: false },
           { task: "Add your location", done: !!meta?.location },
         ];
         setTasks(updatedTasks);
@@ -92,11 +88,10 @@ export default function PhotographerDashboard() {
 
         const { data: photographerRow } = await supabase
           .from("photographers")
-          .select("stripe_onboarding_completed, cancellation_policy")
+          .select("stripe_onboarding_completed")
           .eq("user_id", user.id)
           .single();
         setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
-        setCancellationPolicy(photographerRow?.cancellation_policy || "moderate");
 
         const { data } = await supabase
           .from("bookings")
@@ -191,22 +186,6 @@ export default function PhotographerDashboard() {
     if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
     if (status === "cancelled") return { backgroundColor: "#fef2f2", color: "#dc2626" };
     return { backgroundColor: "#FBF0EA", color: "#B85528" };
-  };
-
-  const savePolicy = async () => {
-    setSavingPolicy(true);
-    setPolicyError("");
-    const { error } = await supabase
-      .from("photographers")
-      .update({ cancellation_policy: cancellationPolicy })
-      .eq("user_id", user.id);
-    setSavingPolicy(false);
-    if (error) {
-      setPolicyError("Failed to save. Please try again.");
-    } else {
-      setPolicySaved(true);
-      setTimeout(() => setPolicySaved(false), 3000);
-    }
   };
 
   const loadEarnings = async () => {
@@ -376,7 +355,7 @@ export default function PhotographerDashboard() {
           <div style={{flex: 1}}>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{user?.user_metadata?.name || "Your name"}</p>
             <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.location || "No location set"}</p>
-            <p style={{fontSize: "12px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || "No specialty set"}{user?.user_metadata?.price ? ` — ${user?.user_metadata?.price}` : ""}</p>
+            <p style={{fontSize: "12px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || "No specialty set"}</p>
           </div>
           <a href="/photographer-dashboard/edit-profile" style={{fontSize: "12px", color: "#1C1009", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", backgroundColor: "#FAF7F1", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>
             Edit profile
@@ -459,43 +438,6 @@ export default function PhotographerDashboard() {
               </div>
             </a>
           </div>
-        </div>
-
-        {/* Cancellation policy */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "32px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>CANCELLATION POLICY</p>
-          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>Refund policy for clients</h2>
-          <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 20px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>This policy is shown to clients before they book and applies to all new bookings.</p>
-          <div style={{display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px"}}>
-            {[
-              { value: "flexible", label: "Flexible", desc: "Full refund up to 24 hours before the session" },
-              { value: "moderate", label: "Moderate", desc: "Full refund up to 48 hours before the session" },
-              { value: "strict", label: "Strict", desc: "No refund once the booking is confirmed" },
-            ].map((opt) => (
-              <label key={opt.value} style={{display: "flex", alignItems: "flex-start", gap: "12px", padding: "14px 16px", border: `1px solid ${cancellationPolicy === opt.value ? "#B85528" : "#E4D8C4"}`, borderRadius: "10px", cursor: "pointer", backgroundColor: cancellationPolicy === opt.value ? "#FBF0EA" : "#FAF7F1"}}>
-                <input
-                  type="radio"
-                  name="cancellation_policy"
-                  value={opt.value}
-                  checked={cancellationPolicy === opt.value}
-                  onChange={() => setCancellationPolicy(opt.value)}
-                  style={{marginTop: "2px", accentColor: "#B85528"}}
-                />
-                <div>
-                  <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{opt.label}</p>
-                  <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{opt.desc}</p>
-                </div>
-              </label>
-            ))}
-          </div>
-          {policyError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0 0 12px", fontFamily: "'Jost', sans-serif"}}>{policyError}</p>}
-          <button
-            onClick={savePolicy}
-            disabled={savingPolicy}
-            style={{backgroundColor: policySaved ? "#15803d" : "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "10px 28px", border: "none", borderRadius: "999px", cursor: savingPolicy ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: savingPolicy ? 0.7 : 1}}
-          >
-            {policySaved ? "✓ Saved" : savingPolicy ? "Saving…" : "Save policy"}
-          </button>
         </div>
 
         {/* Booking requests */}
