@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 
-export default function PhotographerProfile() {
+export default function PhotographerProfile({ params }: { params: any }) {
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [packages, setPackages] = useState<any[]>([]);
   const [addons, setAddons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authUser, setAuthUser] = useState<any>(null);
 
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
   const [addonQty, setAddonQty] = useState<Record<string, number>>({});
@@ -23,14 +24,29 @@ export default function PhotographerProfile() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
-    const id = window.location.pathname.split("/").pop();
     const getData = async () => {
-      const { data: photographerData } = await supabase
-        .from("photographers")
-        .select("*")
-        .eq("id", id)
-        .eq("stripe_onboarding_completed", true)
-        .single();
+      // Next.js 16: params may be a Promise
+      let id: string;
+      if (typeof params?.then === "function") {
+        const resolved = await params;
+        id = resolved?.id;
+      } else {
+        id = params?.id;
+      }
+      // Fallback for safety
+      if (!id) id = window.location.pathname.split("/").filter(Boolean).pop() ?? "";
+
+      const [{ data: photographerData }, { data: { user } }] = await Promise.all([
+        supabase
+          .from("photographers")
+          .select("*")
+          .eq("id", id)
+          .eq("stripe_onboarding_completed", true)
+          .single(),
+        supabase.auth.getUser(),
+      ]);
+
+      setAuthUser(user);
 
       setPhotographer(photographerData);
 
@@ -224,7 +240,24 @@ export default function PhotographerProfile() {
         <Logo size="sm" />
         <div className="flex items-center gap-6">
           <a href="/photographers" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Explore</a>
-          <a href="/signup" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+          {authUser ? (
+            <>
+              <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>
+                {authUser.user_metadata?.name?.split(" ")[0] || "Hi"}
+              </span>
+              <a
+                href={authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
+                style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+              >
+                My dashboard
+              </a>
+            </>
+          ) : (
+            <>
+              <a href="/login" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
+              <a href="/signup" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+            </>
+          )}
         </div>
       </nav>
 
