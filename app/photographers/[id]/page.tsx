@@ -11,6 +11,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
   const [addons, setAddons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
   const [addonQty, setAddonQty] = useState<Record<string, number>>({});
@@ -47,6 +48,15 @@ export default function PhotographerProfile({ params }: { params: any }) {
       ]);
 
       setAuthUser(user);
+
+      if (user) {
+        const { data: adminRow } = await supabase
+          .from("admin_users")
+          .select("id")
+          .eq("email", user.email)
+          .single();
+        if (adminRow) setIsAdmin(true);
+      }
 
       setPhotographer(photographerData);
 
@@ -239,17 +249,21 @@ export default function PhotographerProfile({ params }: { params: any }) {
       <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <div className="flex items-center gap-6">
-          <a href="/photographers" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Explore</a>
+          {isAdmin ? (
+            <a href="/admin" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Admin panel</a>
+          ) : (
+            <a href="/photographers" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Explore</a>
+          )}
           {authUser ? (
             <>
               <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>
                 {authUser.user_metadata?.name?.split(" ")[0] || "Hi"}
               </span>
               <a
-                href={authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
+                href={isAdmin ? "/admin" : authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
                 style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
-                My dashboard
+                {isAdmin ? "Admin panel" : "My dashboard"}
               </a>
             </>
           ) : (
