@@ -3,16 +3,20 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 
+const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
+
 export default function EditProfile() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [otherChecked, setOtherChecked] = useState(false);
+  const [otherCategory, setOtherCategory] = useState("");
   const [form, setForm] = useState({
     name: "",
     bio: "",
-    specialty: "",
     location: "",
     price: "",
     instagram: "",
@@ -36,13 +40,12 @@ export default function EditProfile() {
         const meta = user.user_metadata;
         const { data: row } = await supabase
           .from("photographers")
-          .select("photos_delivered, delivery_time, copyright_ownership, editing_style, revisions_included")
+          .select("photos_delivered, delivery_time, copyright_ownership, editing_style, revisions_included, specialities")
           .eq("user_id", user.id)
           .single();
         setForm({
           name: meta?.name || "",
           bio: meta?.bio || "",
-          specialty: meta?.specialty || "",
           location: meta?.location || "",
           price: meta?.price || "",
           instagram: meta?.instagram || "",
@@ -53,6 +56,10 @@ export default function EditProfile() {
           editing_style: row?.editing_style || "",
           revisions_included: row?.revisions_included || "",
         });
+        const loaded: string[] = row?.specialities || [];
+        setSelectedCategories(loaded.filter((s: string) => CATEGORIES.includes(s)));
+        const otherVal = loaded.find((s: string) => !CATEGORIES.includes(s)) || "";
+        if (otherVal) { setOtherChecked(true); setOtherCategory(otherVal); }
       }
       setLoading(false);
     };
@@ -62,10 +69,15 @@ export default function EditProfile() {
   const handleSave = async () => {
     setSaving(true);
     setSaveError("");
+    const finalSpecialities = [
+      ...selectedCategories,
+      ...(otherChecked && otherCategory.trim() ? [otherCategory.trim()] : []),
+    ];
+    const primarySpecialty = finalSpecialities[0] || "";
     const { error: authError } = await supabase.auth.updateUser({
       data: {
         bio: form.bio,
-        specialty: form.specialty,
+        specialty: primarySpecialty,
         location: form.location,
         price: form.price,
         instagram: form.instagram,
@@ -84,7 +96,9 @@ export default function EditProfile() {
       .eq("user_id", user.id)
       .single();
     const dbPayload = {
-      name: form.name, bio: form.bio, specialty: form.specialty,
+      name: form.name, bio: form.bio,
+      specialty: primarySpecialty || null,
+      specialities: finalSpecialities,
       location: form.location, price: form.price,
       instagram: form.instagram, website: form.website,
       photos_delivered: form.photos_delivered || null,
@@ -163,7 +177,7 @@ export default function EditProfile() {
           </div>
           <div>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{form.name || "Your name"}</p>
-            <p style={{fontSize: "12px", color: "#B85528", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{form.specialty || "Your specialty"}</p>
+            <p style={{fontSize: "12px", color: "#B85528", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{selectedCategories[0] || (otherChecked && otherCategory) || "Your specialty"}</p>
             <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{form.location || "Your location"}</p>
           </div>
         </div>
@@ -182,18 +196,25 @@ export default function EditProfile() {
           </div>
 
           <div>
-            <label style={labelStyle}>Specialty</label>
-            <select value={form.specialty} onChange={(e) => setForm({...form, specialty: e.target.value})} style={inputStyle}>
-              <option value="">Select your specialty</option>
-              <option>Weddings</option>
-              <option>Portraits</option>
-              <option>Events</option>
-              <option>Travel</option>
-              <option>Fashion</option>
-              <option>Commercial</option>
-              <option>Street</option>
-              <option>Nature</option>
-            </select>
+            <label style={labelStyle}>Photography categories (select all that apply)</label>
+            <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: otherChecked ? "10px" : "0"}}>
+              {CATEGORIES.map(cat => {
+                const sel = selectedCategories.includes(cat);
+                return (
+                  <button key={cat} type="button"
+                    onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
+                    style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#B85528" : "#E4D8C4"}`, backgroundColor: sel ? "#B85528" : "#FAF7F1", color: sel ? "#FAF7F1" : "#7A5235", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
+                  >{cat}</button>
+                );
+              })}
+              <button type="button"
+                onClick={() => { setOtherChecked(!otherChecked); if (otherChecked) setOtherCategory(""); }}
+                style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${otherChecked ? "#B85528" : "#E4D8C4"}`, backgroundColor: otherChecked ? "#B85528" : "#FAF7F1", color: otherChecked ? "#FAF7F1" : "#7A5235", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: otherChecked ? "500" : "400"}}
+              >Other</button>
+            </div>
+            {otherChecked && (
+              <input type="text" value={otherCategory} onChange={(e) => setOtherCategory(e.target.value)} placeholder="Describe your specialty..." style={{...inputStyle, marginTop: "10px"}} />
+            )}
           </div>
 
           <div>

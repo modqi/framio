@@ -12,7 +12,7 @@ export default function Photographers() {
   const [sortBy, setSortBy] = useState("newest");
   const [authUser, setAuthUser] = useState<any>(null);
 
-  const specialties = ["All", "Portraits", "Weddings", "Events", "Travel", "Fashion", "Commercial", "Street", "Nature"];
+  const specialties = ["All", "Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
 
   useEffect(() => {
     const getData = async () => {
@@ -45,9 +45,10 @@ export default function Photographers() {
     }
 
     if (specialty !== "All") {
-      results = results.filter(p =>
-        p.specialty?.toLowerCase().includes(specialty.toLowerCase())
-      );
+      results = results.filter(p => {
+        if (p.specialities?.length > 0) return p.specialities.includes(specialty);
+        return p.specialty?.toLowerCase().includes(specialty.toLowerCase());
+      });
     }
 
     const minPkg = (p: any): number | null => {
@@ -193,7 +194,14 @@ export default function Photographers() {
                   <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "72px", fontWeight: "400", color: "#B85528", opacity: 0.5}}>{photographer.name?.[0]}</span>
                 </div>
                 <div style={{padding: "24px"}}>
-                  <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 6px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photographer.specialty}</p>
+                  <div style={{display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "6px"}}>
+                    {(photographer.specialities?.length > 0
+                      ? photographer.specialities.slice(0, 2)
+                      : photographer.specialty ? [photographer.specialty] : []
+                    ).map((cat: string) => (
+                      <span key={cat} style={{fontSize: "10px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.03em"}}>{cat}</span>
+                    ))}
+                  </div>
                   <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{photographer.name}</h3>
                   <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{photographer.location}</p>
                   <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px"}}>

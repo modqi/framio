@@ -280,6 +280,20 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{photographer.instagram}</a>
                 )}
               </div>
+              {(() => {
+                const cats: string[] = photographer.specialities?.length > 0
+                  ? photographer.specialities
+                  : photographer.specialty ? [photographer.specialty] : [];
+                return cats.length > 0 ? (
+                  <div style={{display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px"}}>
+                    {cats.map((cat: string) => (
+                      <span key={cat} style={{fontSize: "11px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "3px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                ) : null;
+              })()}
             </div>
           </div>
           {minPackagePrice !== null && (
@@ -415,7 +429,10 @@ export default function PhotographerProfile({ params }: { params: any }) {
                         >
                           <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px"}}>
                             <div style={{flex: 1}}>
-                              <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0 0 3px", fontFamily: "'Jost', sans-serif"}}>{pkg.name}</p>
+                              <div style={{display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "2px"}}>
+                                <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.name}</p>
+                                {pkg.category && <span style={{fontSize: "10px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "1px 7px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
+                              </div>
                               <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
                               {pkg.description && <p style={{fontSize: "11px", color: "#7A5235", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                             </div>

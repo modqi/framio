@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 
-const BLANK_PKG = { name: "", duration: "", photos_delivered: "", price: "", description: "" };
+const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
+const BLANK_PKG = { name: "", duration: "", photos_delivered: "", price: "", description: "", category: "" };
 const BLANK_ADDON = { name: "", price: "", unit: "flat fee" };
 
 export default function ManagePackages() {
@@ -54,7 +55,7 @@ export default function ManagePackages() {
 
   const openEditPkg = (pkg: any) => {
     setEditingPkgId(pkg.id);
-    setPkgForm({ name: pkg.name, duration: pkg.duration, photos_delivered: String(pkg.photos_delivered), price: String(pkg.price), description: pkg.description || "" });
+    setPkgForm({ name: pkg.name, duration: pkg.duration, photos_delivered: String(pkg.photos_delivered), price: String(pkg.price), description: pkg.description || "", category: pkg.category || "" });
     setShowPkgForm(true);
     setPkgError("");
   };
@@ -84,6 +85,7 @@ export default function ManagePackages() {
       photos_delivered: photosNum,
       price: priceNum,
       description: pkgForm.description.trim() || null,
+      category: pkgForm.category || null,
     };
 
     if (editingPkgId) {
@@ -256,7 +258,10 @@ export default function ManagePackages() {
                   <div style={{border: "1px solid #E4D8C4", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FAF7F1"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px"}}>
                       <div style={{flex: 1}}>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{pkg.name}</p>
+                        <div style={{display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px"}}>
+                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0"}}>{pkg.name}</p>
+                          {pkg.category && <span style={{fontSize: "10px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
+                        </div>
                         <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
                         {pkg.description && <p style={{fontSize: "12px", color: "#7A5235", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                       </div>
@@ -408,6 +413,13 @@ function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyl
         <div>
           <label style={labelStyle}>Description (optional)</label>
           <input type="text" value={form.description} onChange={(e) => setForm((f: any) => ({...f, description: e.target.value}))} placeholder="Short description for clients" style={inputStyle} />
+        </div>
+        <div>
+          <label style={labelStyle}>Category (optional)</label>
+          <select value={form.category} onChange={(e) => setForm((f: any) => ({...f, category: e.target.value}))} style={inputStyle}>
+            <option value="">— No category —</option>
+            {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
         </div>
         {error && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>}
         <div style={{display: "flex", gap: "10px"}}>

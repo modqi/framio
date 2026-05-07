@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 
+const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
+
 export default function JoinAsPhotographer() {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
@@ -10,13 +12,15 @@ export default function JoinAsPhotographer() {
     name: "",
     email: "",
     location: "",
-    specialty: "",
     experience: "",
     instagram: "",
     website: "",
     portfolio_link: "",
     about: "",
   });
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [otherChecked, setOtherChecked] = useState(false);
+  const [otherCategory, setOtherCategory] = useState("");
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.about) {
@@ -26,11 +30,16 @@ export default function JoinAsPhotographer() {
     setSaving(true);
     setError("");
 
+    const finalSpecialities = [
+      ...selectedCategories,
+      ...(otherChecked && otherCategory.trim() ? [otherCategory.trim()] : []),
+    ];
+
     const { error } = await supabase.from("applications").insert({
       name: form.name,
       email: form.email,
       location: form.location,
-      specialty: form.specialty,
+      specialty: finalSpecialities.join(", ") || "",
       experience: form.experience,
       instagram: form.instagram,
       website: form.website,
@@ -188,18 +197,25 @@ export default function JoinAsPhotographer() {
             <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 20px", letterSpacing: "1px"}}>Your photography</p>
             <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
               <div>
-                <label style={labelStyle}>Specialty</label>
-                <select value={form.specialty} onChange={(e) => setForm({...form, specialty: e.target.value})} style={inputStyle}>
-                  <option value="">Select your specialty</option>
-                  <option>Weddings</option>
-                  <option>Portraits</option>
-                  <option>Events</option>
-                  <option>Travel</option>
-                  <option>Fashion</option>
-                  <option>Commercial</option>
-                  <option>Street</option>
-                  <option>Nature</option>
-                </select>
+                <label style={labelStyle}>Photography categories (select all that apply)</label>
+                <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: otherChecked ? "10px" : "0"}}>
+                  {CATEGORIES.map(cat => {
+                    const sel = selectedCategories.includes(cat);
+                    return (
+                      <button key={cat} type="button"
+                        onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
+                        style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C4907A" : "#e5e5e5"}`, backgroundColor: sel ? "#C4907A" : "#fff", color: sel ? "#fff" : "#888", fontSize: "12px", cursor: "pointer", fontWeight: sel ? "600" : "400"}}
+                      >{cat}</button>
+                    );
+                  })}
+                  <button type="button"
+                    onClick={() => { setOtherChecked(!otherChecked); if (otherChecked) setOtherCategory(""); }}
+                    style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${otherChecked ? "#C4907A" : "#e5e5e5"}`, backgroundColor: otherChecked ? "#C4907A" : "#fff", color: otherChecked ? "#fff" : "#888", fontSize: "12px", cursor: "pointer", fontWeight: otherChecked ? "600" : "400"}}
+                  >Other</button>
+                </div>
+                {otherChecked && (
+                  <input type="text" value={otherCategory} onChange={(e) => setOtherCategory(e.target.value)} placeholder="Describe your specialty..." style={inputStyle} />
+                )}
               </div>
               <div>
                 <label style={labelStyle}>Years of experience</label>
