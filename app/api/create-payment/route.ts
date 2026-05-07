@@ -86,11 +86,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
     }
 
-    // Use the photographer's Stripe account currency so the client is charged
-    // in the correct local currency — Stripe Connect handles multi-currency.
     const stripeAccount = await stripe.accounts.retrieve(photographer.stripe_account_id);
     const currency = stripeAccount.default_currency || "usd";
-    const feeAmount = Math.round(priceAmount * 0.10);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -109,8 +106,7 @@ export async function POST(request: NextRequest) {
       ],
       mode: "payment",
       payment_intent_data: {
-        application_fee_amount: feeAmount,
-        transfer_data: { destination: photographer.stripe_account_id },
+        transfer_group: booking.id,
       },
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?booking=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/photographers`,

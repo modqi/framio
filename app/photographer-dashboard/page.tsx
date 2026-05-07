@@ -28,6 +28,8 @@ export default function PhotographerDashboard() {
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [connectIncomplete, setConnectIncomplete] = useState(false);
+  const [markingDeliveredId, setMarkingDeliveredId] = useState<string | null>(null);
+  const [deliverError, setDeliverError] = useState("");
   const [cancellationPolicy, setCancellationPolicy] = useState("moderate");
   const [savingPolicy, setSavingPolicy] = useState(false);
   const [policySaved, setPolicySaved] = useState(false);
@@ -182,6 +184,10 @@ export default function PhotographerDashboard() {
 
   const getStatusStyle = (status: string) => {
     if (status === "confirmed") return { backgroundColor: "#f0fdf4", color: "#15803d" };
+    if (status === "completed") return { backgroundColor: "#eff6ff", color: "#1d4ed8" };
+    if (status === "photos_delivered") return { backgroundColor: "#faf5ff", color: "#7c3aed" };
+    if (status === "paid_out") return { backgroundColor: "#f0fdf4", color: "#15803d" };
+    if (status === "disputed") return { backgroundColor: "#fef3c7", color: "#b45309" };
     if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
     if (status === "cancelled") return { backgroundColor: "#fef2f2", color: "#dc2626" };
     return { backgroundColor: "#FBF0EA", color: "#B85528" };
@@ -223,6 +229,30 @@ export default function PhotographerDashboard() {
       setEarningsData({});
     }
     setEarningsLoading(false);
+  };
+
+  const handleMarkDelivered = async (id: string) => {
+    setMarkingDeliveredId(id);
+    setDeliverError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/mark-photos-delivered", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ bookingId: id }),
+      });
+      if (!res.ok) {
+        setDeliverError("Failed to update. Please try again.");
+      } else {
+        setBookings(prev => prev.map(b => b.id === id ? { ...b, status: "photos_delivered" } : b));
+      }
+    } catch {
+      setDeliverError("Something went wrong. Please try again.");
+    }
+    setMarkingDeliveredId(null);
   };
 
   const handleCancelBooking = async (id: string) => {
@@ -567,6 +597,29 @@ export default function PhotographerDashboard() {
                         </button>
                       )
                     )}
+                    {booking.status === "completed" && (
+                      <button
+                        onClick={() => handleMarkDelivered(booking.id)}
+                        disabled={markingDeliveredId === booking.id}
+                        style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#7c3aed", border: "none", padding: "8px 20px", borderRadius: "999px", cursor: markingDeliveredId === booking.id ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: markingDeliveredId === booking.id ? 0.6 : 1}}
+                      >
+                        {markingDeliveredId === booking.id ? "Updating…" : "Mark photos as delivered"}
+                      </button>
+                    )}
+                    {booking.status === "photos_delivered" && (
+                      <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
+                        Photos delivered — payout due {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
+                      </span>
+                    )}
+                    {booking.status === "paid_out" && (
+                      <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>✓ Payment released</span>
+                    )}
+                    {booking.status === "disputed" && (
+                      <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>⚠ Under admin review</span>
+                    )}
+                    {deliverError && markingDeliveredId === null && (
+                      <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{deliverError}</p>
+                    )}
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message client
                     </a>
@@ -598,7 +651,9 @@ export default function PhotographerDashboard() {
           };
 
           const earningRows = bookings.filter(b =>
-            b.status === "confirmed" || b.status === "cancelled"
+            b.status === "confirmed" || b.status === "completed" ||
+            b.status === "photos_delivered" || b.status === "paid_out" ||
+            b.status === "disputed" || b.status === "cancelled"
           );
 
           return (
@@ -724,6 +779,14 @@ export default function PhotographerDashboard() {
                           const isPast = booking.date && new Date(booking.date + "T00:00:00") < now;
                           const rowStatus = booking.status === "cancelled"
                             ? { label: "Cancelled", bg: "#fef2f2", color: "#dc2626" }
+                            : booking.status === "disputed"
+                            ? { label: "Disputed", bg: "#fef3c7", color: "#b45309" }
+                            : booking.status === "paid_out"
+                            ? { label: "Paid out", bg: "#f0fdf4", color: "#15803d" }
+                            : booking.status === "photos_delivered"
+                            ? { label: "Photos delivered", bg: "#faf5ff", color: "#7c3aed" }
+                            : booking.status === "completed"
+                            ? { label: "Completed", bg: "#eff6ff", color: "#1d4ed8" }
                             : isPast
                             ? { label: "Earned", bg: "#f0fdf4", color: "#15803d" }
                             : { label: "Upcoming", bg: "#FBF0EA", color: "#B85528" };

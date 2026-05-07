@@ -16,7 +16,11 @@ export default function AdminPanel() {
     totalBookings: 0,
     totalPhotographers: 0,
     pendingApplications: 0,
+    openDisputes: 0,
   });
+  const [disputeNotes, setDisputeNotes] = useState<Record<string, string>>({});
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
+  const [resolveError, setResolveError] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -49,6 +53,7 @@ export default function AdminPanel() {
         totalBookings: (bks || []).length,
         totalPhotographers: (photos || []).length,
         pendingApplications: (apps || []).filter((a: any) => a.status === "pending").length,
+        openDisputes: (bks || []).filter((b: any) => b.status === "disputed").length,
       });
       setLoading(false);
     };
@@ -93,6 +98,37 @@ export default function AdminPanel() {
         }),
       });
     }
+  };
+
+  const handleResolveDispute = async (bookingId: string, action: "release" | "refund") => {
+    setResolvingId(bookingId + action);
+    setResolveError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/admin-resolve-dispute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({
+          bookingId,
+          action,
+          adminNote: disputeNotes[bookingId] || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setResolveError(data.error || "Failed to resolve dispute.");
+      } else {
+        const newStatus = action === "release" ? "paid_out" : "cancelled";
+        setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: newStatus } : b));
+        setStats(prev => ({ ...prev, openDisputes: prev.openDisputes - 1 }));
+      }
+    } catch {
+      setResolveError("Something went wrong. Please try again.");
+    }
+    setResolvingId(null);
   };
 
   const handleReject = async (app: any) => {
@@ -179,11 +215,12 @@ export default function AdminPanel() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           {[
             { label: "Total bookings", value: stats.totalBookings },
             { label: "Photographers", value: stats.totalPhotographers },
             { label: "Pending applications", value: stats.pendingApplications },
+            { label: "Open disputes", value: stats.openDisputes },
           ].map((stat) => (
             <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
               <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
@@ -193,12 +230,13 @@ export default function AdminPanel() {
         </div>
 
         {/* Tabs */}
-        <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F5EFE4", padding: "4px", borderRadius: "999px", width: "fit-content"}}>
+        <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F5EFE4", padding: "4px", borderRadius: "999px", width: "fit-content", flexWrap: "wrap"}}>
           {[
             { key: "overview", label: "Overview" },
             { key: "applications", label: `Applications (${stats.pendingApplications})` },
             { key: "photographers", label: "Photographers" },
             { key: "bookings", label: "Bookings" },
+            { key: "disputes", label: `Disputes${stats.openDisputes > 0 ? ` (${stats.openDisputes})` : ""}` },
           ].map((t) => (
             <button key={t.key} onClick={() => { setTab(t.key); setPage(0); }} style={tabStyle(t.key)}>{t.label}</button>
           ))}
@@ -332,6 +370,74 @@ export default function AdminPanel() {
             )}
           </div>
         )}
+
+        {/* Disputes */}
+        {tab === "disputes" && (() => {
+          const disputes = bookings.filter(b => b.status === "disputed");
+          return (
+            <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>OPEN DISPUTES — {disputes.length} TOTAL</p>
+              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1C1009", margin: "0 0 24px", letterSpacing: "-0.02em"}}>
+                Resolve disputes
+              </h2>
+              {resolveError && (
+                <div style={{marginBottom: "16px", padding: "10px 14px", borderRadius: "8px", backgroundColor: "#fef2f2", border: "1px solid #fce8e8"}}>
+                  <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{resolveError}</p>
+                </div>
+              )}
+              {disputes.length === 0 ? (
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No open disputes</p>
+              ) : (
+                <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
+                  {disputes.map((booking) => (
+                    <div key={booking.id} style={{border: "1px solid #fde68a", borderRadius: "12px", padding: "24px", backgroundColor: "#fffbeb"}}>
+                      <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "16px"}}>
+                        <div>
+                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{booking.client_name} → {booking.photographer_name}</p>
+                          <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{booking.session_type} — {booking.date} — {booking.price}</p>
+                          <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.client_email} · {booking.photographer_email}</p>
+                        </div>
+                        <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#fef3c7", color: "#b45309"}}>Disputed</span>
+                      </div>
+                      {booking.dispute_reason && (
+                        <div style={{backgroundColor: "#FAF7F1", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px"}}>
+                          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CLIENT REASON</p>
+                          <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.6"}}>"{booking.dispute_reason}"</p>
+                        </div>
+                      )}
+                      <div style={{marginBottom: "16px"}}>
+                        <label style={{display: "block", fontSize: "11px", color: "#7A5235", margin: "0 0 8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADMIN NOTE (optional)</label>
+                        <textarea
+                          value={disputeNotes[booking.id] || ""}
+                          onChange={(e) => setDisputeNotes(prev => ({ ...prev, [booking.id]: e.target.value }))}
+                          placeholder="Add a note about this resolution..."
+                          rows={2}
+                          style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 14px", fontSize: "13px", fontFamily: "'Jost', sans-serif", resize: "none", outline: "none", backgroundColor: "#FAF7F1", boxSizing: "border-box"}}
+                        />
+                      </div>
+                      <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
+                        <button
+                          onClick={() => handleResolveDispute(booking.id, "release")}
+                          disabled={resolvingId !== null}
+                          style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#15803d", border: "none", padding: "10px 24px", borderRadius: "999px", cursor: resolvingId !== null ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: resolvingId === booking.id + "release" ? 0.6 : 1}}
+                        >
+                          {resolvingId === booking.id + "release" ? "Releasing…" : "Release payment to photographer"}
+                        </button>
+                        <button
+                          onClick={() => handleResolveDispute(booking.id, "refund")}
+                          disabled={resolvingId !== null}
+                          style={{fontSize: "13px", color: "#dc2626", backgroundColor: "transparent", border: "1px solid #fce8e8", padding: "10px 24px", borderRadius: "999px", cursor: resolvingId !== null ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", opacity: resolvingId === booking.id + "refund" ? 0.6 : 1}}
+                        >
+                          {resolvingId === booking.id + "refund" ? "Refunding…" : "Refund client"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Bookings */}
         {tab === "bookings" && (

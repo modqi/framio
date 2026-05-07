@@ -13,6 +13,10 @@ export default function Dashboard() {
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState("");
+  const [disputeBookingId, setDisputeBookingId] = useState<string | null>(null);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [raisingDispute, setRaisingDispute] = useState(false);
+  const [disputeError, setDisputeError] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -83,6 +87,10 @@ export default function Dashboard() {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case "confirmed": return { backgroundColor: "#f0fdf4", color: "#15803d" };
+      case "completed": return { backgroundColor: "#eff6ff", color: "#1d4ed8" };
+      case "photos_delivered": return { backgroundColor: "#faf5ff", color: "#7c3aed" };
+      case "paid_out": return { backgroundColor: "#f0fdf4", color: "#15803d" };
+      case "disputed": return { backgroundColor: "#fef3c7", color: "#b45309" };
       case "pending": return { backgroundColor: "#FBF0EA", color: "#B85528" };
       case "declined": return { backgroundColor: "#fef2f2", color: "#dc2626" };
       case "cancelled": return { backgroundColor: "#fef2f2", color: "#dc2626" };
@@ -101,6 +109,33 @@ export default function Dashboard() {
     return hoursUntil > hours
       ? `Full refund available (cancel more than ${hours}h before session)`
       : `No refund — session is within ${hours}h`;
+  };
+
+  const handleRaiseDispute = async (bookingId: string) => {
+    setRaisingDispute(true);
+    setDisputeError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/raise-dispute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ bookingId, reason: disputeReason }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setDisputeError(data.error || "Failed to raise dispute. Please try again.");
+      } else {
+        setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "disputed" } : b));
+        setDisputeBookingId(null);
+        setDisputeReason("");
+      }
+    } catch {
+      setDisputeError("Something went wrong. Please try again.");
+    }
+    setRaisingDispute(false);
   };
 
   const handleCancel = async (bookingId: string) => {
@@ -285,6 +320,56 @@ export default function Dashboard() {
                     </div>
                   )}
                   <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E4D8C4", display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center"}}>
+                    {booking.status === "photos_delivered" && (
+                      disputeBookingId === booking.id ? (
+                        <div style={{width: "100%", display: "flex", flexDirection: "column", gap: "10px"}}>
+                          <p style={{fontSize: "13px", color: "#7c3aed", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                            Raise a dispute — describe the issue:
+                          </p>
+                          <textarea
+                            value={disputeReason}
+                            onChange={(e) => setDisputeReason(e.target.value)}
+                            placeholder="Describe why you're disputing (e.g. photos not delivered, wrong photos, quality issues...)"
+                            rows={3}
+                            style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 14px", fontSize: "13px", fontFamily: "'Jost', sans-serif", resize: "none", outline: "none", backgroundColor: "#FAF7F1", boxSizing: "border-box"}}
+                          />
+                          <div style={{display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center"}}>
+                            <button
+                              onClick={() => handleRaiseDispute(booking.id)}
+                              disabled={raisingDispute || !disputeReason.trim()}
+                              style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#b45309", border: "none", padding: "8px 20px", borderRadius: "999px", cursor: raisingDispute || !disputeReason.trim() ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: raisingDispute || !disputeReason.trim() ? 0.6 : 1}}
+                            >
+                              {raisingDispute ? "Submitting…" : "Submit dispute"}
+                            </button>
+                            <button
+                              onClick={() => { setDisputeBookingId(null); setDisputeReason(""); setDisputeError(""); }}
+                              style={{fontSize: "12px", color: "#7A5235", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "8px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                            >
+                              Cancel
+                            </button>
+                            {disputeError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{disputeError}</p>}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
+                          <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
+                            📸 Photos delivered — dispute window closes {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
+                          </span>
+                          <button
+                            onClick={() => { setDisputeBookingId(booking.id); setDisputeError(""); }}
+                            style={{fontSize: "12px", color: "#b45309", backgroundColor: "transparent", border: "1px solid #fde68a", padding: "6px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                          >
+                            Raise a dispute
+                          </button>
+                        </div>
+                      )
+                    )}
+                    {booking.status === "paid_out" && (
+                      <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>✓ Photos delivered and payment released</span>
+                    )}
+                    {booking.status === "disputed" && (
+                      <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>⚠ Dispute under admin review — we'll be in touch</span>
+                    )}
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message photographer
                     </a>
