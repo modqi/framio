@@ -58,17 +58,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid package" }, { status: 400 });
     }
 
-    // Fetch and verify each add-on belongs to this photographer
+    // Fetch and verify add-ons — single batch query filtered to this photographer
     const resolvedAddons: Array<{id: string; name: string; price: number; unit: string; quantity: number}> = [];
-    for (const { id, quantity } of (selectedAddons || [])) {
-      if (!quantity || quantity < 1) continue;
-      const { data: addon } = await serviceClient
+    const requestedAddons = (selectedAddons || []).filter(
+      ({ id, quantity }: { id: string; quantity: number }) => id && quantity >= 1
+    );
+    if (requestedAddons.length > 0) {
+      const addonIds = requestedAddons.map(({ id }: { id: string }) => id);
+      const { data: addonRows } = await serviceClient
         .from("photographer_addons")
-        .select("*")
-        .eq("id", id)
-        .single();
-      if (addon && addon.photographer_id === photographer.id) {
-        resolvedAddons.push({ id: addon.id, name: addon.name, price: addon.price, unit: addon.unit, quantity });
+        .select("id, name, price, unit, photographer_id")
+        .in("id", addonIds)
+        .eq("photographer_id", photographer.id);
+      const addonMap = new Map((addonRows ?? []).map((a: any) => [a.id, a]));
+      for (const { id, quantity } of requestedAddons) {
+        const addon = addonMap.get(id);
+        if (addon) resolvedAddons.push({ id: addon.id, name: addon.name, price: addon.price, unit: addon.unit, quantity });
       }
     }
 

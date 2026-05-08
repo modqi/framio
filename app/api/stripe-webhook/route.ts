@@ -80,8 +80,9 @@ export async function POST(request: NextRequest) {
       price,
     } = booking;
 
-    // Notify photographer — new paid booking waiting for their response
-    await resend.emails.send({
+    // Notify both parties in parallel
+    await Promise.all([
+    resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
       to: photographerEmail || "hello@lomissa.com",
       subject: `New booking request from ${esc(clientName)}!`,
@@ -146,10 +147,8 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    });
-
-    // Confirm to client — their payment went through and the request is with the photographer
-    await resend.emails.send({
+    }),
+    resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
       to: clientEmail,
       subject: `Your booking request to ${esc(photographerName)} has been sent!`,
@@ -201,7 +200,8 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    });
+    }),
+    ]);
   }
 
   return NextResponse.json({ received: true });

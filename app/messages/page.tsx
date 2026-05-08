@@ -28,19 +28,13 @@ export default function Messages() {
 
     const bookingIds = bookings.map((b) => b.id);
 
-    const [{ data: allMessages }, { data: unreadRows }, { data: deletions }] =
+    const [{ data: allMessages }, { data: deletions }] =
       await Promise.all([
         supabase
           .from("messages")
-          .select("id, booking_id, sender_id, content, created_at")
+          .select("id, booking_id, sender_id, receiver_id, content, created_at, read")
           .in("booking_id", bookingIds)
           .order("created_at", { ascending: false }),
-        supabase
-          .from("messages")
-          .select("booking_id, created_at")
-          .in("booking_id", bookingIds)
-          .eq("receiver_id", uid)
-          .eq("read", false),
         supabase
           .from("conversation_deletions")
           .select("booking_id, deleted_at")
@@ -69,9 +63,10 @@ export default function Messages() {
       return !!last && new Date(last.created_at) > new Date(deletedAt);
     };
 
-    // Only count unread messages that arrived after any deletion timestamp
+    // Count unread messages (sent to this user, after any deletion timestamp)
     const unreadByBooking: Record<string, number> = {};
-    for (const m of (unreadRows ?? []) as any[]) {
+    for (const m of (allMessages ?? []) as any[]) {
+      if (m.receiver_id !== uid || m.read) continue;
       const deletedAt = deletionMap.get(m.booking_id);
       if (deletedAt && new Date(m.created_at) <= new Date(deletedAt)) continue;
       unreadByBooking[m.booking_id] = (unreadByBooking[m.booking_id] ?? 0) + 1;
