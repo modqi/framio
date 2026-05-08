@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 
@@ -370,8 +371,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
               ))
             ) : (
               photos.map((photo, index) => (
-                <div key={photo.id} style={{aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E4D8C4"}}>
-                  <img src={photo.url} alt={`Portfolio photo ${index + 1}`} style={{width: "100%", height: "100%", objectFit: "cover"}}/>
+                <div key={photo.id} style={{aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E4D8C4", position: "relative"}}>
+                  <Image src={photo.url} alt={`Portfolio photo ${index + 1}`} fill sizes="(max-width: 768px) 33vw, 20vw" style={{objectFit: "cover"}}/>
                 </div>
               ))
             )}
