@@ -12,9 +12,12 @@ export default function AdminPanel() {
   const [applications, setApplications] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
   const [photographers, setPhotographers] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
+  const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
   const [stats, setStats] = useState({
     totalBookings: 0,
     totalPhotographers: 0,
+    totalClients: 0,
     pendingApplications: 0,
     openDisputes: 0,
   });
@@ -36,22 +39,30 @@ export default function AdminPanel() {
       if (!adminData) { window.location.href = "/studio-access"; return; }
       setAuthorized(true);
 
+      const { data: { session } } = await supabase.auth.getSession();
+
       const [
         { data: apps },
         { data: bks },
         { data: photos },
+        clientsRes,
       ] = await Promise.all([
         supabase.from("applications").select("*").order("created_at", { ascending: false }),
         supabase.from("bookings").select("*").order("created_at", { ascending: false }),
         supabase.from("photographers").select("*").order("created_at", { ascending: false }),
+        fetch("/api/admin/clients", {
+          headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+        }).then((r) => r.json()).catch(() => ({ clients: [] })),
       ]);
 
       setApplications(apps || []);
       setBookings(bks || []);
       setPhotographers(photos || []);
+      setClients(clientsRes.clients || []);
       setStats({
         totalBookings: (bks || []).length,
         totalPhotographers: (photos || []).length,
+        totalClients: (clientsRes.clients || []).length,
         pendingApplications: (apps || []).filter((a: any) => a.status === "pending").length,
         openDisputes: (bks || []).filter((b: any) => b.status === "disputed").length,
       });
@@ -215,10 +226,11 @@ export default function AdminPanel() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
           {[
             { label: "Total bookings", value: stats.totalBookings },
             { label: "Photographers", value: stats.totalPhotographers },
+            { label: "Clients", value: stats.totalClients },
             { label: "Pending applications", value: stats.pendingApplications },
             { label: "Open disputes", value: stats.openDisputes },
           ].map((stat) => (
@@ -235,6 +247,7 @@ export default function AdminPanel() {
             { key: "overview", label: "Overview" },
             { key: "applications", label: `Applications (${stats.pendingApplications})` },
             { key: "photographers", label: "Photographers" },
+            { key: "clients", label: `Clients (${stats.totalClients})` },
             { key: "bookings", label: "Bookings" },
             { key: "disputes", label: `Disputes${stats.openDisputes > 0 ? ` (${stats.openDisputes})` : ""}` },
           ].map((t) => (
@@ -366,6 +379,96 @@ export default function AdminPanel() {
                 <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
                 <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(photographers.length / PAGE_SIZE)}</span>
                 <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= photographers.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= photographers.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= photographers.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Clients */}
+        {tab === "clients" && (
+          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+              ALL CLIENTS — {clients.length} TOTAL
+              {clients.filter(c => c.pending_deletion).length > 0 && (
+                <span style={{marginLeft: "12px", color: "#dc2626"}}>
+                  · {clients.filter(c => c.pending_deletion).length} pending deletion
+                </span>
+              )}
+            </p>
+            {clients.length === 0 ? (
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No clients yet</p>
+            ) : (
+              <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
+                {clients.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((client) => {
+                  const clientBookings = bookings.filter(b => b.client_id === client.id);
+                  const isExpanded = expandedClientId === client.id;
+                  return (
+                    <div key={client.id} style={{border: client.pending_deletion ? "1px solid #fecaca" : "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: client.pending_deletion ? "#fff8f8" : "#FAF7F1"}}>
+                      <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px"}}>
+                        <div>
+                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>
+                            {client.name || <span style={{color: "#C3AB88", fontStyle: "italic"}}>No name set</span>}
+                          </p>
+                          <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{client.email}</p>
+                          <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                            Joined {new Date(client.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                          </p>
+                        </div>
+                        <div style={{display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px"}}>
+                          <div style={{display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end"}}>
+                            <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#F5EFE4", color: "#7A5235"}}>
+                              {client.booking_count} booking{client.booking_count !== 1 ? "s" : ""}
+                            </span>
+                            {client.pending_deletion ? (
+                              <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#fef2f2", color: "#dc2626"}}>
+                                Pending deletion
+                              </span>
+                            ) : (
+                              <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#f0fdf4", color: "#15803d"}}>
+                                Active
+                              </span>
+                            )}
+                          </div>
+                          {client.pending_deletion && client.scheduled_deletion_at && (
+                            <p style={{fontSize: "11px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                              Deletes {new Date(client.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {client.booking_count > 0 && (
+                        <div style={{marginTop: "12px"}}>
+                          <button
+                            onClick={() => setExpandedClientId(isExpanded ? null : client.id)}
+                            style={{fontSize: "12px", color: "#B85528", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}
+                          >
+                            {isExpanded ? "Hide booking history ↑" : `View booking history (${client.booking_count}) →`}
+                          </button>
+                          {isExpanded && (
+                            <div style={{marginTop: "12px", display: "flex", flexDirection: "column", gap: "8px"}}>
+                              {clientBookings.map((b) => (
+                                <div key={b.id} style={{backgroundColor: "#FDFBF7", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px"}}>
+                                  <div>
+                                    <p style={{fontSize: "13px", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{b.session_type} with {b.photographer_name}</p>
+                                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{b.date || "No date"} · {b.price}</p>
+                                  </div>
+                                  <span style={statusBadge(b.status)}>{b.status}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {clients.length > PAGE_SIZE && (
+              <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(clients.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= clients.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= clients.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= clients.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
               </div>
             )}
           </div>
