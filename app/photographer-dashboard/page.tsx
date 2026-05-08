@@ -37,6 +37,11 @@ export default function PhotographerDashboard() {
   const [earningsData, setEarningsData] = useState<any>(null);
   const [earningsLoading, setEarningsLoading] = useState(false);
   const [earningsError, setEarningsError] = useState("");
+  const [deletionRequest, setDeletionRequest] = useState<any>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [requestingDeletion, setRequestingDeletion] = useState(false);
+  const [deletionError, setDeletionError] = useState("");
+  const [cancellingDeletion, setCancellingDeletion] = useState(false);
   const [tasks, setTasks] = useState([
     { task: "Add profile photo", done: false },
     { task: "Write your bio", done: false },
@@ -93,6 +98,14 @@ export default function PhotographerDashboard() {
           .single();
         setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
 
+        const { data: delReq } = await supabase
+          .from("account_deletion_requests")
+          .select("id, scheduled_deletion_at")
+          .eq("user_id", user.id)
+          .eq("status", "pending")
+          .maybeSingle();
+        setDeletionRequest(delReq || null);
+
         const { data } = await supabase
           .from("bookings")
           .select("*")
@@ -142,6 +155,43 @@ export default function PhotographerDashboard() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     window.location.href = "/";
+  };
+
+  const handleRequestDeletion = async () => {
+    setRequestingDeletion(true);
+    setDeletionError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/request-deletion", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setDeletionError(data.error === "already_pending" ? "A deletion request already exists." : "Failed to request deletion. Please try again.");
+      } else {
+        setDeletionRequest({ scheduled_deletion_at: data.scheduledDate });
+        setShowDeleteConfirm(false);
+      }
+    } catch {
+      setDeletionError("Something went wrong. Please try again.");
+    }
+    setRequestingDeletion(false);
+  };
+
+  const handleCancelDeletion = async () => {
+    setCancellingDeletion(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/cancel-deletion", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+      });
+      if (res.ok) setDeletionRequest(null);
+    } catch {
+      // silently fail
+    }
+    setCancellingDeletion(false);
   };
 
   const handleBookingStatus = async (id: string, status: string) => {
@@ -314,6 +364,28 @@ export default function PhotographerDashboard() {
               {connectError}
             </p>
           )}
+        </div>
+      )}
+
+      {deletionRequest && (
+        <div style={{backgroundColor: "#fef2f2", borderBottom: "1px solid #fecaca", padding: "14px 32px"}}>
+          <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
+            <div>
+              <p style={{fontSize: "13px", color: "#dc2626", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                Your account is scheduled for deletion
+              </p>
+              <p style={{fontSize: "12px", color: "#ef4444", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                All data will be permanently deleted on {new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}.
+              </p>
+            </div>
+            <button
+              onClick={handleCancelDeletion}
+              disabled={cancellingDeletion}
+              style={{backgroundColor: "#dc2626", color: "#fff", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: cancellingDeletion ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", flexShrink: 0, opacity: cancellingDeletion ? 0.7 : 1}}
+            >
+              {cancellingDeletion ? "Cancelling…" : "Cancel deletion"}
+            </button>
+          </div>
         </div>
       )}
 
@@ -572,6 +644,68 @@ export default function PhotographerDashboard() {
             </div>
           )}
         </div>
+
+        {/* Account settings */}
+        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginTop: "32px"}}>
+          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ACCOUNT SETTINGS</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 16px", letterSpacing: "-0.02em"}}>Delete my account</h2>
+
+          {deletionRequest ? (
+            <div>
+              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
+                Your account is scheduled for permanent deletion on <strong>{new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong>. You can cancel this request before that date.
+              </p>
+              <button
+                onClick={handleCancelDeletion}
+                disabled={cancellingDeletion}
+                style={{backgroundColor: "transparent", color: "#15803d", fontSize: "13px", padding: "10px 24px", border: "1px solid #bbf7d0", borderRadius: "999px", cursor: cancellingDeletion ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: cancellingDeletion ? 0.7 : 1}}
+              >
+                {cancellingDeletion ? "Cancelling…" : "Cancel deletion request"}
+              </button>
+            </div>
+          ) : showDeleteConfirm ? (
+            <div>
+              <div style={{backgroundColor: "#fef2f2", borderRadius: "8px", padding: "16px", border: "1px solid #fecaca", marginBottom: "16px"}}>
+                <p style={{fontSize: "13px", fontWeight: "500", color: "#dc2626", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>This cannot be undone. Before your account is permanently deleted:</p>
+                <ul style={{fontSize: "13px", color: "#7A5235", margin: "0", paddingLeft: "18px", lineHeight: "2", fontFamily: "'Jost', sans-serif"}}>
+                  <li>All pending and confirmed bookings will be cancelled and clients fully refunded</li>
+                  <li>Your profile and portfolio will be removed from Lomissa immediately</li>
+                  <li>You will have 30 days to change your mind from your dashboard</li>
+                  <li>Completed sessions and past earnings in Stripe are not affected</li>
+                </ul>
+              </div>
+              {deletionError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0 0 12px", fontFamily: "'Jost', sans-serif"}}>{deletionError}</p>}
+              <div style={{display: "flex", gap: "12px", flexWrap: "wrap"}}>
+                <button
+                  onClick={handleRequestDeletion}
+                  disabled={requestingDeletion}
+                  style={{backgroundColor: "#dc2626", color: "#fff", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: requestingDeletion ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: requestingDeletion ? 0.7 : 1}}
+                >
+                  {requestingDeletion ? "Requesting…" : "Yes, delete my account"}
+                </button>
+                <button
+                  onClick={() => { setShowDeleteConfirm(false); setDeletionError(""); }}
+                  style={{backgroundColor: "transparent", color: "#7A5235", fontSize: "13px", padding: "10px 24px", border: "1px solid #E4D8C4", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                >
+                  Keep my account
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
+                Permanently delete your account and all associated data. Active bookings will be cancelled and clients fully refunded. Completed sessions and past Stripe earnings are not affected. You will have a 30-day window to change your mind.
+              </p>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                style={{backgroundColor: "transparent", color: "#dc2626", fontSize: "13px", padding: "10px 24px", border: "1px solid #fecaca", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+              >
+                Delete my account
+              </button>
+            </div>
+          )}
+        </div>
+
         </div>
         {/* /Overview tab */}
 
