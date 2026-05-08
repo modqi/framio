@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
+import { EmptyInboxIcon } from "../../components/Icons";
 
 // Force Cloudinary to serve the file as a download attachment
 const downloadUrl = (url: string) => url.replace("/upload/", "/upload/fl_attachment/");
@@ -100,28 +101,28 @@ export default function PhotoGallery({ params }: { params: any }) {
   const backHref = isPhotographer ? "/photographer-dashboard" : "/dashboard";
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
-      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading your photos…</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading your photos…</p>
     </div>
   );
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4 sticky top-0 z-10">
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4 sticky top-0 z-10">
         <Logo size="sm" />
-        <a href={backHref} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>
+        <a href={backHref} style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>
           ← Back to dashboard
         </a>
       </nav>
 
       {/* Header */}
-      <div style={{backgroundColor: "#FDFBF7", borderBottom: "1px solid #E4D8C4", padding: "40px 32px"}}>
+      <div style={{backgroundColor: "#FDFBF8", borderBottom: "1px solid #E2D5C8", padding: "40px 32px"}}>
         <div style={{maxWidth: "1100px", margin: "0 auto"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR PHOTOS</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "42px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR PHOTOS</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "42px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             {booking?.session_type}
           </h1>
-          <p style={{fontSize: "14px", color: "#9E7250", fontFamily: "'Jost', sans-serif", margin: "0"}}>
+          <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>
             {booking?.photographer_name} · {booking?.date} · {totalPhotos} photo{totalPhotos === 1 ? "" : "s"}
           </p>
         </div>
@@ -131,9 +132,9 @@ export default function PhotoGallery({ params }: { params: any }) {
       <div style={{maxWidth: "1100px", margin: "0 auto", padding: "40px 32px"}}>
         {deliveries.length === 0 ? (
           <div style={{textAlign: "center", padding: "80px 0"}}>
-            <div style={{fontSize: "56px", marginBottom: "16px"}}>📭</div>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1C1009", margin: "0 0 8px"}}>No photos yet</p>
-            <p style={{fontSize: "14px", color: "#9E7250", fontFamily: "'Jost', sans-serif", margin: "0"}}>Your photographer will deliver the edited photos here.</p>
+            <div style={{marginBottom: "16px"}}><EmptyInboxIcon size={56} color="#C8622A"/></div>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06", margin: "0 0 8px"}}>No photos yet</p>
+            <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>Your photographer will deliver the edited photos here.</p>
           </div>
         ) : deliveries.map((delivery, di) => (
           <div key={delivery.id} style={{marginBottom: "64px"}}>
@@ -141,15 +142,15 @@ export default function PhotoGallery({ params }: { params: any }) {
             <div style={{display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "24px"}}>
               <div>
                 {deliveries.length > 1 && (
-                  <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                  <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
                     DELIVERY {di + 1}
                   </p>
                 )}
-                <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
                   {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length} photo{delivery.photos.length === 1 ? "" : "s"}
                 </p>
                 {delivery.message && (
-                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5235", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>
+                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>
                     "{delivery.message}"
                   </p>
                 )}
@@ -157,9 +158,9 @@ export default function PhotoGallery({ params }: { params: any }) {
               <button
                 onClick={() => handleDownloadAll(delivery.id)}
                 disabled={zipping === delivery.id}
-                style={{backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: zipping === delivery.id ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: zipping === delivery.id ? 0.6 : 1}}
+                style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: zipping === delivery.id ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: zipping === delivery.id ? 0.6 : 1}}
               >
-                {zipping === delivery.id ? "Preparing…" : `⬇ Download all (${delivery.photos.length})`}
+                {zipping === delivery.id ? "Preparing…" : `Download all (${delivery.photos.length})`}
               </button>
             </div>
 
@@ -168,7 +169,7 @@ export default function PhotoGallery({ params }: { params: any }) {
               {delivery.photos.map((photo: any) => (
                 <div
                   key={photo.id}
-                  style={{position: "relative", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E4D8C4", cursor: "zoom-in"}}
+                  style={{position: "relative", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E2D5C8", cursor: "zoom-in"}}
                   onClick={() => setLightboxUrl(photo.cloudinary_url)}
                 >
                   <img
@@ -195,7 +196,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                     className="photo-dl-btn"
                     title="Download"
                   >
-                    ⬇ Save
+                    Save
                   </a>
                 </div>
               ))}
@@ -225,7 +226,7 @@ export default function PhotoGallery({ params }: { params: any }) {
               style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", backdropFilter: "blur(4px)"}}
               title="Download"
             >
-              ⬇
+              
             </a>
             <button
               onClick={() => setLightboxUrl(null)}

@@ -33,7 +33,7 @@ export default function ResetPassword() {
       <div style={{maxWidth: "480px", margin: "80px auto", padding: "0 32px"}}>
         {sent ? (
           <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "48px 32px", border: "1px solid #f0f0f0", textAlign: "center"}}>
-            <div style={{fontSize: "48px", marginBottom: "24px"}}>📧</div>
+            <div style={{marginBottom: "24px"}}><svg viewBox="0 0 64 64" width="56" height="56" fill="none"><g stroke="#C8622A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="16" width="48" height="32" rx="4"/><polyline points="8,20 32,36 56,20"/></g></svg></div>
             <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>CHECK YOUR EMAIL</p>
             <h1 style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 16px", letterSpacing: "-0.5px"}}>
               Reset link sent!

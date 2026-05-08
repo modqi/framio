@@ -180,52 +180,52 @@ export default function ManagePackages() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
-      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
     </div>
   );
 
   const inputStyle: React.CSSProperties = {
-    width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 14px",
-    fontSize: "13px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1",
+    width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 14px",
+    fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8",
     fontFamily: "'Jost', sans-serif", boxSizing: "border-box",
   };
   const labelStyle: React.CSSProperties = {
-    fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px",
+    fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px",
     fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em",
   };
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 32px"}}>
 
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR OFFERINGS</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR OFFERINGS</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             Packages & add-ons
           </h1>
-          <p style={{fontSize: "14px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
             You need at least one package to appear on the browse page. Maximum 5 packages.
           </p>
         </div>
 
         {/* ── PACKAGES ── */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "24px"}}>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px"}}>
             <div>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PACKAGES</p>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{packages.length}/5 packages</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PACKAGES</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{packages.length}/5 packages</p>
             </div>
             {packages.length < 5 && !showPkgForm && (
               <button
                 onClick={() => { cancelPkgForm(); setShowPkgForm(true); }}
-                style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+                style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
                 + Add package
               </button>
@@ -233,9 +233,9 @@ export default function ManagePackages() {
           </div>
 
           {packages.length === 0 && !showPkgForm && (
-            <div style={{textAlign: "center", padding: "32px 0", borderTop: "1px solid #E4D8C4"}}>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#C3AB88", fontStyle: "italic", margin: "0 0 8px"}}>No packages yet</p>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>Add your first package to appear in search results</p>
+            <div style={{textAlign: "center", padding: "32px 0", borderTop: "1px solid #E2D5C8"}}>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#DDD0C0", fontStyle: "italic", margin: "0 0 8px"}}>No packages yet</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Add your first package to appear in search results</p>
             </div>
           )}
 
@@ -255,24 +255,24 @@ export default function ManagePackages() {
                     isEdit
                   />
                 ) : (
-                  <div style={{border: "1px solid #E4D8C4", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FAF7F1"}}>
+                  <div style={{border: "1px solid #E2D5C8", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FDFBF8"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px"}}>
                       <div style={{flex: 1}}>
                         <div style={{display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px"}}>
-                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0"}}>{pkg.name}</p>
-                          {pkg.category && <span style={{fontSize: "10px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
+                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06", margin: "0"}}>{pkg.name}</p>
+                          {pkg.category && <span style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
                         </div>
-                        <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
-                        {pkg.description && <p style={{fontSize: "12px", color: "#7A5235", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
+                        <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
+                        {pkg.description && <p style={{fontSize: "12px", color: "#7A5C44", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                       </div>
                       <div style={{textAlign: "right", flexShrink: 0}}>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1C1009", margin: "0 0 8px"}}>{pkg.price.toLocaleString()} NOK</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 8px"}}>{pkg.price.toLocaleString()} NOK</p>
                         <div style={{display: "flex", gap: "8px", justifyContent: "flex-end"}}>
-                          <button onClick={() => openEditPkg(pkg)} style={{fontSize: "12px", color: "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
+                          <button onClick={() => openEditPkg(pkg)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
                           {confirmDeletePkg === pkg.id ? (
                             <>
-                              <button onClick={() => deletePackage(pkg.id)} style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Confirm</button>
-                              <button onClick={() => setConfirmDeletePkg(null)} style={{fontSize: "12px", color: "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+                              <button onClick={() => deletePackage(pkg.id)} style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Confirm</button>
+                              <button onClick={() => setConfirmDeletePkg(null)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
                             </>
                           ) : (
                             <button onClick={() => setConfirmDeletePkg(pkg.id)} style={{fontSize: "12px", color: "#dc2626", background: "none", border: "1px solid #fce8e8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Delete</button>
@@ -302,16 +302,16 @@ export default function ManagePackages() {
         </div>
 
         {/* ── ADD-ONS ── */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px"}}>
             <div>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADD-ONS</p>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>Optional extras clients can add at checkout</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADD-ONS</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Optional extras clients can add at checkout</p>
             </div>
             {!showAddonForm && (
               <button
                 onClick={() => { cancelAddonForm(); setShowAddonForm(true); }}
-                style={{backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+                style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
                 + Add extra
               </button>
@@ -319,8 +319,8 @@ export default function ManagePackages() {
           </div>
 
           {addons.length === 0 && !showAddonForm && (
-            <div style={{textAlign: "center", padding: "24px 0", borderTop: "1px solid #E4D8C4"}}>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic", margin: "0"}}>No add-ons yet</p>
+            <div style={{textAlign: "center", padding: "24px 0", borderTop: "1px solid #E2D5C8"}}>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic", margin: "0"}}>No add-ons yet</p>
             </div>
           )}
 
@@ -339,17 +339,17 @@ export default function ManagePackages() {
                     labelStyle={labelStyle}
                   />
                 ) : (
-                  <div style={{border: "1px solid #E4D8C4", borderRadius: "10px", padding: "12px 16px", backgroundColor: "#FAF7F1", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px"}}>
+                  <div style={{border: "1px solid #E2D5C8", borderRadius: "10px", padding: "12px 16px", backgroundColor: "#FDFBF8", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px"}}>
                     <div>
-                      <p style={{fontSize: "14px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
-                      <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK · {addon.unit}</p>
+                      <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
+                      <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK · {addon.unit}</p>
                     </div>
                     <div style={{display: "flex", gap: "8px", flexShrink: 0}}>
-                      <button onClick={() => openEditAddon(addon)} style={{fontSize: "12px", color: "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
+                      <button onClick={() => openEditAddon(addon)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
                       {confirmDeleteAddon === addon.id ? (
                         <>
-                          <button onClick={() => deleteAddon(addon.id)} style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Confirm</button>
-                          <button onClick={() => setConfirmDeleteAddon(null)} style={{fontSize: "12px", color: "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+                          <button onClick={() => deleteAddon(addon.id)} style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Confirm</button>
+                          <button onClick={() => setConfirmDeleteAddon(null)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
                         </>
                       ) : (
                         <button onClick={() => setConfirmDeleteAddon(addon.id)} style={{fontSize: "12px", color: "#dc2626", background: "none", border: "1px solid #fce8e8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Delete</button>
@@ -377,9 +377,9 @@ export default function ManagePackages() {
 
       </div>
 
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
     </main>
   );
@@ -387,8 +387,8 @@ export default function ManagePackages() {
 
 function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyle, labelStyle, isEdit }: any) {
   return (
-    <div style={{border: "1px solid #B85528", borderRadius: "10px", padding: "20px", backgroundColor: "#FBF0EA"}}>
-      <p style={{fontSize: "12px", color: "#B85528", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>
+    <div style={{border: "1px solid #C8622A", borderRadius: "10px", padding: "20px", backgroundColor: "#FBF0EA"}}>
+      <p style={{fontSize: "12px", color: "#C8622A", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>
         {isEdit ? "EDIT PACKAGE" : "NEW PACKAGE"}
       </p>
       <div style={{display: "flex", flexDirection: "column", gap: "14px"}}>
@@ -423,10 +423,10 @@ function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyl
         </div>
         {error && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>}
         <div style={{display: "flex", gap: "10px"}}>
-          <button onClick={onSave} disabled={saving} style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: saving ? 0.7 : 1}}>
+          <button onClick={onSave} disabled={saving} style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: saving ? 0.7 : 1}}>
             {saving ? "Saving…" : isEdit ? "Save changes" : "Add package"}
           </button>
-          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
         </div>
       </div>
     </div>
@@ -435,8 +435,8 @@ function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyl
 
 function AddonForm({ form, setForm, onSave, onCancel, saving, error, inputStyle, labelStyle }: any) {
   return (
-    <div style={{border: "1px solid #1C1009", borderRadius: "10px", padding: "20px", backgroundColor: "#F5EFE4"}}>
-      <p style={{fontSize: "12px", color: "#1C1009", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>NEW ADD-ON</p>
+    <div style={{border: "1px solid #1A0E06", borderRadius: "10px", padding: "20px", backgroundColor: "#F5EFE4"}}>
+      <p style={{fontSize: "12px", color: "#1A0E06", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>NEW ADD-ON</p>
       <div style={{display: "flex", flexDirection: "column", gap: "14px"}}>
         <div>
           <label style={labelStyle}>Name</label>
@@ -454,10 +454,10 @@ function AddonForm({ form, setForm, onSave, onCancel, saving, error, inputStyle,
         </div>
         {error && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>}
         <div style={{display: "flex", gap: "10px"}}>
-          <button onClick={onSave} disabled={saving} style={{backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: saving ? 0.7 : 1}}>
+          <button onClick={onSave} disabled={saving} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: saving ? 0.7 : 1}}>
             {saving ? "Saving…" : "Add extra"}
           </button>
-          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
         </div>
       </div>
     </div>

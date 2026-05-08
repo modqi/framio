@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
+import { CameraIcon, CalendarIcon, MessageIcon, ProfileIcon, PortfolioIcon, PackageIcon, EmptyInboxIcon, CheckIcon } from "../components/Icons";
 
 const parsePrice = (price: unknown): number => {
   const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
@@ -233,7 +234,7 @@ export default function PhotographerDashboard() {
     if (status === "disputed") return { backgroundColor: "#fef3c7", color: "#b45309" };
     if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
     if (status === "cancelled") return { backgroundColor: "#fef2f2", color: "#dc2626" };
-    return { backgroundColor: "#FBF0EA", color: "#B85528" };
+    return { backgroundColor: "#FBF0EA", color: "#C8622A" };
   };
 
   const loadEarnings = async () => {
@@ -286,29 +287,29 @@ export default function PhotographerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
-        <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
+        <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <div className="flex items-center gap-4">
-          <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.name} 📸</span>
-          <a href="/messages" style={{fontSize: "12px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "'Jost', sans-serif"}}>
-            💬 Messages
+          <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.name}</span>
+          <a href="/messages" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "'Jost', sans-serif"}}>
+            <MessageIcon size={16} color="#7A5C44" /> Messages
             {unreadCount > 0 && (
-              <span style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "999px"}}>
+              <span style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "999px"}}>
                 {unreadCount}
               </span>
             )}
           </a>
-          <button onClick={handleSignOut} style={{fontSize: "12px", color: "#7A5235", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
+          <button onClick={handleSignOut} style={{fontSize: "12px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
             Sign out
           </button>
         </div>
@@ -316,11 +317,11 @@ export default function PhotographerDashboard() {
 
       {/* Stripe onboarding banner — shown until payout setup is complete */}
       {stripeOnboarded === false && (
-        <div style={{backgroundColor: "#1C1009", padding: "16px 32px"}}>
+        <div style={{backgroundColor: "#1A0E06", padding: "16px 32px"}}>
           <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
             <div>
-              <p style={{fontSize: "13px", color: "#FAF7F1", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
-              <p style={{fontSize: "12px", color: "rgba(250,247,241,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+              <p style={{fontSize: "13px", color: "#FDFBF8", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
+              <p style={{fontSize: "12px", color: "rgba(253,251,248,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>
                 {connectIncomplete
                   ? "Stripe onboarding was not completed. Please finish setting up your account."
                   : "Connect your bank account to go live and start receiving payouts."}
@@ -329,7 +330,7 @@ export default function PhotographerDashboard() {
             <button
               onClick={handleCompleteStripeSetup}
               disabled={connectLoading}
-              style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
+              style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
             >
               {connectLoading ? "Loading…" : connectIncomplete ? "Resume setup →" : "Connect bank account →"}
             </button>
@@ -368,15 +369,15 @@ export default function PhotographerDashboard() {
 
         {/* Welcome */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PHOTOGRAPHER DASHBOARD</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PHOTOGRAPHER DASHBOARD</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             Your photography business
           </h1>
-          <p style={{fontSize: "14px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your profile, bookings and earnings all in one place.</p>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your profile, bookings and earnings all in one place.</p>
         </div>
 
         {/* Tab navigation */}
-        <div style={{display: "flex", borderBottom: "1px solid #E4D8C4", marginBottom: "32px"}}>
+        <div style={{display: "flex", borderBottom: "1px solid #E2D5C8", marginBottom: "32px"}}>
           {([
             { id: "overview", label: "Overview" },
             { id: "earnings", label: "Earnings" },
@@ -384,7 +385,7 @@ export default function PhotographerDashboard() {
             <button
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); if (tab.id === "earnings") loadEarnings(); }}
-              style={{padding: "12px 24px", fontSize: "13px", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "none", cursor: "pointer", backgroundColor: "transparent", color: activeTab === tab.id ? "#B85528" : "#9E7250", borderBottom: `2px solid ${activeTab === tab.id ? "#B85528" : "transparent"}`, marginBottom: "-1px", transition: "color 0.15s"}}
+              style={{padding: "12px 24px", fontSize: "13px", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "none", cursor: "pointer", backgroundColor: "transparent", color: activeTab === tab.id ? "#C8622A" : "#7A5C44", borderBottom: `2px solid ${activeTab === tab.id ? "#C8622A" : "transparent"}`, marginBottom: "-1px", transition: "color 0.15s"}}
             >
               {tab.label}
             </button>
@@ -395,16 +396,16 @@ export default function PhotographerDashboard() {
         <div style={{display: activeTab === "overview" ? "block" : "none"}}>
 
         {/* Profile card */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4", marginBottom: "24px", display: "flex", alignItems: "center", gap: "20px"}}>
-          <div style={{width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
-            <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "500", color: "#B85528"}}>{user?.user_metadata?.name?.[0] || "?"}</span>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "24px", border: "1px solid #E2D5C8", marginBottom: "24px", display: "flex", alignItems: "center", gap: "20px"}}>
+          <div style={{width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
+            <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "500", color: "#C8622A"}}>{user?.user_metadata?.name?.[0] || "?"}</span>
           </div>
           <div style={{flex: 1}}>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{user?.user_metadata?.name || "Your name"}</p>
-            <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.location || "No location set"}</p>
-            <p style={{fontSize: "12px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || "No specialty set"}</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{user?.user_metadata?.name || "Your name"}</p>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.location || "No location set"}</p>
+            <p style={{fontSize: "12px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || "No specialty set"}</p>
           </div>
-          <a href="/photographer-dashboard/edit-profile" style={{fontSize: "12px", color: "#1C1009", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", backgroundColor: "#FAF7F1", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>
+          <a href="/photographer-dashboard/edit-profile" style={{fontSize: "12px", color: "#1A0E06", border: "1px solid #E2D5C8", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", backgroundColor: "#FDFBF8", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>
             Edit profile
           </a>
         </div>
@@ -417,62 +418,62 @@ export default function PhotographerDashboard() {
             { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, desc: "Confirmed sessions" },
             { label: "Unread messages", value: unreadCount, desc: "New messages" },
           ].map((stat) => (
-            <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "20px", border: "1px solid #E4D8C4"}}>
-              <p style={{fontSize: "11px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1C1009", margin: "0 0 4px", letterSpacing: "-0.02em"}}>{stat.value}</p>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{stat.desc}</p>
+            <div key={stat.label} style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px", border: "1px solid #E2D5C8"}}>
+              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 4px", letterSpacing: "-0.02em"}}>{stat.value}</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{stat.desc}</p>
             </div>
           ))}
         </div>
 
         {/* Profile completion */}
-        <div style={{backgroundColor: "#1C1009", borderRadius: "12px", padding: "32px", marginBottom: "32px"}}>
+        <div style={{backgroundColor: "#1A0E06", borderRadius: "12px", padding: "32px", marginBottom: "32px"}}>
           <div className="flex items-center justify-between mb-4">
             <div>
               <p style={{fontSize: "11px", color: "#C1622F", margin: "0 0 6px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PROFILE STRENGTH</p>
-              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#FAF7F1", margin: "0"}}>Complete your profile</h2>
-              <p style={{fontSize: "13px", color: "rgba(250,247,241,0.4)", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>A complete profile gets 3x more bookings</p>
+              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#FDFBF8", margin: "0"}}>Complete your profile</h2>
+              <p style={{fontSize: "13px", color: "rgba(253,251,248,0.4)", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>A complete profile gets 3x more bookings</p>
             </div>
             <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "44px", fontWeight: "400", color: "#C1622F", letterSpacing: "-0.02em"}}>{completion}%</span>
           </div>
-          <div style={{width: "100%", backgroundColor: "rgba(250,247,241,0.1)", borderRadius: "4px", height: "4px", marginBottom: "24px"}}>
+          <div style={{width: "100%", backgroundColor: "rgba(253,251,248,0.1)", borderRadius: "4px", height: "4px", marginBottom: "24px"}}>
             <div style={{width: `${completion}%`, backgroundColor: "#C1622F", height: "4px", borderRadius: "4px", transition: "width 0.5s"}}></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {tasks.map((item) => (
               <div key={item.task} className="flex items-center gap-3">
-                <div style={{width: "20px", height: "20px", borderRadius: "50%", backgroundColor: item.done ? "#C1622F" : "transparent", border: item.done ? "none" : "1px solid rgba(250,247,241,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
-                  {item.done && <span style={{color: "#FAF7F1", fontSize: "11px"}}>✓</span>}
+                <div style={{width: "20px", height: "20px", borderRadius: "50%", backgroundColor: item.done ? "#C1622F" : "transparent", border: item.done ? "none" : "1px solid rgba(253,251,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
+                  {item.done && <CheckIcon size={11} color="#FDFBF8"/>}
                 </div>
-                <span style={{fontSize: "13px", color: item.done ? "rgba(250,247,241,0.4)" : "#FAF7F1", textDecoration: item.done ? "line-through" : "none", fontFamily: "'Jost', sans-serif"}}>{item.task}</span>
+                <span style={{fontSize: "13px", color: item.done ? "rgba(253,251,248,0.4)" : "#FDFBF8", textDecoration: item.done ? "line-through" : "none", fontFamily: "'Jost', sans-serif"}}>{item.task}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Quick actions */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "32px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>QUICK ACTIONS</p>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "32px"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>QUICK ACTIONS</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: "👤", title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
-              { icon: "🖼️", title: "My portfolio", desc: "Add and manage your photos", href: "/photographer-dashboard/portfolio" },
-              { icon: "📅", title: "My availability", desc: "Set your available days", href: "/photographer-dashboard/availability" },
-              { icon: "📦", title: "My packages", desc: "Manage your sessions and add-ons", href: "/photographer-dashboard/packages" },
+              { icon: <ProfileIcon size={22} color="#FDFBF8"/>, title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
+              { icon: <PortfolioIcon size={22} color="#FDFBF8"/>, title: "My portfolio", desc: "Add and manage your photos", href: "/photographer-dashboard/portfolio" },
+              { icon: <CalendarIcon size={22} color="#FDFBF8"/>, title: "My availability", desc: "Set your available days", href: "/photographer-dashboard/availability" },
+              { icon: <PackageIcon size={22} color="#FDFBF8"/>, title: "My packages", desc: "Manage your sessions and add-ons", href: "/photographer-dashboard/packages" },
             ].map((action) => (
-              <a key={action.title} href={action.href} style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #E4D8C4", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FAF7F1"}}>
-                <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#B85528", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0}}>
+              <a key={action.title} href={action.href} style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #E2D5C8", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FDFBF8"}}>
+                <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#C8622A", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
                   {action.icon}
                 </div>
                 <div>
-                  <p style={{fontSize: "14px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{action.title}</p>
-                  <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{action.desc}</p>
+                  <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{action.title}</p>
+                  <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{action.desc}</p>
                 </div>
               </a>
             ))}
-            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: unreadCount > 0 ? "1px solid #B85528" : "1px solid #E4D8C4", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FAF7F1"}}>
-              <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#B85528", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0, position: "relative"}}>
-                💬
+            <a href="/messages" style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: unreadCount > 0 ? "1px solid #C8622A" : "1px solid #E2D5C8", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FDFBF8"}}>
+              <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#C8622A", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative"}}>
+                <MessageIcon size={22} color="#FDFBF8"/>
                 {unreadCount > 0 && (
                   <span style={{position: "absolute", top: "-4px", right: "-4px", backgroundColor: "#dc2626", color: "#fff", fontSize: "10px", fontWeight: "700", padding: "2px 5px", borderRadius: "999px"}}>
                     {unreadCount}
@@ -480,35 +481,35 @@ export default function PhotographerDashboard() {
                 )}
               </div>
               <div>
-                <p style={{fontSize: "14px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>Messages</p>
-                <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your clients"}</p>
+                <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>Messages</p>
+                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your clients"}</p>
               </div>
             </a>
           </div>
         </div>
 
         {/* Booking requests */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>INCOMING</p>
-          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1C1009", margin: "0 0 24px", letterSpacing: "-0.02em"}}>Booking requests</h2>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>INCOMING</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em"}}>Booking requests</h2>
 
           {bookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div style={{fontSize: "48px", marginBottom: "16px"}}>📭</div>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1C1009", margin: "0 0 8px"}}>No booking requests yet</p>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>Complete your profile to start receiving bookings</p>
-              <a href="/photographer-dashboard/edit-profile" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+              <div style={{marginBottom: "16px"}}><EmptyInboxIcon size={56} color="#C8622A"/></div>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1A0E06", margin: "0 0 8px"}}>No booking requests yet</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>Complete your profile to start receiving bookings</p>
+              <a href="/photographer-dashboard/edit-profile" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
                 Complete my profile
               </a>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
               {bookings.map((booking) => (
-                <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
+                <div key={booking.id} style={{border: "1px solid #E2D5C8", borderRadius: "12px", padding: "20px", backgroundColor: "#FDFBF8"}}>
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{booking.client_name}</p>
-                      <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.client_email}</p>
+                      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{booking.client_name}</p>
+                      <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.client_email}</p>
                     </div>
                     <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
                       {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
@@ -522,15 +523,15 @@ export default function PhotographerDashboard() {
                       { label: "Price", value: booking.price },
                     ].map((item) => (
                       <div key={item.label}>
-                        <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{item.label}</p>
-                        <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{item.value}</p>
+                        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{item.label}</p>
+                        <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif"}}>{item.value}</p>
                       </div>
                     ))}
                   </div>
                   {booking.message && (
-                    <div style={{backgroundColor: "#FDFBF7", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px", marginBottom: "16px"}}>
-                      <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Message from client</p>
-                      <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{booking.message}"</p>
+                    <div style={{backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px", marginBottom: "16px"}}>
+                      <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Message from client</p>
+                      <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
                   {actionError && (
@@ -544,14 +545,14 @@ export default function PhotographerDashboard() {
                         <button
                           onClick={() => handleBookingStatus(booking.id, "confirmed")}
                           disabled={processingId === booking.id}
-                          style={{flex: 1, backgroundColor: processingId === booking.id ? "#9E7250" : "#1C1009", color: "#FAF7F1", padding: "10px", borderRadius: "999px", border: "none", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
+                          style={{flex: 1, backgroundColor: processingId === booking.id ? "#7A5C44" : "#1A0E06", color: "#FDFBF8", padding: "10px", borderRadius: "999px", border: "none", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
                         >
                           {processingId === booking.id ? "Processing..." : "Accept booking"}
                         </button>
                         <button
                           onClick={() => handleBookingStatus(booking.id, "declined")}
                           disabled={processingId === booking.id}
-                          style={{flex: 1, backgroundColor: "transparent", color: "#1C1009", padding: "10px", borderRadius: "999px", border: "1px solid #E4D8C4", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontFamily: "'Jost', sans-serif", opacity: processingId === booking.id ? 0.5 : 1}}
+                          style={{flex: 1, backgroundColor: "transparent", color: "#1A0E06", padding: "10px", borderRadius: "999px", border: "1px solid #E2D5C8", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontFamily: "'Jost', sans-serif", opacity: processingId === booking.id ? 0.5 : 1}}
                         >
                           Decline
                         </button>
@@ -560,19 +561,19 @@ export default function PhotographerDashboard() {
                     {booking.status === "confirmed" && (
                       confirmCancelId === booking.id ? (
                         <div style={{display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap"}}>
-                          <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                          <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
                             Cancelling issues a full refund to the client. Confirm?
                           </p>
                           <button
                             onClick={() => handleCancelBooking(booking.id)}
                             disabled={cancellingId === booking.id}
-                            style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#dc2626", border: "none", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", opacity: cancellingId === booking.id ? 0.6 : 1}}
+                            style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", opacity: cancellingId === booking.id ? 0.6 : 1}}
                           >
                             {cancellingId === booking.id ? "Cancelling…" : "Yes, cancel"}
                           </button>
                           <button
                             onClick={() => { setConfirmCancelId(null); setCancelError(""); }}
-                            style={{fontSize: "12px", color: "#7A5235", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                            style={{fontSize: "12px", color: "#7A5C44", backgroundColor: "transparent", border: "1px solid #E2D5C8", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                           >
                             Keep booking
                           </button>
@@ -581,7 +582,7 @@ export default function PhotographerDashboard() {
                       ) : (
                         <button
                           onClick={() => { setConfirmCancelId(booking.id); setCancelError(""); }}
-                          style={{fontSize: "13px", color: "#9E7250", backgroundColor: "transparent", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                          style={{fontSize: "13px", color: "#7A5C44", backgroundColor: "transparent", border: "1px solid #E2D5C8", padding: "8px 20px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                         >
                           Cancel booking
                         </button>
@@ -590,7 +591,7 @@ export default function PhotographerDashboard() {
                     {booking.status === "completed" && (
                       <a
                         href={`/photographer-dashboard/deliver/${booking.id}`}
-                        style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
+                        style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
                       >
                         Deliver photos →
                       </a>
@@ -598,7 +599,7 @@ export default function PhotographerDashboard() {
                     {booking.status === "photos_delivered" && (
                       <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
                         <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
-                          📸 Payout due {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
+                          Payout due {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
                         </span>
                         <a
                           href={`/photographer-dashboard/deliver/${booking.id}`}
@@ -608,7 +609,7 @@ export default function PhotographerDashboard() {
                         </a>
                         <a
                           href={`/deliveries/${booking.id}`}
-                          style={{fontSize: "12px", color: "#7A5235", border: "1px solid #E4D8C4", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
+                          style={{fontSize: "12px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
                         >
                           View delivery
                         </a>
@@ -620,8 +621,8 @@ export default function PhotographerDashboard() {
                     {booking.status === "disputed" && (
                       <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>⚠ Under admin review</span>
                     )}
-                    <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
-                      💬 Message client
+                    <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
+                      Message client
                     </a>
                   </div>
                 </div>
@@ -631,13 +632,13 @@ export default function PhotographerDashboard() {
         </div>
 
         {/* Account settings */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginTop: "32px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ACCOUNT SETTINGS</p>
-          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 16px", letterSpacing: "-0.02em"}}>Delete my account</h2>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginTop: "32px"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ACCOUNT SETTINGS</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>Delete my account</h2>
 
           {deletionRequest ? (
             <div>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
                 Your account is scheduled for permanent deletion on <strong>{new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong>. You can cancel this request before that date.
               </p>
               <button
@@ -652,7 +653,7 @@ export default function PhotographerDashboard() {
             <div>
               <div style={{backgroundColor: "#fef2f2", borderRadius: "8px", padding: "16px", border: "1px solid #fecaca", marginBottom: "16px"}}>
                 <p style={{fontSize: "13px", fontWeight: "500", color: "#dc2626", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>This cannot be undone. Before your account is permanently deleted:</p>
-                <ul style={{fontSize: "13px", color: "#7A5235", margin: "0", paddingLeft: "18px", lineHeight: "2", fontFamily: "'Jost', sans-serif"}}>
+                <ul style={{fontSize: "13px", color: "#7A5C44", margin: "0", paddingLeft: "18px", lineHeight: "2", fontFamily: "'Jost', sans-serif"}}>
                   <li>All pending and confirmed bookings will be cancelled and clients fully refunded</li>
                   <li>Your profile and portfolio will be removed from Lomissa immediately</li>
                   <li>You will have 30 days to change your mind from your dashboard</li>
@@ -670,7 +671,7 @@ export default function PhotographerDashboard() {
                 </button>
                 <button
                   onClick={() => { setShowDeleteConfirm(false); setDeletionError(""); }}
-                  style={{backgroundColor: "transparent", color: "#7A5235", fontSize: "13px", padding: "10px 24px", border: "1px solid #E4D8C4", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+                  style={{backgroundColor: "transparent", color: "#7A5C44", fontSize: "13px", padding: "10px 24px", border: "1px solid #E2D5C8", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                 >
                   Keep my account
                 </button>
@@ -678,7 +679,7 @@ export default function PhotographerDashboard() {
             </div>
           ) : (
             <div>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
                 Permanently delete your account and all associated data. Active bookings will be cancelled and clients fully refunded. Completed sessions and past Stripe earnings are not affected. You will have a 30-day window to change your mind.
               </p>
               <button
@@ -709,7 +710,7 @@ export default function PhotographerDashboard() {
             if (s === "paid") return { backgroundColor: "#f0fdf4", color: "#15803d" };
             if (s === "in_transit") return { backgroundColor: "#eff6ff", color: "#1d4ed8" };
             if (s === "failed") return { backgroundColor: "#fef2f2", color: "#dc2626" };
-            return { backgroundColor: "#FBF0EA", color: "#B85528" };
+            return { backgroundColor: "#FBF0EA", color: "#C8622A" };
           };
 
           const earningRows = bookings.filter(b =>
@@ -722,7 +723,7 @@ export default function PhotographerDashboard() {
             <div>
               {earningsLoading ? (
                 <div style={{textAlign: "center", padding: "48px 0"}}>
-                  <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading Stripe data…</p>
+                  <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading Stripe data…</p>
                 </div>
               ) : (
                 <>
@@ -760,36 +761,36 @@ export default function PhotographerDashboard() {
                         note: "From Stripe balance",
                       },
                     ].map((stat) => (
-                      <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "20px", border: "1px solid #E4D8C4"}}>
-                        <p style={{fontSize: "11px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label.toUpperCase()}</p>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "400", color: "#1C1009", margin: "0 0 4px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>{stat.value}</p>
-                        <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{stat.desc}</p>
-                        <p style={{fontSize: "10px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>{stat.note}</p>
+                      <div key={stat.label} style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px", border: "1px solid #E2D5C8"}}>
+                        <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label.toUpperCase()}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "400", color: "#1A0E06", margin: "0 0 4px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>{stat.value}</p>
+                        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{stat.desc}</p>
+                        <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>{stat.note}</p>
                       </div>
                     ))}
                   </div>
 
                   {/* Payout history */}
-                  <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "24px"}}>
-                    <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PAYOUT HISTORY</p>
-                    <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 20px", letterSpacing: "-0.02em"}}>
+                  <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
+                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PAYOUT HISTORY</p>
+                    <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 20px", letterSpacing: "-0.02em"}}>
                       Bank payouts
                     </h2>
                     {earningsData?.noStripeAccount ? (
-                      <p style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>
+                      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
                         Connect your Stripe account to see payout history.
                       </p>
                     ) : !earningsData?.payouts?.length ? (
-                      <p style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>
+                      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>
                         No payouts yet — payouts appear here once Stripe transfers funds to your bank.
                       </p>
                     ) : (
                       <div style={{overflowX: "auto"}}>
                         <table style={{width: "100%", borderCollapse: "collapse"}}>
                           <thead>
-                            <tr style={{borderBottom: "1px solid #E4D8C4"}}>
+                            <tr style={{borderBottom: "1px solid #E2D5C8"}}>
                               {["Arrival date", "Amount", "Status", "Reference"].map(h => (
-                                <th key={h} style={{textAlign: "left", padding: "8px 12px 12px 0", fontSize: "11px", color: "#9E7250", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{h.toUpperCase()}</th>
+                                <th key={h} style={{textAlign: "left", padding: "8px 12px 12px 0", fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{h.toUpperCase()}</th>
                               ))}
                             </tr>
                           </thead>
@@ -798,10 +799,10 @@ export default function PhotographerDashboard() {
                               const s = payoutStatusStyle(payout.status);
                               return (
                                 <tr key={payout.id} style={{borderBottom: "1px solid #F5EFE4"}}>
-                                  <td style={{padding: "12px 12px 12px 0", fontSize: "13px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>
+                                  <td style={{padding: "12px 12px 12px 0", fontSize: "13px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>
                                     {new Date(payout.arrival_date * 1000).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                                   </td>
-                                  <td style={{padding: "12px 12px 12px 0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#1C1009"}}>
+                                  <td style={{padding: "12px 12px 12px 0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#1A0E06"}}>
                                     {fmtMoney(payout.amount, payout.currency)}
                                   </td>
                                   <td style={{padding: "12px 12px 12px 0"}}>
@@ -809,7 +810,7 @@ export default function PhotographerDashboard() {
                                       {payout.status.replace("_", " ").charAt(0).toUpperCase() + payout.status.replace("_", " ").slice(1)}
                                     </span>
                                   </td>
-                                  <td style={{padding: "12px 0 12px 0", fontSize: "11px", color: "#C3AB88", fontFamily: "'Jost', sans-serif"}}>
+                                  <td style={{padding: "12px 0 12px 0", fontSize: "11px", color: "#DDD0C0", fontFamily: "'Jost', sans-serif"}}>
                                     {payout.id}
                                   </td>
                                 </tr>
@@ -822,16 +823,16 @@ export default function PhotographerDashboard() {
                   </div>
 
                   {/* Per-booking breakdown */}
-                  <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-                    <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BREAKDOWN</p>
-                    <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 4px", letterSpacing: "-0.02em"}}>
+                  <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BREAKDOWN</p>
+                    <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 4px", letterSpacing: "-0.02em"}}>
                       Earnings by booking
                     </h2>
-                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>
+                    <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>
                       Showing confirmed and cancelled bookings. Lomissa retains 10% of each session fee.
                     </p>
                     {earningRows.length === 0 ? (
-                      <p style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>No bookings to show yet.</p>
+                      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>No bookings to show yet.</p>
                     ) : (
                       <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
                         {earningRows.map((booking) => {
@@ -851,30 +852,30 @@ export default function PhotographerDashboard() {
                             ? { label: "Completed", bg: "#eff6ff", color: "#1d4ed8" }
                             : isPast
                             ? { label: "Earned", bg: "#f0fdf4", color: "#15803d" }
-                            : { label: "Upcoming", bg: "#FBF0EA", color: "#B85528" };
+                            : { label: "Upcoming", bg: "#FBF0EA", color: "#C8622A" };
                           return (
-                            <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FAF7F1"}}>
+                            <div key={booking.id} style={{border: "1px solid #E2D5C8", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FDFBF8"}}>
                               <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "12px"}}>
                                 <div>
-                                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "17px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{booking.client_name}</p>
-                                  <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type}{booking.date ? ` — ${booking.date}` : ""}</p>
+                                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "17px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{booking.client_name}</p>
+                                  <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type}{booking.date ? ` — ${booking.date}` : ""}</p>
                                 </div>
                                 <span style={{...rowStatus, fontSize: "11px", padding: "3px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", flexShrink: 0}}>
                                   {rowStatus.label}
                                 </span>
                               </div>
-                              <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", borderTop: "1px solid #E4D8C4", paddingTop: "12px"}}>
+                              <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", borderTop: "1px solid #E2D5C8", paddingTop: "12px"}}>
                                 <div>
-                                  <p style={{fontSize: "10px", color: "#C3AB88", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>SESSION FEE</p>
-                                  <p style={{fontSize: "15px", color: "#1C1009", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price || "—"}</p>
+                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>SESSION FEE</p>
+                                  <p style={{fontSize: "15px", color: "#1A0E06", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price || "—"}</p>
                                 </div>
                                 <div>
-                                  <p style={{fontSize: "10px", color: "#C3AB88", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOMISSA FEE (10%)</p>
+                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOMISSA FEE (10%)</p>
                                   <p style={{fontSize: "15px", color: "#dc2626", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>−{fee.toFixed(2)}</p>
                                 </div>
                                 <div>
-                                  <p style={{fontSize: "10px", color: "#C3AB88", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>YOU RECEIVE</p>
-                                  <p style={{fontSize: "15px", color: booking.status === "cancelled" ? "#C3AB88" : "#15803d", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: "500"}}>{booking.status === "cancelled" ? "—" : net.toFixed(2)}</p>
+                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>YOU RECEIVE</p>
+                                  <p style={{fontSize: "15px", color: booking.status === "cancelled" ? "#DDD0C0" : "#15803d", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: "500"}}>{booking.status === "cancelled" ? "—" : net.toFixed(2)}</p>
                                 </div>
                               </div>
                             </div>
@@ -893,9 +894,9 @@ export default function PhotographerDashboard() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

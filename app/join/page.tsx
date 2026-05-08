@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { ReviewStarIcon } from "../components/Icons";
 
 const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
 
@@ -101,7 +102,7 @@ export default function JoinAsPhotographer() {
           </div>
         </nav>
         <div style={{maxWidth: "600px", margin: "0 auto", padding: "80px 32px", textAlign: "center"}}>
-          <div style={{fontSize: "56px", marginBottom: "24px"}}>🎉</div>
+          <div style={{marginBottom: "24px"}}><ReviewStarIcon size={56} color="#C8622A"/></div>
           <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>APPLICATION RECEIVED</p>
           <h1 style={{fontFamily: "Georgia, serif", fontSize: "36px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 16px", letterSpacing: "-1px"}}>
             Thank you, {form.name}!

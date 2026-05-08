@@ -9,27 +9,27 @@ export default function Pending() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen flex flex-col" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <button
           onClick={handleSignOut}
-          style={{fontSize: "13px", color: "#7A5235", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+          style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
         >
           Sign out
         </button>
       </nav>
 
       <div className="flex flex-col items-center justify-center flex-1" style={{padding: "48px 32px"}}>
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "16px", padding: "48px 32px", border: "1px solid #E4D8C4", textAlign: "center", maxWidth: "480px", width: "100%"}}>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "16px", padding: "48px 32px", border: "1px solid #E2D5C8", textAlign: "center", maxWidth: "480px", width: "100%"}}>
           <div style={{fontSize: "48px", marginBottom: "24px"}}>⏳</div>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>APPLICATION UNDER REVIEW</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1C1009", margin: "0 0 16px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>APPLICATION UNDER REVIEW</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>
             We are reviewing your application
           </h1>
-          <p style={{fontSize: "14px", color: "#7A5235", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
             Thank you for applying to Lomissa. Our team is reviewing your portfolio and will get back to you within 3 business days.
           </p>
           <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "32px", textAlign: "left"}}>
@@ -40,22 +40,22 @@ export default function Pending() {
               "If approved you can log in immediately",
             ].map((step, i) => (
               <div key={i} style={{display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: i < 3 ? "10px" : "0"}}>
-                <span style={{fontSize: "12px", color: "#B85528", flexShrink: 0, fontWeight: "600", fontFamily: "'Jost', sans-serif"}}>0{i + 1}</span>
-                <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>{step}</span>
+                <span style={{fontSize: "12px", color: "#C8622A", flexShrink: 0, fontWeight: "600", fontFamily: "'Jost', sans-serif"}}>0{i + 1}</span>
+                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{step}</span>
               </div>
             ))}
           </div>
-          <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+          <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
             Questions? Email us at{" "}
-            <a href="mailto:hello@lomissa.com" style={{color: "#B85528", textDecoration: "none"}}>hello@lomissa.com</a>
+            <a href="mailto:hello@lomissa.com" style={{color: "#C8622A", textDecoration: "none"}}>hello@lomissa.com</a>
           </p>
         </div>
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

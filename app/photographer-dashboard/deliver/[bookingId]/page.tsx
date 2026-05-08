@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../../lib/supabase";
 import Logo from "../../../components/Logo";
+import { CameraIcon, CheckIcon, XIcon, ImageFileIcon } from "../../../components/Icons";
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 const MAX_FILES = 100;
@@ -161,21 +162,21 @@ export default function DeliverPhotos({ params }: { params: any }) {
     : null;
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
-      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading…</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading…</p>
     </div>
   );
 
   if (done) return (
-    <main className="min-h-screen flex flex-col items-center justify-center" style={{backgroundColor: "#FAF7F1", padding: "40px 24px"}}>
+    <main className="min-h-screen flex flex-col items-center justify-center" style={{backgroundColor: "#FDFBF8", padding: "40px 24px"}}>
       <div style={{maxWidth: "480px", width: "100%", textAlign: "center"}}>
-        <div style={{fontSize: "56px", marginBottom: "24px"}}>📸</div>
-        <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1C1009", margin: "0 0 12px"}}>Photos delivered!</h1>
-        <p style={{fontSize: "14px", color: "#9E7250", fontFamily: "'Jost', sans-serif", lineHeight: "1.7", margin: "0 0 32px"}}>
+        <div style={{marginBottom: "24px"}}><CameraIcon size={56} color="#C8622A"/></div>
+        <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>Photos delivered!</h1>
+        <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", lineHeight: "1.7", margin: "0 0 32px"}}>
           {uploadedCount} photo{uploadedCount === 1 ? "" : "s"} sent to {booking?.client_name}. They'll receive an email with a link to view and download them.
           The 7-day dispute window has started.
         </p>
-        <a href="/photographer-dashboard" style={{backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}>
+        <a href="/photographer-dashboard" style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}>
           Back to dashboard
         </a>
       </div>
@@ -183,20 +184,20 @@ export default function DeliverPhotos({ params }: { params: any }) {
   );
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to dashboard</a>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 24px"}}>
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>DELIVER PHOTOS</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>DELIVER PHOTOS</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             {booking?.client_name}
           </h1>
-          <p style={{fontSize: "14px", color: "#9E7250", fontFamily: "'Jost', sans-serif", margin: "0"}}>
+          <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>
             {booking?.session_type} · {booking?.date}
           </p>
           {booking?.status === "photos_delivered" && (
@@ -208,8 +209,8 @@ export default function DeliverPhotos({ params }: { params: any }) {
 
         {/* Message */}
         <div style={{marginBottom: "32px"}}>
-          <label style={{display: "block", fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-            MESSAGE TO CLIENT <span style={{color: "#C3AB88"}}>(optional)</span>
+          <label style={{display: "block", fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+            MESSAGE TO CLIENT <span style={{color: "#DDD0C0"}}>(optional)</span>
           </label>
           <textarea
             value={message}
@@ -217,13 +218,13 @@ export default function DeliverPhotos({ params }: { params: any }) {
             placeholder="Add a personal note — thank them for the session, describe your editing approach, or share anything else…"
             rows={4}
             disabled={submitting}
-            style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "12px", padding: "16px", fontSize: "14px", fontFamily: "'Jost', sans-serif", resize: "vertical", outline: "none", backgroundColor: "#FDFBF7", color: "#1C1009", boxSizing: "border-box"}}
+            style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "12px", padding: "16px", fontSize: "14px", fontFamily: "'Jost', sans-serif", resize: "vertical", outline: "none", backgroundColor: "#FDFBF8", color: "#1A0E06", boxSizing: "border-box"}}
           />
         </div>
 
         {/* File picker */}
         <div style={{marginBottom: "24px"}}>
-          <label style={{display: "block", fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+          <label style={{display: "block", fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
             PHOTOS ({files.length}/{MAX_FILES})
           </label>
           <input
@@ -238,20 +239,20 @@ export default function DeliverPhotos({ params }: { params: any }) {
             onClick={() => fileInputRef.current?.click()}
             disabled={submitting || files.length >= MAX_FILES}
             style={{
-              width: "100%", padding: "32px", border: "2px dashed #E4D8C4",
-              borderRadius: "12px", backgroundColor: "#FDFBF7", cursor: "pointer",
-              fontFamily: "'Jost', sans-serif", fontSize: "14px", color: "#9E7250",
+              width: "100%", padding: "32px", border: "2px dashed #E2D5C8",
+              borderRadius: "12px", backgroundColor: "#FDFBF8", cursor: "pointer",
+              fontFamily: "'Jost', sans-serif", fontSize: "14px", color: "#7A5C44",
               display: "flex", flexDirection: "column", alignItems: "center", gap: "8px",
               opacity: files.length >= MAX_FILES ? 0.5 : 1,
             }}
           >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C3AB88" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#DDD0C0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/>
               <circle cx="8.5" cy="8.5" r="1.5"/>
               <polyline points="21 15 16 10 5 21"/>
             </svg>
             <span>Click to select photos</span>
-            <span style={{fontSize: "12px", color: "#C3AB88"}}>JPG, PNG, WEBP · Max 20 MB each · Up to {MAX_FILES} photos</span>
+            <span style={{fontSize: "12px", color: "#DDD0C0"}}>JPG, PNG, WEBP · Max 20 MB each · Up to {MAX_FILES} photos</span>
           </button>
         </div>
 
@@ -259,18 +260,18 @@ export default function DeliverPhotos({ params }: { params: any }) {
         {files.length > 0 && (
           <div style={{marginBottom: "32px", display: "flex", flexDirection: "column", gap: "8px"}}>
             {files.map((entry, i) => (
-              <div key={i} style={{display: "flex", alignItems: "center", gap: "12px", padding: "10px 14px", borderRadius: "8px", border: "1px solid #E4D8C4", backgroundColor: entry.status === "done" ? "#f0fdf4" : entry.status === "error" ? "#fef2f2" : "#FDFBF7"}}>
+              <div key={i} style={{display: "flex", alignItems: "center", gap: "12px", padding: "10px 14px", borderRadius: "8px", border: "1px solid #E2D5C8", backgroundColor: entry.status === "done" ? "#f0fdf4" : entry.status === "error" ? "#fef2f2" : "#FDFBF8"}}>
                 <div style={{fontSize: "18px", flexShrink: 0}}>
-                  {entry.status === "done" ? "✅" : entry.status === "error" ? "❌" : entry.status === "uploading" ? "⏳" : "🖼️"}
+                  {entry.status === "done" ? <CheckIcon size={18} color="#16a34a"/> : entry.status === "error" ? <XIcon size={18} color="#dc2626"/> : entry.status === "uploading" ? <ImageFileIcon size={18} color="#C8622A"/> : <ImageFileIcon size={18} color="#DDD0C0"/>}
                 </div>
                 <div style={{flex: 1, minWidth: 0}}>
-                  <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>{entry.file.name}</p>
-                  <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                  <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>{entry.file.name}</p>
+                  <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
                     {entry.status === "uploading" ? "Uploading…" : entry.status === "error" ? (entry.error || "Failed") : (entry.file.size / (1024 * 1024)).toFixed(1) + " MB"}
                   </p>
                 </div>
                 {!submitting && entry.status === "pending" && (
-                  <button onClick={() => removeFile(i)} style={{background: "none", border: "none", cursor: "pointer", color: "#C3AB88", fontSize: "16px", padding: "0", flexShrink: 0}}>✕</button>
+                  <button onClick={() => removeFile(i)} style={{background: "none", border: "none", cursor: "pointer", color: "#DDD0C0", fontSize: "16px", padding: "0", flexShrink: 0}}>✕</button>
                 )}
               </div>
             ))}
@@ -289,12 +290,12 @@ export default function DeliverPhotos({ params }: { params: any }) {
           <button
             onClick={handleDeliver}
             disabled={submitting || files.length === 0}
-            style={{backgroundColor: files.length === 0 || submitting ? "#9E7250" : "#B85528", color: "#FAF7F1", fontSize: "14px", padding: "14px 40px", border: "none", borderRadius: "999px", cursor: files.length === 0 || submitting ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", opacity: files.length === 0 ? 0.5 : 1}}
+            style={{backgroundColor: files.length === 0 || submitting ? "#7A5C44" : "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 40px", border: "none", borderRadius: "999px", cursor: files.length === 0 || submitting ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", opacity: files.length === 0 ? 0.5 : 1}}
           >
             {progress || `Deliver ${files.length > 0 ? files.length + " photo" + (files.length === 1 ? "" : "s") : "photos"}`}
           </button>
           {submitting && (
-            <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
               Please keep this page open…
             </p>
           )}

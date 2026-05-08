@@ -165,8 +165,8 @@ export default function AdminPanel() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
-      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
     </div>
   );
 
@@ -178,8 +178,8 @@ export default function AdminPanel() {
     fontSize: "13px",
     cursor: "pointer",
     border: "none",
-    backgroundColor: tab === t ? "#B85528" : "transparent",
-    color: tab === t ? "#FAF7F1" : "#7A5235",
+    backgroundColor: tab === t ? "#C8622A" : "transparent",
+    color: tab === t ? "#FDFBF8" : "#7A5C44",
     fontWeight: tab === t ? "500" : "400",
     fontFamily: "'Jost', sans-serif",
   });
@@ -191,23 +191,23 @@ export default function AdminPanel() {
     fontWeight: "500",
     fontFamily: "'Jost', sans-serif",
     backgroundColor: status === "approved" ? "#f0fdf4" : status === "rejected" ? "#fef2f2" : "#FBF0EA",
-    color: status === "approved" ? "#15803d" : status === "rejected" ? "#dc2626" : "#B85528",
+    color: status === "approved" ? "#15803d" : status === "rejected" ? "#dc2626" : "#C8622A",
   });
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <div className="flex items-center gap-4">
           <Logo size="sm" />
-          <span style={{fontSize: "11px", letterSpacing: "0.15em", color: "#B85528", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADMIN</span>
+          <span style={{fontSize: "11px", letterSpacing: "0.15em", color: "#C8622A", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADMIN</span>
         </div>
         <div className="flex items-center gap-4">
-          <a href="/" style={{fontSize: "12px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>View site</a>
+          <a href="/" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>View site</a>
           <button
             onClick={() => supabase.auth.signOut().then(() => window.location.href = "/studio-access")}
-            style={{fontSize: "12px", color: "#7A5235", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
+            style={{fontSize: "12px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
           >
             Sign out
           </button>
@@ -218,11 +218,11 @@ export default function AdminPanel() {
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADMIN PANEL</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADMIN PANEL</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             Lomissa HQ
           </h1>
-          <p style={{fontSize: "14px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your platform from one place</p>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your platform from one place</p>
         </div>
 
         {/* Stats */}
@@ -234,9 +234,9 @@ export default function AdminPanel() {
             { label: "Pending applications", value: stats.pendingApplications },
             { label: "Open disputes", value: stats.openDisputes },
           ].map((stat) => (
-            <div key={stat.label} style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
-              <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1C1009", margin: "0", letterSpacing: "-0.02em"}}>{stat.value}</p>
+            <div key={stat.label} style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "24px", border: "1px solid #E2D5C8"}}>
+              <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>{stat.value}</p>
             </div>
           ))}
         </div>
@@ -258,38 +258,38 @@ export default function AdminPanel() {
         {/* Overview */}
         {tab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>RECENT APPLICATIONS</p>
+            <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "24px", border: "1px solid #E2D5C8"}}>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>RECENT APPLICATIONS</p>
               {applications.slice(0, 3).length === 0 ? (
-                <p style={{fontSize: "13px", color: "#C3AB88", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No applications yet</p>
+                <p style={{fontSize: "13px", color: "#DDD0C0", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No applications yet</p>
               ) : applications.slice(0, 3).map((app) => (
-                <div key={app.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E4D8C4"}}>
+                <div key={app.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E2D5C8"}}>
                   <div>
-                    <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{app.name}</p>
-                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{app.specialty} — {app.location}</p>
+                    <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{app.name}</p>
+                    <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{app.specialty} — {app.location}</p>
                   </div>
                   <span style={statusBadge(app.status)}>{app.status}</span>
                 </div>
               ))}
-              <button onClick={() => setTab("applications")} style={{marginTop: "16px", fontSize: "12px", color: "#B85528", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}>
+              <button onClick={() => setTab("applications")} style={{marginTop: "16px", fontSize: "12px", color: "#C8622A", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}>
                 View all applications →
               </button>
             </div>
 
-            <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "24px", border: "1px solid #E4D8C4"}}>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>RECENT BOOKINGS</p>
+            <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "24px", border: "1px solid #E2D5C8"}}>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>RECENT BOOKINGS</p>
               {bookings.slice(0, 3).length === 0 ? (
-                <p style={{fontSize: "13px", color: "#C3AB88", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No bookings yet</p>
+                <p style={{fontSize: "13px", color: "#DDD0C0", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No bookings yet</p>
               ) : bookings.slice(0, 3).map((booking) => (
-                <div key={booking.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E4D8C4"}}>
+                <div key={booking.id} style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E2D5C8"}}>
                   <div>
-                    <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{booking.client_name || "Client"}</p>
-                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.photographer_name} — {booking.date}</p>
+                    <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{booking.client_name || "Client"}</p>
+                    <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.photographer_name} — {booking.date}</p>
                   </div>
                   <span style={statusBadge(booking.status)}>{booking.status}</span>
                 </div>
               ))}
-              <button onClick={() => setTab("bookings")} style={{marginTop: "16px", fontSize: "12px", color: "#B85528", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}>
+              <button onClick={() => setTab("bookings")} style={{marginTop: "16px", fontSize: "12px", color: "#C8622A", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}>
                 View all bookings →
               </button>
             </div>
@@ -298,39 +298,39 @@ export default function AdminPanel() {
 
         {/* Applications */}
         {tab === "applications" && (
-          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL APPLICATIONS — {applications.length} TOTAL</p>
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL APPLICATIONS — {applications.length} TOTAL</p>
             {applications.length === 0 ? (
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No applications yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No applications yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
                 {applications.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((app) => (
-                  <div key={app.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
+                  <div key={app.id} style={{border: "1px solid #E2D5C8", borderRadius: "12px", padding: "20px", backgroundColor: "#FDFBF8"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px"}}>
                       <div>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{app.name}</p>
-                        <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{app.email} — {app.location}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{app.name}</p>
+                        <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{app.email} — {app.location}</p>
                         <div style={{display: "flex", gap: "8px", flexWrap: "wrap"}}>
-                          {app.specialty && <span style={{fontSize: "11px", color: "#B85528", border: "1px solid #E4D8C4", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.specialty}</span>}
-                          {app.experience && <span style={{fontSize: "11px", color: "#9E7250", border: "1px solid #E4D8C4", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.experience}</span>}
+                          {app.specialty && <span style={{fontSize: "11px", color: "#C8622A", border: "1px solid #E2D5C8", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.specialty}</span>}
+                          {app.experience && <span style={{fontSize: "11px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.experience}</span>}
                         </div>
                       </div>
                       <span style={statusBadge(app.status)}>{app.status}</span>
                     </div>
                     {app.about && (
-                      <p style={{fontSize: "14px", color: "#7A5235", margin: "12px 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.7"}}>"{app.about}"</p>
+                      <p style={{fontSize: "14px", color: "#7A5C44", margin: "12px 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.7"}}>"{app.about}"</p>
                     )}
                     <div style={{display: "flex", gap: "16px", flexWrap: "wrap", marginTop: "8px"}}>
                       {app.instagram && (
-                        <a href={`https://instagram.com/${app.instagram}`} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{app.instagram} ↗</a>
+                        <a href={`https://instagram.com/${app.instagram}`} target="_blank" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{app.instagram} ↗</a>
                       )}
                       {app.portfolio_link && (
-                        <a href={app.portfolio_link} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Portfolio ↗</a>
+                        <a href={app.portfolio_link} target="_blank" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Portfolio ↗</a>
                       )}
                     </div>
                     {app.status === "pending" && (
                       <div style={{display: "flex", gap: "8px", marginTop: "16px"}}>
-                        <button onClick={() => handleApprove(app)} style={{backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
+                        <button onClick={() => handleApprove(app)} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
                           Approve ✓
                         </button>
                         <button onClick={() => handleReject(app)} style={{backgroundColor: "transparent", color: "#dc2626", fontSize: "12px", padding: "8px 20px", border: "1px solid #fce8e8", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
@@ -344,9 +344,9 @@ export default function AdminPanel() {
             )}
             {applications.length > PAGE_SIZE && (
               <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
-                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
-                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(applications.length / PAGE_SIZE)}</span>
-                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= applications.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= applications.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= applications.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(applications.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= applications.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= applications.length ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= applications.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
               </div>
             )}
           </div>
@@ -354,20 +354,20 @@ export default function AdminPanel() {
 
         {/* Photographers */}
         {tab === "photographers" && (
-          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL PHOTOGRAPHERS — {photographers.length} TOTAL</p>
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL PHOTOGRAPHERS — {photographers.length} TOTAL</p>
             {photographers.length === 0 ? (
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No photographers yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No photographers yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
                 {photographers.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((p) => (
-                  <div key={p.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px"}}>
+                  <div key={p.id} style={{border: "1px solid #E2D5C8", borderRadius: "12px", padding: "20px", backgroundColor: "#FDFBF8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px"}}>
                     <div>
-                      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{p.name}</p>
-                      <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{p.location} — {p.specialty}</p>
-                      <p style={{fontSize: "13px", color: "#B85528", margin: "0", fontFamily: "'Jost', sans-serif"}}>{p.price} — ⭐ {p.rating || "New"}</p>
+                      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{p.name}</p>
+                      <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{p.location} — {p.specialty}</p>
+                      <p style={{fontSize: "13px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{p.price} — <svg viewBox="0 0 64 64" width="14" height="14" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:"3px"}}><circle cx="32" cy="32" r="9" fill="#C8622A"/><line x1="32" y1="18" x2="32" y2="10" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="46" y1="32" x2="54" y2="32" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="42" y1="22" x2="48" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="22" y1="22" x2="16" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/></svg>{p.rating || "New"}</p>
                     </div>
-                    <a href={`/photographers/${p.id}`} target="_blank" style={{fontSize: "12px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "6px 16px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
+                    <a href={`/photographers/${p.id}`} target="_blank" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
                       View profile →
                     </a>
                   </div>
@@ -376,9 +376,9 @@ export default function AdminPanel() {
             )}
             {photographers.length > PAGE_SIZE && (
               <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
-                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
-                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(photographers.length / PAGE_SIZE)}</span>
-                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= photographers.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= photographers.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= photographers.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(photographers.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= photographers.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= photographers.length ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= photographers.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
               </div>
             )}
           </div>
@@ -386,8 +386,8 @@ export default function AdminPanel() {
 
         {/* Clients */}
         {tab === "clients" && (
-          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
               ALL CLIENTS — {clients.length} TOTAL
               {clients.filter(c => c.pending_deletion).length > 0 && (
                 <span style={{marginLeft: "12px", color: "#dc2626"}}>
@@ -396,27 +396,27 @@ export default function AdminPanel() {
               )}
             </p>
             {clients.length === 0 ? (
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No clients yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No clients yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
                 {clients.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((client) => {
                   const clientBookings = bookings.filter(b => b.client_id === client.id);
                   const isExpanded = expandedClientId === client.id;
                   return (
-                    <div key={client.id} style={{border: client.pending_deletion ? "1px solid #fecaca" : "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: client.pending_deletion ? "#fff8f8" : "#FAF7F1"}}>
+                    <div key={client.id} style={{border: client.pending_deletion ? "1px solid #fecaca" : "1px solid #E2D5C8", borderRadius: "12px", padding: "20px", backgroundColor: client.pending_deletion ? "#fff8f8" : "#FDFBF8"}}>
                       <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px"}}>
                         <div>
-                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>
-                            {client.name || <span style={{color: "#C3AB88", fontStyle: "italic"}}>No name set</span>}
+                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>
+                            {client.name || <span style={{color: "#DDD0C0", fontStyle: "italic"}}>No name set</span>}
                           </p>
-                          <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{client.email}</p>
-                          <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                          <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{client.email}</p>
+                          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>
                             Joined {new Date(client.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                           </p>
                         </div>
                         <div style={{display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px"}}>
                           <div style={{display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end"}}>
-                            <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#F5EFE4", color: "#7A5235"}}>
+                            <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#F5EFE4", color: "#7A5C44"}}>
                               {client.booking_count} booking{client.booking_count !== 1 ? "s" : ""}
                             </span>
                             {client.pending_deletion ? (
@@ -440,17 +440,17 @@ export default function AdminPanel() {
                         <div style={{marginTop: "12px"}}>
                           <button
                             onClick={() => setExpandedClientId(isExpanded ? null : client.id)}
-                            style={{fontSize: "12px", color: "#B85528", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}
+                            style={{fontSize: "12px", color: "#C8622A", background: "none", border: "none", cursor: "pointer", padding: "0", fontFamily: "'Jost', sans-serif"}}
                           >
                             {isExpanded ? "Hide booking history ↑" : `View booking history (${client.booking_count}) →`}
                           </button>
                           {isExpanded && (
                             <div style={{marginTop: "12px", display: "flex", flexDirection: "column", gap: "8px"}}>
                               {clientBookings.map((b) => (
-                                <div key={b.id} style={{backgroundColor: "#FDFBF7", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px"}}>
+                                <div key={b.id} style={{backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px"}}>
                                   <div>
-                                    <p style={{fontSize: "13px", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{b.session_type} with {b.photographer_name}</p>
-                                    <p style={{fontSize: "12px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{b.date || "No date"} · {b.price}</p>
+                                    <p style={{fontSize: "13px", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{b.session_type} with {b.photographer_name}</p>
+                                    <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{b.date || "No date"} · {b.price}</p>
                                   </div>
                                   <span style={statusBadge(b.status)}>{b.status}</span>
                                 </div>
@@ -466,9 +466,9 @@ export default function AdminPanel() {
             )}
             {clients.length > PAGE_SIZE && (
               <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
-                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
-                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(clients.length / PAGE_SIZE)}</span>
-                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= clients.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= clients.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= clients.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(clients.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= clients.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= clients.length ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= clients.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
               </div>
             )}
           </div>
@@ -478,9 +478,9 @@ export default function AdminPanel() {
         {tab === "disputes" && (() => {
           const disputes = bookings.filter(b => b.status === "disputed");
           return (
-            <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>OPEN DISPUTES — {disputes.length} TOTAL</p>
-              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1C1009", margin: "0 0 24px", letterSpacing: "-0.02em"}}>
+            <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>OPEN DISPUTES — {disputes.length} TOTAL</p>
+              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em"}}>
                 Resolve disputes
               </h2>
               {resolveError && (
@@ -489,40 +489,40 @@ export default function AdminPanel() {
                 </div>
               )}
               {disputes.length === 0 ? (
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No open disputes</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No open disputes</p>
               ) : (
                 <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
                   {disputes.map((booking) => (
                     <div key={booking.id} style={{border: "1px solid #fde68a", borderRadius: "12px", padding: "24px", backgroundColor: "#fffbeb"}}>
                       <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "16px"}}>
                         <div>
-                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{booking.client_name} → {booking.photographer_name}</p>
-                          <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{booking.session_type} — {booking.date} — {booking.price}</p>
-                          <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.client_email} · {booking.photographer_email}</p>
+                          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{booking.client_name} → {booking.photographer_name}</p>
+                          <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{booking.session_type} — {booking.date} — {booking.price}</p>
+                          <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.client_email} · {booking.photographer_email}</p>
                         </div>
                         <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#fef3c7", color: "#b45309"}}>Disputed</span>
                       </div>
                       {booking.dispute_reason && (
-                        <div style={{backgroundColor: "#FAF7F1", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px"}}>
-                          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 4px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CLIENT REASON</p>
-                          <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.6"}}>"{booking.dispute_reason}"</p>
+                        <div style={{backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px"}}>
+                          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CLIENT REASON</p>
+                          <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.6"}}>"{booking.dispute_reason}"</p>
                         </div>
                       )}
                       <div style={{marginBottom: "16px"}}>
-                        <label style={{display: "block", fontSize: "11px", color: "#7A5235", margin: "0 0 8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADMIN NOTE (optional)</label>
+                        <label style={{display: "block", fontSize: "11px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADMIN NOTE (optional)</label>
                         <textarea
                           value={disputeNotes[booking.id] || ""}
                           onChange={(e) => setDisputeNotes(prev => ({ ...prev, [booking.id]: e.target.value }))}
                           placeholder="Add a note about this resolution..."
                           rows={2}
-                          style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 14px", fontSize: "13px", fontFamily: "'Jost', sans-serif", resize: "none", outline: "none", backgroundColor: "#FAF7F1", boxSizing: "border-box"}}
+                          style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 14px", fontSize: "13px", fontFamily: "'Jost', sans-serif", resize: "none", outline: "none", backgroundColor: "#FDFBF8", boxSizing: "border-box"}}
                         />
                       </div>
                       <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
                         <button
                           onClick={() => handleResolveDispute(booking.id, "release")}
                           disabled={resolvingId !== null}
-                          style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#15803d", border: "none", padding: "10px 24px", borderRadius: "999px", cursor: resolvingId !== null ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: resolvingId === booking.id + "release" ? 0.6 : 1}}
+                          style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#15803d", border: "none", padding: "10px 24px", borderRadius: "999px", cursor: resolvingId !== null ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: resolvingId === booking.id + "release" ? 0.6 : 1}}
                         >
                           {resolvingId === booking.id + "release" ? "Releasing…" : "Release payment to photographer"}
                         </button>
@@ -544,22 +544,22 @@ export default function AdminPanel() {
 
         {/* Bookings */}
         {tab === "bookings" && (
-          <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4"}}>
-            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL BOOKINGS — {bookings.length} TOTAL</p>
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ALL BOOKINGS — {bookings.length} TOTAL</p>
             {bookings.length === 0 ? (
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No bookings yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No bookings yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
                 {bookings.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((booking) => (
-                  <div key={booking.id} style={{border: "1px solid #E4D8C4", borderRadius: "12px", padding: "20px", backgroundColor: "#FAF7F1"}}>
+                  <div key={booking.id} style={{border: "1px solid #E2D5C8", borderRadius: "12px", padding: "20px", backgroundColor: "#FDFBF8"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "12px"}}>
                       <div>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1C1009", margin: "0 0 4px"}}>{booking.client_name} → {booking.photographer_name}</p>
-                        <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type} — {booking.date} — {booking.location}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{booking.client_name} → {booking.photographer_name}</p>
+                        <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type} — {booking.date} — {booking.location}</p>
                       </div>
                       <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
                         <span style={statusBadge(booking.status)}>{booking.status}</span>
-                        <span style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price}</span>
+                        <span style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price}</span>
                       </div>
                     </div>
                   </div>
@@ -568,9 +568,9 @@ export default function AdminPanel() {
             )}
             {bookings.length > PAGE_SIZE && (
               <div style={{display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center"}}>
-                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
-                <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(bookings.length / PAGE_SIZE)}</span>
-                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= bookings.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= bookings.length ? "#C3AB88" : "#7A5235", background: "none", border: "1px solid #E4D8C4", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= bookings.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{fontSize: "12px", color: page === 0 ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>← Prev</button>
+                <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Page {page + 1} of {Math.ceil(bookings.length / PAGE_SIZE)}</span>
+                <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= bookings.length} style={{fontSize: "12px", color: (page + 1) * PAGE_SIZE >= bookings.length ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= bookings.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif"}}>Next →</button>
               </div>
             )}
           </div>
@@ -578,9 +578,9 @@ export default function AdminPanel() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

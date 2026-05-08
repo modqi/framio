@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
+import { CameraIcon } from "../../components/Icons";
 
 export default function Portfolio() {
   const [user, setUser] = useState<any>(null);
@@ -95,23 +96,23 @@ export default function Portfolio() {
   }
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
       </nav>
 
       <div style={{maxWidth: "900px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY WORK</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY WORK</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             My portfolio
           </h1>
-          <p style={{fontSize: "14px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
             Upload your best photos — these appear on your public profile
           </p>
         </div>
@@ -119,21 +120,21 @@ export default function Portfolio() {
         {/* Upload area */}
         <div style={{marginBottom: "40px"}}>
           <label style={{display: "block", cursor: "pointer"}}>
-            <div style={{border: "2px dashed #E4D8C4", borderRadius: "12px", padding: "48px 32px", textAlign: "center", backgroundColor: uploading ? "#F5EFE4" : "#FDFBF7", transition: "all 0.2s"}}>
+            <div style={{border: "2px dashed #E2D5C8", borderRadius: "12px", padding: "48px 32px", textAlign: "center", backgroundColor: uploading ? "#F5EFE4" : "#FDFBF8", transition: "all 0.2s"}}>
               {uploading ? (
                 <div>
-                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#B85528", margin: "0 0 8px"}}>Uploading...</p>
-                  <p style={{fontSize: "13px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>Please wait while we upload your photos</p>
+                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#C8622A", margin: "0 0 8px"}}>Uploading...</p>
+                  <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Please wait while we upload your photos</p>
                 </div>
               ) : (
                 <div>
-                  <p style={{fontSize: "40px", margin: "0 0 16px"}}>📸</p>
-                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px"}}>Upload your photos</p>
-                  <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>Click to browse or drag and drop your photos here</p>
-                  <span style={{fontSize: "12px", color: "#B85528", border: "1px solid #B85528", padding: "8px 24px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
+                  <div style={{margin: "0 0 16px"}}><CameraIcon size={48} color="#C8622A"/></div>
+                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px"}}>Upload your photos</p>
+                  <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>Click to browse or drag and drop your photos here</p>
+                  <span style={{fontSize: "12px", color: "#C8622A", border: "1px solid #C8622A", padding: "8px 24px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
                     Choose photos
                   </span>
-                  <p style={{fontSize: "11px", color: "#C3AB88", margin: "16px 0 0", fontFamily: "'Jost', sans-serif"}}>JPG, PNG up to 10MB each — multiple photos allowed</p>
+                  <p style={{fontSize: "11px", color: "#DDD0C0", margin: "16px 0 0", fontFamily: "'Jost', sans-serif"}}>JPG, PNG up to 10MB each — multiple photos allowed</p>
                 </div>
               )}
             </div>
@@ -157,12 +158,12 @@ export default function Portfolio() {
         {/* Photos grid */}
         {photos.length === 0 ? (
           <div style={{textAlign: "center", padding: "48px 0"}}>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#C3AB88", margin: "0 0 8px"}}>No photos yet</p>
-            <p style={{fontSize: "13px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>Upload your first photo to get started</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#DDD0C0", margin: "0 0 8px"}}>No photos yet</p>
+            <p style={{fontSize: "13px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>Upload your first photo to get started</p>
           </div>
         ) : (
           <div>
-            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 20px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photos.length} PHOTOS</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photos.length} PHOTOS</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {photos.map((photo, index) => (
                 <div key={photo.id} style={{position: "relative", aspectRatio: "3/4", borderRadius: "8px", overflow: "hidden", backgroundColor: "#f5f5f5"}}>
@@ -175,7 +176,7 @@ export default function Portfolio() {
                     {confirmDeleteId === photo.id && (
                       <button
                         onClick={() => setConfirmDeleteId(null)}
-                        style={{backgroundColor: "#fff", border: "none", borderRadius: "12px", padding: "4px 8px", cursor: "pointer", fontSize: "11px", color: "#7A5235", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", fontFamily: "'Jost', sans-serif"}}
+                        style={{backgroundColor: "#fff", border: "none", borderRadius: "12px", padding: "4px 8px", cursor: "pointer", fontSize: "11px", color: "#7A5C44", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", fontFamily: "'Jost', sans-serif"}}
                       >
                         Cancel
                       </button>
@@ -195,9 +196,9 @@ export default function Portfolio() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

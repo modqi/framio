@@ -98,5 +98,5 @@ export function LomissaLogo({ width = 160, className = '' }: { width?: number, c
 }
 
 export function LomissaLogoWhite({ width = 160, className = '' }: { width?: number, className?: string }) {
-  return <Logo size="md" asLink={false} color="#FAF7F1" accent="#C1622F" />
+  return <Logo size="md" asLink={false} color="#FDFBF8" accent="#C1622F" />
 }

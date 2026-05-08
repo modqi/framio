@@ -109,52 +109,52 @@ export default function Availability() {
   );
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
       </nav>
 
       <div style={{maxWidth: "680px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY SCHEDULE</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY SCHEDULE</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             My availability
           </h1>
-          <p style={{fontSize: "14px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
             Tap days to mark them as unavailable — all other days are open for booking
           </p>
         </div>
 
         {/* Stats strip */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "16px 24px", border: "1px solid #E4D8C4", marginBottom: "24px", display: "flex", gap: "32px"}}>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "16px 24px", border: "1px solid #E2D5C8", marginBottom: "24px", display: "flex", gap: "32px"}}>
           <div>
-            <p style={{fontSize: "11px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Available days</p>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1C1009", margin: "0"}}>{availableCount}</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Available days</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>{availableCount}</p>
           </div>
           <div>
-            <p style={{fontSize: "11px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Blocked days</p>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#B85528", margin: "0"}}>{blockedCount}</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Blocked days</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#C8622A", margin: "0"}}>{blockedCount}</p>
           </div>
           <div>
-            <p style={{fontSize: "11px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Month</p>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1C1009", margin: "0"}}>{currentMonth.toLocaleString("default", { month: "short" })}</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Month</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>{currentMonth.toLocaleString("default", { month: "short" })}</p>
           </div>
         </div>
 
         {/* Calendar */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "32px", border: "1px solid #E4D8C4", marginBottom: "24px"}}>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
 
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-6">
             <button onClick={prevMonth} disabled={isCurrentMonth} style={{border: "1px solid #e5e5e5", backgroundColor: "#fff", borderRadius: "8px", padding: "8px 16px", cursor: isCurrentMonth ? "not-allowed" : "pointer", fontSize: "13px", color: isCurrentMonth ? "#ccc" : "#1a1a1a", opacity: isCurrentMonth ? 0.5 : 1}}>
               ← Prev
             </button>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0"}}>{monthName}</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>{monthName}</p>
             <button onClick={nextMonth} style={{border: "1px solid #e5e5e5", backgroundColor: "#fff", borderRadius: "8px", padding: "8px 16px", cursor: "pointer", fontSize: "13px", color: "#1a1a1a"}}>
               Next →
             </button>
@@ -184,9 +184,9 @@ export default function Availability() {
                     fontSize: "13px",
                     borderRadius: "8px",
                     cursor: past ? "not-allowed" : "pointer",
-                    backgroundColor: past ? "#FAF7F1" : isBlocked ? "#F5EFE4" : "#FDFBF7",
-                    color: past ? "#C3AB88" : isBlocked ? "#C3AB88" : "#1C1009",
-                    border: past ? "1px solid #E4D8C4" : isBlocked ? "1px solid #E4D8C4" : "1px solid #E4D8C4",
+                    backgroundColor: past ? "#FDFBF8" : isBlocked ? "#F5EFE4" : "#FDFBF8",
+                    color: past ? "#DDD0C0" : isBlocked ? "#DDD0C0" : "#1A0E06",
+                    border: past ? "1px solid #E2D5C8" : isBlocked ? "1px solid #E2D5C8" : "1px solid #E2D5C8",
                     fontWeight: isBlocked ? "400" : "500",
                     textDecoration: isBlocked ? "line-through" : "none",
                     transition: "all 0.15s",
@@ -199,25 +199,25 @@ export default function Availability() {
           </div>
 
           {/* Legend */}
-          <div style={{display: "flex", gap: "20px", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid #E4D8C4"}}>
+          <div style={{display: "flex", gap: "20px", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid #E2D5C8"}}>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
-              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#FDFBF7", border: "1px solid #E4D8C4"}}></div>
-              <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Available</span>
+              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8"}}></div>
+              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Available</span>
             </div>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
-              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4"}}></div>
-              <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Unavailable</span>
+              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8"}}></div>
+              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Unavailable</span>
             </div>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
-              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#FAF7F1", border: "1px solid #E4D8C4"}}></div>
-              <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>Past</span>
+              <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8"}}></div>
+              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Past</span>
             </div>
           </div>
         </div>
 
         {/* Instructions */}
-        <div style={{backgroundColor: "#FDFBF7", borderRadius: "12px", padding: "20px 24px", border: "1px solid #E4D8C4", marginBottom: "24px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>HOW IT WORKS</p>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px 24px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>HOW IT WORKS</p>
           <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
             {[
               "All future days are available by default",
@@ -226,8 +226,8 @@ export default function Availability() {
               "Click Save when you are done",
             ].map((tip, i) => (
               <div key={i} style={{display: "flex", gap: "10px", alignItems: "flex-start"}}>
-                <span style={{fontSize: "12px", color: "#B85528", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>0{i + 1}</span>
-                <span style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>{tip}</span>
+                <span style={{fontSize: "12px", color: "#C8622A", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>0{i + 1}</span>
+                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{tip}</span>
               </div>
             ))}
           </div>
@@ -242,7 +242,7 @@ export default function Availability() {
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{width: "100%", backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}
+          style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}
         >
           {saving ? "Saving..." : "Save availability"}
         </button>
@@ -250,9 +250,9 @@ export default function Availability() {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
+import { ReviewStarIcon } from "../../components/Icons";
 
 export default function PhotographerProfile({ params }: { params: any }) {
   const [photographer, setPhotographer] = useState<any>(null);
@@ -210,15 +211,15 @@ export default function PhotographerProfile({ params }: { params: any }) {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FAF7F1"}}>
-      <p style={{fontSize: "13px", color: "#B85528", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
     </div>
   );
 
   if (!photographer) return (
-    <div className="min-h-screen flex items-center justify-center flex-col gap-4" style={{backgroundColor: "#FAF7F1"}}>
-      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1C1009"}}>Photographer not found</p>
-      <a href="/photographers" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Back to browse</a>
+    <div className="min-h-screen flex items-center justify-center flex-col gap-4" style={{backgroundColor: "#FDFBF8"}}>
+      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06"}}>Photographer not found</p>
+      <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Back to browse</a>
     </div>
   );
 
@@ -238,61 +239,61 @@ export default function PhotographerProfile({ params }: { params: any }) {
   const policy = photographer.cancellation_policy || "moderate";
   const policyMap: Record<string, { label: string; desc: string; color: string; bg: string }> = {
     flexible: { label: "Flexible cancellation", desc: "Full refund up to 24h before", color: "#15803d", bg: "#f0fdf4" },
-    moderate: { label: "Moderate cancellation", desc: "Full refund up to 48h before", color: "#B85528", bg: "#FBF0EA" },
+    moderate: { label: "Moderate cancellation", desc: "Full refund up to 48h before", color: "#C8622A", bg: "#FBF0EA" },
     strict:   { label: "Strict cancellation",   desc: "No refund once confirmed",     color: "#dc2626", bg: "#fef2f2" },
   };
   const policyInfo = policyMap[policy] || policyMap.moderate;
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E4D8C4", backgroundColor: "rgba(250,247,241,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <div className="flex items-center gap-6">
           {isAdmin ? (
-            <a href="/admin" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Admin panel</a>
+            <a href="/admin" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Admin panel</a>
           ) : (
-            <a href="/photographers" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Explore</a>
+            <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Explore</a>
           )}
           {authUser ? (
             <>
-              <span style={{fontSize: "13px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>
+              <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
                 {authUser.user_metadata?.name?.split(" ")[0] || "Hi"}
               </span>
               <a
                 href={isAdmin ? "/admin" : authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
-                style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+                style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
                 {isAdmin ? "Admin panel" : "My dashboard"}
               </a>
             </>
           ) : (
             <>
-              <a href="/login" style={{color: "#7A5235", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
-              <a href="/signup" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
+              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
             </>
           )}
         </div>
       </nav>
 
       {/* Hero */}
-      <section style={{backgroundColor: "#F5EFE4", padding: "48px", borderBottom: "1px solid #E4D8C4"}}>
+      <section style={{backgroundColor: "#F5EFE4", padding: "48px", borderBottom: "1px solid #E2D5C8"}}>
         <div className="flex items-start justify-between flex-wrap gap-8">
           <div className="flex items-start gap-8">
-            <div style={{width: "100px", height: "100px", backgroundColor: "#E4D8C4", backgroundImage: "repeating-linear-gradient(-45deg,#E4D8C4,#E4D8C4 6px,#EDE3D1 6px,#EDE3D1 14px)", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "12px", flexShrink: 0}}>
-              <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "44px", fontWeight: "400", color: "#B85528"}}>{photographer.name?.[0] || "?"}</span>
+            <div style={{width: "100px", height: "100px", backgroundColor: "#E2D5C8", backgroundImage: "repeating-linear-gradient(-45deg,#E2D5C8,#E2D5C8 6px,#EDE3D1 6px,#EDE3D1 14px)", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "12px", flexShrink: 0}}>
+              <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "44px", fontWeight: "400", color: "#C8622A"}}>{photographer.name?.[0] || "?"}</span>
             </div>
             <div>
-              <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photographer.specialty || "PHOTOGRAPHER"}</p>
-              <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>{photographer.name}</h1>
-              <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{photographer.location}</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photographer.specialty || "PHOTOGRAPHER"}</p>
+              <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>{photographer.name}</h1>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{photographer.location}</p>
               <div className="flex items-center gap-3 flex-wrap">
-                <span style={{fontSize: "13px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>⭐ {photographer.rating || "New"}</span>
-                {reviews.length > 0 && <span style={{fontSize: "12px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>({reviews.length} reviews)</span>}
-                {isAvailable && <span style={{fontSize: "12px", color: "#FAF7F1", backgroundColor: "#B85528", padding: "4px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>Available</span>}
+                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}><svg viewBox="0 0 64 64" width="14" height="14" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:"3px"}}><circle cx="32" cy="32" r="9" fill="#C8622A"/><line x1="32" y1="18" x2="32" y2="10" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="46" y1="32" x2="54" y2="32" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="42" y1="22" x2="48" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="22" y1="22" x2="16" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/></svg>{photographer.rating || "New"}</span>
+                {reviews.length > 0 && <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>({reviews.length} reviews)</span>}
+                {isAvailable && <span style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#C8622A", padding: "4px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>Available</span>}
                 {photographer.instagram && (
-                  <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{photographer.instagram}</a>
+                  <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{photographer.instagram}</a>
                 )}
               </div>
               {(() => {
@@ -302,7 +303,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 return cats.length > 0 ? (
                   <div style={{display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px"}}>
                     {cats.map((cat: string) => (
-                      <span key={cat} style={{fontSize: "11px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "3px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
+                      <span key={cat} style={{fontSize: "11px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "3px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
                         {cat}
                       </span>
                     ))}
@@ -313,8 +314,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
           </div>
           {minPackagePrice !== null && (
             <div style={{textAlign: "right"}}>
-              <p style={{fontSize: "12px", color: "#9E7250", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>From</p>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1C1009", margin: "0", letterSpacing: "-0.02em"}}>{minPackagePrice.toLocaleString()} NOK</p>
+              <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>From</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>{minPackagePrice.toLocaleString()} NOK</p>
             </div>
           )}
         </div>
@@ -322,8 +323,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
       {/* Bio */}
       {photographer.bio && (
-        <section style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderBottom: "1px solid #E4D8C4"}}>
-          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5235", margin: "0", lineHeight: "1.8", maxWidth: "720px", fontStyle: "italic"}}>
+        <section style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderBottom: "1px solid #E2D5C8"}}>
+          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", margin: "0", lineHeight: "1.8", maxWidth: "720px", fontStyle: "italic"}}>
             "{photographer.bio}"
           </p>
         </section>
@@ -334,19 +335,19 @@ export default function PhotographerProfile({ params }: { params: any }) {
         const terms = [
           { icon: "⏱️", label: "Delivery time",  value: photographer.delivery_time },
           { icon: "⚖️", label: "Copyright",      value: photographer.copyright_ownership },
-          { icon: "🎨", label: "Editing style",  value: photographer.editing_style },
+          { icon: "✦", label: "Editing style",  value: photographer.editing_style },
           { icon: "✏️", label: "Revisions",      value: photographer.revisions_included },
         ].filter(t => t.value);
         return (
-          <section style={{backgroundColor: "#FDFBF7", padding: "32px 48px", borderBottom: "1px solid #E4D8C4"}}>
-            <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WHAT'S INCLUDED</p>
+          <section style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderBottom: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WHAT'S INCLUDED</p>
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "16px"}}>
               {terms.map((t) => (
                 <div key={t.label} style={{display: "flex", alignItems: "flex-start", gap: "12px"}}>
-                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E4D8C4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>{t.icon}</div>
+                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>{t.icon}</div>
                   <div>
-                    <p style={{fontSize: "10px", color: "#B85528", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t.label.toUpperCase()}</p>
-                    <p style={{fontSize: "13px", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{t.value}</p>
+                    <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t.label.toUpperCase()}</p>
+                    <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{t.value}</p>
                   </div>
                 </div>
               ))}
@@ -358,48 +359,48 @@ export default function PhotographerProfile({ params }: { params: any }) {
       <div className="flex flex-col md:flex-row">
 
         {/* Left — portfolio & reviews */}
-        <div style={{flex: 2, padding: "48px", borderRight: "1px solid #E4D8C4"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+        <div style={{flex: 2, padding: "48px", borderRight: "1px solid #E2D5C8"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
             PORTFOLIO {photos.length > 0 && `— ${photos.length} PHOTOS`}
           </p>
           <div className="grid grid-cols-3 gap-3 mb-12">
             {photos.length === 0 ? (
               [1,2,3,4,5,6].map((i) => (
-                <div key={i} style={{aspectRatio: "1", backgroundColor: "#E4D8C4", backgroundImage: "repeating-linear-gradient(-45deg,#E4D8C4,#E4D8C4 6px,#EDE3D1 6px,#EDE3D1 14px)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                  <span style={{fontSize: "12px", color: "#C3AB88", fontFamily: "'Jost', sans-serif"}}>Photo {i}</span>
+                <div key={i} style={{aspectRatio: "1", backgroundColor: "#E2D5C8", backgroundImage: "repeating-linear-gradient(-45deg,#E2D5C8,#E2D5C8 6px,#EDE3D1 6px,#EDE3D1 14px)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                  <span style={{fontSize: "12px", color: "#DDD0C0", fontFamily: "'Jost', sans-serif"}}>Photo {i}</span>
                 </div>
               ))
             ) : (
               photos.map((photo, index) => (
-                <div key={photo.id} style={{aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E4D8C4", position: "relative"}}>
+                <div key={photo.id} style={{aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E2D5C8", position: "relative"}}>
                   <Image src={photo.url} alt={`Portfolio photo ${index + 1}`} fill sizes="(max-width: 768px) 33vw, 20vw" style={{objectFit: "cover"}}/>
                 </div>
               ))
             )}
           </div>
 
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
             REVIEWS {reviews.length > 0 && `— ${reviews.length}`}
           </p>
-          <div style={{borderTop: "1px solid #E4D8C4", paddingTop: "20px"}}>
+          <div style={{borderTop: "1px solid #E2D5C8", paddingTop: "20px"}}>
             {reviews.length === 0 ? (
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#C3AB88", fontStyle: "italic"}}>No reviews yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No reviews yet</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
                 {reviews.map((review: any) => (
-                  <div key={review.id} style={{padding: "16px", border: "1px solid #E4D8C4", borderRadius: "12px", backgroundColor: "#FDFBF7"}}>
+                  <div key={review.id} style={{padding: "16px", border: "1px solid #E2D5C8", borderRadius: "12px", backgroundColor: "#FDFBF8"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
                       <div>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1C1009", margin: "0 0 2px"}}>{review.client_name}</p>
-                        <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(review.created_at).toLocaleDateString()}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{review.client_name}</p>
+                        <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(review.created_at).toLocaleDateString()}</p>
                       </div>
                       <div style={{display: "flex", gap: "2px"}}>
                         {[1,2,3,4,5].map(star => (
-                          <span key={star} style={{fontSize: "14px", opacity: star <= review.rating ? 1 : 0.2}}>⭐</span>
+                          <span key={star} style={{opacity: star <= review.rating ? 1 : 0.2, display: "inline-flex"}}><svg viewBox="0 0 64 64" width="14" height="14" fill="none"><circle cx="32" cy="32" r="9" fill="#C8622A"/><line x1="32" y1="18" x2="32" y2="10" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="46" y1="32" x2="54" y2="32" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="42" y1="22" x2="48" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="22" y1="22" x2="16" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/></svg></span>
                         ))}
                       </div>
                     </div>
-                    <p style={{fontSize: "14px", color: "#7A5235", margin: "0", lineHeight: "1.7", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{review.comment}"</p>
+                    <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.7", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{review.comment}"</p>
                   </div>
                 ))}
               </div>
@@ -409,30 +410,30 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
         {/* Right — booking form */}
         <div style={{flex: 1, padding: "48px"}}>
-          <div style={{border: "1px solid #E4D8C4", borderRadius: "16px", padding: "32px", position: "sticky", top: "32px", boxShadow: "0 4px 24px rgba(28,16,9,0.08)", backgroundColor: "#FDFBF7"}}>
+          <div style={{border: "1px solid #E2D5C8", borderRadius: "16px", padding: "32px", position: "sticky", top: "32px", boxShadow: "0 4px 24px rgba(28,16,9,0.08)", backgroundColor: "#FDFBF8"}}>
             {booked ? (
               <div className="text-center py-8">
-                <div style={{fontSize: "48px", marginBottom: "16px"}}>🎉</div>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1C1009", margin: "0 0 12px"}}>Booking requested!</p>
-                <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 8px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif"}}>{photographer.name} will respond within 24 hours.</p>
-                <p style={{fontSize: "13px", color: "#B85528", margin: "0 0 24px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>{selectedDate}</p>
-                <a href="/dashboard" style={{backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>View my bookings</a>
+                <div style={{marginBottom: "16px"}}><ReviewStarIcon size={56} color="#C8622A"/></div>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>Booking requested!</p>
+                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif"}}>{photographer.name} will respond within 24 hours.</p>
+                <p style={{fontSize: "13px", color: "#C8622A", margin: "0 0 24px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>{selectedDate}</p>
+                <a href="/dashboard" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>View my bookings</a>
               </div>
             ) : packages.length === 0 ? (
               <div>
-                <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#C3AB88", fontStyle: "italic", margin: "0 0 16px"}}>No packages yet</p>
-                <p style={{fontSize: "13px", color: "#9E7250", margin: "0 0 24px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>This photographer hasn't listed any packages yet. Send them a message to discuss rates and availability.</p>
-                <a href="/messages" style={{display: "block", textAlign: "center", backgroundColor: "#1C1009", color: "#FAF7F1", fontSize: "13px", padding: "14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Message photographer</a>
+                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#DDD0C0", fontStyle: "italic", margin: "0 0 16px"}}>No packages yet</p>
+                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>This photographer hasn't listed any packages yet. Send them a message to discuss rates and availability.</p>
+                <a href="/messages" style={{display: "block", textAlign: "center", backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Message photographer</a>
               </div>
             ) : (
               <>
-                <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1C1009", margin: "0 0 20px"}}>{photographer.name?.split(" ")[0]}</p>
+                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 20px"}}>{photographer.name?.split(" ")[0]}</p>
 
                 {/* Package selector */}
                 <div style={{marginBottom: "20px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CHOOSE A PACKAGE</label>
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CHOOSE A PACKAGE</label>
                   <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
                     {packages.map((pkg) => {
                       const selected = selectedPackage?.id === pkg.id;
@@ -440,18 +441,18 @@ export default function PhotographerProfile({ params }: { params: any }) {
                         <button
                           key={pkg.id}
                           onClick={() => setSelectedPackage(pkg)}
-                          style={{border: `1px solid ${selected ? "#B85528" : "#E4D8C4"}`, borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", backgroundColor: selected ? "#FBF0EA" : "#FAF7F1", width: "100%", transition: "all 0.1s"}}
+                          style={{border: `1px solid ${selected ? "#C8622A" : "#E2D5C8"}`, borderRadius: "10px", padding: "14px 16px", textAlign: "left", cursor: "pointer", backgroundColor: selected ? "#FBF0EA" : "#FDFBF8", width: "100%", transition: "all 0.1s"}}
                         >
                           <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px"}}>
                             <div style={{flex: 1}}>
                               <div style={{display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "2px"}}>
-                                <p style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.name}</p>
-                                {pkg.category && <span style={{fontSize: "10px", color: "#B85528", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "1px 7px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
+                                <p style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.name}</p>
+                                {pkg.category && <span style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "1px 7px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
                               </div>
-                              <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
-                              {pkg.description && <p style={{fontSize: "11px", color: "#7A5235", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
+                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
+                              {pkg.description && <p style={{fontSize: "11px", color: "#7A5C44", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                             </div>
-                            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: selected ? "#B85528" : "#1C1009", margin: "0", flexShrink: 0}}>{pkg.price.toLocaleString()} NOK</p>
+                            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: selected ? "#C8622A" : "#1A0E06", margin: "0", flexShrink: 0}}>{pkg.price.toLocaleString()} NOK</p>
                           </div>
                         </button>
                       );
@@ -462,23 +463,23 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 {/* Add-ons */}
                 {addons.length > 0 && (
                   <div style={{marginBottom: "20px"}}>
-                    <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADD-ONS (OPTIONAL)</label>
+                    <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADD-ONS (OPTIONAL)</label>
                     <div style={{display: "flex", flexDirection: "column", gap: "6px"}}>
                       {addons.map((addon) => {
                         const qty = addonQty[addon.id] || 0;
                         return (
-                          <div key={addon.id} style={{border: `1px solid ${qty > 0 ? "#B85528" : "#E4D8C4"}`, borderRadius: "8px", padding: "10px 12px", backgroundColor: qty > 0 ? "#FBF0EA" : "#FAF7F1", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", transition: "all 0.1s"}}>
+                          <div key={addon.id} style={{border: `1px solid ${qty > 0 ? "#C8622A" : "#E2D5C8"}`, borderRadius: "8px", padding: "10px 12px", backgroundColor: qty > 0 ? "#FBF0EA" : "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", transition: "all 0.1s"}}>
                             <div style={{flex: 1}}>
-                              <p style={{fontSize: "13px", color: "#1C1009", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
-                              <p style={{fontSize: "11px", color: "#9E7250", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK {addon.unit}</p>
+                              <p style={{fontSize: "13px", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
+                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK {addon.unit}</p>
                             </div>
                             {qty === 0 ? (
-                              <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#B85528", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>Add</button>
+                              <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#C8622A", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>Add</button>
                             ) : (
                               <div style={{display: "flex", alignItems: "center", gap: "8px", flexShrink: 0}}>
-                                <button onClick={() => setAddonQuantity(addon.id, qty - 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #E4D8C4", backgroundColor: "#FAF7F1", cursor: "pointer", fontSize: "14px", color: "#1C1009", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>−</button>
-                                <span style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", fontFamily: "'Jost', sans-serif", minWidth: "16px", textAlign: "center"}}>{qty}</span>
-                                <button onClick={() => setAddonQuantity(addon.id, qty + 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #B85528", backgroundColor: "#B85528", cursor: "pointer", fontSize: "14px", color: "#FAF7F1", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>+</button>
+                                <button onClick={() => setAddonQuantity(addon.id, qty - 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #E2D5C8", backgroundColor: "#FDFBF8", cursor: "pointer", fontSize: "14px", color: "#1A0E06", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>−</button>
+                                <span style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Jost', sans-serif", minWidth: "16px", textAlign: "center"}}>{qty}</span>
+                                <button onClick={() => setAddonQuantity(addon.id, qty + 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #C8622A", backgroundColor: "#C8622A", cursor: "pointer", fontSize: "14px", color: "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>+</button>
                               </div>
                             )}
                           </div>
@@ -490,18 +491,18 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
                 {/* Date picker */}
                 <div style={{marginBottom: "16px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
-                    SELECT A DATE {selectedDate && <span style={{color: "#B85528", fontWeight: "600"}}>— {selectedDate}</span>}
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
+                    SELECT A DATE {selectedDate && <span style={{color: "#C8622A", fontWeight: "600"}}>— {selectedDate}</span>}
                   </label>
-                  <div style={{border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px", backgroundColor: "#FAF7F1"}}>
+                  <div style={{border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px", backgroundColor: "#FDFBF8"}}>
                     <div className="flex items-center justify-between mb-3">
-                      <button onClick={prevMonth} disabled={isCurrentMonth} style={{border: "none", backgroundColor: "transparent", cursor: isCurrentMonth ? "not-allowed" : "pointer", fontSize: "16px", color: isCurrentMonth ? "#C3AB88" : "#9E7250", padding: "4px 8px", opacity: isCurrentMonth ? 0.4 : 1}}>←</button>
-                      <span style={{fontSize: "12px", fontWeight: "500", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{monthName}</span>
-                      <button onClick={nextMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#9E7250", padding: "4px 8px"}}>→</button>
+                      <button onClick={prevMonth} disabled={isCurrentMonth} style={{border: "none", backgroundColor: "transparent", cursor: isCurrentMonth ? "not-allowed" : "pointer", fontSize: "16px", color: isCurrentMonth ? "#DDD0C0" : "#7A5C44", padding: "4px 8px", opacity: isCurrentMonth ? 0.4 : 1}}>←</button>
+                      <span style={{fontSize: "12px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{monthName}</span>
+                      <button onClick={nextMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#7A5C44", padding: "4px 8px"}}>→</button>
                     </div>
                     <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px"}}>
                       {["M","T","W","T","F","S","S"].map((d, i) => (
-                        <div key={i} style={{textAlign: "center", fontSize: "10px", color: "#C3AB88", padding: "2px", fontFamily: "'Jost', sans-serif"}}>{d}</div>
+                        <div key={i} style={{textAlign: "center", fontSize: "10px", color: "#DDD0C0", padding: "2px", fontFamily: "'Jost', sans-serif"}}>{d}</div>
                       ))}
                     </div>
                     <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px"}}>
@@ -512,17 +513,17 @@ export default function PhotographerProfile({ params }: { params: any }) {
                         const blocked = isBlocked(day);
                         const sel = selectedDate === dateStr;
                         return (
-                          <div key={day} onClick={() => handleDayClick(day)} style={{textAlign: "center", padding: "6px 2px", fontSize: "12px", borderRadius: "6px", cursor: past || blocked ? "not-allowed" : "pointer", backgroundColor: sel ? "#B85528" : past || blocked ? "#F5EFE4" : "#FDFBF7", color: sel ? "#FAF7F1" : past || blocked ? "#C3AB88" : "#1C1009", textDecoration: blocked && !past ? "line-through" : "none", fontWeight: sel ? "500" : "400", border: sel ? "1px solid #B85528" : "1px solid #E4D8C4", transition: "all 0.1s", fontFamily: "'Jost', sans-serif"}}>
+                          <div key={day} onClick={() => handleDayClick(day)} style={{textAlign: "center", padding: "6px 2px", fontSize: "12px", borderRadius: "6px", cursor: past || blocked ? "not-allowed" : "pointer", backgroundColor: sel ? "#C8622A" : past || blocked ? "#F5EFE4" : "#FDFBF8", color: sel ? "#FDFBF8" : past || blocked ? "#DDD0C0" : "#1A0E06", textDecoration: blocked && !past ? "line-through" : "none", fontWeight: sel ? "500" : "400", border: sel ? "1px solid #C8622A" : "1px solid #E2D5C8", transition: "all 0.1s", fontFamily: "'Jost', sans-serif"}}>
                             {day}
                           </div>
                         );
                       })}
                     </div>
-                    <div style={{display: "flex", gap: "12px", marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #E4D8C4"}}>
-                      {[{color: "#FDFBF7", border: "1px solid #E4D8C4", label: "Available"}, {color: "#F5EFE4", border: "none", label: "Unavailable"}, {color: "#B85528", border: "none", label: "Selected"}].map(item => (
+                    <div style={{display: "flex", gap: "12px", marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #E2D5C8"}}>
+                      {[{color: "#FDFBF8", border: "1px solid #E2D5C8", label: "Available"}, {color: "#F5EFE4", border: "none", label: "Unavailable"}, {color: "#C8622A", border: "none", label: "Selected"}].map(item => (
                         <div key={item.label} style={{display: "flex", alignItems: "center", gap: "4px"}}>
                           <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: item.color, border: item.border}}></div>
-                          <span style={{fontSize: "10px", color: "#9E7250", fontFamily: "'Jost', sans-serif"}}>{item.label}</span>
+                          <span style={{fontSize: "10px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{item.label}</span>
                         </div>
                       ))}
                     </div>
@@ -531,33 +532,33 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
                 {/* Location */}
                 <div style={{marginBottom: "16px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOCATION</label>
-                  <input type="text" placeholder="Where is the shoot?" value={location} onChange={(e) => setLocation(e.target.value)} style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", fontFamily: "'Jost', sans-serif"}}/>
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOCATION</label>
+                  <input type="text" placeholder="Where is the shoot?" value={location} onChange={(e) => setLocation(e.target.value)} style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
                 {/* Message */}
                 <div style={{marginBottom: "20px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>MESSAGE</label>
-                  <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1C1009", backgroundColor: "#FAF7F1", resize: "none", fontFamily: "'Jost', sans-serif"}}/>
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>MESSAGE</label>
+                  <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", resize: "none", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
                 {/* Order summary */}
                 {selectedPackage && (
                   <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "16px"}}>
-                    <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 10px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ORDER SUMMARY</p>
+                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 10px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ORDER SUMMARY</p>
                     <div style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
-                      <span style={{fontSize: "12px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.name}</span>
-                      <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.price.toLocaleString()} NOK</span>
+                      <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.name}</span>
+                      <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.price.toLocaleString()} NOK</span>
                     </div>
                     {selectedAddonsList.map(addon => (
                       <div key={addon.id} style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
-                        <span style={{fontSize: "12px", color: "#7A5235", fontFamily: "'Jost', sans-serif"}}>{addon.name} ×{addonQty[addon.id]}</span>
-                        <span style={{fontSize: "12px", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>+{(addon.price * addonQty[addon.id]).toLocaleString()} NOK</span>
+                        <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{addon.name} ×{addonQty[addon.id]}</span>
+                        <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>+{(addon.price * addonQty[addon.id]).toLocaleString()} NOK</span>
                       </div>
                     ))}
-                    <div style={{borderTop: "1px solid #E4D8C4", marginTop: "8px", paddingTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                      <span style={{fontSize: "13px", fontWeight: "500", color: "#1C1009", fontFamily: "'Jost', sans-serif"}}>Total</span>
-                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1C1009"}}>{total.toLocaleString()} NOK</span>
+                    <div style={{borderTop: "1px solid #E2D5C8", marginTop: "8px", paddingTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                      <span style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>Total</span>
+                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06"}}>{total.toLocaleString()} NOK</span>
                     </div>
                   </div>
                 )}
@@ -565,7 +566,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 {/* Cancellation policy */}
                 <div style={{backgroundColor: policyInfo.bg, borderRadius: "8px", padding: "12px 14px", marginBottom: "16px"}}>
                   <p style={{fontSize: "11px", fontWeight: "600", color: policyInfo.color, margin: "0 0 2px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{policyInfo.label.toUpperCase()}</p>
-                  <p style={{fontSize: "12px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>{policyInfo.desc}</p>
+                  <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{policyInfo.desc}</p>
                 </div>
 
                 {error && (
@@ -577,11 +578,11 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 <button
                   onClick={handleBooking}
                   disabled={booking || !selectedDate || !selectedPackage}
-                  style={{width: "100%", backgroundColor: selectedDate && selectedPackage ? "#B85528" : "#E4D8C4", color: selectedDate && selectedPackage ? "#FAF7F1" : "#C3AB88", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate && selectedPackage ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate && selectedPackage ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}
+                  style={{width: "100%", backgroundColor: selectedDate && selectedPackage ? "#C8622A" : "#E2D5C8", color: selectedDate && selectedPackage ? "#FDFBF8" : "#DDD0C0", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate && selectedPackage ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate && selectedPackage ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}
                 >
                   {booking ? "Redirecting to payment…" : selectedDate && selectedPackage ? `Book & Pay — ${total.toLocaleString()} NOK` : "Select a package and date"}
                 </button>
-                <p style={{fontSize: "11px", color: "#C3AB88", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
+                <p style={{fontSize: "11px", color: "#DDD0C0", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
               </>
             )}
           </div>
@@ -589,9 +590,9 @@ export default function PhotographerProfile({ params }: { params: any }) {
       </div>
 
       {/* Footer */}
-      <footer style={{backgroundColor: "#FAF7F1", padding: "32px 48px", borderTop: "1px solid #E4D8C4", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
         <Logo size="sm" asLink={false} />
-        <p style={{fontSize: "12px", color: "#C3AB88", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

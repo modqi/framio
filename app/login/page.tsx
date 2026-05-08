@@ -28,52 +28,52 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen flex" style={{backgroundColor: "#FAF7F1"}}>
+    <main className="min-h-screen flex" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Left — warm panel */}
-      <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1C1009", padding: "48px", flexShrink: 0}}>
-        <Logo size="sm" href="/" color="#FAF7F1" accent="#C1622F" />
+      <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0}}>
+        <Logo size="sm" href="/" color="#FDFBF8" accent="#C1622F" />
         <div>
-          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#FAF7F1", margin: "0 0 16px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>
+          <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#FDFBF8", margin: "0 0 16px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>
             Welcome back to Lomissa
           </p>
-          <p style={{fontSize: "14px", color: "rgba(250,247,241,0.5)", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
+          <p style={{fontSize: "14px", color: "rgba(253,251,248,0.5)", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
             Log in to manage your bookings and connect with photographers.
           </p>
         </div>
-        <p style={{fontSize: "12px", color: "rgba(250,247,241,0.3)", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa</p>
+        <p style={{fontSize: "12px", color: "rgba(253,251,248,0.3)", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa</p>
       </div>
 
       {/* Right — form */}
       <div className="flex flex-col justify-center flex-1" style={{padding: "48px 32px", maxWidth: "560px", margin: "0 auto"}}>
 
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#B85528", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WELCOME BACK</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1C1009", margin: "0 0 8px", letterSpacing: "-0.02em"}}>Log in</h1>
-          <p style={{fontSize: "14px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WELCOME BACK</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>Log in</h1>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
             Don't have an account?{" "}
-            <a href="/signup" style={{color: "#B85528", textDecoration: "none", fontWeight: "500"}}>Sign up</a>
+            <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>Sign up</a>
           </p>
         </div>
 
         <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
 
           <div>
-            <label style={{fontSize: "11px", color: "#7A5235", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Email address</label>
+            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Email address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-              style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1C1009", backgroundColor: "#FDFBF7", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
+              style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
             />
           </div>
 
           <div>
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px"}}>
-              <label style={{fontSize: "11px", color: "#7A5235", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Password</label>
-              <a href="/reset-password" style={{fontSize: "12px", color: "#B85528", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Forgot your password?</a>
+              <label style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Password</label>
+              <a href="/reset-password" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Forgot your password?</a>
             </div>
             <div style={{position: "relative"}}>
               <input
@@ -82,12 +82,12 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Your password"
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                style={{width: "100%", border: "1px solid #E4D8C4", borderRadius: "8px", padding: "12px 16px", paddingRight: "60px", fontSize: "14px", outline: "none", color: "#1C1009", backgroundColor: "#FDFBF7", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
+                style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px 16px", paddingRight: "60px", fontSize: "14px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#9E7250", padding: "0", fontFamily: "'Jost', sans-serif"}}
+                style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#7A5C44", padding: "0", fontFamily: "'Jost', sans-serif"}}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -103,19 +103,19 @@ export default function Login() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            style={{width: "100%", backgroundColor: "#B85528", color: "#FAF7F1", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginTop: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)"}}
+            style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginTop: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)"}}
           >
             {loading ? "Logging in..." : "Log in"}
           </button>
 
-          <div style={{textAlign: "center", paddingTop: "16px", borderTop: "1px solid #E4D8C4"}}>
-            <p style={{fontSize: "13px", color: "#7A5235", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>
+          <div style={{textAlign: "center", paddingTop: "16px", borderTop: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>
               Don't have an account?{" "}
-              <a href="/signup" style={{color: "#B85528", textDecoration: "none", fontWeight: "500"}}>Sign up free</a>
+              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>Sign up free</a>
             </p>
-            <p style={{fontSize: "13px", color: "#7A5235", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+            <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
               Are you a photographer?{" "}
-              <a href="/signup" style={{color: "#B85528", textDecoration: "none", fontWeight: "500"}}>Apply to join</a>
+              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>Apply to join</a>
             </p>
           </div>
 

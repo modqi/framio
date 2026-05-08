@@ -35,7 +35,7 @@ export default function UpdatePassword() {
       <div style={{maxWidth: "480px", margin: "80px auto", padding: "0 32px"}}>
         {done ? (
           <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "48px 32px", border: "1px solid #f0f0f0", textAlign: "center"}}>
-            <div style={{fontSize: "48px", marginBottom: "24px"}}>✅</div>
+            <div style={{marginBottom: "24px"}}><svg viewBox="0 0 64 64" width="56" height="56" fill="none"><circle cx="32" cy="32" r="28" stroke="#C8622A" strokeWidth="1.6"/><polyline points="18,32 27,41 46,22" stroke="#C8622A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></div>
             <h1 style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 16px"}}>
               Password updated!
             </h1>
