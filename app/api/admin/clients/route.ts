@@ -56,14 +56,6 @@ export async function GET(request: NextRequest) {
     const batch = data?.users ?? [];
     if (!batch.length) break;
 
-    // Log full field inventory of first user so we can identify the correct metadata key
-    const sample = batch[0];
-    console.log("[admin/clients] sample user keys:", Object.keys(sample));
-    console.log("[admin/clients] sample user — email:", sample.email);
-    console.log("[admin/clients] sample user_metadata:", JSON.stringify(sample.user_metadata));
-    console.log("[admin/clients] sample raw_user_meta_data:", JSON.stringify((sample as any).raw_user_meta_data));
-    console.log("[admin/clients] sample app_metadata:", JSON.stringify(sample.app_metadata));
-
     allUsers.push(...batch);
     if (batch.length < 1000) break;
     pg++;
@@ -71,22 +63,11 @@ export async function GET(request: NextRequest) {
 
   console.log("[admin/clients] total users fetched:", allUsers.length);
 
-  // Check role from both possible field locations
-  const rolesFromUserMetadata = [...new Set(allUsers.map((u) => u.user_metadata?.role ?? "(none)"))];
-  const rolesFromRawMeta = [...new Set(allUsers.map((u) => (u as any).raw_user_meta_data?.role ?? "(none)"))];
-  console.log("[admin/clients] roles via user_metadata:", rolesFromUserMetadata);
-  console.log("[admin/clients] roles via raw_user_meta_data:", rolesFromRawMeta);
-
-  const { data: adminRows } = await serviceClient.from("admin_users").select("email");
-  const adminEmails = new Set((adminRows || []).map((a: any) => a.email));
-
   // Read role from both fields to handle either SDK response shape
   const getRole = (u: any): string =>
     u.user_metadata?.role ?? (u as any).raw_user_meta_data?.role ?? "";
 
-  const clientUsers = allUsers.filter(
-    (u) => getRole(u) === "client" && !adminEmails.has(u.email)
-  );
+  const clientUsers = allUsers.filter((u) => getRole(u) === "client");
   console.log("[admin/clients] users with role=client:", clientUsers.length);
 
   if (clientUsers.length === 0) return NextResponse.json({ clients: [] });
