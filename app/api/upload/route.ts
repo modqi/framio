@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.formData();
     const file = data.get("file") as File;
+    const type = (data.get("type") as string) || "portfolio";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -30,17 +31,15 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    const isMessage = type === "message";
+    const folder = isMessage ? "frameyou/messages" : "frameyou/portfolios";
+    const transformation = isMessage
+      ? [{ width: 1200, crop: "limit" }, { quality: 85 }, { fetch_format: "auto" }]
+      : [{ width: 1200, height: 1600, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }];
+
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        {
-          resource_type: "image",
-          folder: "frameyou/portfolios",
-          transformation: [
-            { width: 1200, height: 1600, crop: "limit" },
-            { quality: "auto" },
-            { fetch_format: "auto" },
-          ],
-        },
+        { resource_type: "image", folder, transformation },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
