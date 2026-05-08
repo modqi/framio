@@ -28,8 +28,6 @@ export default function PhotographerDashboard() {
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [connectIncomplete, setConnectIncomplete] = useState(false);
-  const [markingDeliveredId, setMarkingDeliveredId] = useState<string | null>(null);
-  const [deliverError, setDeliverError] = useState("");
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState("");
@@ -260,29 +258,6 @@ export default function PhotographerDashboard() {
     setEarningsLoading(false);
   };
 
-  const handleMarkDelivered = async (id: string) => {
-    setMarkingDeliveredId(id);
-    setDeliverError("");
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch("/api/mark-photos-delivered", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token ?? ""}`,
-        },
-        body: JSON.stringify({ bookingId: id }),
-      });
-      if (!res.ok) {
-        setDeliverError("Failed to update. Please try again.");
-      } else {
-        setBookings(prev => prev.map(b => b.id === id ? { ...b, status: "photos_delivered" } : b));
-      }
-    } catch {
-      setDeliverError("Something went wrong. Please try again.");
-    }
-    setMarkingDeliveredId(null);
-  };
 
   const handleCancelBooking = async (id: string) => {
     setCancellingId(id);
@@ -613,27 +588,37 @@ export default function PhotographerDashboard() {
                       )
                     )}
                     {booking.status === "completed" && (
-                      <button
-                        onClick={() => handleMarkDelivered(booking.id)}
-                        disabled={markingDeliveredId === booking.id}
-                        style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#7c3aed", border: "none", padding: "8px 20px", borderRadius: "999px", cursor: markingDeliveredId === booking.id ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: markingDeliveredId === booking.id ? 0.6 : 1}}
+                      <a
+                        href={`/photographer-dashboard/deliver/${booking.id}`}
+                        style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
                       >
-                        {markingDeliveredId === booking.id ? "Updating…" : "Mark photos as delivered"}
-                      </button>
+                        Deliver photos →
+                      </a>
                     )}
                     {booking.status === "photos_delivered" && (
-                      <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
-                        Photos delivered — payout due {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
-                      </span>
+                      <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
+                        <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
+                          📸 Payout due {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
+                        </span>
+                        <a
+                          href={`/photographer-dashboard/deliver/${booking.id}`}
+                          style={{fontSize: "12px", color: "#7c3aed", border: "1px solid #ddd6fe", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
+                        >
+                          Add more photos
+                        </a>
+                        <a
+                          href={`/deliveries/${booking.id}`}
+                          style={{fontSize: "12px", color: "#7A5235", border: "1px solid #E4D8C4", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
+                        >
+                          View delivery
+                        </a>
+                      </div>
                     )}
                     {booking.status === "paid_out" && (
                       <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>✓ Payment released</span>
                     )}
                     {booking.status === "disputed" && (
                       <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>⚠ Under admin review</span>
-                    )}
-                    {deliverError && markingDeliveredId === null && (
-                      <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{deliverError}</p>
                     )}
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5235", textDecoration: "none", border: "1px solid #E4D8C4", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
                       💬 Message client

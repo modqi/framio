@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [requestingDeletion, setRequestingDeletion] = useState(false);
   const [deletionError, setDeletionError] = useState("");
   const [cancellingDeletion, setCancellingDeletion] = useState(false);
+  const [deliveredBookingIds, setDeliveredBookingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const init = async () => {
@@ -46,6 +47,16 @@ export default function Dashboard() {
           .in("booking_id", bookingIds)
           .eq("client_id", user.id);
         setReviewedBookingIds(new Set((reviews || []).map((r: any) => r.booking_id)));
+      }
+
+      // Fetch which bookings have photo deliveries
+      if (bookingIds.length > 0) {
+        const { data: deliveries } = await supabase
+          .from("photo_deliveries")
+          .select("booking_id")
+          .in("booking_id", bookingIds)
+          .eq("client_id", user.id);
+        setDeliveredBookingIds(new Set((deliveries || []).map((d: any) => d.booking_id)));
       }
 
       // Fetch deletion timestamps so we exclude messages that arrived before
@@ -397,6 +408,14 @@ export default function Dashboard() {
                     </div>
                   )}
                   <div style={{marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E4D8C4", display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center"}}>
+                    {(booking.status === "photos_delivered" || booking.status === "paid_out") && deliveredBookingIds.has(booking.id) && (
+                      <a
+                        href={`/deliveries/${booking.id}`}
+                        style={{fontSize: "13px", color: "#FAF7F1", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
+                      >
+                        📸 View your photos
+                      </a>
+                    )}
                     {booking.status === "photos_delivered" && (
                       disputeBookingId === booking.id ? (
                         <div style={{width: "100%", display: "flex", flexDirection: "column", gap: "10px"}}>
@@ -442,7 +461,7 @@ export default function Dashboard() {
                       )
                     )}
                     {booking.status === "paid_out" && (
-                      <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>✓ Photos delivered and payment released</span>
+                      <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>✓ Session complete</span>
                     )}
                     {booking.status === "disputed" && (
                       <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>⚠ Dispute under admin review — we'll be in touch</span>
