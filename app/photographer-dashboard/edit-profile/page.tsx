@@ -13,6 +13,7 @@ export default function EditProfile() {
   const [saveError, setSaveError] = useState("");
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState("");
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [otherChecked, setOtherChecked] = useState(false);
@@ -128,12 +129,12 @@ export default function EditProfile() {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    setPhotoError("");
     if (file.size > 10 * 1024 * 1024) {
-      setSaveError("Photo must be under 10 MB.");
+      setPhotoError("Photo must be under 10 MB.");
       return;
     }
     setUploadingPhoto(true);
-    setSaveError("");
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const formData = new FormData();
@@ -148,7 +149,7 @@ export default function EditProfile() {
       if (!data.url) throw new Error(data.error || "Upload failed");
       setProfilePhoto(data.url);
     } catch {
-      setSaveError("Photo upload failed. Please try again.");
+      setPhotoError("Photo upload failed. Please try again.");
     }
     setUploadingPhoto(false);
   };
@@ -237,6 +238,12 @@ export default function EditProfile() {
             <p style={{fontSize: "11px", color: "#DDD0C0", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>JPG, PNG or WEBP · Max 10 MB</p>
           </div>
         </div>
+
+        {photoError && (
+          <p style={{fontSize: "12px", color: "#dc2626", margin: "-20px 0 16px", fontFamily: "'Jost', sans-serif"}}>
+            {photoError}
+          </p>
+        )}
 
         {/* Form */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", display: "flex", flexDirection: "column", gap: "24px"}}>
