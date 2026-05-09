@@ -357,13 +357,22 @@ export default function EditProfile() {
 
           <div>
             <label style={labelStyle}>Delivery time</label>
-            <input
-              type="text"
+            <select
               value={form.delivery_time}
               onChange={(e) => setForm({...form, delivery_time: e.target.value})}
-              placeholder="e.g. 2 weeks after the session"
               style={inputStyle}
-            />
+            >
+              <option value="">Select delivery time</option>
+              <option value="Within 3 days">Within 3 days</option>
+              <option value="Within 5 days">Within 5 days</option>
+              <option value="Within 1 week">Within 1 week</option>
+              <option value="Within 2 weeks">Within 2 weeks</option>
+              <option value="Within 3 weeks">Within 3 weeks</option>
+              <option value="Within 1 month">Within 1 month</option>
+              <option value="Within 2 months">Within 2 months</option>
+              <option value="Within 3 months">Within 3 months</option>
+            </select>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>Delivery time starts after the session date.</p>
           </div>
 
           <div>
