@@ -213,16 +213,31 @@ export default function EditProfile() {
             style={{display: "none"}}
             onChange={handlePhotoUpload}
           />
-          <div
-            onClick={() => !uploadingPhoto && photoInputRef.current?.click()}
-            style={{width: "80px", height: "80px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "2px dashed #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, cursor: uploadingPhoto ? "default" : "pointer", overflow: "hidden", position: "relative"}}
-          >
-            {profilePhoto ? (
-              <img src={profilePhoto} alt="Profile" style={{width: "100%", height: "100%", objectFit: "cover"}}/>
-            ) : uploadingPhoto ? (
-              <span style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", textAlign: "center", padding: "4px"}}>Uploading…</span>
-            ) : (
-              <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#C8622A"}}>{form.name?.[0] || "?"}</span>
+          <div style={{position: "relative", flexShrink: 0, width: "80px", height: "80px"}}>
+            <div
+              onClick={() => !uploadingPhoto && photoInputRef.current?.click()}
+              style={{width: "80px", height: "80px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "2px dashed #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", cursor: uploadingPhoto ? "default" : "pointer", overflow: "hidden"}}
+            >
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="Profile" style={{width: "100%", height: "100%", objectFit: "cover"}}/>
+              ) : uploadingPhoto ? (
+                <span style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", textAlign: "center", padding: "4px"}}>Uploading…</span>
+              ) : (
+                <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#C8622A"}}>{form.name?.[0] || "?"}</span>
+              )}
+            </div>
+            {profilePhoto && !uploadingPhoto && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setProfilePhoto(null); setPhotoError(""); }}
+                title="Remove photo"
+                style={{position: "absolute", top: "0", right: "0", width: "22px", height: "22px", borderRadius: "50%", backgroundColor: "#1A0E06", border: "2px solid #FDFBF8", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: "0"}}
+              >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="2" y1="2" x2="8" y2="8" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+                  <line x1="8" y1="2" x2="2" y2="8" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+                </svg>
+              </button>
             )}
           </div>
           <div>
