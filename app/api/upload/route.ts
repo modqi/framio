@@ -33,11 +33,14 @@ export async function POST(request: NextRequest) {
 
     const isMessage = type === "message";
     const isDelivery = type === "delivery";
-    const folder = isDelivery ? "frameyou/deliveries" : isMessage ? "frameyou/messages" : "frameyou/portfolios";
+    const isProfile = type === "profile";
+    const folder = isDelivery ? "frameyou/deliveries" : isMessage ? "frameyou/messages" : isProfile ? "frameyou/profiles" : "frameyou/portfolios";
     const transformation = isDelivery
       ? [{ width: 4000, crop: "limit" }, { quality: 95 }, { fetch_format: "auto" }]
       : isMessage
       ? [{ width: 1200, crop: "limit" }, { quality: 85 }, { fetch_format: "auto" }]
+      : isProfile
+      ? [{ width: 800, height: 800, crop: "fill", gravity: "face" }, { quality: "auto" }, { fetch_format: "auto" }]
       : [{ width: 1200, height: 1600, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }];
 
     const result = await new Promise((resolve, reject) => {

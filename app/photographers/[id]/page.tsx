@@ -281,8 +281,11 @@ export default function PhotographerProfile({ params }: { params: any }) {
       <section style={{backgroundColor: "#F5EFE4", padding: "48px", borderBottom: "1px solid #E2D5C8"}}>
         <div className="flex items-start justify-between flex-wrap gap-8">
           <div className="flex items-start gap-8">
-            <div style={{width: "100px", height: "100px", backgroundColor: "#E2D5C8", backgroundImage: "repeating-linear-gradient(-45deg,#E2D5C8,#E2D5C8 6px,#EDE3D1 6px,#EDE3D1 14px)", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "12px", flexShrink: 0}}>
-              <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "44px", fontWeight: "400", color: "#C8622A"}}>{photographer.name?.[0] || "?"}</span>
+            <div style={{width: "100px", height: "100px", backgroundColor: "#E2D5C8", backgroundImage: photographer.profile_photo ? "none" : "repeating-linear-gradient(-45deg,#E2D5C8,#E2D5C8 6px,#EDE3D1 6px,#EDE3D1 14px)", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "12px", flexShrink: 0, overflow: "hidden"}}>
+              {photographer.profile_photo
+                ? <img src={photographer.profile_photo} alt={photographer.name} style={{width: "100%", height: "100%", objectFit: "cover"}}/>
+                : <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "44px", fontWeight: "400", color: "#C8622A"}}>{photographer.name?.[0] || "?"}</span>
+              }
             </div>
             <div>
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photographer.specialty || "PHOTOGRAPHER"}</p>

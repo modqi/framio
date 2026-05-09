@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 
@@ -11,6 +11,9 @@ export default function EditProfile() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [otherChecked, setOtherChecked] = useState(false);
   const [otherCategory, setOtherCategory] = useState("");
@@ -39,9 +42,10 @@ export default function EditProfile() {
         const meta = user.user_metadata;
         const { data: row } = await supabase
           .from("photographers")
-          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities")
+          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities, profile_photo")
           .eq("user_id", user.id)
           .single();
+        if (row?.profile_photo) setProfilePhoto(row.profile_photo);
         setForm({
           name: meta?.name || "",
           bio: meta?.bio || "",
@@ -103,6 +107,7 @@ export default function EditProfile() {
       copyright_ownership: form.copyright_ownership || null,
       editing_style: form.editing_style || null,
       revisions_included: form.revisions_included || null,
+      profile_photo: profilePhoto || null,
     };
     const { error: dbError } = existing
       ? await supabase.from("photographers").update(dbPayload).eq("user_id", user.id)
@@ -115,6 +120,35 @@ export default function EditProfile() {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
     setSaving(false);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setSaveError("Photo must be under 10 MB.");
+      return;
+    }
+    setUploadingPhoto(true);
+    setSaveError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "profile");
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!data.url) throw new Error(data.error || "Upload failed");
+      setProfilePhoto(data.url);
+    } catch {
+      setSaveError("Photo upload failed. Please try again.");
+    }
+    setUploadingPhoto(false);
   };
 
   if (loading) {
@@ -167,15 +201,38 @@ export default function EditProfile() {
           <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>A complete profile gets 3x more bookings</p>
         </div>
 
-        {/* Profile preview */}
-        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px", border: "1px solid #E2D5C8", marginBottom: "32px", display: "flex", alignItems: "center", gap: "16px"}}>
-          <div style={{width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
-            <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: "400", color: "#C8622A"}}>{form.name?.[0] || "?"}</span>
+        {/* Profile photo */}
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "24px", border: "1px solid #E2D5C8", marginBottom: "32px", display: "flex", alignItems: "center", gap: "20px"}}>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            style={{display: "none"}}
+            onChange={handlePhotoUpload}
+          />
+          <div
+            onClick={() => !uploadingPhoto && photoInputRef.current?.click()}
+            style={{width: "80px", height: "80px", borderRadius: "50%", backgroundColor: "#F5EFE4", border: "2px dashed #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, cursor: uploadingPhoto ? "default" : "pointer", overflow: "hidden", position: "relative"}}
+          >
+            {profilePhoto ? (
+              <img src={profilePhoto} alt="Profile" style={{width: "100%", height: "100%", objectFit: "cover"}}/>
+            ) : uploadingPhoto ? (
+              <span style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", textAlign: "center", padding: "4px"}}>Uploading…</span>
+            ) : (
+              <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#C8622A"}}>{form.name?.[0] || "?"}</span>
+            )}
           </div>
           <div>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{form.name || "Your name"}</p>
-            <p style={{fontSize: "12px", color: "#C8622A", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{selectedCategories[0] || (otherChecked && otherCategory) || "Your specialty"}</p>
-            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{form.location || "Your location"}</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{form.name || "Your name"}</p>
+            <button
+              type="button"
+              onClick={() => !uploadingPhoto && photoInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              style={{fontSize: "12px", color: "#C8622A", background: "none", border: "none", padding: "0", cursor: uploadingPhoto ? "default" : "pointer", fontFamily: "'Jost', sans-serif", textDecoration: "underline"}}
+            >
+              {uploadingPhoto ? "Uploading…" : profilePhoto ? "Change photo" : "Upload profile photo"}
+            </button>
+            <p style={{fontSize: "11px", color: "#DDD0C0", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>JPG, PNG or WEBP · Max 10 MB</p>
           </div>
         </div>
 

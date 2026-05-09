@@ -79,23 +79,24 @@ export default function PhotographerDashboard() {
           .select("*", { count: "exact", head: true })
           .eq("photographer_id", user.id);
 
+        const { data: photographerRow } = await supabase
+          .from("photographers")
+          .select("stripe_onboarding_completed, profile_photo, photographer_packages(id)")
+          .eq("user_id", user.id)
+          .single();
+        setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
+
+        const hasPackages = (photographerRow?.photographer_packages?.length ?? 0) > 0;
         const updatedTasks = [
-          { task: "Add profile photo", done: false },
+          { task: "Add profile photo", done: !!photographerRow?.profile_photo },
           { task: "Write your bio", done: !!meta?.bio },
           { task: "Add portfolio photos", done: (photoCount || 0) > 0 },
-          { task: "Add packages", done: false },
+          { task: "Add packages", done: hasPackages },
           { task: "Add your location", done: !!meta?.location },
         ];
         setTasks(updatedTasks);
         const done = updatedTasks.filter(t => t.done).length;
         setCompletion(Math.round((done / updatedTasks.length) * 100));
-
-        const { data: photographerRow } = await supabase
-          .from("photographers")
-          .select("stripe_onboarding_completed")
-          .eq("user_id", user.id)
-          .single();
-        setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
 
         const { data: delReq } = await supabase
           .from("account_deletion_requests")
