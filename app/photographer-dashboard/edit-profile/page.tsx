@@ -91,29 +91,31 @@ export default function EditProfile() {
       setSaving(false);
       return;
     }
-    const { data: existing } = await supabase
-      .from("photographers")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-    const dbPayload = {
-      name: form.name, bio: form.bio,
-      specialty: primarySpecialty || null,
-      specialities: finalSpecialities,
-      location: form.location,
-      instagram: form.instagram, website: form.website,
-      cancellation_policy: form.cancellation_policy,
-      delivery_time: form.delivery_time || null,
-      copyright_ownership: form.copyright_ownership || null,
-      editing_style: form.editing_style || null,
-      revisions_included: form.revisions_included || null,
-      profile_photo: profilePhoto || null,
-    };
-    const { error: dbError } = existing
-      ? await supabase.from("photographers").update(dbPayload).eq("user_id", user.id)
-      : await supabase.from("photographers").insert({ user_id: user.id, ...dbPayload });
-    if (dbError) {
-      setSaveError("Profile metadata saved but failed to update public profile. Please try again.");
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch("/api/update-photographer-profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token ?? ""}`,
+      },
+      body: JSON.stringify({
+        name: form.name,
+        bio: form.bio,
+        specialty: primarySpecialty || null,
+        specialities: finalSpecialities,
+        location: form.location,
+        instagram: form.instagram,
+        website: form.website,
+        cancellation_policy: form.cancellation_policy,
+        delivery_time: form.delivery_time || null,
+        copyright_ownership: form.copyright_ownership || null,
+        editing_style: form.editing_style || null,
+        revisions_included: form.revisions_included || null,
+        profile_photo: profilePhoto || null,
+      }),
+    });
+    if (!res.ok) {
+      setSaveError("Failed to update public profile. Please try again.");
       setSaving(false);
       return;
     }
