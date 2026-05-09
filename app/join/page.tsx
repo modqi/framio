@@ -12,6 +12,7 @@ export default function JoinAsPhotographer() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone_number: "",
     location: "",
     experience: "",
     instagram: "",
@@ -24,8 +25,8 @@ export default function JoinAsPhotographer() {
   const [otherCategory, setOtherCategory] = useState("");
 
   const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.about) {
-      setError("Please fill in your name, email and about section.");
+    if (!form.name || !form.email || !form.phone_number || !form.about) {
+      setError("Please fill in your name, email, phone number and about section.");
       return;
     }
     setSaving(true);
@@ -39,6 +40,7 @@ export default function JoinAsPhotographer() {
     const { error } = await supabase.from("applications").insert({
       name: form.name,
       email: form.email,
+      phone_number: form.phone_number || null,
       location: form.location,
       specialty: finalSpecialities.join(", ") || "",
       experience: form.experience,
@@ -186,6 +188,11 @@ export default function JoinAsPhotographer() {
               <div>
                 <label style={labelStyle}>Email *</label>
                 <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} placeholder="your@email.com" style={inputStyle}/>
+              </div>
+              <div>
+                <label style={labelStyle}>Phone number *</label>
+                <input type="tel" value={form.phone_number} onChange={(e) => setForm({...form, phone_number: e.target.value})} placeholder="+47 900 00 000" style={inputStyle}/>
+                <p style={{fontSize: "11px", color: "#888", margin: "6px 0 0"}}>Include country code. Used for booking notifications.</p>
               </div>
               <div>
                 <label style={labelStyle}>Location</label>

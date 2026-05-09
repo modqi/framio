@@ -24,6 +24,7 @@ export default function EditProfile() {
     location: "",
     instagram: "",
     website: "",
+    phone_number: "",
     cancellation_policy: "moderate",
     delivery_time: "",
     copyright_ownership: "",
@@ -43,7 +44,7 @@ export default function EditProfile() {
         const meta = user.user_metadata;
         const { data: row } = await supabase
           .from("photographers")
-          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities, profile_photo")
+          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities, profile_photo, phone_number")
           .eq("user_id", user.id)
           .single();
         if (row?.profile_photo) setProfilePhoto(row.profile_photo);
@@ -53,6 +54,7 @@ export default function EditProfile() {
           location: meta?.location || "",
           instagram: meta?.instagram || "",
           website: meta?.website || "",
+          phone_number: row?.phone_number || "",
           cancellation_policy: row?.cancellation_policy || "moderate",
           delivery_time: row?.delivery_time || "",
           copyright_ownership: row?.copyright_ownership || "",
@@ -107,6 +109,7 @@ export default function EditProfile() {
         location: form.location,
         instagram: form.instagram,
         website: form.website,
+        phone_number: form.phone_number || null,
         cancellation_policy: form.cancellation_policy,
         delivery_time: form.delivery_time || null,
         copyright_ownership: form.copyright_ownership || null,
@@ -319,6 +322,12 @@ export default function EditProfile() {
           <div>
             <label style={labelStyle}>Website</label>
             <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" style={inputStyle}/>
+          </div>
+
+          <div>
+            <label style={labelStyle}>Phone number</label>
+            <input type="tel" value={form.phone_number} onChange={(e) => setForm({...form, phone_number: e.target.value})} placeholder="+47 900 00 000" style={inputStyle}/>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>Include country code. Used for booking notifications only.</p>
           </div>
 
           {/* Cancellation policy */}

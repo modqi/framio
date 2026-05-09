@@ -24,6 +24,9 @@ export default function Dashboard() {
   const [deletionError, setDeletionError] = useState("");
   const [cancellingDeletion, setCancellingDeletion] = useState(false);
   const [deliveredBookingIds, setDeliveredBookingIds] = useState<Set<string>>(new Set());
+  const [phonePromptInput, setPhonePromptInput] = useState("");
+  const [savingPhone, setSavingPhone] = useState(false);
+  const [phoneSaved, setPhoneSaved] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -107,6 +110,14 @@ export default function Dashboard() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     window.location.href = "/";
+  };
+
+  const handleSavePhone = async () => {
+    if (!phonePromptInput.trim()) return;
+    setSavingPhone(true);
+    await supabase.auth.updateUser({ data: { phone_number: phonePromptInput.trim() } });
+    setSavingPhone(false);
+    setPhoneSaved(true);
   };
 
   const handleRequestDeletion = async () => {
@@ -347,6 +358,37 @@ export default function Dashboard() {
             </a>
           </div>
         </div>
+
+        {/* Phone number prompt — shown once client has at least one booking and no phone saved */}
+        {bookings.length > 0 && !user?.user_metadata?.phone_number && !phoneSaved && (
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "24px 28px", border: "1px solid #E2D5C8", marginBottom: "32px", display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap"}}>
+            <div style={{flex: 1, minWidth: "200px"}}>
+              <p style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Get SMS updates about your bookings</p>
+              <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Optional — include country code, e.g. +47 900 00 000</p>
+            </div>
+            <div style={{display: "flex", gap: "8px", flexShrink: 0, alignItems: "center"}}>
+              <input
+                type="tel"
+                value={phonePromptInput}
+                onChange={(e) => setPhonePromptInput(e.target.value)}
+                placeholder="+47 900 00 000"
+                style={{border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 14px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif", width: "180px"}}
+              />
+              <button
+                onClick={handleSavePhone}
+                disabled={savingPhone || !phonePromptInput.trim()}
+                style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "12px", padding: "10px 20px", border: "none", borderRadius: "999px", cursor: savingPhone || !phonePromptInput.trim() ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: savingPhone || !phonePromptInput.trim() ? 0.6 : 1, whiteSpace: "nowrap"}}
+              >
+                {savingPhone ? "Saving…" : "Save"}
+              </button>
+              <button
+                onClick={() => setPhoneSaved(true)}
+                style={{background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#7A5C44", padding: "4px", lineHeight: "1", flexShrink: 0}}
+                title="Dismiss"
+              >×</button>
+            </div>
+          </div>
+        )}
 
         {/* Bookings */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>

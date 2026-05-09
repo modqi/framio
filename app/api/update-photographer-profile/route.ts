@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       location: body.location || null,
       instagram: body.instagram || null,
       website: body.website || null,
+      phone_number: body.phone_number || null,
       cancellation_policy: body.cancellation_policy || "moderate",
       delivery_time: body.delivery_time || null,
       copyright_ownership: body.copyright_ownership || null,
