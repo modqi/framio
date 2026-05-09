@@ -115,9 +115,7 @@ export default function EditProfile() {
       }),
     });
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      console.error("[edit-profile] save failed:", res.status, errData);
-      setSaveError(`Failed to update public profile: ${errData.error ?? res.status}`);
+      setSaveError("Failed to update public profile. Please try again.");
       setSaving(false);
       return;
     }

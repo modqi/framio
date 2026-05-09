@@ -9,16 +9,10 @@ export async function POST(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
-  if (authError || !user) {
-    console.error("[update-photographer-profile] Auth error:", authError);
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  console.log("[update-photographer-profile] user:", user.id, "role:", user.user_metadata?.role);
-
+  const { data: { user } } = await anonClient.auth.getUser(token);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (user.user_metadata?.role !== "photographer") {
-    return NextResponse.json({ error: "Forbidden: role is not photographer" }, { status: 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const serviceClient = createClient(
@@ -28,7 +22,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    console.log("[update-photographer-profile] payload keys:", Object.keys(body));
 
     const payload: Record<string, any> = {
       name: body.name || null,
@@ -46,29 +39,15 @@ export async function POST(request: NextRequest) {
       profile_photo: body.profile_photo || null,
     };
 
-    console.log("[update-photographer-profile] updating user_id:", user.id);
-
-    const { data, error, count } = await serviceClient
+    const { error } = await serviceClient
       .from("photographers")
       .update(payload)
-      .eq("user_id", user.id)
-      .select("id");
+      .eq("user_id", user.id);
 
-    if (error) {
-      console.error("[update-photographer-profile] DB error:", JSON.stringify(error, null, 2));
-      return NextResponse.json({ error: error.message, details: error }, { status: 500 });
-    }
-
-    console.log("[update-photographer-profile] updated rows:", data?.length ?? 0, "data:", JSON.stringify(data));
-
-    if (!data || data.length === 0) {
-      console.error("[update-photographer-profile] No row found for user_id:", user.id);
-      return NextResponse.json({ error: `No photographer row found for user_id ${user.id}` }, { status: 404 });
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("[update-photographer-profile] Unexpected error:", err?.message, err?.stack);
     return NextResponse.json({ error: err?.message ?? "Failed to update profile" }, { status: 500 });
   }
 }
