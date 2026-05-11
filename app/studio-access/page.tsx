@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
+import Logo from "../components/Logo";
 
 export default function StudioAccess() {
   const [email, setEmail] = useState("");
@@ -35,30 +36,30 @@ export default function StudioAccess() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#1a1a1a"}}>
+    <main className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#1A0E06"}}>
       <div style={{width: "100%", maxWidth: "400px", padding: "0 24px"}}>
 
         <div style={{textAlign: "center", marginBottom: "40px"}}>
-          <p style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#fff", margin: "0 0 4px", letterSpacing: "-1px"}}>Lomissa</p>
-          <p style={{fontSize: "11px", letterSpacing: "3px", color: "#C4907A", margin: "0"}}>STUDIO ACCESS</p>
+          <Logo size="sm" asLink={false} color="#FDFBF8" accent="#C8622A" />
+          <p style={{fontSize: "11px", letterSpacing: "0.25em", color: "#C8622A", margin: "12px 0 0", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>STUDIO ACCESS</p>
         </div>
 
-        <div style={{backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "12px", padding: "32px", border: "1px solid rgba(255,255,255,0.1)"}}>
+        <div style={{backgroundColor: "rgba(253,251,248,0.05)", borderRadius: "12px", padding: "32px", border: "1px solid rgba(253,251,248,0.1)"}}>
 
           <div style={{marginBottom: "16px"}}>
-            <label style={{fontSize: "11px", color: "rgba(255,255,255,0.5)", display: "block", marginBottom: "6px"}}>Email</label>
+            <label style={{fontSize: "11px", color: "rgba(253,251,248,0.5)", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               placeholder="your@lomissa.com"
-              style={{width: "100%", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "12px 16px", fontSize: "13px", outline: "none", color: "#fff", backgroundColor: "rgba(255,255,255,0.05)", boxSizing: "border-box"}}
+              style={{width: "100%", border: "1px solid rgba(253,251,248,0.1)", borderRadius: "8px", padding: "12px 16px", fontSize: "13px", outline: "none", color: "#FDFBF8", backgroundColor: "rgba(253,251,248,0.05)", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
             />
           </div>
 
           <div style={{marginBottom: "24px"}}>
-            <label style={{fontSize: "11px", color: "rgba(255,255,255,0.5)", display: "block", marginBottom: "6px"}}>Password</label>
+            <label style={{fontSize: "11px", color: "rgba(253,251,248,0.5)", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>Password</label>
             <div style={{position: "relative"}}>
               <input
                 type={showPassword ? "text" : "password"}
@@ -66,12 +67,12 @@ export default function StudioAccess() {
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 placeholder="Your password"
-                style={{width: "100%", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "12px 16px", paddingRight: "60px", fontSize: "13px", outline: "none", color: "#fff", backgroundColor: "rgba(255,255,255,0.05)", boxSizing: "border-box"}}
+                style={{width: "100%", border: "1px solid rgba(253,251,248,0.1)", borderRadius: "8px", padding: "12px 16px", paddingRight: "60px", fontSize: "13px", outline: "none", color: "#FDFBF8", backgroundColor: "rgba(253,251,248,0.05)", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "rgba(255,255,255,0.4)", padding: "0"}}
+                style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "rgba(253,251,248,0.4)", padding: "0", fontFamily: "'Jost', sans-serif"}}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -79,21 +80,21 @@ export default function StudioAccess() {
           </div>
 
           {error && (
-            <div style={{marginBottom: "16px", padding: "12px", borderRadius: "8px", backgroundColor: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.2)"}}>
-              <p style={{fontSize: "12px", color: "#f87171", margin: "0"}}>{error}</p>
+            <div style={{marginBottom: "16px", padding: "12px 16px", borderRadius: "8px", backgroundColor: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.2)"}}>
+              <p style={{fontSize: "12px", color: "#f87171", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>
             </div>
           )}
 
           <button
             onClick={handleLogin}
             disabled={loading}
-            style={{width: "100%", backgroundColor: "#C4907A", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
+            style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: loading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", opacity: loading ? 0.7 : 1}}
           >
-            {loading ? "Accessing..." : "Access studio"}
+            {loading ? "Accessing…" : "Access studio"}
           </button>
         </div>
 
-        <p style={{textAlign: "center", fontSize: "12px", color: "rgba(255,255,255,0.2)", margin: "24px 0 0"}}>
+        <p style={{textAlign: "center", fontSize: "12px", color: "rgba(253,251,248,0.2)", margin: "24px 0 0", fontFamily: "'Jost', sans-serif"}}>
           This page is private. Unauthorized access is prohibited.
         </p>
       </div>

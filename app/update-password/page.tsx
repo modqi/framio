@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
+import Logo from "../components/Logo";
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState("");
@@ -23,53 +24,70 @@ export default function UpdatePassword() {
     setLoading(false);
   };
 
-  return (
-    <main className="min-h-screen" style={{backgroundColor: "#FAFAF8"}}>
+  const inputStyle = {
+    width: "100%",
+    border: "1px solid #E2D5C8",
+    borderRadius: "8px",
+    padding: "12px 16px",
+    paddingRight: "60px",
+    fontSize: "13px",
+    outline: "none",
+    color: "#1A0E06",
+    backgroundColor: "#FDFBF8",
+    boxSizing: "border-box" as const,
+    fontFamily: "'Jost', sans-serif",
+  };
 
-      <nav style={{borderBottom: "1px solid #f0f0f0", backgroundColor: "#fff"}} className="flex items-center justify-between px-8 py-5">
-        <div className="flex items-baseline gap-3">
-          <a href="/" style={{fontFamily: "Georgia, serif", fontSize: "24px", fontWeight: "700", color: "#1a1a1a", letterSpacing: "-1px", textDecoration: "none"}}>Lomissa</a>
-        </div>
+  return (
+    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
+
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+        <Logo size="sm" />
       </nav>
 
       <div style={{maxWidth: "480px", margin: "80px auto", padding: "0 32px"}}>
         {done ? (
-          <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "48px 32px", border: "1px solid #f0f0f0", textAlign: "center"}}>
-            <div style={{marginBottom: "24px"}}><svg viewBox="0 0 64 64" width="56" height="56" fill="none"><circle cx="32" cy="32" r="28" stroke="#C8622A" strokeWidth="1.6"/><polyline points="18,32 27,41 46,22" stroke="#C8622A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></div>
-            <h1 style={{fontFamily: "Georgia, serif", fontSize: "28px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 16px"}}>
-              Password updated!
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "48px 32px", border: "1px solid #E2D5C8", textAlign: "center"}}>
+            <div style={{marginBottom: "24px"}}>
+              <svg viewBox="0 0 64 64" width="56" height="56" fill="none">
+                <circle cx="32" cy="32" r="28" stroke="#C8622A" strokeWidth="1.6"/>
+                <polyline points="18,32 27,41 46,22" stroke="#C8622A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>
+              Password updated
             </h1>
-            <p style={{fontSize: "14px", color: "#888", margin: "0 0 32px", lineHeight: "1.7"}}>
+            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
               Your password has been successfully updated. You can now log in with your new password.
             </p>
-            <a href="/login" style={{backgroundColor: "#1a1a1a", color: "#fff", fontSize: "13px", padding: "12px 32px", borderRadius: "8px", textDecoration: "none", display: "inline-block"}}>
+            <a href="/login" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
               Log in
             </a>
           </div>
         ) : (
-          <div style={{backgroundColor: "#fff", borderRadius: "12px", padding: "48px 32px", border: "1px solid #f0f0f0"}}>
-            <p style={{fontSize: "12px", color: "#C4907A", margin: "0 0 12px", letterSpacing: "1px"}}>ACCOUNT RECOVERY</p>
-            <h1 style={{fontFamily: "Georgia, serif", fontSize: "32px", fontWeight: "700", color: "#1a1a1a", margin: "0 0 8px", letterSpacing: "-1px"}}>
+          <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "48px 32px", border: "1px solid #E2D5C8"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ACCOUNT RECOVERY</p>
+            <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
               Set new password
             </h1>
-            <p style={{fontSize: "14px", color: "#888", margin: "0 0 32px", lineHeight: "1.7"}}>
+            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
               Choose a strong password for your Lomissa account.
             </p>
 
             <div style={{marginBottom: "16px"}}>
-              <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "6px"}}>New password</label>
+              <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>New password</label>
               <div style={{position: "relative"}}>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 8 characters"
-                  style={{width: "100%", border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px 16px", paddingRight: "60px", fontSize: "13px", outline: "none", color: "#1a1a1a", backgroundColor: "#fff", boxSizing: "border-box"}}
+                  style={inputStyle}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#888", padding: "0"}}
+                  style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#7A5C44", padding: "0", fontFamily: "'Jost', sans-serif"}}
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
@@ -77,19 +95,19 @@ export default function UpdatePassword() {
             </div>
 
             <div style={{marginBottom: "24px"}}>
-              <label style={{fontSize: "11px", color: "#888", display: "block", marginBottom: "6px"}}>Confirm password</label>
+              <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>Confirm password</label>
               <div style={{position: "relative"}}>
                 <input
                   type={showConfirm ? "text" : "password"}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="Repeat your password"
-                  style={{width: "100%", border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px 16px", paddingRight: "60px", fontSize: "13px", outline: "none", color: "#1a1a1a", backgroundColor: "#fff", boxSizing: "border-box"}}
+                  style={inputStyle}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#888", padding: "0"}}
+                  style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#7A5C44", padding: "0", fontFamily: "'Jost', sans-serif"}}
                 >
                   {showConfirm ? "Hide" : "Show"}
                 </button>
@@ -97,25 +115,25 @@ export default function UpdatePassword() {
             </div>
 
             {error && (
-              <div style={{marginBottom: "16px", padding: "12px", borderRadius: "8px", backgroundColor: "#fff8f8", border: "1px solid #fce8e8"}}>
-                <p style={{fontSize: "12px", color: "#cc0000", margin: "0"}}>{error}</p>
+              <div style={{marginBottom: "16px", padding: "12px 16px", borderRadius: "8px", backgroundColor: "#fef2f2", border: "1px solid #fecaca"}}>
+                <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>
               </div>
             )}
 
             <button
               onClick={handleUpdate}
               disabled={loading}
-              style={{width: "100%", backgroundColor: "#C4907A", color: "#fff", fontSize: "14px", padding: "14px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600"}}
+              style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: loading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", opacity: loading ? 0.7 : 1}}
             >
-              {loading ? "Updating..." : "Update password"}
+              {loading ? "Updating…" : "Update password"}
             </button>
           </div>
         )}
       </div>
 
-      <footer style={{backgroundColor: "#fff", padding: "32px 48px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
-        <p style={{fontFamily: "Georgia, serif", fontSize: "18px", fontWeight: "700", color: "#1a1a1a", margin: "0"}}>Lomissa</p>
-        <p style={{fontSize: "12px", color: "#888", margin: "0"}}>© 2026 Lomissa. All rights reserved.</p>
+      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginTop: "48px"}}>
+        <Logo size="sm" asLink={false} />
+        <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>
