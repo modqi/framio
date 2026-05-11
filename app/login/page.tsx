@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
+import GlobeModal from "../components/GlobeModal";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,8 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen flex" style={{backgroundColor: "#FDFBF8"}}>
+    <main className="min-h-screen flex" style={{backgroundColor: "#FDFBF8", position: "relative"}}>
+      <div style={{position: "absolute", top: "16px", right: "24px", zIndex: 10}}><GlobeModal /></div>
 
       {/* Left — warm panel */}
       <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0}}>

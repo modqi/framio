@@ -1,4 +1,5 @@
 import Logo from "../components/Logo";
+import GlobeModal from "../components/GlobeModal";
 
 export default function Terms() {
   const sections = [
@@ -61,7 +62,7 @@ export default function Terms() {
 
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to home</a>
+        <div className="flex items-center gap-3"><GlobeModal /><a href="/" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to home</a></div>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "64px 32px"}}>

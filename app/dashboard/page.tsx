@@ -3,8 +3,11 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { CameraIcon, MessageIcon } from "../components/Icons";
+import GlobeModal from "../components/GlobeModal";
+import { useCurrency } from "../../lib/currency-context";
 
 export default function Dashboard() {
+  const { convertPrice } = useCurrency();
   const [user, setUser] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -257,6 +260,7 @@ export default function Dashboard() {
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <div className="flex items-center gap-4">
+          <GlobeModal />
           <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
             Hello, {user?.user_metadata?.name?.split(" ")[0] || "there"}
           </span>
@@ -437,7 +441,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Price</p>
-                      <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.price}</p>
+                      <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif"}}>{convertPrice(booking.price)}</p>
                     </div>
                     <div>
                       <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Booked on</p>

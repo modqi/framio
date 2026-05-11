@@ -3,9 +3,12 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import Logo from "./components/Logo";
 import { CalendarIcon, ReviewStarIcon } from "./components/Icons";
+import GlobeModal from "./components/GlobeModal";
+import { useCurrency } from "../lib/currency-context";
 
 export default function Home() {
   const [photographers, setPhotographers] = useState<any[]>([]);
+  const { convertPrice } = useCurrency();
 
   useEffect(() => {
     const getData = async () => {
@@ -26,7 +29,8 @@ export default function Home() {
       {/* Navigation */}
       <nav style={{position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          <GlobeModal />
           <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Photographers</a>
           <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Log in</a>
           <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>Sign up</a>
@@ -110,7 +114,7 @@ export default function Home() {
                     <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{photographer.location}</p>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                       <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}><svg viewBox="0 0 64 64" width="14" height="14" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:"3px"}}><circle cx="32" cy="32" r="9" fill="#C8622A"/><line x1="32" y1="18" x2="32" y2="10" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="46" y1="32" x2="54" y2="32" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="42" y1="22" x2="48" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="22" y1="22" x2="16" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/></svg>{photographer.rating || "New"}</span>
-                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06"}}>{photographer.price}</span>
+                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06"}}>{convertPrice(photographer.price)}</span>
                     </div>
                   </div>
                 </a>

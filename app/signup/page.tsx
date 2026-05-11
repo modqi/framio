@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
+import GlobeModal from "../components/GlobeModal";
 
 export default function Signup() {
   const [role, setRole] = useState("client");
@@ -161,7 +162,8 @@ export default function Signup() {
   }
 
   return (
-    <main className="min-h-screen flex" style={{backgroundColor: "#FDFBF8"}}>
+    <main className="min-h-screen flex" style={{backgroundColor: "#FDFBF8", position: "relative"}}>
+      <div style={{position: "absolute", top: "16px", right: "24px", zIndex: 10}}><GlobeModal /></div>
 
       {/* Left — dark panel */}
       <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0}}>

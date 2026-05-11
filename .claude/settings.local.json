@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(node *)",
+      "Bash(curl -s 'https://ilnduxgvstfacuqbnxsl.supabase.co/rest/v1/photographers?select=id,user_id,name,email,stripe_account_id,stripe_onboarding_completed,price&order=created_at.desc' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbmR1eGd2c3RmYWN1cWJueHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTc4NTMsImV4cCI6MjA5MTMzMzg1M30.DpXf5WGbMRb74PlwlncRASODjdvossCjNf3L3LK5tsU' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbmR1eGd2c3RmYWN1cWJueHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTc4NTMsImV4cCI6MjA5MTMzMzg1M30.DpXf5WGbMRb74PlwlncRASODjdvossCjNf3L3LK5tsU')",
+      "Bash(npm run *)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\MOUHA\\\\framio\\\\app\\\\api\\\\cron\\\\release-payouts\")",
+      "Bash(Out-Null)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\MOUHA\\\\framio\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(npm install *)",
+      "Bash(npx vercel *)",
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(cp \"C:\\\\Users\\\\MOUHA\\\\.claude\\\\projects\\\\C--Users-MOUHA-framio\\\\eb25219d-0247-40bf-91c4-6759955a953e\\\\tool-results\\\\webfetch-1778273671103-dolztl.bin\" /tmp/design.gz)",
+      "Bash(gunzip -c /tmp/design.gz)",
+      "Read(//tmp/**)",
+      "Bash(tar -tf design.html)",
+      "Bash(tar -xf design.html lomissa/chats/chat2.md lomissa/chats/chat3.md lomissa/chats/chat4.md -O)",
+      "Read(//mnt/c/Users/MOUHA/**)",
+      "Bash(grep -rl \"#FAF7F1\\\\|#B85528\\\\|#1C1009\\\\|#E4D8C4\\\\|#9E7250\\\\|#7A5235\\\\|#C3AB88\\\\|#FDFBF7\" app/ --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(git stash *)",
+      "Bash(grep -n \"profile_photo\\\\|photographer\\\\\\\\.photo\\\\|src=\" \"app/photographers/[id]/page.tsx\")",
+      "Bash(vercel logs *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\MOUHA\\\\framio\\\\app\" -Recurse -Filter \"*.tsx\")",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(xargs grep *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

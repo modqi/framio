@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
+import GlobeModal from "../components/GlobeModal";
+import { useCurrency } from "../../lib/currency-context";
 
 export default function Photographers() {
+  const { formatPrice } = useCurrency();
   const [photographers, setPhotographers] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +94,8 @@ export default function Photographers() {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          <GlobeModal />
           {authUser ? (
             <>
               <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
@@ -209,7 +213,7 @@ export default function Photographers() {
                     <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06"}}>
                       {(() => {
                         const prices = (photographer.photographer_packages || []).map((p: any) => p.price).filter((n: number) => n > 0);
-                        return prices.length > 0 ? `From ${Math.min(...prices).toLocaleString()} NOK` : "";
+                        return prices.length > 0 ? `From ${formatPrice(Math.min(...prices))}` : "";
                       })()}
                     </span>
                   </div>

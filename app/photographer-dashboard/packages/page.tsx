@@ -2,12 +2,15 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
+import GlobeModal from "../../components/GlobeModal";
+import { useCurrency } from "../../../lib/currency-context";
 
 const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
 const BLANK_PKG = { name: "", duration: "", photos_delivered: "", price: "", description: "", category: "" };
 const BLANK_ADDON = { name: "", price: "", unit: "flat fee" };
 
 export default function ManagePackages() {
+  const { formatPrice } = useCurrency();
   const [photographerId, setPhotographerId] = useState<string | null>(null);
   const [packages, setPackages] = useState<any[]>([]);
   const [addons, setAddons] = useState<any[]>([]);
@@ -200,7 +203,10 @@ export default function ManagePackages() {
 
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        <div className="flex items-center gap-3">
+          <GlobeModal />
+          <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        </div>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 32px"}}>
@@ -266,7 +272,7 @@ export default function ManagePackages() {
                         {pkg.description && <p style={{fontSize: "12px", color: "#7A5C44", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                       </div>
                       <div style={{textAlign: "right", flexShrink: 0}}>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 8px"}}>{pkg.price.toLocaleString()} NOK</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 8px"}}>{formatPrice(pkg.price)}</p>
                         <div style={{display: "flex", gap: "8px", justifyContent: "flex-end"}}>
                           <button onClick={() => openEditPkg(pkg)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
                           {confirmDeletePkg === pkg.id ? (
@@ -342,7 +348,7 @@ export default function ManagePackages() {
                   <div style={{border: "1px solid #E2D5C8", borderRadius: "10px", padding: "12px 16px", backgroundColor: "#FDFBF8", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px"}}>
                     <div>
                       <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
-                      <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK · {addon.unit}</p>
+                      <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{formatPrice(addon.price)} · {addon.unit}</p>
                     </div>
                     <div style={{display: "flex", gap: "8px", flexShrink: 0}}>
                       <button onClick={() => openEditAddon(addon)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>

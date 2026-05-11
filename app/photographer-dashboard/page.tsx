@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { CameraIcon, CalendarIcon, MessageIcon, ProfileIcon, PortfolioIcon, PackageIcon, EmptyInboxIcon, CheckIcon } from "../components/Icons";
+import GlobeModal from "../components/GlobeModal";
+import { useCurrency } from "../../lib/currency-context";
 
 const parsePrice = (price: unknown): number => {
   const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
@@ -18,6 +20,7 @@ const fmtMoney = (amount: number, currency = "usd"): string => {
 };
 
 export default function PhotographerDashboard() {
+  const { convertPrice } = useCurrency();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
@@ -301,6 +304,7 @@ export default function PhotographerDashboard() {
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <div className="flex items-center gap-4">
+          <GlobeModal />
           <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.name}</span>
           <a href="/messages" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "'Jost', sans-serif"}}>
             <MessageIcon size={16} color="#7A5C44" /> Messages
@@ -521,7 +525,7 @@ export default function PhotographerDashboard() {
                       { label: "Session", value: booking.session_type },
                       { label: "Date", value: booking.date || "Not set" },
                       { label: "Location", value: booking.location || "Not set" },
-                      { label: "Price", value: booking.price },
+                      { label: "Price", value: convertPrice(booking.price) },
                     ].map((item) => (
                       <div key={item.label}>
                         <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{item.label}</p>
@@ -868,7 +872,7 @@ export default function PhotographerDashboard() {
                               <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", borderTop: "1px solid #E2D5C8", paddingTop: "12px"}}>
                                 <div>
                                   <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>SESSION FEE</p>
-                                  <p style={{fontSize: "15px", color: "#1A0E06", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{booking.price || "—"}</p>
+                                  <p style={{fontSize: "15px", color: "#1A0E06", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{convertPrice(booking.price) || "—"}</p>
                                 </div>
                                 <div>
                                   <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOMISSA FEE (10%)</p>

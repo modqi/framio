@@ -4,8 +4,11 @@ import Image from "next/image";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { ReviewStarIcon } from "../../components/Icons";
+import GlobeModal from "../../components/GlobeModal";
+import { useCurrency } from "../../../lib/currency-context";
 
 export default function PhotographerProfile({ params }: { params: any }) {
+  const { formatPrice } = useCurrency();
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -250,7 +253,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          <GlobeModal />
           {isAdmin ? (
             <a href="/admin" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Admin panel</a>
           ) : (
@@ -318,7 +322,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
           {minPackagePrice !== null && (
             <div style={{textAlign: "right"}}>
               <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>From</p>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>{minPackagePrice.toLocaleString()} NOK</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>{formatPrice(minPackagePrice)}</p>
             </div>
           )}
         </div>
@@ -455,7 +459,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                               <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
                               {pkg.description && <p style={{fontSize: "11px", color: "#7A5C44", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                             </div>
-                            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: selected ? "#C8622A" : "#1A0E06", margin: "0", flexShrink: 0}}>{pkg.price.toLocaleString()} NOK</p>
+                            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: selected ? "#C8622A" : "#1A0E06", margin: "0", flexShrink: 0}}>{formatPrice(pkg.price)}</p>
                           </div>
                         </button>
                       );
@@ -474,7 +478,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                           <div key={addon.id} style={{border: `1px solid ${qty > 0 ? "#C8622A" : "#E2D5C8"}`, borderRadius: "8px", padding: "10px 12px", backgroundColor: qty > 0 ? "#FBF0EA" : "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", transition: "all 0.1s"}}>
                             <div style={{flex: 1}}>
                               <p style={{fontSize: "13px", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
-                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{addon.price.toLocaleString()} NOK {addon.unit}</p>
+                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{formatPrice(addon.price)} {addon.unit}</p>
                             </div>
                             {qty === 0 ? (
                               <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#C8622A", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>Add</button>
@@ -551,17 +555,17 @@ export default function PhotographerProfile({ params }: { params: any }) {
                     <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 10px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ORDER SUMMARY</p>
                     <div style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
                       <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.name}</span>
-                      <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.price.toLocaleString()} NOK</span>
+                      <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{formatPrice(selectedPackage.price)}</span>
                     </div>
                     {selectedAddonsList.map(addon => (
                       <div key={addon.id} style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
                         <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{addon.name} ×{addonQty[addon.id]}</span>
-                        <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>+{(addon.price * addonQty[addon.id]).toLocaleString()} NOK</span>
+                        <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>+{formatPrice(addon.price * addonQty[addon.id])}</span>
                       </div>
                     ))}
                     <div style={{borderTop: "1px solid #E2D5C8", marginTop: "8px", paddingTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                       <span style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>Total</span>
-                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06"}}>{total.toLocaleString()} NOK</span>
+                      <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06"}}>{formatPrice(total)}</span>
                     </div>
                   </div>
                 )}
@@ -583,7 +587,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   disabled={booking || !selectedDate || !selectedPackage}
                   style={{width: "100%", backgroundColor: selectedDate && selectedPackage ? "#C8622A" : "#E2D5C8", color: selectedDate && selectedPackage ? "#FDFBF8" : "#DDD0C0", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate && selectedPackage ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate && selectedPackage ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}
                 >
-                  {booking ? "Redirecting to payment…" : selectedDate && selectedPackage ? `Book & Pay — ${total.toLocaleString()} NOK` : "Select a package and date"}
+                  {booking ? "Redirecting to payment…" : selectedDate && selectedPackage ? `Book & Pay — ${formatPrice(total)}` : "Select a package and date"}
                 </button>
                 <p style={{fontSize: "11px", color: "#DDD0C0", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
               </>

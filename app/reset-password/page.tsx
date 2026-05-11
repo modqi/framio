@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
+import GlobeModal from "../components/GlobeModal";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -26,7 +27,7 @@ export default function ResetPassword() {
 
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/login" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to login</a>
+        <div className="flex items-center gap-3"><GlobeModal /><a href="/login" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to login</a></div>
       </nav>
 
       <div style={{maxWidth: "480px", margin: "80px auto", padding: "0 32px"}}>

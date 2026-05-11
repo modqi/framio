@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
+import GlobeModal from "../components/GlobeModal";
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState("");
@@ -43,6 +44,7 @@ export default function UpdatePassword() {
 
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
+        <GlobeModal />
       </nav>
 
       <div style={{maxWidth: "480px", margin: "80px auto", padding: "0 32px"}}>
