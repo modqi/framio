@@ -5,10 +5,12 @@ import Logo from "./components/Logo";
 import { CalendarIcon, ReviewStarIcon } from "./components/Icons";
 import GlobeModal from "./components/GlobeModal";
 import { useCurrency } from "../lib/currency-context";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
   const [photographers, setPhotographers] = useState<any[]>([]);
   const { convertPrice } = useCurrency();
+  const t = useTranslations("Home");
 
   useEffect(() => {
     const getData = async () => {
@@ -31,9 +33,9 @@ export default function Home() {
         <Logo size="sm" />
         <div className="flex items-center gap-4">
           <GlobeModal />
-          <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Photographers</a>
-          <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Log in</a>
-          <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>Sign up</a>
+          <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.photographers")}</a>
+          <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.logIn")}</a>
+          <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{t("nav.signUp")}</a>
         </div>
       </nav>
 
@@ -45,19 +47,19 @@ export default function Home() {
             <Logo size="xl" asLink={false} />
           </div>
           <div style={{display: "inline-block", backgroundColor: "rgba(184,85,40,0.08)", border: "1px solid rgba(184,85,40,0.2)", borderRadius: "999px", padding: "6px 16px", marginBottom: "40px"}}>
-            <p style={{fontSize: "12px", color: "#C8622A", margin: "0", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>NOW LAUNCHING WORLDWIDE</p>
+            <p style={{fontSize: "12px", color: "#C8622A", margin: "0", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
           </div>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(44px, 7vw, 84px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em", lineHeight: "1.05"}}>
-            Your moment deserves<br/>the perfect photographer
+            {t("hero.headline")}
           </h1>
           <p style={{fontSize: "clamp(15px, 2vw, 18px)", color: "#7A5C44", margin: "0 0 52px", lineHeight: "1.8", maxWidth: "520px", marginLeft: "auto", marginRight: "auto", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-            Lomissa connects you with hand-picked photographers for portraits, weddings, events and more.
+            {t("hero.description")}
           </p>
           <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "15px", padding: "16px 44px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.35)"}}>
-            Find a photographer
+            {t("hero.cta")}
           </a>
           <p style={{fontSize: "12px", color: "#DDD0C0", margin: "28px 0 0", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif"}}>
-            HAND-PICKED · INSTANT BOOKING · SECURE PAYMENTS
+            {t("hero.trust")}
           </p>
         </div>
       </section>
@@ -66,21 +68,21 @@ export default function Home() {
       <section style={{backgroundColor: "#F5EFE4", padding: "100px 48px"}}>
         <div style={{maxWidth: "1000px", margin: "0 auto"}}>
           <div style={{textAlign: "center", marginBottom: "72px"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>HOW IT WORKS</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("howItWorks.label")}</p>
             <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>
-              Book a photographer in minutes
+              {t("howItWorks.heading")}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { number: "01", title: "Browse photographers", desc: "Explore hand-picked photographers and find the perfect match for your style and budget." },
-              { number: "02", title: "Book instantly", desc: "See real availability, pick a date that works and book in minutes. No back and forth." },
-              { number: "03", title: "Get your photos", desc: "Have your session and receive your professionally edited photos through Lomissa." },
+              { number: "01", titleKey: "howItWorks.step1Title", descKey: "howItWorks.step1Desc" },
+              { number: "02", titleKey: "howItWorks.step2Title", descKey: "howItWorks.step2Desc" },
+              { number: "03", titleKey: "howItWorks.step3Title", descKey: "howItWorks.step3Desc" },
             ].map((step) => (
               <div key={step.number}>
                 <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "56px", fontWeight: "300", color: "#E2D5C8", margin: "0 0 20px", letterSpacing: "-0.04em", lineHeight: "1"}}>{step.number}</p>
-                <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{step.title}</h3>
-                <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{step.desc}</p>
+                <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{t(step.titleKey as any)}</h3>
+                <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t(step.descKey as any)}</p>
               </div>
             ))}
           </div>
@@ -93,13 +95,13 @@ export default function Home() {
           <div style={{maxWidth: "1100px", margin: "0 auto"}}>
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "56px", flexWrap: "wrap", gap: "16px"}}>
               <div>
-                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>OUR PHOTOGRAPHERS</p>
+                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("featured.label")}</p>
                 <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>
-                  Hand-picked talent
+                  {t("featured.heading")}
                 </h2>
               </div>
               <a href="/photographers" style={{fontSize: "13px", color: "#C8622A", textDecoration: "none", border: "1px solid rgba(184,85,40,0.3)", padding: "10px 24px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
-                View all →
+                {t("featured.viewAll")}
               </a>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -127,22 +129,22 @@ export default function Home() {
       {/* Trust section */}
       <section style={{backgroundColor: "#F5EFE4", padding: "100px 48px"}}>
         <div style={{maxWidth: "800px", margin: "0 auto", textAlign: "center"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WHY LOMISSA</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("trust.label")}</p>
           <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 56px", letterSpacing: "-0.02em", lineHeight: "1.1"}}>
-            Every photographer is hand-picked
+            {t("trust.heading")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { icon: <svg viewBox="0 0 64 64" width="22" height="22" fill="none"><circle cx="32" cy="32" r="22" stroke="#FDFBF8" strokeWidth="1.6"/><polyline points="20,32 28,40 44,24" stroke="#FDFBF8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>, title: "Vetted professionals", desc: "Every photographer on Lomissa goes through a personal review process. Only the best make it." },
-              { icon: <CalendarIcon size={22} color="#FDFBF8"/>, title: "Instant booking", desc: "See real availability and book in seconds. No waiting, no back and forth emails." },
-              { icon: <ReviewStarIcon size={22} color="#FDFBF8"/>, title: "Verified reviews", desc: "Every review comes from a real client who completed a real session. No fake ratings." },
+              { icon: <svg viewBox="0 0 64 64" width="22" height="22" fill="none"><circle cx="32" cy="32" r="22" stroke="#FDFBF8" strokeWidth="1.6"/><polyline points="20,32 28,40 44,24" stroke="#FDFBF8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>, titleKey: "trust.vettedTitle", descKey: "trust.vettedDesc" },
+              { icon: <CalendarIcon size={22} color="#FDFBF8"/>, titleKey: "trust.bookingTitle", descKey: "trust.bookingDesc" },
+              { icon: <ReviewStarIcon size={22} color="#FDFBF8"/>, titleKey: "trust.reviewsTitle", descKey: "trust.reviewsDesc" },
             ].map((item) => (
-              <div key={item.title}>
+              <div key={item.titleKey}>
                 <div style={{width: "52px", height: "52px", borderRadius: "50%", backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", margin: "0 auto 20px"}}>
                   {item.icon}
                 </div>
-                <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{item.title}</h3>
-                <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{item.desc}</p>
+                <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{t(item.titleKey as any)}</h3>
+                <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t(item.descKey as any)}</p>
               </div>
             ))}
           </div>
@@ -154,28 +156,28 @@ export default function Home() {
         <div style={{maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "32px"}}>
           <div>
             <Logo size="md" asLink={false} />
-            <p style={{fontSize: "12px", color: "#7A5C44", margin: "16px 0 0", maxWidth: "280px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>The photography marketplace connecting clients with hand-picked photographers worldwide.</p>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "16px 0 0", maxWidth: "280px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("footer.tagline")}</p>
           </div>
           <div style={{display: "flex", gap: "48px", flexWrap: "wrap"}}>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PLATFORM</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.platformLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/photographers" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Find photographers</a>
-                <a href="/signup" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Create account</a>
-                <a href="/login" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
+                <a href="/photographers" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.findPhotographers")}</a>
+                <a href="/signup" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.createAccount")}</a>
+                <a href="/login" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.logIn")}</a>
               </div>
             </div>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>LEGAL</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.legalLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
                 <a href="/privacy" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Privacy Policy</a>
                 <a href="/terms" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Terms of Service</a>
               </div>
             </div>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PHOTOGRAPHERS</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.photographersLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/join" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Apply to join</a>
+                <a href="/join" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.applyToJoin")}</a>
                 <a href="mailto:hello@lomissa.com" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>hello@lomissa.com</a>
               </div>
             </div>
@@ -183,7 +185,7 @@ export default function Home() {
         </div>
         <div style={{maxWidth: "1100px", margin: "32px auto 0", paddingTop: "32px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
           <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
-          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>Made with ❤️ for photographers everywhere</p>
+          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("footer.taglineBottom")}</p>
         </div>
       </footer>
 

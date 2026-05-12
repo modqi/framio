@@ -1,0 +1,338 @@
+{
+  "Home": {
+    "nav": {
+      "photographers": "Photographers",
+      "logIn": "Log in",
+      "signUp": "Sign up"
+    },
+    "hero": {
+      "badge": "NOW LAUNCHING WORLDWIDE",
+      "headline": "Your moment deserves the perfect photographer",
+      "description": "Lomissa connects you with hand-picked photographers for portraits, weddings, events and more.",
+      "cta": "Find a photographer",
+      "trust": "HAND-PICKED · INSTANT BOOKING · SECURE PAYMENTS"
+    },
+    "howItWorks": {
+      "label": "HOW IT WORKS",
+      "heading": "Book a photographer in minutes",
+      "step1Title": "Browse photographers",
+      "step1Desc": "Explore hand-picked photographers and find the perfect match for your style and budget.",
+      "step2Title": "Book instantly",
+      "step2Desc": "See real availability, pick a date that works and book in minutes. No back and forth.",
+      "step3Title": "Get your photos",
+      "step3Desc": "Have your session and receive your professionally edited photos through Lomissa."
+    },
+    "featured": {
+      "label": "OUR PHOTOGRAPHERS",
+      "heading": "Hand-picked talent",
+      "viewAll": "View all →"
+    },
+    "trust": {
+      "label": "WHY LOMISSA",
+      "heading": "Every photographer is hand-picked",
+      "vettedTitle": "Vetted professionals",
+      "vettedDesc": "Every photographer on Lomissa goes through a personal review process. Only the best make it.",
+      "bookingTitle": "Instant booking",
+      "bookingDesc": "See real availability and book in seconds. No waiting, no back and forth emails.",
+      "reviewsTitle": "Verified reviews",
+      "reviewsDesc": "Every review comes from a real client who completed a real session. No fake ratings."
+    },
+    "footer": {
+      "tagline": "The photography marketplace connecting clients with hand-picked photographers worldwide.",
+      "platformLabel": "PLATFORM",
+      "findPhotographers": "Find photographers",
+      "createAccount": "Create account",
+      "legalLabel": "LEGAL",
+      "photographersLabel": "PHOTOGRAPHERS",
+      "applyToJoin": "Apply to join",
+      "taglineBottom": "Made with ❤️ for photographers everywhere"
+    }
+  },
+  "Browse": {
+    "nav": {
+      "myDashboard": "My dashboard",
+      "logIn": "Log in",
+      "signUp": "Sign up"
+    },
+    "header": {
+      "label": "OUR PHOTOGRAPHERS",
+      "heading": "Find your photographer"
+    },
+    "search": {
+      "placeholder": "Search by name, location or specialty..."
+    },
+    "sort": {
+      "label": "Sort by:",
+      "newest": "Newest first",
+      "highestRated": "Highest rated",
+      "priceLow": "Price — low to high",
+      "priceHigh": "Price — high to low"
+    },
+    "count": "{count, plural, one {# photographer} other {# photographers}}",
+    "noResults": {
+      "heading": "No photographers found",
+      "description": "Try a different search or filter",
+      "clear": "Clear filters"
+    },
+    "card": {
+      "from": "From",
+      "viewProfile": "View profile"
+    }
+  },
+  "Profile": {
+    "nav": {
+      "explore": "Explore",
+      "logIn": "Log in",
+      "signUp": "Sign up",
+      "myDashboard": "My dashboard",
+      "adminPanel": "Admin panel",
+      "backToAdmin": "← Admin panel"
+    },
+    "hero": {
+      "new": "New",
+      "available": "Available",
+      "from": "From"
+    },
+    "whatsIncluded": "WHAT'S INCLUDED",
+    "terms": {
+      "deliveryTime": "DELIVERY TIME",
+      "copyright": "COPYRIGHT",
+      "editingStyle": "EDITING STYLE",
+      "revisions": "REVISIONS"
+    },
+    "portfolio": {
+      "label": "PORTFOLIO",
+      "photos": "{count} PHOTOS"
+    },
+    "reviews": {
+      "label": "REVIEWS",
+      "noReviews": "No reviews yet"
+    },
+    "booking": {
+      "title": "BOOK A SESSION",
+      "choosePackage": "CHOOSE A PACKAGE",
+      "addons": "ADD-ONS (OPTIONAL)",
+      "selectDate": "SELECT A DATE",
+      "locationLabel": "LOCATION",
+      "locationPlaceholder": "Where is the shoot?",
+      "messageLabel": "MESSAGE",
+      "messagePlaceholder": "Tell them about your vision...",
+      "orderSummary": "ORDER SUMMARY",
+      "total": "Total",
+      "securePayment": "You will be taken to a secure payment page",
+      "add": "Add",
+      "noPackagesTitle": "No packages yet",
+      "noPackagesDesc": "This photographer hasn't listed any packages yet. Send them a message to discuss rates and availability.",
+      "noPackagesAction": "Message photographer",
+      "redirecting": "Redirecting to payment…",
+      "bookAndPay": "Book & Pay — {price}",
+      "selectPackageAndDate": "Select a package and date",
+      "requestedHeading": "Booking requested!",
+      "requestedDesc": "{name} will respond within 24 hours.",
+      "viewBookings": "View my bookings"
+    },
+    "calendar": {
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "selected": "Selected"
+    },
+    "policy": {
+      "flexibleLabel": "Flexible cancellation",
+      "flexibleDesc": "Full refund up to 24h before",
+      "moderateLabel": "Moderate cancellation",
+      "moderateDesc": "Full refund up to 48h before",
+      "strictLabel": "Strict cancellation",
+      "strictDesc": "No refund once confirmed"
+    },
+    "notFound": {
+      "heading": "Photographer not found",
+      "back": "Back to browse"
+    }
+  },
+  "Login": {
+    "panel": {
+      "heading": "Welcome back to Lomissa",
+      "description": "Log in to manage your bookings and connect with photographers."
+    },
+    "form": {
+      "badge": "WELCOME BACK",
+      "heading": "Log in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot your password?",
+      "show": "Show",
+      "hide": "Hide",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "signUpFree": "Sign up free",
+      "isPhotographer": "Are you a photographer?",
+      "applyToJoin": "Apply to join"
+    },
+    "errors": {
+      "fillAll": "Please fill in all fields.",
+      "invalidCredentials": "Invalid email or password. Please try again."
+    }
+  },
+  "Signup": {
+    "panel": {
+      "clientHeadline": "Your moment deserves the perfect photographer",
+      "clientDesc": "Connect with hand-picked photographers for your most important moments.",
+      "photographerHeadline": "Join the photography marketplace launching worldwide",
+      "photographerDesc": "We hand-pick every photographer on Lomissa. Apply today and start receiving bookings.",
+      "statFree": "Free",
+      "statFreeLabel": "To join Lomissa",
+      "statCommission": "10%",
+      "statCommissionLabel": "Commission only",
+      "statResponse": "3 days",
+      "statResponseLabel": "Average response time"
+    },
+    "form": {
+      "badge": "GET STARTED",
+      "headingClient": "Create account",
+      "headingPhotographer": "Apply to join",
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in",
+      "roleBook": "I want to book",
+      "rolePhotographer": "I am a photographer",
+      "nameLabel": "Full name",
+      "nameLabelRequired": "Full name *",
+      "namePlaceholder": "Your full name",
+      "emailLabel": "Email address",
+      "emailLabelRequired": "Email address *",
+      "passwordLabel": "Password",
+      "passwordLabelRequired": "Password *",
+      "passwordPlaceholder": "At least 8 characters",
+      "show": "Show",
+      "hide": "Hide",
+      "submitClient": "Create account",
+      "submittingClient": "Creating account...",
+      "submitPhotographer": "Apply to join Lomissa",
+      "submittingPhotographer": "Submitting application...",
+      "tosText": "By signing up you agree to our",
+      "tosTerms": "Terms of Service",
+      "tosAnd": "and",
+      "tosPrivacy": "Privacy Policy",
+      "photoReviewNote": "✓ We review every application personally and respond within 3 business days.",
+      "locationLabel": "Location",
+      "locationPlaceholder": "e.g. Bergen, Norway",
+      "specialtyLabel": "Specialty *",
+      "specialtyPlaceholder": "Select specialty",
+      "experienceLabel": "Years of experience",
+      "experiencePlaceholder": "Select experience",
+      "instagramLabel": "Instagram handle",
+      "portfolioLabel": "Portfolio link",
+      "portfolioPlaceholder": "https://your-portfolio.com",
+      "aboutLabel": "About you and your photography style *",
+      "aboutPlaceholder": "Tell us about your experience, your style and why you want to join Lomissa..."
+    },
+    "experience": {
+      "lessThan1": "Less than 1 year",
+      "oneToTwo": "1-2 years",
+      "threeToFive": "3-5 years",
+      "fiveToTen": "5-10 years",
+      "moreThan10": "More than 10 years"
+    },
+    "specialty": {
+      "portraits": "Portraits",
+      "weddings": "Weddings",
+      "events": "Events",
+      "travel": "Travel",
+      "fashion": "Fashion",
+      "commercial": "Commercial",
+      "street": "Street",
+      "nature": "Nature"
+    },
+    "doneClient": {
+      "badge": "WELCOME TO LOMISSA",
+      "heading": "Account created!",
+      "description": "Your account has been created. You can now log in and start booking photographers.",
+      "cta": "Log in now"
+    },
+    "donePhotographer": {
+      "badge": "APPLICATION RECEIVED",
+      "heading": "Thank you, {name}!",
+      "description": "We have received your application. Our team will review your portfolio and get back to you within 3 business days.",
+      "step1": "We review your portfolio and experience",
+      "step2": "We check your Instagram and website",
+      "step3": "You receive an email with our decision",
+      "step4": "If approved you can log in immediately",
+      "backToLomissa": "Back to Lomissa"
+    },
+    "errors": {
+      "fillAll": "Please fill in all fields.",
+      "passwordLength": "Password must be at least 8 characters.",
+      "fillRequired": "Please fill in all required fields."
+    }
+  },
+  "Join": {
+    "nav": {
+      "backToHome": "← Back to home"
+    },
+    "hero": {
+      "badge": "JOIN LOMISSA",
+      "heading": "Apply to join as a photographer",
+      "description": "We hand-pick every photographer on Lomissa. Tell us about yourself and your work — we'll be in touch within 3 business days."
+    },
+    "stats": {
+      "responseValue": "3 days",
+      "responseLabel": "Average response time",
+      "commissionValue": "10%",
+      "commissionLabel": "Commission only",
+      "freeValue": "Free",
+      "freeLabel": "To join Lomissa"
+    },
+    "form": {
+      "personalDetails": "PERSONAL DETAILS",
+      "nameLabel": "Full name *",
+      "namePlaceholder": "Your full name",
+      "emailLabel": "Email *",
+      "emailPlaceholder": "your@email.com",
+      "phoneLabel": "Phone number *",
+      "phonePlaceholder": "+47 900 00 000",
+      "phoneHelper": "Include country code. Used for booking notifications.",
+      "locationLabel": "Location",
+      "locationPlaceholder": "e.g. Bergen, Norway",
+      "photographySection": "YOUR PHOTOGRAPHY",
+      "categoriesLabel": "Photography categories (select all that apply)",
+      "otherCategory": "Other",
+      "otherCategoryPlaceholder": "Describe your specialty...",
+      "experienceLabel": "Years of experience",
+      "experiencePlaceholder": "Select experience",
+      "instagramLabel": "Instagram handle",
+      "portfolioLabel": "Portfolio link",
+      "portfolioPlaceholder": "https://your-portfolio.com",
+      "websiteLabel": "Website",
+      "websitePlaceholder": "https://yourwebsite.com",
+      "aboutSection": "ABOUT YOU",
+      "aboutLabel": "Tell us about yourself and your photography style *",
+      "aboutPlaceholder": "Tell us about your experience, your photography style, the kind of clients you work with and why you want to join Lomissa...",
+      "submit": "Submit application",
+      "submitting": "Submitting application…",
+      "tosText": "By applying you agree to Lomissa's terms. We review every application manually and will contact you within 3 business days."
+    },
+    "experience": {
+      "lessThan1": "Less than 1 year",
+      "oneToTwo": "1-2 years",
+      "threeToFive": "3-5 years",
+      "fiveToTen": "5-10 years",
+      "moreThan10": "More than 10 years"
+    },
+    "done": {
+      "badge": "APPLICATION RECEIVED",
+      "heading": "Thank you, {name}",
+      "description": "We have received your application to join Lomissa. Our team will review your portfolio and get back to you within 3 business days.",
+      "whatHappensNext": "WHAT HAPPENS NEXT",
+      "step1": "We review your portfolio and experience",
+      "step2": "We check your Instagram and website",
+      "step3": "You receive an email with our decision",
+      "step4": "If approved your profile goes live on Lomissa",
+      "backToLomissa": "Back to Lomissa"
+    },
+    "errors": {
+      "fillRequired": "Please fill in your name, email, phone number and about section.",
+      "genericError": "Something went wrong. Please try again."
+    }
+  }
+}

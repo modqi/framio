@@ -1,18 +1,20 @@
 "use client";
 import { useState } from "react";
 import { useCurrency, CURRENCIES } from "../../lib/currency-context";
+import { useLocale } from "../../lib/locale-context";
 
 const LANGUAGES = [
-  { code: "en", label: "English", native: "English", active: true },
-  { code: "no", label: "Norwegian", native: "Norsk", active: false },
-  { code: "ar", label: "Arabic", native: "العربية", active: false },
-  { code: "fr", label: "French", native: "Français", active: false },
-  { code: "es", label: "Spanish", native: "Español", active: false },
-  { code: "de", label: "German", native: "Deutsch", active: false },
+  { code: "en", label: "English", native: "English" },
+  { code: "no", label: "Norwegian", native: "Norsk" },
+  { code: "ar", label: "Arabic", native: "العربية", comingSoon: true },
+  { code: "fr", label: "French", native: "Français", comingSoon: true },
+  { code: "es", label: "Spanish", native: "Español", comingSoon: true },
+  { code: "de", label: "German", native: "Deutsch", comingSoon: true },
 ];
 
 export default function GlobeModal() {
   const { currency, setCurrency } = useCurrency();
+  const { locale, setLocale } = useLocale();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"currency" | "language">("currency");
 
@@ -143,34 +145,39 @@ export default function GlobeModal() {
                 <div>
                   <p style={{ fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500" }}>SELECT LANGUAGE</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    {LANGUAGES.map((lang) => (
-                      <div
-                        key={lang.code}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "14px 16px",
-                          border: lang.active ? "1.5px solid #C8622A" : "1px solid #E2D5C8",
-                          borderRadius: "10px",
-                          backgroundColor: lang.active ? "#FBF0EA" : "#FDFBF8",
-                          cursor: lang.active ? "default" : "not-allowed",
-                          opacity: lang.active ? 1 : 0.65,
-                        }}
-                      >
-                        <div>
-                          <p style={{ fontSize: "13px", fontWeight: lang.active ? "500" : "400", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif" }}>
-                            {lang.label}
-                          </p>
-                          <p style={{ fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif" }}>{lang.native}</p>
+                    {LANGUAGES.map((lang) => {
+                      const active = !lang.comingSoon;
+                      const selected = locale === lang.code;
+                      return (
+                        <div
+                          key={lang.code}
+                          onClick={() => { if (active) { setLocale(lang.code as "en" | "no"); setOpen(false); } }}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "14px 16px",
+                            border: selected ? "1.5px solid #C8622A" : "1px solid #E2D5C8",
+                            borderRadius: "10px",
+                            backgroundColor: selected ? "#FBF0EA" : "#FDFBF8",
+                            cursor: active ? "pointer" : "not-allowed",
+                            opacity: active ? 1 : 0.65,
+                          }}
+                        >
+                          <div>
+                            <p style={{ fontSize: "13px", fontWeight: selected ? "500" : "400", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif" }}>
+                              {lang.label}
+                            </p>
+                            <p style={{ fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif" }}>{lang.native}</p>
+                          </div>
+                          {selected ? (
+                            <span style={{ fontSize: "11px", color: "#C8622A", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em" }}>ACTIVE</span>
+                          ) : lang.comingSoon ? (
+                            <span style={{ fontSize: "11px", color: "#DDD0C0", fontFamily: "'Jost', sans-serif" }}>Coming soon</span>
+                          ) : null}
                         </div>
-                        {lang.active ? (
-                          <span style={{ fontSize: "11px", color: "#C8622A", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em" }}>ACTIVE</span>
-                        ) : (
-                          <span style={{ fontSize: "11px", color: "#DDD0C0", fontFamily: "'Jost', sans-serif" }}>Coming soon</span>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

@@ -4,9 +4,11 @@ import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 import { useCurrency } from "../../lib/currency-context";
+import { useTranslations } from "next-intl";
 
 export default function Photographers() {
   const { formatPrice } = useCurrency();
+  const t = useTranslations("Browse");
   const [photographers, setPhotographers] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,13 +107,13 @@ export default function Photographers() {
                 href={authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
                 style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
-                My dashboard
+                {t("nav.myDashboard")}
               </a>
             </>
           ) : (
             <>
-              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
-              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.logIn")}</a>
+              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("nav.signUp")}</a>
             </>
           )}
         </div>
@@ -119,9 +121,9 @@ export default function Photographers() {
 
       {/* Header */}
       <section style={{backgroundColor: "#FDFBF8", padding: "48px 48px 32px", borderBottom: "1px solid #E2D5C8"}}>
-        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>OUR PHOTOGRAPHERS</p>
+        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("header.label")}</p>
         <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(32px, 5vw, 52px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 32px", letterSpacing: "-0.02em"}}>
-          Find your photographer
+          {t("header.heading")}
         </h1>
 
         {/* Search bar */}
@@ -130,7 +132,7 @@ export default function Photographers() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, location or specialty..."
+            placeholder={t("search.placeholder")}
             style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "12px 24px", paddingLeft: "48px", fontSize: "14px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
           />
           <span style={{position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", }}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#7A5C44" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></span>
@@ -159,19 +161,19 @@ export default function Photographers() {
 
         {/* Sort */}
         <div style={{display: "flex", alignItems: "center", gap: "12px"}}>
-          <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Sort by:</span>
+          <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t("sort.label")}</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             style={{border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", fontSize: "12px", outline: "none", backgroundColor: "#FDFBF8", color: "#1A0E06", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
           >
-            <option value="newest">Newest first</option>
-            <option value="rating">Highest rated</option>
-            <option value="price_low">Price — low to high</option>
-            <option value="price_high">Price — high to low</option>
+            <option value="newest">{t("sort.newest")}</option>
+            <option value="rating">{t("sort.highestRated")}</option>
+            <option value="price_low">{t("sort.priceLow")}</option>
+            <option value="price_high">{t("sort.priceHigh")}</option>
           </select>
           <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
-            {filtered.length} photographer{filtered.length !== 1 ? "s" : ""}
+            {t("count", { count: filtered.length })}
           </span>
         </div>
       </section>
@@ -181,13 +183,13 @@ export default function Photographers() {
         {filtered.length === 0 ? (
           <div style={{textAlign: "center", padding: "80px 0"}}>
             <div style={{marginBottom: "16px"}}><svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="#C8622A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></div>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06", margin: "0 0 8px"}}>No photographers found</p>
-            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>Try a different search or filter</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06", margin: "0 0 8px"}}>{t("noResults.heading")}</p>
+            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>{t("noResults.description")}</p>
             <button
               onClick={() => { setSearch(""); setSpecialty("All"); setSortBy("newest"); }}
               style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
             >
-              Clear filters
+              {t("noResults.clear")}
             </button>
           </div>
         ) : (
@@ -213,12 +215,12 @@ export default function Photographers() {
                     <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06"}}>
                       {(() => {
                         const prices = (photographer.photographer_packages || []).map((p: any) => p.price).filter((n: number) => n > 0);
-                        return prices.length > 0 ? `From ${formatPrice(Math.min(...prices))}` : "";
+                        return prices.length > 0 ? `${t("card.from")} ${formatPrice(Math.min(...prices))}` : "";
                       })()}
                     </span>
                   </div>
                   <div style={{display: "block", textAlign: "center", backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
-                    View profile
+                    {t("card.viewProfile")}
                   </div>
                 </div>
               </a>

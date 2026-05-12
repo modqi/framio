@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
+import { useTranslations } from "next-intl";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,13 +11,14 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const t = useTranslations("Login");
 
   const handleLogin = async () => {
-    if (!email || !password) { setError("Please fill in all fields."); return; }
+    if (!email || !password) { setError(t("errors.fillAll")); return; }
     setLoading(true);
     setError("");
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setError("Invalid email or password. Please try again."); setLoading(false); return; }
+    if (error) { setError(t("errors.invalidCredentials")); setLoading(false); return; }
     const user = data.user;
     const role = user?.user_metadata?.role;
     if (role === "photographer") { window.location.href = "/photographer-dashboard"; }
@@ -37,10 +39,10 @@ export default function Login() {
         <Logo size="sm" href="/" color="#FDFBF8" accent="#C1622F" />
         <div>
           <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#FDFBF8", margin: "0 0 16px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>
-            Welcome back to Lomissa
+            {t("panel.heading")}
           </p>
           <p style={{fontSize: "14px", color: "rgba(253,251,248,0.5)", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-            Log in to manage your bookings and connect with photographers.
+            {t("panel.description")}
           </p>
         </div>
         <p style={{fontSize: "12px", color: "rgba(253,251,248,0.3)", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa</p>
@@ -50,18 +52,18 @@ export default function Login() {
       <div className="flex flex-col justify-center flex-1" style={{padding: "48px 32px", maxWidth: "560px", margin: "0 auto"}}>
 
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WELCOME BACK</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>Log in</h1>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("form.badge")}</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>{t("form.heading")}</h1>
           <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-            Don't have an account?{" "}
-            <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>Sign up</a>
+            {t("form.noAccount")}{" "}
+            <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.signUp")}</a>
           </p>
         </div>
 
         <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
 
           <div>
-            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Email address</label>
+            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("form.emailLabel")}</label>
             <input
               type="email"
               value={email}
@@ -74,8 +76,8 @@ export default function Login() {
 
           <div>
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px"}}>
-              <label style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>Password</label>
-              <a href="/reset-password" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Forgot your password?</a>
+              <label style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("form.passwordLabel")}</label>
+              <a href="/reset-password" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("form.forgotPassword")}</a>
             </div>
             <div style={{position: "relative"}}>
               <input
@@ -91,7 +93,7 @@ export default function Login() {
                 onClick={() => setShowPassword(!showPassword)}
                 style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#7A5C44", padding: "0", fontFamily: "'Jost', sans-serif"}}
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword ? t("form.hide") : t("form.show")}
               </button>
             </div>
           </div>
@@ -107,17 +109,17 @@ export default function Login() {
             disabled={loading}
             style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginTop: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)"}}
           >
-            {loading ? "Logging in..." : "Log in"}
+            {loading ? t("form.submitting") : t("form.submit")}
           </button>
 
           <div style={{textAlign: "center", paddingTop: "16px", borderTop: "1px solid #E2D5C8"}}>
             <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>
-              Don't have an account?{" "}
-              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>Sign up free</a>
+              {t("form.noAccount")}{" "}
+              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.signUpFree")}</a>
             </p>
             <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-              Are you a photographer?{" "}
-              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>Apply to join</a>
+              {t("form.isPhotographer")}{" "}
+              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.applyToJoin")}</a>
             </p>
           </div>
 

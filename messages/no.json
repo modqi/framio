@@ -1,0 +1,338 @@
+{
+  "Home": {
+    "nav": {
+      "photographers": "Fotografer",
+      "logIn": "Logg inn",
+      "signUp": "Registrer deg"
+    },
+    "hero": {
+      "badge": "NÅ TILGJENGELIG OVER HELE VERDEN",
+      "headline": "Øyeblikket ditt fortjener den perfekte fotografen",
+      "description": "Lomissa kobler deg med håndplukkede fotografer for portretter, bryllup, arrangementer og mer.",
+      "cta": "Finn en fotograf",
+      "trust": "HÅNDPLUKKET · ØYEBLIKKELIG BESTILLING · SIKRE BETALINGER"
+    },
+    "howItWorks": {
+      "label": "SLIK FUNGERER DET",
+      "heading": "Bestill en fotograf på minutter",
+      "step1Title": "Bla gjennom fotografer",
+      "step1Desc": "Utforsk håndplukkede fotografer og finn den perfekte matchen for din stil og ditt budsjett.",
+      "step2Title": "Bestill umiddelbart",
+      "step2Desc": "Se faktisk tilgjengelighet, velg en dato som passer og bestill på minutter. Ingen frem og tilbake.",
+      "step3Title": "Få bildene dine",
+      "step3Desc": "Ha din økt og motta dine profesjonelt redigerte bilder gjennom Lomissa."
+    },
+    "featured": {
+      "label": "VÅRE FOTOGRAFER",
+      "heading": "Håndplukket talent",
+      "viewAll": "Se alle →"
+    },
+    "trust": {
+      "label": "HVORFOR LOMISSA",
+      "heading": "Alle fotografer er håndplukket",
+      "vettedTitle": "Verifiserte fagfolk",
+      "vettedDesc": "Alle fotografer på Lomissa gjennomgår en personlig gjennomgang. Bare de beste slipper gjennom.",
+      "bookingTitle": "Øyeblikkelig bestilling",
+      "bookingDesc": "Se faktisk tilgjengelighet og bestill på sekunder. Ingen ventetid, ingen e-poster frem og tilbake.",
+      "reviewsTitle": "Verifiserte anmeldelser",
+      "reviewsDesc": "Alle anmeldelser kommer fra en ekte klient som fullførte en ekte økt. Ingen falske vurderinger."
+    },
+    "footer": {
+      "tagline": "Markedsplassen som kobler klienter med håndplukkede fotografer over hele verden.",
+      "platformLabel": "PLATTFORM",
+      "findPhotographers": "Finn fotografer",
+      "createAccount": "Opprett konto",
+      "legalLabel": "JURIDISK",
+      "photographersLabel": "FOTOGRAFER",
+      "applyToJoin": "Søk om å bli med",
+      "taglineBottom": "Laget med ❤️ for fotografer overalt"
+    }
+  },
+  "Browse": {
+    "nav": {
+      "myDashboard": "Min oversikt",
+      "logIn": "Logg inn",
+      "signUp": "Registrer deg"
+    },
+    "header": {
+      "label": "VÅRE FOTOGRAFER",
+      "heading": "Finn din fotograf"
+    },
+    "search": {
+      "placeholder": "Søk etter navn, sted eller spesialitet..."
+    },
+    "sort": {
+      "label": "Sorter etter:",
+      "newest": "Nyeste først",
+      "highestRated": "Høyest vurdert",
+      "priceLow": "Pris — lav til høy",
+      "priceHigh": "Pris — høy til lav"
+    },
+    "count": "{count, plural, one {# fotograf} other {# fotografer}}",
+    "noResults": {
+      "heading": "Ingen fotografer funnet",
+      "description": "Prøv et annet søk eller filter",
+      "clear": "Fjern filtre"
+    },
+    "card": {
+      "from": "Fra",
+      "viewProfile": "Se profil"
+    }
+  },
+  "Profile": {
+    "nav": {
+      "explore": "Utforsk",
+      "logIn": "Logg inn",
+      "signUp": "Registrer deg",
+      "myDashboard": "Min oversikt",
+      "adminPanel": "Adminpanel",
+      "backToAdmin": "← Adminpanel"
+    },
+    "hero": {
+      "new": "Ny",
+      "available": "Tilgjengelig",
+      "from": "Fra"
+    },
+    "whatsIncluded": "HVA SOM ER INKLUDERT",
+    "terms": {
+      "deliveryTime": "LEVERINGSTID",
+      "copyright": "OPPHAVSRETT",
+      "editingStyle": "REDIGERINGSSTIL",
+      "revisions": "REVISJONER"
+    },
+    "portfolio": {
+      "label": "PORTEFØLJE",
+      "photos": "{count} BILDER"
+    },
+    "reviews": {
+      "label": "VURDERINGER",
+      "noReviews": "Ingen vurderinger ennå"
+    },
+    "booking": {
+      "title": "BESTILL EN ØKT",
+      "choosePackage": "VELG EN PAKKE",
+      "addons": "TILLEGG (VALGFRITT)",
+      "selectDate": "VELG EN DATO",
+      "locationLabel": "STED",
+      "locationPlaceholder": "Hvor er fotograferingen?",
+      "messageLabel": "MELDING",
+      "messagePlaceholder": "Fortell om din visjon...",
+      "orderSummary": "BESTILLINGSSAMMENDRAG",
+      "total": "Totalt",
+      "securePayment": "Du vil bli videresendt til en sikker betalingsside",
+      "add": "Legg til",
+      "noPackagesTitle": "Ingen pakker ennå",
+      "noPackagesDesc": "Denne fotografen har ikke listet opp pakker ennå. Send dem en melding for å diskutere priser og tilgjengelighet.",
+      "noPackagesAction": "Send melding til fotograf",
+      "redirecting": "Viderekobles til betaling…",
+      "bookAndPay": "Bestill og betal — {price}",
+      "selectPackageAndDate": "Velg en pakke og dato",
+      "requestedHeading": "Bestilling sendt!",
+      "requestedDesc": "{name} vil svare innen 24 timer.",
+      "viewBookings": "Se mine bestillinger"
+    },
+    "calendar": {
+      "available": "Tilgjengelig",
+      "unavailable": "Ikke tilgjengelig",
+      "selected": "Valgt"
+    },
+    "policy": {
+      "flexibleLabel": "Fleksibel avbestilling",
+      "flexibleDesc": "Full refund inntil 24 timer før",
+      "moderateLabel": "Moderat avbestilling",
+      "moderateDesc": "Full refund inntil 48 timer før",
+      "strictLabel": "Streng avbestilling",
+      "strictDesc": "Ingen refusjon etter bekreftelse"
+    },
+    "notFound": {
+      "heading": "Fotograf ikke funnet",
+      "back": "Tilbake til søk"
+    }
+  },
+  "Login": {
+    "panel": {
+      "heading": "Velkommen tilbake til Lomissa",
+      "description": "Logg inn for å administrere bestillingene dine og koble deg til fotografer."
+    },
+    "form": {
+      "badge": "VELKOMMEN TILBAKE",
+      "heading": "Logg inn",
+      "noAccount": "Har du ikke konto?",
+      "signUp": "Registrer deg",
+      "emailLabel": "E-postadresse",
+      "passwordLabel": "Passord",
+      "forgotPassword": "Glemt passordet?",
+      "show": "Vis",
+      "hide": "Skjul",
+      "submit": "Logg inn",
+      "submitting": "Logger inn...",
+      "signUpFree": "Registrer deg gratis",
+      "isPhotographer": "Er du fotograf?",
+      "applyToJoin": "Søk om å bli med"
+    },
+    "errors": {
+      "fillAll": "Vennligst fyll inn alle felt.",
+      "invalidCredentials": "Ugyldig e-post eller passord. Prøv igjen."
+    }
+  },
+  "Signup": {
+    "panel": {
+      "clientHeadline": "Øyeblikket ditt fortjener den perfekte fotografen",
+      "clientDesc": "Koble deg med håndplukkede fotografer for dine viktigste øyeblikk.",
+      "photographerHeadline": "Bli med i fotografmarkedsplassen som lanseres over hele verden",
+      "photographerDesc": "Vi håndplukker alle fotografer på Lomissa. Søk i dag og begynn å motta bestillinger.",
+      "statFree": "Gratis",
+      "statFreeLabel": "Å bli med i Lomissa",
+      "statCommission": "10%",
+      "statCommissionLabel": "Kun provisjon",
+      "statResponse": "3 dager",
+      "statResponseLabel": "Gjennomsnittlig responstid"
+    },
+    "form": {
+      "badge": "KOM I GANG",
+      "headingClient": "Opprett konto",
+      "headingPhotographer": "Søk om å bli med",
+      "haveAccount": "Har du allerede konto?",
+      "logIn": "Logg inn",
+      "roleBook": "Jeg vil bestille",
+      "rolePhotographer": "Jeg er fotograf",
+      "nameLabel": "Fullt navn",
+      "nameLabelRequired": "Fullt navn *",
+      "namePlaceholder": "Ditt fulle navn",
+      "emailLabel": "E-postadresse",
+      "emailLabelRequired": "E-postadresse *",
+      "passwordLabel": "Passord",
+      "passwordLabelRequired": "Passord *",
+      "passwordPlaceholder": "Minst 8 tegn",
+      "show": "Vis",
+      "hide": "Skjul",
+      "submitClient": "Opprett konto",
+      "submittingClient": "Oppretter konto...",
+      "submitPhotographer": "Søk om å bli med i Lomissa",
+      "submittingPhotographer": "Sender søknad...",
+      "tosText": "Ved å registrere deg godtar du vår",
+      "tosTerms": "Brukervilkår",
+      "tosAnd": "og",
+      "tosPrivacy": "Personvernerklæring",
+      "photoReviewNote": "✓ Vi gjennomgår alle søknader personlig og svarer innen 3 virkedager.",
+      "locationLabel": "Sted",
+      "locationPlaceholder": "f.eks. Bergen, Norge",
+      "specialtyLabel": "Spesialitet *",
+      "specialtyPlaceholder": "Velg spesialitet",
+      "experienceLabel": "År med erfaring",
+      "experiencePlaceholder": "Velg erfaring",
+      "instagramLabel": "Instagram-håndtak",
+      "portfolioLabel": "Porteføljelenke",
+      "portfolioPlaceholder": "https://din-portefolje.com",
+      "aboutLabel": "Om deg og din fotografistil *",
+      "aboutPlaceholder": "Fortell om din erfaring, din stil og hvorfor du vil bli med i Lomissa..."
+    },
+    "experience": {
+      "lessThan1": "Mindre enn 1 år",
+      "oneToTwo": "1-2 år",
+      "threeToFive": "3-5 år",
+      "fiveToTen": "5-10 år",
+      "moreThan10": "Mer enn 10 år"
+    },
+    "specialty": {
+      "portraits": "Portretter",
+      "weddings": "Bryllup",
+      "events": "Arrangementer",
+      "travel": "Reise",
+      "fashion": "Mote",
+      "commercial": "Kommersiell",
+      "street": "Gatebilde",
+      "nature": "Natur"
+    },
+    "doneClient": {
+      "badge": "VELKOMMEN TIL LOMISSA",
+      "heading": "Konto opprettet!",
+      "description": "Kontoen din er opprettet. Du kan nå logge inn og begynne å bestille fotografer.",
+      "cta": "Logg inn nå"
+    },
+    "donePhotographer": {
+      "badge": "SØKNAD MOTTATT",
+      "heading": "Takk, {name}!",
+      "description": "Vi har mottatt søknaden din. Teamet vårt vil gjennomgå porteføljen din og komme tilbake til deg innen 3 virkedager.",
+      "step1": "Vi gjennomgår porteføljen og erfaringen din",
+      "step2": "Vi sjekker Instagram og nettstedet ditt",
+      "step3": "Du mottar en e-post med vår beslutning",
+      "step4": "Hvis godkjent, kan du logge inn umiddelbart",
+      "backToLomissa": "Tilbake til Lomissa"
+    },
+    "errors": {
+      "fillAll": "Vennligst fyll inn alle felt.",
+      "passwordLength": "Passordet må være minst 8 tegn.",
+      "fillRequired": "Vennligst fyll inn alle obligatoriske felt."
+    }
+  },
+  "Join": {
+    "nav": {
+      "backToHome": "← Tilbake til forsiden"
+    },
+    "hero": {
+      "badge": "BLI MED I LOMISSA",
+      "heading": "Søk om å bli med som fotograf",
+      "description": "Vi håndplukker alle fotografer på Lomissa. Fortell oss om deg selv og arbeidet ditt — vi tar kontakt innen 3 virkedager."
+    },
+    "stats": {
+      "responseValue": "3 dager",
+      "responseLabel": "Gjennomsnittlig responstid",
+      "commissionValue": "10%",
+      "commissionLabel": "Kun provisjon",
+      "freeValue": "Gratis",
+      "freeLabel": "Å bli med i Lomissa"
+    },
+    "form": {
+      "personalDetails": "PERSONLIGE OPPLYSNINGER",
+      "nameLabel": "Fullt navn *",
+      "namePlaceholder": "Ditt fulle navn",
+      "emailLabel": "E-post *",
+      "emailPlaceholder": "din@epost.no",
+      "phoneLabel": "Telefonnummer *",
+      "phonePlaceholder": "+47 900 00 000",
+      "phoneHelper": "Inkluder landkode. Brukes for bestillingsvarslinger.",
+      "locationLabel": "Sted",
+      "locationPlaceholder": "f.eks. Bergen, Norge",
+      "photographySection": "DIN FOTOGRAFERING",
+      "categoriesLabel": "Fotografikategorier (velg alle som gjelder)",
+      "otherCategory": "Annet",
+      "otherCategoryPlaceholder": "Beskriv din spesialitet...",
+      "experienceLabel": "År med erfaring",
+      "experiencePlaceholder": "Velg erfaring",
+      "instagramLabel": "Instagram-håndtak",
+      "portfolioLabel": "Porteføljelenke",
+      "portfolioPlaceholder": "https://din-portefolje.com",
+      "websiteLabel": "Nettsted",
+      "websitePlaceholder": "https://ditt-nettsted.com",
+      "aboutSection": "OM DEG",
+      "aboutLabel": "Fortell oss om deg selv og fotografistilen din *",
+      "aboutPlaceholder": "Fortell om din erfaring, fotografistil, typen klienter du jobber med og hvorfor du vil bli med i Lomissa...",
+      "submit": "Send inn søknad",
+      "submitting": "Sender søknad…",
+      "tosText": "Ved å søke godtar du Lomissas vilkår. Vi gjennomgår alle søknader manuelt og kontakter deg innen 3 virkedager."
+    },
+    "experience": {
+      "lessThan1": "Mindre enn 1 år",
+      "oneToTwo": "1-2 år",
+      "threeToFive": "3-5 år",
+      "fiveToTen": "5-10 år",
+      "moreThan10": "Mer enn 10 år"
+    },
+    "done": {
+      "badge": "SØKNAD MOTTATT",
+      "heading": "Takk, {name}",
+      "description": "Vi har mottatt din søknad om å bli med i Lomissa. Teamet vårt vil gjennomgå porteføljen din og komme tilbake til deg innen 3 virkedager.",
+      "whatHappensNext": "HVA SKJER VIDERE",
+      "step1": "Vi gjennomgår porteføljen og erfaringen din",
+      "step2": "Vi sjekker Instagram og nettstedet ditt",
+      "step3": "Du mottar en e-post med vår beslutning",
+      "step4": "Hvis godkjent, blir profilen din synlig på Lomissa",
+      "backToLomissa": "Tilbake til Lomissa"
+    },
+    "errors": {
+      "fillRequired": "Vennligst fyll inn navn, e-post, telefonnummer og om-seksjonen.",
+      "genericError": "Noe gikk galt. Prøv igjen."
+    }
+  }
+}

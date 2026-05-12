@@ -6,9 +6,11 @@ import Logo from "../../components/Logo";
 import { ReviewStarIcon } from "../../components/Icons";
 import GlobeModal from "../../components/GlobeModal";
 import { useCurrency } from "../../../lib/currency-context";
+import { useTranslations } from "next-intl";
 
 export default function PhotographerProfile({ params }: { params: any }) {
   const { formatPrice } = useCurrency();
+  const t = useTranslations("Profile");
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -221,8 +223,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
   if (!photographer) return (
     <div className="min-h-screen flex items-center justify-center flex-col gap-4" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06"}}>Photographer not found</p>
-      <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Back to browse</a>
+      <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06"}}>{t("notFound.heading")}</p>
+      <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("notFound.back")}</a>
     </div>
   );
 
@@ -241,9 +243,9 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
   const policy = photographer.cancellation_policy || "moderate";
   const policyMap: Record<string, { label: string; desc: string; color: string; bg: string }> = {
-    flexible: { label: "Flexible cancellation", desc: "Full refund up to 24h before", color: "#15803d", bg: "#f0fdf4" },
-    moderate: { label: "Moderate cancellation", desc: "Full refund up to 48h before", color: "#C8622A", bg: "#FBF0EA" },
-    strict:   { label: "Strict cancellation",   desc: "No refund once confirmed",     color: "#dc2626", bg: "#fef2f2" },
+    flexible: { label: t("policy.flexibleLabel"), desc: t("policy.flexibleDesc"), color: "#15803d", bg: "#f0fdf4" },
+    moderate: { label: t("policy.moderateLabel"), desc: t("policy.moderateDesc"), color: "#C8622A", bg: "#FBF0EA" },
+    strict:   { label: t("policy.strictLabel"),   desc: t("policy.strictDesc"),   color: "#dc2626", bg: "#fef2f2" },
   };
   const policyInfo = policyMap[policy] || policyMap.moderate;
 
@@ -256,9 +258,9 @@ export default function PhotographerProfile({ params }: { params: any }) {
         <div className="flex items-center gap-4">
           <GlobeModal />
           {isAdmin ? (
-            <a href="/admin" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Admin panel</a>
+            <a href="/admin" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.backToAdmin")}</a>
           ) : (
-            <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Explore</a>
+            <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.explore")}</a>
           )}
           {authUser ? (
             <>
@@ -269,13 +271,13 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 href={isAdmin ? "/admin" : authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
                 style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
-                {isAdmin ? "Admin panel" : "My dashboard"}
+                {isAdmin ? t("nav.adminPanel") : t("nav.myDashboard")}
               </a>
             </>
           ) : (
             <>
-              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Log in</a>
-              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Sign up</a>
+              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.logIn")}</a>
+              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("nav.signUp")}</a>
             </>
           )}
         </div>
@@ -296,9 +298,9 @@ export default function PhotographerProfile({ params }: { params: any }) {
               <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>{photographer.name}</h1>
               <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{photographer.location}</p>
               <div className="flex items-center gap-3 flex-wrap">
-                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}><svg viewBox="0 0 64 64" width="14" height="14" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:"3px"}}><circle cx="32" cy="32" r="9" fill="#C8622A"/><line x1="32" y1="18" x2="32" y2="10" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="46" y1="32" x2="54" y2="32" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="42" y1="22" x2="48" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="22" y1="22" x2="16" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/></svg>{photographer.rating || "New"}</span>
+                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}><svg viewBox="0 0 64 64" width="14" height="14" fill="none" style={{display:"inline-block",verticalAlign:"middle",marginRight:"3px"}}><circle cx="32" cy="32" r="9" fill="#C8622A"/><line x1="32" y1="18" x2="32" y2="10" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="46" y1="32" x2="54" y2="32" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="42" y1="22" x2="48" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/><line x1="22" y1="22" x2="16" y2="16" stroke="#C8622A" strokeWidth="2" strokeLinecap="round"/></svg>{photographer.rating || t("hero.new")}</span>
                 {reviews.length > 0 && <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>({reviews.length} reviews)</span>}
-                {isAvailable && <span style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#C8622A", padding: "4px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>Available</span>}
+                {isAvailable && <span style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#C8622A", padding: "4px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{t("hero.available")}</span>}
                 {photographer.instagram && (
                   <a href={`https://instagram.com/${photographer.instagram}`} target="_blank" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{photographer.instagram}</a>
                 )}
@@ -321,7 +323,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
           </div>
           {minPackagePrice !== null && (
             <div style={{textAlign: "right"}}>
-              <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>From</p>
+              <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{t("hero.from")}</p>
               <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>{formatPrice(minPackagePrice)}</p>
             </div>
           )}
@@ -337,24 +339,24 @@ export default function PhotographerProfile({ params }: { params: any }) {
         </section>
       )}
 
-      {/* Photographer terms (delivery, copyright, etc.) */}
+      {/* Photographer terms */}
       {(photographer.delivery_time || photographer.copyright_ownership || photographer.editing_style || photographer.revisions_included) && (() => {
         const terms = [
-          { icon: "⏱️", label: "Delivery time",  value: photographer.delivery_time },
-          { icon: "⚖️", label: "Copyright",      value: photographer.copyright_ownership },
-          { icon: "✦", label: "Editing style",  value: photographer.editing_style },
-          { icon: "✏️", label: "Revisions",      value: photographer.revisions_included },
+          { icon: "⏱️", labelKey: "terms.deliveryTime",  value: photographer.delivery_time },
+          { icon: "⚖️", labelKey: "terms.copyright",      value: photographer.copyright_ownership },
+          { icon: "✦",  labelKey: "terms.editingStyle",   value: photographer.editing_style },
+          { icon: "✏️", labelKey: "terms.revisions",      value: photographer.revisions_included },
         ].filter(t => t.value);
         return (
           <section style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderBottom: "1px solid #E2D5C8"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>WHAT'S INCLUDED</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("whatsIncluded")}</p>
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "16px"}}>
-              {terms.map((t) => (
-                <div key={t.label} style={{display: "flex", alignItems: "flex-start", gap: "12px"}}>
-                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>{t.icon}</div>
+              {terms.map((term) => (
+                <div key={term.labelKey} style={{display: "flex", alignItems: "flex-start", gap: "12px"}}>
+                  <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>{term.icon}</div>
                   <div>
-                    <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t.label.toUpperCase()}</p>
-                    <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{t.value}</p>
+                    <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t(term.labelKey as any)}</p>
+                    <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{term.value}</p>
                   </div>
                 </div>
               ))}
@@ -368,7 +370,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
         {/* Left — portfolio & reviews */}
         <div style={{flex: 2, padding: "48px", borderRight: "1px solid #E2D5C8"}}>
           <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-            PORTFOLIO {photos.length > 0 && `— ${photos.length} PHOTOS`}
+            {t("portfolio.label")} {photos.length > 0 && `— ${t("portfolio.photos", { count: photos.length })}`}
           </p>
           <div className="grid grid-cols-3 gap-3 mb-12">
             {photos.length === 0 ? (
@@ -387,11 +389,11 @@ export default function PhotographerProfile({ params }: { params: any }) {
           </div>
 
           <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-            REVIEWS {reviews.length > 0 && `— ${reviews.length}`}
+            {t("reviews.label")} {reviews.length > 0 && `— ${reviews.length}`}
           </p>
           <div style={{borderTop: "1px solid #E2D5C8", paddingTop: "20px"}}>
             {reviews.length === 0 ? (
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>No reviews yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic"}}>{t("reviews.noReviews")}</p>
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
                 {reviews.map((review: any) => (
@@ -421,26 +423,26 @@ export default function PhotographerProfile({ params }: { params: any }) {
             {booked ? (
               <div className="text-center py-8">
                 <div style={{marginBottom: "16px"}}><ReviewStarIcon size={56} color="#C8622A"/></div>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>Booking requested!</p>
-                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif"}}>{photographer.name} will respond within 24 hours.</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>{t("booking.requestedHeading")}</p>
+                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif"}}>{t("booking.requestedDesc", { name: photographer.name })}</p>
                 <p style={{fontSize: "13px", color: "#C8622A", margin: "0 0 24px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>{selectedDate}</p>
-                <a href="/dashboard" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>View my bookings</a>
+                <a href="/dashboard" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("booking.viewBookings")}</a>
               </div>
             ) : packages.length === 0 ? (
               <div>
-                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#DDD0C0", fontStyle: "italic", margin: "0 0 16px"}}>No packages yet</p>
-                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>This photographer hasn't listed any packages yet. Send them a message to discuss rates and availability.</p>
-                <a href="/messages" style={{display: "block", textAlign: "center", backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Message photographer</a>
+                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("booking.title")}</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#DDD0C0", fontStyle: "italic", margin: "0 0 16px"}}>{t("booking.noPackagesTitle")}</p>
+                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>{t("booking.noPackagesDesc")}</p>
+                <a href="/messages" style={{display: "block", textAlign: "center", backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("booking.noPackagesAction")}</a>
               </div>
             ) : (
               <>
-                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BOOK A SESSION</p>
+                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("booking.title")}</p>
                 <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 20px"}}>{photographer.name?.split(" ")[0]}</p>
 
                 {/* Package selector */}
                 <div style={{marginBottom: "20px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>CHOOSE A PACKAGE</label>
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("booking.choosePackage")}</label>
                   <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
                     {packages.map((pkg) => {
                       const selected = selectedPackage?.id === pkg.id;
@@ -470,7 +472,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 {/* Add-ons */}
                 {addons.length > 0 && (
                   <div style={{marginBottom: "20px"}}>
-                    <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>ADD-ONS (OPTIONAL)</label>
+                    <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("booking.addons")}</label>
                     <div style={{display: "flex", flexDirection: "column", gap: "6px"}}>
                       {addons.map((addon) => {
                         const qty = addonQty[addon.id] || 0;
@@ -481,7 +483,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                               <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{formatPrice(addon.price)} {addon.unit}</p>
                             </div>
                             {qty === 0 ? (
-                              <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#C8622A", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>Add</button>
+                              <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#C8622A", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>{t("booking.add")}</button>
                             ) : (
                               <div style={{display: "flex", alignItems: "center", gap: "8px", flexShrink: 0}}>
                                 <button onClick={() => setAddonQuantity(addon.id, qty - 1)} style={{width: "26px", height: "26px", borderRadius: "50%", border: "1px solid #E2D5C8", backgroundColor: "#FDFBF8", cursor: "pointer", fontSize: "14px", color: "#1A0E06", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>−</button>
@@ -499,7 +501,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                 {/* Date picker */}
                 <div style={{marginBottom: "16px"}}>
                   <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>
-                    SELECT A DATE {selectedDate && <span style={{color: "#C8622A", fontWeight: "600"}}>— {selectedDate}</span>}
+                    {t("booking.selectDate")} {selectedDate && <span style={{color: "#C8622A", fontWeight: "600"}}>— {selectedDate}</span>}
                   </label>
                   <div style={{border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px", backgroundColor: "#FDFBF8"}}>
                     <div className="flex items-center justify-between mb-3">
@@ -527,10 +529,14 @@ export default function PhotographerProfile({ params }: { params: any }) {
                       })}
                     </div>
                     <div style={{display: "flex", gap: "12px", marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #E2D5C8"}}>
-                      {[{color: "#FDFBF8", border: "1px solid #E2D5C8", label: "Available"}, {color: "#F5EFE4", border: "none", label: "Unavailable"}, {color: "#C8622A", border: "none", label: "Selected"}].map(item => (
-                        <div key={item.label} style={{display: "flex", alignItems: "center", gap: "4px"}}>
+                      {[
+                        {color: "#FDFBF8", border: "1px solid #E2D5C8", labelKey: "calendar.available"},
+                        {color: "#F5EFE4", border: "none", labelKey: "calendar.unavailable"},
+                        {color: "#C8622A", border: "none", labelKey: "calendar.selected"},
+                      ].map(item => (
+                        <div key={item.labelKey} style={{display: "flex", alignItems: "center", gap: "4px"}}>
                           <div style={{width: "8px", height: "8px", borderRadius: "2px", backgroundColor: item.color, border: item.border}}></div>
-                          <span style={{fontSize: "10px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{item.label}</span>
+                          <span style={{fontSize: "10px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t(item.labelKey as any)}</span>
                         </div>
                       ))}
                     </div>
@@ -539,20 +545,20 @@ export default function PhotographerProfile({ params }: { params: any }) {
 
                 {/* Location */}
                 <div style={{marginBottom: "16px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOCATION</label>
-                  <input type="text" placeholder="Where is the shoot?" value={location} onChange={(e) => setLocation(e.target.value)} style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif"}}/>
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("booking.locationLabel")}</label>
+                  <input type="text" placeholder={t("booking.locationPlaceholder")} value={location} onChange={(e) => setLocation(e.target.value)} style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
                 {/* Message */}
                 <div style={{marginBottom: "20px"}}>
-                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>MESSAGE</label>
-                  <textarea placeholder="Tell them about your vision..." value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", resize: "none", fontFamily: "'Jost', sans-serif"}}/>
+                  <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("booking.messageLabel")}</label>
+                  <textarea placeholder={t("booking.messagePlaceholder")} value={message} onChange={(e) => setMessage(e.target.value)} rows={3} style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", resize: "none", fontFamily: "'Jost', sans-serif"}}/>
                 </div>
 
                 {/* Order summary */}
                 {selectedPackage && (
                   <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "16px"}}>
-                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 10px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ORDER SUMMARY</p>
+                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 10px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("booking.orderSummary")}</p>
                     <div style={{display: "flex", justifyContent: "space-between", marginBottom: "6px"}}>
                       <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{selectedPackage.name}</span>
                       <span style={{fontSize: "12px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{formatPrice(selectedPackage.price)}</span>
@@ -564,7 +570,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                       </div>
                     ))}
                     <div style={{borderTop: "1px solid #E2D5C8", marginTop: "8px", paddingTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                      <span style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>Total</span>
+                      <span style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{t("booking.total")}</span>
                       <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06"}}>{formatPrice(total)}</span>
                     </div>
                   </div>
@@ -587,9 +593,9 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   disabled={booking || !selectedDate || !selectedPackage}
                   style={{width: "100%", backgroundColor: selectedDate && selectedPackage ? "#C8622A" : "#E2D5C8", color: selectedDate && selectedPackage ? "#FDFBF8" : "#DDD0C0", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: selectedDate && selectedPackage ? "pointer" : "not-allowed", fontWeight: "500", marginBottom: "12px", transition: "all 0.2s", fontFamily: "'Jost', sans-serif", boxShadow: selectedDate && selectedPackage ? "0 4px 20px rgba(184,85,40,0.3)" : "none"}}
                 >
-                  {booking ? "Redirecting to payment…" : selectedDate && selectedPackage ? `Book & Pay — ${formatPrice(total)}` : "Select a package and date"}
+                  {booking ? t("booking.redirecting") : selectedDate && selectedPackage ? t("booking.bookAndPay", { price: formatPrice(total) }) : t("booking.selectPackageAndDate")}
                 </button>
-                <p style={{fontSize: "11px", color: "#DDD0C0", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>You will be taken to a secure payment page</p>
+                <p style={{fontSize: "11px", color: "#DDD0C0", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("booking.securePayment")}</p>
               </>
             )}
           </div>
