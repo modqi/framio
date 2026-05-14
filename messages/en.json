@@ -265,8 +265,7 @@
       "photoReviewNote": "✓ We review every application personally and respond within 3 business days.",
       "locationLabel": "Location",
       "locationPlaceholder": "e.g. Bergen, Norway",
-      "specialtyLabel": "Specialty *",
-      "specialtyPlaceholder": "Select specialty",
+      "categoriesLabel": "Photography specialties (select all that apply) *",
       "experienceLabel": "Years of experience",
       "experiencePlaceholder": "Select experience",
       "instagramLabel": "Instagram handle",
@@ -281,16 +280,6 @@
       "threeToFive": "3-5 years",
       "fiveToTen": "5-10 years",
       "moreThan10": "More than 10 years"
-    },
-    "specialty": {
-      "portraits": "Portraits",
-      "weddings": "Weddings",
-      "events": "Events",
-      "travel": "Travel",
-      "fashion": "Fashion",
-      "commercial": "Commercial",
-      "street": "Street",
-      "nature": "Nature"
     },
     "doneClient": {
       "badge": "WELCOME TO LOMISSA",

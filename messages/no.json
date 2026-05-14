@@ -265,8 +265,7 @@
       "photoReviewNote": "✓ Vi gjennomgår alle søknader personlig og svarer innen 3 virkedager.",
       "locationLabel": "Sted",
       "locationPlaceholder": "f.eks. Bergen, Norge",
-      "specialtyLabel": "Spesialitet *",
-      "specialtyPlaceholder": "Velg spesialitet",
+      "categoriesLabel": "Fotografispesialiteter (velg alle som gjelder) *",
       "experienceLabel": "År med erfaring",
       "experiencePlaceholder": "Velg erfaring",
       "instagramLabel": "Instagram-håndtak",
@@ -281,16 +280,6 @@
       "threeToFive": "3-5 år",
       "fiveToTen": "5-10 år",
       "moreThan10": "Mer enn 10 år"
-    },
-    "specialty": {
-      "portraits": "Portretter",
-      "weddings": "Bryllup",
-      "events": "Arrangementer",
-      "travel": "Reise",
-      "fashion": "Mote",
-      "commercial": "Kommersiell",
-      "street": "Gatebilde",
-      "nature": "Natur"
     },
     "doneClient": {
       "badge": "VELKOMMEN TIL LOMISSA",

@@ -5,6 +5,7 @@ import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
 import GlobeModal from "../components/GlobeModal";
 import { useTranslations } from "next-intl";
+import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 
 export default function Signup() {
   const [role, setRole] = useState("client");
@@ -15,10 +16,11 @@ export default function Signup() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const t = useTranslations("Signup");
+  const tCat = useTranslations("Categories");
 
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [specialty, setSpecialty] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [experience, setExperience] = useState("");
   const [instagram, setInstagram] = useState("");
   const [portfolio, setPortfolio] = useState("");
@@ -43,7 +45,7 @@ export default function Signup() {
   };
 
   const handlePhotographerApply = async () => {
-    if (!name || !email || !password || !specialty || !about) {
+    if (!name || !email || !password || selectedCategories.length === 0 || !about) {
       setError(t("errors.fillRequired"));
       return;
     }
@@ -58,7 +60,7 @@ export default function Signup() {
       email,
       password,
       options: {
-        data: { role: "pending_photographer", name },
+        data: { role: "pending_photographer", name, specialties: selectedCategories },
         emailRedirectTo: "https://lomissa.com/auth/confirm",
       },
     });
@@ -66,7 +68,7 @@ export default function Signup() {
     if (signupError) { setError(signupError.message); setLoading(false); return; }
 
     const { error: appError } = await supabase.from("applications").insert({
-      name, email, location, specialty, experience,
+      name, email, location, specialty: selectedCategories.join(", "), experience,
       instagram, portfolio_link: portfolio, about, status: "pending",
     });
 
@@ -310,23 +312,6 @@ export default function Signup() {
                 <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t("form.locationPlaceholder")} style={inputStyle}/>
               </div>
               <div>
-                <label style={labelStyle}>{t("form.specialtyLabel")}</label>
-                <select value={specialty} onChange={(e) => setSpecialty(e.target.value)} style={inputStyle}>
-                  <option value="">{t("form.specialtyPlaceholder")}</option>
-                  <option>{t("specialty.portraits")}</option>
-                  <option>{t("specialty.weddings")}</option>
-                  <option>{t("specialty.events")}</option>
-                  <option>{t("specialty.travel")}</option>
-                  <option>{t("specialty.fashion")}</option>
-                  <option>{t("specialty.commercial")}</option>
-                  <option>{t("specialty.street")}</option>
-                  <option>{t("specialty.nature")}</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px"}}>
-              <div>
                 <label style={labelStyle}>{t("form.experienceLabel")}</label>
                 <select value={experience} onChange={(e) => setExperience(e.target.value)} style={inputStyle}>
                   <option value="">{t("form.experiencePlaceholder")}</option>
@@ -337,12 +322,28 @@ export default function Signup() {
                   <option>{t("experience.moreThan10")}</option>
                 </select>
               </div>
-              <div>
-                <label style={labelStyle}>{t("form.instagramLabel")}</label>
-                <div style={{display: "flex", alignItems: "center", border: "1px solid #E2D5C8", borderRadius: "8px", overflow: "hidden", backgroundColor: "#FDFBF8"}}>
-                  <span style={{padding: "12px 12px", backgroundColor: "#F5EFE4", color: "#C8622A", fontSize: "13px", borderRight: "1px solid #E2D5C8", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>@</span>
-                  <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="yourhandle" style={{flex: 1, border: "none", outline: "none", padding: "12px 12px", fontSize: "14px", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif"}}/>
-                </div>
+            </div>
+
+            <div>
+              <label style={labelStyle}>{t("form.categoriesLabel")}</label>
+              <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
+                {CATEGORIES.map(cat => {
+                  const sel = selectedCategories.includes(cat);
+                  return (
+                    <button key={cat} type="button"
+                      onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
+                      style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
+                    >{tCat(CATEGORY_KEY[cat])}</button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label style={labelStyle}>{t("form.instagramLabel")}</label>
+              <div style={{display: "flex", alignItems: "center", border: "1px solid #E2D5C8", borderRadius: "8px", overflow: "hidden", backgroundColor: "#FDFBF8"}}>
+                <span style={{padding: "12px 12px", backgroundColor: "#F5EFE4", color: "#C8622A", fontSize: "13px", borderRight: "1px solid #E2D5C8", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>@</span>
+                <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="yourhandle" style={{flex: 1, border: "none", outline: "none", padding: "12px 12px", fontSize: "14px", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif"}}/>
               </div>
             </div>
 
