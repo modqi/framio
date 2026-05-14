@@ -241,6 +241,17 @@ export default function Dashboard() {
     setCancellingId(null);
   };
 
+  const getExpiryCountdown = (booking: any): string | null => {
+    if (booking.status !== "pending" || !booking.expires_at) return null;
+    const msLeft = new Date(booking.expires_at).getTime() - Date.now();
+    if (msLeft <= 0) return null;
+    const hoursLeft = Math.floor(msLeft / (1000 * 60 * 60));
+    if (hoursLeft >= 1) return t("bookings.expiresInHours", { hours: hoursLeft } as any);
+    const minutesLeft = Math.floor(msLeft / (1000 * 60));
+    if (minutesLeft >= 1) return t("bookings.expiresInMinutes", { minutes: minutesLeft } as any);
+    return t("bookings.expiresSoon");
+  };
+
   const isPastDate = (dateStr: string) => {
     if (!dateStr) return false;
     const d = new Date(dateStr + "T00:00:00");
@@ -428,9 +439,16 @@ export default function Dashboard() {
                         </p>
                       )}
                     </div>
-                    <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
-                      {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                    </span>
+                    <div style={{display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px"}}>
+                      <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
+                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                      </span>
+                      {getExpiryCountdown(booking) && (
+                        <span style={{fontSize: "11px", color: "#b45309", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                          ⏱ {getExpiryCountdown(booking)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>

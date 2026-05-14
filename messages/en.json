@@ -403,7 +403,10 @@
       "confirmCancelSuffix": "confirm cancel?",
       "yesCancel": "Yes, cancel",
       "cancelling": "Cancelling…",
-      "keepBooking": "Keep booking"
+      "keepBooking": "Keep booking",
+      "expiresInHours": "Awaiting response — expires in {hours}h",
+      "expiresInMinutes": "Awaiting response — expires in {minutes}m",
+      "expiresSoon": "Awaiting response — expiring very soon"
     },
     "refund": {
       "fullGuaranteed": "Full refund guaranteed",

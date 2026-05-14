@@ -403,7 +403,10 @@
       "confirmCancelSuffix": "bekreft avbestilling?",
       "yesCancel": "Ja, avbestill",
       "cancelling": "Avbestiller…",
-      "keepBooking": "Behold bestilling"
+      "keepBooking": "Behold bestilling",
+      "expiresInHours": "Venter på svar — utløper om {hours} timer",
+      "expiresInMinutes": "Venter på svar — utløper om {minutes} min",
+      "expiresSoon": "Venter på svar — utløper snart"
     },
     "refund": {
       "fullGuaranteed": "Full refusjon garantert",
