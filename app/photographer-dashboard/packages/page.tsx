@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import GlobeModal from "../../components/GlobeModal";
@@ -10,6 +11,7 @@ const BLANK_PKG = { name: "", duration: "", photos_delivered: "", price: "", des
 const BLANK_ADDON = { name: "", price: "", unit: "flat fee" };
 
 export default function ManagePackages() {
+  const t = useTranslations("Packages");
   const { formatPrice } = useCurrency();
   const [photographerId, setPhotographerId] = useState<string | null>(null);
   const [packages, setPackages] = useState<any[]>([]);
@@ -71,13 +73,13 @@ export default function ManagePackages() {
   };
 
   const savePackage = async () => {
-    if (!pkgForm.name.trim()) { setPkgError("Package name is required."); return; }
-    if (!pkgForm.duration.trim()) { setPkgError("Duration is required."); return; }
+    if (!pkgForm.name.trim()) { setPkgError(t("errors.nameRequired")); return; }
+    if (!pkgForm.duration.trim()) { setPkgError(t("errors.durationRequired")); return; }
     const photosNum = parseInt(pkgForm.photos_delivered);
-    if (isNaN(photosNum) || photosNum <= 0) { setPkgError("Photos delivered must be a positive number."); return; }
+    if (isNaN(photosNum) || photosNum <= 0) { setPkgError(t("errors.photosInvalid")); return; }
     const priceNum = parseInt(pkgForm.price);
-    if (isNaN(priceNum) || priceNum <= 0) { setPkgError("Price must be a positive number."); return; }
-    if (!editingPkgId && packages.length >= 5) { setPkgError("Maximum 5 packages allowed."); return; }
+    if (isNaN(priceNum) || priceNum <= 0) { setPkgError(t("errors.priceInvalid")); return; }
+    if (!editingPkgId && packages.length >= 5) { setPkgError(t("errors.maxPackages")); return; }
 
     setSavingPkg(true);
     setPkgError("");
@@ -98,7 +100,7 @@ export default function ManagePackages() {
         .eq("id", editingPkgId)
         .select()
         .single();
-      if (error || !data) { setPkgError("Failed to save. Please try again."); setSavingPkg(false); return; }
+      if (error || !data) { setPkgError(t("errors.saveFailed")); setSavingPkg(false); return; }
       setPackages(prev => prev.map(p => p.id === editingPkgId ? data : p));
     } else {
       payload.photographer_id = photographerId;
@@ -108,7 +110,7 @@ export default function ManagePackages() {
         .insert(payload)
         .select()
         .single();
-      if (error || !data) { setPkgError("Failed to save. Please try again."); setSavingPkg(false); return; }
+      if (error || !data) { setPkgError(t("errors.saveFailed")); setSavingPkg(false); return; }
       setPackages(prev => [...prev, data]);
     }
 
@@ -137,10 +139,10 @@ export default function ManagePackages() {
   };
 
   const saveAddon = async () => {
-    if (!addonForm.name.trim()) { setAddonError("Name is required."); return; }
+    if (!addonForm.name.trim()) { setAddonError(t("errors.addonNameRequired")); return; }
     const priceNum = parseInt(addonForm.price);
-    if (isNaN(priceNum) || priceNum <= 0) { setAddonError("Price must be a positive number."); return; }
-    if (!addonForm.unit.trim()) { setAddonError("Unit is required."); return; }
+    if (isNaN(priceNum) || priceNum <= 0) { setAddonError(t("errors.addonPriceInvalid")); return; }
+    if (!addonForm.unit.trim()) { setAddonError(t("errors.addonUnitRequired")); return; }
 
     setSavingAddon(true);
     setAddonError("");
@@ -158,7 +160,7 @@ export default function ManagePackages() {
         .eq("id", editingAddonId)
         .select()
         .single();
-      if (error || !data) { setAddonError("Failed to save."); setSavingAddon(false); return; }
+      if (error || !data) { setAddonError(t("errors.addonSaveFailed")); setSavingAddon(false); return; }
       setAddons(prev => prev.map(a => a.id === editingAddonId ? data : a));
     } else {
       payload.photographer_id = photographerId;
@@ -168,7 +170,7 @@ export default function ManagePackages() {
         .insert(payload)
         .select()
         .single();
-      if (error || !data) { setAddonError("Failed to save."); setSavingAddon(false); return; }
+      if (error || !data) { setAddonError(t("errors.addonSaveFailed")); setSavingAddon(false); return; }
       setAddons(prev => [...prev, data]);
     }
 
@@ -184,7 +186,7 @@ export default function ManagePackages() {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
     </div>
   );
 
@@ -205,19 +207,19 @@ export default function ManagePackages() {
         <Logo size="sm" />
         <div className="flex items-center gap-3">
           <GlobeModal />
-          <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+          <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.dashboard")}</a>
         </div>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 32px"}}>
 
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR OFFERINGS</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-            Packages & add-ons
+            {t("heading")}
           </h1>
           <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-            You need at least one package to appear on the browse page. Maximum 5 packages.
+            {t("description")}
           </p>
         </div>
 
@@ -225,23 +227,23 @@ export default function ManagePackages() {
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px"}}>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PACKAGES</p>
-              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{packages.length}/5 packages</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("packages.label")}</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("packages.count", { count: packages.length } as any)}</p>
             </div>
             {packages.length < 5 && !showPkgForm && (
               <button
                 onClick={() => { cancelPkgForm(); setShowPkgForm(true); }}
                 style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
-                + Add package
+                {t("packages.addButton")}
               </button>
             )}
           </div>
 
           {packages.length === 0 && !showPkgForm && (
             <div style={{textAlign: "center", padding: "32px 0", borderTop: "1px solid #E2D5C8"}}>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#DDD0C0", fontStyle: "italic", margin: "0 0 8px"}}>No packages yet</p>
-              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Add your first package to appear in search results</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", color: "#DDD0C0", fontStyle: "italic", margin: "0 0 8px"}}>{t("packages.noPackages")}</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("packages.noPackagesDesc")}</p>
             </div>
           )}
 
@@ -274,14 +276,14 @@ export default function ManagePackages() {
                       <div style={{textAlign: "right", flexShrink: 0}}>
                         <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 8px"}}>{formatPrice(pkg.price)}</p>
                         <div style={{display: "flex", gap: "8px", justifyContent: "flex-end"}}>
-                          <button onClick={() => openEditPkg(pkg)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
+                          <button onClick={() => openEditPkg(pkg)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("packages.edit")}</button>
                           {confirmDeletePkg === pkg.id ? (
                             <>
-                              <button onClick={() => deletePackage(pkg.id)} style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Confirm</button>
-                              <button onClick={() => setConfirmDeletePkg(null)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+                              <button onClick={() => deletePackage(pkg.id)} style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("packages.confirm")}</button>
+                              <button onClick={() => setConfirmDeletePkg(null)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("packages.cancel")}</button>
                             </>
                           ) : (
-                            <button onClick={() => setConfirmDeletePkg(pkg.id)} style={{fontSize: "12px", color: "#dc2626", background: "none", border: "1px solid #fce8e8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Delete</button>
+                            <button onClick={() => setConfirmDeletePkg(pkg.id)} style={{fontSize: "12px", color: "#dc2626", background: "none", border: "1px solid #fce8e8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("packages.delete")}</button>
                           )}
                         </div>
                       </div>
@@ -311,22 +313,22 @@ export default function ManagePackages() {
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px"}}>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ADD-ONS</p>
-              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Optional extras clients can add at checkout</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("addons.label")}</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("addons.description")}</p>
             </div>
             {!showAddonForm && (
               <button
                 onClick={() => { cancelAddonForm(); setShowAddonForm(true); }}
                 style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
-                + Add extra
+                {t("addons.addButton")}
               </button>
             )}
           </div>
 
           {addons.length === 0 && !showAddonForm && (
             <div style={{textAlign: "center", padding: "24px 0", borderTop: "1px solid #E2D5C8"}}>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic", margin: "0"}}>No add-ons yet</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic", margin: "0"}}>{t("addons.noAddons")}</p>
             </div>
           )}
 
@@ -351,14 +353,14 @@ export default function ManagePackages() {
                       <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{formatPrice(addon.price)} · {addon.unit}</p>
                     </div>
                     <div style={{display: "flex", gap: "8px", flexShrink: 0}}>
-                      <button onClick={() => openEditAddon(addon)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Edit</button>
+                      <button onClick={() => openEditAddon(addon)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("addons.edit")}</button>
                       {confirmDeleteAddon === addon.id ? (
                         <>
-                          <button onClick={() => deleteAddon(addon.id)} style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Confirm</button>
-                          <button onClick={() => setConfirmDeleteAddon(null)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+                          <button onClick={() => deleteAddon(addon.id)} style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("addons.confirm")}</button>
+                          <button onClick={() => setConfirmDeleteAddon(null)} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("addons.cancel")}</button>
                         </>
                       ) : (
-                        <button onClick={() => setConfirmDeleteAddon(addon.id)} style={{fontSize: "12px", color: "#dc2626", background: "none", border: "1px solid #fce8e8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Delete</button>
+                        <button onClick={() => setConfirmDeleteAddon(addon.id)} style={{fontSize: "12px", color: "#dc2626", background: "none", border: "1px solid #fce8e8", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("addons.delete")}</button>
                       )}
                     </div>
                   </div>
@@ -392,47 +394,48 @@ export default function ManagePackages() {
 }
 
 function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyle, labelStyle, isEdit }: any) {
+  const t = useTranslations("Packages");
   return (
     <div style={{border: "1px solid #C8622A", borderRadius: "10px", padding: "20px", backgroundColor: "#FBF0EA"}}>
       <p style={{fontSize: "12px", color: "#C8622A", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>
-        {isEdit ? "EDIT PACKAGE" : "NEW PACKAGE"}
+        {isEdit ? t("packageForm.editTitle") : t("packageForm.newTitle")}
       </p>
       <div style={{display: "flex", flexDirection: "column", gap: "14px"}}>
         <div>
-          <label style={labelStyle}>Package name</label>
-          <input type="text" value={form.name} onChange={(e) => setForm((f: any) => ({...f, name: e.target.value}))} placeholder="e.g. Portrait, Wedding, Family" style={inputStyle} />
+          <label style={labelStyle}>{t("packageForm.name")}</label>
+          <input type="text" value={form.name} onChange={(e) => setForm((f: any) => ({...f, name: e.target.value}))} placeholder={t("packageForm.namePlaceholder")} style={inputStyle} />
         </div>
         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px"}}>
           <div>
-            <label style={labelStyle}>Duration</label>
-            <input type="text" value={form.duration} onChange={(e) => setForm((f: any) => ({...f, duration: e.target.value}))} placeholder="e.g. 1 hour, Full day" style={inputStyle} />
+            <label style={labelStyle}>{t("packageForm.duration")}</label>
+            <input type="text" value={form.duration} onChange={(e) => setForm((f: any) => ({...f, duration: e.target.value}))} placeholder={t("packageForm.durationPlaceholder")} style={inputStyle} />
           </div>
           <div>
-            <label style={labelStyle}>Photos delivered</label>
-            <input type="number" min="1" value={form.photos_delivered} onChange={(e) => setForm((f: any) => ({...f, photos_delivered: e.target.value}))} placeholder="e.g. 20" style={inputStyle} />
+            <label style={labelStyle}>{t("packageForm.photosDelivered")}</label>
+            <input type="number" min="1" value={form.photos_delivered} onChange={(e) => setForm((f: any) => ({...f, photos_delivered: e.target.value}))} placeholder={t("packageForm.photosPlaceholder")} style={inputStyle} />
           </div>
         </div>
         <div>
-          <label style={labelStyle}>Price (NOK)</label>
-          <input type="number" min="1" value={form.price} onChange={(e) => setForm((f: any) => ({...f, price: e.target.value}))} placeholder="e.g. 3500" style={inputStyle} />
+          <label style={labelStyle}>{t("packageForm.price")}</label>
+          <input type="number" min="1" value={form.price} onChange={(e) => setForm((f: any) => ({...f, price: e.target.value}))} placeholder={t("packageForm.pricePlaceholder")} style={inputStyle} />
         </div>
         <div>
-          <label style={labelStyle}>Description (optional)</label>
-          <input type="text" value={form.description} onChange={(e) => setForm((f: any) => ({...f, description: e.target.value}))} placeholder="Short description for clients" style={inputStyle} />
+          <label style={labelStyle}>{t("packageForm.description")}</label>
+          <input type="text" value={form.description} onChange={(e) => setForm((f: any) => ({...f, description: e.target.value}))} placeholder={t("packageForm.descriptionPlaceholder")} style={inputStyle} />
         </div>
         <div>
-          <label style={labelStyle}>Category (optional)</label>
+          <label style={labelStyle}>{t("packageForm.category")}</label>
           <select value={form.category} onChange={(e) => setForm((f: any) => ({...f, category: e.target.value}))} style={inputStyle}>
-            <option value="">— No category —</option>
+            <option value="">{t("packageForm.noCategory")}</option>
             {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
         </div>
         {error && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>}
         <div style={{display: "flex", gap: "10px"}}>
           <button onClick={onSave} disabled={saving} style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: saving ? 0.7 : 1}}>
-            {saving ? "Saving…" : isEdit ? "Save changes" : "Add package"}
+            {saving ? t("packageForm.saving") : isEdit ? t("packageForm.saveChanges") : t("packageForm.addPackage")}
           </button>
-          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("packageForm.cancel")}</button>
         </div>
       </div>
     </div>
@@ -440,30 +443,31 @@ function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyl
 }
 
 function AddonForm({ form, setForm, onSave, onCancel, saving, error, inputStyle, labelStyle }: any) {
+  const t = useTranslations("Packages");
   return (
     <div style={{border: "1px solid #1A0E06", borderRadius: "10px", padding: "20px", backgroundColor: "#F5EFE4"}}>
-      <p style={{fontSize: "12px", color: "#1A0E06", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>NEW ADD-ON</p>
+      <p style={{fontSize: "12px", color: "#1A0E06", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{t("addonForm.title")}</p>
       <div style={{display: "flex", flexDirection: "column", gap: "14px"}}>
         <div>
-          <label style={labelStyle}>Name</label>
-          <input type="text" value={form.name} onChange={(e) => setForm((f: any) => ({...f, name: e.target.value}))} placeholder="e.g. Extra hour, Rush delivery" style={inputStyle} />
+          <label style={labelStyle}>{t("addonForm.name")}</label>
+          <input type="text" value={form.name} onChange={(e) => setForm((f: any) => ({...f, name: e.target.value}))} placeholder={t("addonForm.namePlaceholder")} style={inputStyle} />
         </div>
         <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px"}}>
           <div>
-            <label style={labelStyle}>Price (NOK)</label>
-            <input type="number" min="1" value={form.price} onChange={(e) => setForm((f: any) => ({...f, price: e.target.value}))} placeholder="e.g. 800" style={inputStyle} />
+            <label style={labelStyle}>{t("addonForm.price")}</label>
+            <input type="number" min="1" value={form.price} onChange={(e) => setForm((f: any) => ({...f, price: e.target.value}))} placeholder={t("addonForm.pricePlaceholder")} style={inputStyle} />
           </div>
           <div>
-            <label style={labelStyle}>Unit</label>
-            <input type="text" value={form.unit} onChange={(e) => setForm((f: any) => ({...f, unit: e.target.value}))} placeholder="e.g. per hour, flat fee" style={inputStyle} />
+            <label style={labelStyle}>{t("addonForm.unit")}</label>
+            <input type="text" value={form.unit} onChange={(e) => setForm((f: any) => ({...f, unit: e.target.value}))} placeholder={t("addonForm.unitPlaceholder")} style={inputStyle} />
           </div>
         </div>
         {error && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>}
         <div style={{display: "flex", gap: "10px"}}>
           <button onClick={onSave} disabled={saving} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: saving ? 0.7 : 1}}>
-            {saving ? "Saving…" : "Add extra"}
+            {saving ? t("addonForm.saving") : t("addonForm.addExtra")}
           </button>
-          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>Cancel</button>
+          <button onClick={onCancel} style={{fontSize: "13px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "10px 24px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>{t("addonForm.cancel")}</button>
         </div>
       </div>
     </div>

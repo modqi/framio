@@ -3,10 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import GlobeModal from "../../components/GlobeModal";
+import { useTranslations } from "next-intl";
 
 const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
 
 export default function EditProfile() {
+  const t = useTranslations("EditProfile");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -91,7 +93,7 @@ export default function EditProfile() {
       }
     });
     if (authError) {
-      setSaveError("Failed to save profile. Please try again.");
+      setSaveError(t("saveFailed"));
       setSaving(false);
       return;
     }
@@ -120,7 +122,7 @@ export default function EditProfile() {
       }),
     });
     if (!res.ok) {
-      setSaveError("Failed to update public profile. Please try again.");
+      setSaveError(t("updateFailed"));
       setSaving(false);
       return;
     }
@@ -135,7 +137,7 @@ export default function EditProfile() {
     if (!file) return;
     setPhotoError("");
     if (file.size > 10 * 1024 * 1024) {
-      setPhotoError("Photo must be under 10 MB.");
+      setPhotoError(t("photo.tooLarge"));
       return;
     }
     setUploadingPhoto(true);
@@ -153,7 +155,7 @@ export default function EditProfile() {
       if (!data.url) throw new Error(data.error || "Upload failed");
       setProfilePhoto(data.url);
     } catch {
-      setPhotoError("Photo upload failed. Please try again.");
+      setPhotoError(t("photo.uploadFailed"));
     }
     setUploadingPhoto(false);
   };
@@ -161,7 +163,7 @@ export default function EditProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
+        <p style={{fontSize: "13px", color: "#C4907A"}}>{t("loading")}</p>
       </div>
     );
   }
@@ -194,18 +196,18 @@ export default function EditProfile() {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <div className="flex items-center gap-3"><GlobeModal /><a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a></div>
+        <div className="flex items-center gap-3"><GlobeModal /><a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.dashboard")}</a></div>
       </nav>
 
       <div style={{maxWidth: "680px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR PROFILE</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-            Edit your profile
+            {t("heading")}
           </h1>
-          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>A complete profile gets 3x more bookings</p>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("description")}</p>
         </div>
 
         {/* Profile photo */}
@@ -225,7 +227,7 @@ export default function EditProfile() {
               {profilePhoto ? (
                 <img src={profilePhoto} alt="Profile" style={{width: "100%", height: "100%", objectFit: "cover"}}/>
               ) : uploadingPhoto ? (
-                <span style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", textAlign: "center", padding: "4px"}}>Uploading…</span>
+                <span style={{fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", textAlign: "center", padding: "4px"}}>{t("photo.uploading")}</span>
               ) : (
                 <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#C8622A"}}>{form.name?.[0] || "?"}</span>
               )}
@@ -252,9 +254,9 @@ export default function EditProfile() {
               disabled={uploadingPhoto}
               style={{fontSize: "12px", color: "#C8622A", background: "none", border: "none", padding: "0", cursor: uploadingPhoto ? "default" : "pointer", fontFamily: "'Jost', sans-serif", textDecoration: "underline"}}
             >
-              {uploadingPhoto ? "Uploading…" : profilePhoto ? "Change photo" : "Upload profile photo"}
+              {uploadingPhoto ? t("photo.uploading") : profilePhoto ? t("photo.change") : t("photo.upload")}
             </button>
-            <p style={{fontSize: "11px", color: "#DDD0C0", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>JPG, PNG or WEBP · Max 10 MB</p>
+            <p style={{fontSize: "11px", color: "#DDD0C0", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>{t("photo.hint")}</p>
           </div>
         </div>
 
@@ -268,17 +270,17 @@ export default function EditProfile() {
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", display: "flex", flexDirection: "column", gap: "24px"}}>
 
           <div>
-            <label style={labelStyle}>Full name</label>
-            <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} placeholder="Your full name" style={inputStyle}/>
+            <label style={labelStyle}>{t("form.fullName")}</label>
+            <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} placeholder={t("form.fullNamePlaceholder")} style={inputStyle}/>
           </div>
 
           <div>
-            <label style={labelStyle}>Location</label>
-            <input type="text" value={form.location} onChange={(e) => setForm({...form, location: e.target.value})} placeholder="e.g. Bergen, Norway" style={inputStyle}/>
+            <label style={labelStyle}>{t("form.location")}</label>
+            <input type="text" value={form.location} onChange={(e) => setForm({...form, location: e.target.value})} placeholder={t("form.locationPlaceholder")} style={inputStyle}/>
           </div>
 
           <div>
-            <label style={labelStyle}>Photography categories (select all that apply)</label>
+            <label style={labelStyle}>{t("form.categories")}</label>
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: otherChecked ? "10px" : "0"}}>
               {CATEGORIES.map(cat => {
                 const sel = selectedCategories.includes(cat);
@@ -292,19 +294,19 @@ export default function EditProfile() {
               <button type="button"
                 onClick={() => { setOtherChecked(!otherChecked); if (otherChecked) setOtherCategory(""); }}
                 style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${otherChecked ? "#C8622A" : "#E2D5C8"}`, backgroundColor: otherChecked ? "#C8622A" : "#FDFBF8", color: otherChecked ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: otherChecked ? "500" : "400"}}
-              >Other</button>
+              >{t("form.other")}</button>
             </div>
             {otherChecked && (
-              <input type="text" value={otherCategory} onChange={(e) => setOtherCategory(e.target.value)} placeholder="Describe your specialty..." style={{...inputStyle, marginTop: "10px"}} />
+              <input type="text" value={otherCategory} onChange={(e) => setOtherCategory(e.target.value)} placeholder={t("form.otherPlaceholder")} style={{...inputStyle, marginTop: "10px"}} />
             )}
           </div>
 
           <div>
-            <label style={labelStyle}>Bio</label>
+            <label style={labelStyle}>{t("form.bio")}</label>
             <textarea
               value={form.bio}
               onChange={(e) => setForm({...form, bio: e.target.value})}
-              placeholder="Tell clients about yourself, your style and your experience..."
+              placeholder={t("form.bioPlaceholder")}
               maxLength={500}
               rows={5}
               style={{...inputStyle, resize: "none"}}
@@ -313,7 +315,7 @@ export default function EditProfile() {
           </div>
 
           <div>
-            <label style={labelStyle}>Instagram handle</label>
+            <label style={labelStyle}>{t("form.instagram")}</label>
             <div style={{display: "flex", alignItems: "center", border: "1px solid #E2D5C8", borderRadius: "8px", overflow: "hidden"}}>
               <span style={{padding: "12px 16px", backgroundColor: "#F5EFE4", color: "#C8622A", fontSize: "13px", borderRight: "1px solid #E2D5C8", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>@</span>
               <input type="text" value={form.instagram} onChange={(e) => setForm({...form, instagram: e.target.value})} placeholder="yourhandle" style={{flex: 1, border: "none", outline: "none", padding: "12px 16px", fontSize: "13px", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif"}}/>
@@ -321,25 +323,25 @@ export default function EditProfile() {
           </div>
 
           <div>
-            <label style={labelStyle}>Website</label>
-            <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder="https://yourwebsite.com" style={inputStyle}/>
+            <label style={labelStyle}>{t("form.website")}</label>
+            <input type="text" value={form.website} onChange={(e) => setForm({...form, website: e.target.value})} placeholder={t("form.websitePlaceholder")} style={inputStyle}/>
           </div>
 
           <div>
-            <label style={labelStyle}>Phone number</label>
-            <input type="tel" value={form.phone_number} onChange={(e) => setForm({...form, phone_number: e.target.value})} placeholder="+47 900 00 000" style={inputStyle}/>
-            <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>Include country code. Used for booking notifications only.</p>
+            <label style={labelStyle}>{t("form.phone")}</label>
+            <input type="tel" value={form.phone_number} onChange={(e) => setForm({...form, phone_number: e.target.value})} placeholder={t("form.phonePlaceholder")} style={inputStyle}/>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>{t("form.phoneHelper")}</p>
           </div>
 
           {/* Cancellation policy */}
           <div style={{borderTop: "1px solid #E2D5C8", paddingTop: "24px"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>CANCELLATION POLICY</p>
-            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>Shown to clients before they book. Applies to all new bookings.</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("cancellation.label")}</p>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{t("cancellation.description")}</p>
             <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
               {[
-                { value: "flexible", label: "Flexible", desc: "Full refund up to 24 hours before the session" },
-                { value: "moderate", label: "Moderate", desc: "Full refund up to 48 hours before the session" },
-                { value: "strict", label: "Strict", desc: "No refund once the booking is confirmed" },
+                { value: "flexible", label: t("cancellation.flexibleLabel"), desc: t("cancellation.flexibleDesc") },
+                { value: "moderate", label: t("cancellation.moderateLabel"), desc: t("cancellation.moderateDesc") },
+                { value: "strict", label: t("cancellation.strictLabel"), desc: t("cancellation.strictDesc") },
               ].map((opt) => (
                 <label key={opt.value} style={{display: "flex", alignItems: "flex-start", gap: "12px", padding: "12px 14px", border: `1px solid ${form.cancellation_policy === opt.value ? "#C8622A" : "#E2D5C8"}`, borderRadius: "8px", cursor: "pointer", backgroundColor: form.cancellation_policy === opt.value ? "#FBF0EA" : "#FDFBF8"}}>
                   <input
@@ -361,18 +363,18 @@ export default function EditProfile() {
 
           {/* Session terms */}
           <div style={{borderTop: "1px solid #E2D5C8", paddingTop: "24px"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>SESSION TERMS</p>
-            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>Shown to clients on your profile before they book. Leave blank to hide.</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("sessionTerms.label")}</p>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>{t("sessionTerms.description")}</p>
           </div>
 
           <div>
-            <label style={labelStyle}>Delivery time</label>
+            <label style={labelStyle}>{t("sessionTerms.deliveryTime")}</label>
             <select
               value={form.delivery_time}
               onChange={(e) => setForm({...form, delivery_time: e.target.value})}
               style={inputStyle}
             >
-              <option value="">Select delivery time</option>
+              <option value="">{t("sessionTerms.deliveryTimePlaceholder")}</option>
               <option value="Within 3 days">Within 3 days</option>
               <option value="Within 5 days">Within 5 days</option>
               <option value="Within 1 week">Within 1 week</option>
@@ -382,17 +384,17 @@ export default function EditProfile() {
               <option value="Within 2 months">Within 2 months</option>
               <option value="Within 3 months">Within 3 months</option>
             </select>
-            <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>Delivery time starts after the session date.</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>{t("sessionTerms.deliveryTimeHelper")}</p>
           </div>
 
           <div>
-            <label style={labelStyle}>Copyright ownership</label>
+            <label style={labelStyle}>{t("sessionTerms.copyright")}</label>
             <select
               value={form.copyright_ownership}
               onChange={(e) => setForm({...form, copyright_ownership: e.target.value})}
               style={inputStyle}
             >
-              <option value="">Select copyright policy</option>
+              <option value="">{t("sessionTerms.copyrightPlaceholder")}</option>
               <option value="Photographer retains copyright, client gets personal use license">
                 Photographer retains copyright, client gets personal use license
               </option>
@@ -406,23 +408,23 @@ export default function EditProfile() {
           </div>
 
           <div>
-            <label style={labelStyle}>Editing style</label>
+            <label style={labelStyle}>{t("sessionTerms.editingStyle")}</label>
             <input
               type="text"
               value={form.editing_style}
               onChange={(e) => setForm({...form, editing_style: e.target.value})}
-              placeholder="e.g. Natural and light, film-inspired"
+              placeholder={t("sessionTerms.editingStylePlaceholder")}
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label style={labelStyle}>Revisions included</label>
+            <label style={labelStyle}>{t("sessionTerms.revisions")}</label>
             <input
               type="text"
               value={form.revisions_included}
               onChange={(e) => setForm({...form, revisions_included: e.target.value})}
-              placeholder="e.g. 2 rounds of revisions included"
+              placeholder={t("sessionTerms.revisionsPlaceholder")}
               style={inputStyle}
             />
           </div>
@@ -434,7 +436,7 @@ export default function EditProfile() {
           )}
           {saved && (
             <div style={{padding: "12px 16px", borderRadius: "8px", backgroundColor: "#f0fdf4", border: "1px solid #dcfce7", textAlign: "center"}}>
-              <p style={{fontSize: "13px", color: "#15803d", margin: "0"}}>Profile saved successfully ✓</p>
+              <p style={{fontSize: "13px", color: "#15803d", margin: "0"}}>{t("saved")}</p>
             </div>
           )}
 
@@ -443,7 +445,7 @@ export default function EditProfile() {
             disabled={saving}
             style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}
           >
-            {saving ? "Saving..." : "Save profile"}
+            {saving ? t("saving") : t("save")}
           </button>
 
         </div>

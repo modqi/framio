@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
+import { useTranslations } from "next-intl";
 
 export default function Availability() {
+  const t = useTranslations("Availability");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -114,34 +116,34 @@ export default function Availability() {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.dashboard")}</a>
       </nav>
 
       <div style={{maxWidth: "680px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY SCHEDULE</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-            My availability
+            {t("heading")}
           </h1>
           <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-            Tap days to mark them as unavailable — all other days are open for booking
+            {t("description")}
           </p>
         </div>
 
         {/* Stats strip */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "16px 24px", border: "1px solid #E2D5C8", marginBottom: "24px", display: "flex", gap: "32px"}}>
           <div>
-            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Available days</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{t("stats.availableDays")}</p>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>{availableCount}</p>
           </div>
           <div>
-            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Blocked days</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{t("stats.blockedDays")}</p>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#C8622A", margin: "0"}}>{blockedCount}</p>
           </div>
           <div>
-            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Month</p>
+            <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{t("stats.month")}</p>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>{currentMonth.toLocaleString("default", { month: "short" })}</p>
           </div>
         </div>
@@ -152,18 +154,18 @@ export default function Availability() {
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-6">
             <button onClick={prevMonth} disabled={isCurrentMonth} style={{border: "1px solid #e5e5e5", backgroundColor: "#fff", borderRadius: "8px", padding: "8px 16px", cursor: isCurrentMonth ? "not-allowed" : "pointer", fontSize: "13px", color: isCurrentMonth ? "#ccc" : "#1a1a1a", opacity: isCurrentMonth ? 0.5 : 1}}>
-              ← Prev
+              {t("calendar.prev")}
             </button>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>{monthName}</p>
             <button onClick={nextMonth} style={{border: "1px solid #e5e5e5", backgroundColor: "#fff", borderRadius: "8px", padding: "8px 16px", cursor: "pointer", fontSize: "13px", color: "#1a1a1a"}}>
-              Next →
+              {t("calendar.next")}
             </button>
           </div>
 
           {/* Day labels */}
           <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", marginBottom: "8px"}}>
-            {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map(d => (
-              <div key={d} style={{textAlign: "center", fontSize: "11px", color: "#888", padding: "4px"}}>{d}</div>
+            {(["mo", "tu", "we", "th", "fr", "sa", "su"] as const).map(d => (
+              <div key={d} style={{textAlign: "center", fontSize: "11px", color: "#888", padding: "4px"}}>{t(`calendar.${d}` as any)}</div>
             ))}
           </div>
 
@@ -202,29 +204,24 @@ export default function Availability() {
           <div style={{display: "flex", gap: "20px", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid #E2D5C8"}}>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
               <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8"}}></div>
-              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Available</span>
+              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t("calendar.available")}</span>
             </div>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
               <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8"}}></div>
-              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Unavailable</span>
+              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t("calendar.unavailable")}</span>
             </div>
             <div style={{display: "flex", alignItems: "center", gap: "6px"}}>
               <div style={{width: "12px", height: "12px", borderRadius: "3px", backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8"}}></div>
-              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Past</span>
+              <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t("calendar.past")}</span>
             </div>
           </div>
         </div>
 
         {/* Instructions */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px 24px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>HOW IT WORKS</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("howItWorks.label")}</p>
           <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-            {[
-              "All future days are available by default",
-              "Tap any day to mark it as unavailable",
-              "Tap again to make it available again",
-              "Click Save when you are done",
-            ].map((tip, i) => (
+            {([t("howItWorks.tip1"), t("howItWorks.tip2"), t("howItWorks.tip3"), t("howItWorks.tip4")] as string[]).map((tip, i) => (
               <div key={i} style={{display: "flex", gap: "10px", alignItems: "flex-start"}}>
                 <span style={{fontSize: "12px", color: "#C8622A", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>0{i + 1}</span>
                 <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{tip}</span>
@@ -235,7 +232,7 @@ export default function Availability() {
 
         {saved && (
           <div style={{padding: "12px 16px", borderRadius: "8px", backgroundColor: "#f0fdf4", border: "1px solid #dcfce7", marginBottom: "16px", textAlign: "center"}}>
-            <p style={{fontSize: "13px", color: "#15803d", margin: "0"}}>Availability saved successfully ✓</p>
+            <p style={{fontSize: "13px", color: "#15803d", margin: "0"}}>{t("saved")}</p>
           </div>
         )}
 
@@ -244,7 +241,7 @@ export default function Availability() {
           disabled={saving}
           style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}
         >
-          {saving ? "Saving..." : "Save availability"}
+          {saving ? t("saving") : t("save")}
         </button>
 
       </div>

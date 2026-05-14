@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { ReviewStarIcon } from "../../components/Icons";
+import { useTranslations } from "next-intl";
 
 export default function LeaveReview() {
+  const t = useTranslations("Review");
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -47,8 +49,8 @@ export default function LeaveReview() {
   }, []);
 
   const handleSubmit = async () => {
-    if (rating === 0) { setError("Please select a star rating."); return; }
-    if (!comment) { setError("Please write a short review."); return; }
+    if (rating === 0) { setError(t("errors.noRating")); return; }
+    if (!comment) { setError(t("errors.noComment")); return; }
     setSaving(true);
     setError("");
 
@@ -75,7 +77,7 @@ export default function LeaveReview() {
     });
 
     if (error) {
-      setError("Something went wrong. Please try again.");
+      setError(t("errors.genericError"));
     } else {
       const { data: allReviews } = await supabase
         .from("reviews")
@@ -96,13 +98,13 @@ export default function LeaveReview() {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
     </div>
   );
 
   if (!booking) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>Booking not found</p>
+      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t("bookingNotFound")}</p>
     </div>
   );
 
@@ -113,15 +115,15 @@ export default function LeaveReview() {
       </nav>
       <div style={{maxWidth: "560px", margin: "0 auto", padding: "80px 32px", textAlign: "center"}}>
         <div style={{marginBottom: "24px"}}><ReviewStarIcon size={56} color="#C8622A"/></div>
-        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>THANK YOU</p>
+        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("done.badge")}</p>
         <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>
-          Review submitted!
+          {t("done.heading")}
         </h1>
         <p style={{fontSize: "15px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-          Thank you for reviewing {booking.photographer_name}. Your review helps other clients find great photographers.
+          {t("done.description", { name: booking.photographer_name })}
         </p>
         <a href="/dashboard" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-          Back to my bookings
+          {t("done.backToBookings")}
         </a>
       </div>
     </main>
@@ -134,7 +136,7 @@ export default function LeaveReview() {
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
         <a href="/dashboard" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
-          Back to dashboard
+          {t("nav.backToDashboard")}
         </a>
       </nav>
 
@@ -142,12 +144,12 @@ export default function LeaveReview() {
 
         {/* Header */}
         <div style={{marginBottom: "32px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>LEAVE A REVIEW</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-            How was your session?
+            {t("heading")}
           </h1>
           <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-            Share your experience with {booking.photographer_name}
+            {t("description", { name: booking.photographer_name })}
           </p>
         </div>
 
@@ -169,7 +171,7 @@ export default function LeaveReview() {
 
           {/* Star rating */}
           <div style={{marginBottom: "28px"}}>
-            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "12px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>Your rating</label>
+            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "12px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>{t("ratingLabel")}</label>
             <div style={{display: "flex", gap: "8px"}}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -195,22 +197,18 @@ export default function LeaveReview() {
             </div>
             {rating > 0 && (
               <p style={{fontSize: "13px", color: "#C8622A", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>
-                {rating === 1 && "Poor"}
-                {rating === 2 && "Fair"}
-                {rating === 3 && "Good"}
-                {rating === 4 && "Very good"}
-                {rating === 5 && "Excellent!"}
+                {t(`ratings.${rating}` as any)}
               </p>
             )}
           </div>
 
           {/* Comment */}
           <div style={{marginBottom: "24px"}}>
-            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>Your review</label>
+            <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>{t("reviewLabel")}</label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder={`Tell others about your experience with ${booking.photographer_name}...`}
+              placeholder={t("reviewPlaceholder", { name: booking.photographer_name })}
               maxLength={500}
               rows={5}
               style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", resize: "none", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
@@ -229,7 +227,7 @@ export default function LeaveReview() {
             disabled={saving}
             style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", boxShadow: "0 4px 20px rgba(184,85,40,0.3)"}}
           >
-            {saving ? "Submitting..." : "Submit review"}
+            {saving ? t("submitting") : t("submit")}
           </button>
         </div>
       </div>

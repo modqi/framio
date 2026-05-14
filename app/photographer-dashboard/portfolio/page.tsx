@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { CameraIcon } from "../../components/Icons";
+import { useTranslations } from "next-intl";
 
 export default function Portfolio() {
+  const t = useTranslations("Portfolio");
   const [user, setUser] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -41,7 +43,7 @@ export default function Portfolio() {
     let nextIndex = photos.length;
     for (const file of Array.from(files)) {
       if (file.size > 10 * 1024 * 1024) {
-        setError("Each photo must be under 10MB");
+        setError(t("upload.tooLarge"));
         continue;
       }
       try {
@@ -70,7 +72,7 @@ export default function Portfolio() {
           }
         }
       } catch (err) {
-        setError("Upload failed. Please try again.");
+        setError(t("upload.failed"));
       }
     }
     setUploading(false);
@@ -90,7 +92,7 @@ export default function Portfolio() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <p style={{fontSize: "13px", color: "#C4907A"}}>Loading...</p>
+        <p style={{fontSize: "13px", color: "#C4907A"}}>{t("loading")}</p>
       </div>
     );
   }
@@ -101,19 +103,19 @@ export default function Portfolio() {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.dashboard")}</a>
       </nav>
 
       <div style={{maxWidth: "900px", margin: "0 auto", padding: "48px 32px"}}>
 
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>MY WORK</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-            My portfolio
+            {t("heading")}
           </h1>
           <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-            Upload your best photos — these appear on your public profile
+            {t("description")}
           </p>
         </div>
 
@@ -123,18 +125,18 @@ export default function Portfolio() {
             <div style={{border: "2px dashed #E2D5C8", borderRadius: "12px", padding: "48px 32px", textAlign: "center", backgroundColor: uploading ? "#F5EFE4" : "#FDFBF8", transition: "all 0.2s"}}>
               {uploading ? (
                 <div>
-                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#C8622A", margin: "0 0 8px"}}>Uploading...</p>
-                  <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>Please wait while we upload your photos</p>
+                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#C8622A", margin: "0 0 8px"}}>{t("upload.uploading")}</p>
+                  <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("upload.uploadingDesc")}</p>
                 </div>
               ) : (
                 <div>
                   <div style={{margin: "0 0 16px"}}><CameraIcon size={48} color="#C8622A"/></div>
-                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px"}}>Upload your photos</p>
-                  <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>Click to browse or drag and drop your photos here</p>
+                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px"}}>{t("upload.heading")}</p>
+                  <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif"}}>{t("upload.description")}</p>
                   <span style={{fontSize: "12px", color: "#C8622A", border: "1px solid #C8622A", padding: "8px 24px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
-                    Choose photos
+                    {t("upload.choose")}
                   </span>
-                  <p style={{fontSize: "11px", color: "#DDD0C0", margin: "16px 0 0", fontFamily: "'Jost', sans-serif"}}>JPG, PNG up to 10MB each — multiple photos allowed</p>
+                  <p style={{fontSize: "11px", color: "#DDD0C0", margin: "16px 0 0", fontFamily: "'Jost', sans-serif"}}>{t("upload.hint")}</p>
                 </div>
               )}
             </div>
@@ -158,12 +160,12 @@ export default function Portfolio() {
         {/* Photos grid */}
         {photos.length === 0 ? (
           <div style={{textAlign: "center", padding: "48px 0"}}>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#DDD0C0", margin: "0 0 8px"}}>No photos yet</p>
-            <p style={{fontSize: "13px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>Upload your first photo to get started</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#DDD0C0", margin: "0 0 8px"}}>{t("photos.noPhotos")}</p>
+            <p style={{fontSize: "13px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("photos.noPhotosDesc")}</p>
           </div>
         ) : (
           <div>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{photos.length} PHOTOS</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 20px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("photos.count", { count: photos.length })}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {photos.map((photo, index) => (
                 <div key={photo.id} style={{position: "relative", aspectRatio: "3/4", borderRadius: "8px", overflow: "hidden", backgroundColor: "#f5f5f5"}}>
@@ -178,7 +180,7 @@ export default function Portfolio() {
                         onClick={() => setConfirmDeleteId(null)}
                         style={{backgroundColor: "#fff", border: "none", borderRadius: "12px", padding: "4px 8px", cursor: "pointer", fontSize: "11px", color: "#7A5C44", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", fontFamily: "'Jost', sans-serif"}}
                       >
-                        Cancel
+                        {t("photos.cancel")}
                       </button>
                     )}
                     <button

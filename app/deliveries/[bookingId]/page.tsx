@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { EmptyInboxIcon } from "../../components/Icons";
@@ -8,6 +9,7 @@ import { EmptyInboxIcon } from "../../components/Icons";
 const downloadUrl = (url: string) => url.replace("/upload/", "/upload/fl_attachment/");
 
 export default function PhotoGallery({ params }: { params: any }) {
+  const t = useTranslations("Deliveries");
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [booking, setBooking] = useState<any>(null);
@@ -102,7 +104,7 @@ export default function PhotoGallery({ params }: { params: any }) {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading your photos…</p>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
     </div>
   );
 
@@ -111,19 +113,19 @@ export default function PhotoGallery({ params }: { params: any }) {
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4 sticky top-0 z-10">
         <Logo size="sm" />
         <a href={backHref} style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>
-          ← Back to dashboard
+          {t("nav.backToDashboard")}
         </a>
       </nav>
 
       {/* Header */}
       <div style={{backgroundColor: "#FDFBF8", borderBottom: "1px solid #E2D5C8", padding: "40px 32px"}}>
         <div style={{maxWidth: "1100px", margin: "0 auto"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>YOUR PHOTOS</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("header.badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "42px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             {booking?.session_type}
           </h1>
           <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>
-            {booking?.photographer_name} · {booking?.date} · {totalPhotos} photo{totalPhotos === 1 ? "" : "s"}
+            {booking?.photographer_name} · {booking?.date} · {t("header.photoCount", { count: totalPhotos } as any)}
           </p>
         </div>
       </div>
@@ -133,8 +135,8 @@ export default function PhotoGallery({ params }: { params: any }) {
         {deliveries.length === 0 ? (
           <div style={{textAlign: "center", padding: "80px 0"}}>
             <div style={{marginBottom: "16px"}}><EmptyInboxIcon size={56} color="#C8622A"/></div>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06", margin: "0 0 8px"}}>No photos yet</p>
-            <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>Your photographer will deliver the edited photos here.</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06", margin: "0 0 8px"}}>{t("empty.title")}</p>
+            <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>{t("empty.description")}</p>
           </div>
         ) : deliveries.map((delivery, di) => (
           <div key={delivery.id} style={{marginBottom: "64px"}}>
@@ -143,11 +145,11 @@ export default function PhotoGallery({ params }: { params: any }) {
               <div>
                 {deliveries.length > 1 && (
                   <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-                    DELIVERY {di + 1}
+                    {t("delivery.label", { number: di + 1 } as any)}
                   </p>
                 )}
                 <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                  {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length} photo{delivery.photos.length === 1 ? "" : "s"}
+                  {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {t("delivery.photoCount", { count: delivery.photos.length } as any)}
                 </p>
                 {delivery.message && (
                   <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>
@@ -160,7 +162,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                 disabled={zipping === delivery.id}
                 style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: zipping === delivery.id ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: zipping === delivery.id ? 0.6 : 1}}
               >
-                {zipping === delivery.id ? "Preparing…" : `Download all (${delivery.photos.length})`}
+                {zipping === delivery.id ? t("delivery.preparing") : t("delivery.downloadAll", { count: delivery.photos.length } as any)}
               </button>
             </div>
 
@@ -196,7 +198,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                     className="photo-dl-btn"
                     title="Download"
                   >
-                    Save
+                    {t("delivery.save")}
                   </a>
                 </div>
               ))}

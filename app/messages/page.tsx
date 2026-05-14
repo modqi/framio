@@ -4,8 +4,10 @@ import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 import { MessageIcon } from "../components/Icons";
+import { useTranslations } from "next-intl";
 
 export default function Messages() {
+  const t = useTranslations("Inbox");
   const [user, setUser] = useState<any>(null);
   const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -153,7 +155,7 @@ export default function Messages() {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading messages...</p>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
     </div>
   );
 
@@ -165,21 +167,21 @@ export default function Messages() {
         <Logo size="sm" />
         <div className="flex items-center gap-3">
           <GlobeModal />
-          <a href={isPhotographer ? "/photographer-dashboard" : "/dashboard"} style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Dashboard</a>
+          <a href={isPhotographer ? "/photographer-dashboard" : "/dashboard"} style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("nav.dashboard")}</a>
         </div>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 32px"}}>
         <div style={{marginBottom: "32px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>INBOX</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>Messages</h1>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>{t("heading")}</h1>
         </div>
 
         {conversations.length === 0 ? (
           <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "48px", border: "1px solid #E2D5C8", textAlign: "center"}}>
             <div style={{marginBottom: "16px"}}><MessageIcon size={56} color="#C8622A"/></div>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1A0E06", margin: "0 0 8px"}}>No messages yet</p>
-            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Messages from your bookings will appear here.</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1A0E06", margin: "0 0 8px"}}>{t("empty.heading")}</p>
+            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("empty.description")}</p>
           </div>
         ) : (
           <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
@@ -189,21 +191,21 @@ export default function Messages() {
                   /* Confirmation state */
                   <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px 24px", border: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px"}}>
                     <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                      Delete this conversation? This cannot be undone.
+                      {t("deleteConfirm")}
                     </p>
                     <div style={{display: "flex", gap: "8px", flexShrink: 0}}>
                       <button
                         onClick={() => setConfirmDeleteId(null)}
                         style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                       >
-                        Cancel
+                        {t("cancel")}
                       </button>
                       <button
                         onClick={() => deleteConversation(conv.id)}
                         disabled={deletingId === conv.id}
                         style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#C8622A", border: "none", borderRadius: "999px", padding: "6px 14px", cursor: deletingId === conv.id ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: deletingId === conv.id ? 0.6 : 1}}
                       >
-                        {deletingId === conv.id ? "Deleting…" : "Delete"}
+                        {deletingId === conv.id ? t("deleting") : t("delete")}
                       </button>
                     </div>
                   </div>
@@ -217,17 +219,17 @@ export default function Messages() {
                         </p>
                         {conv.unreadCount > 0 && (
                           <span style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "11px", padding: "2px 8px", borderRadius: "999px", fontWeight: "600", fontFamily: "'Jost', sans-serif"}}>
-                            {conv.unreadCount} new
+                            {t("newBadge", { count: conv.unreadCount })}
                           </span>
                         )}
                       </div>
                       <p style={{fontSize: "12px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{conv.session_type} — {conv.date}</p>
                       {conv.lastMessage ? (
                         <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Jost', sans-serif"}}>
-                          {conv.lastMessage.sender_id === user?.id ? "You: " : ""}{conv.lastMessage.content}
+                          {conv.lastMessage.sender_id === user?.id ? t("youPrefix") : ""}{conv.lastMessage.content}
                         </p>
                       ) : (
-                        <p style={{fontSize: "13px", color: "#DDD0C0", margin: "0", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No messages yet — start the conversation</p>
+                        <p style={{fontSize: "13px", color: "#DDD0C0", margin: "0", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>{t("noMessages")}</p>
                       )}
                     </div>
                     <div style={{display: "flex", alignItems: "center", gap: "12px", flexShrink: 0}}>

@@ -2,8 +2,10 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
+import { useTranslations } from "next-intl";
 
 export default function Conversation({ params }: { params: any }) {
+  const t = useTranslations("Conversation");
   const [user, setUser] = useState<any>(null);
   const [booking, setBooking] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -153,7 +155,7 @@ export default function Conversation({ params }: { params: any }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      setSendError("Image must be under 5 MB.");
+      setSendError(t("imageTooLarge"));
       e.target.value = "";
       return;
     }
@@ -192,12 +194,12 @@ export default function Conversation({ params }: { params: any }) {
         if (uploadResult.url) {
           uploadedImageUrl = uploadResult.url;
         } else {
-          setSendError("Image upload failed. Please try again.");
+          setSendError(t("imageUploadFailed"));
           setSending(false);
           return;
         }
       } catch {
-        setSendError("Image upload failed. Please try again.");
+        setSendError(t("imageUploadFailed"));
         setSending(false);
         return;
       }
@@ -244,7 +246,7 @@ export default function Conversation({ params }: { params: any }) {
         }),
       });
     } else if (error) {
-      setSendError("Message failed to send. Please try again.");
+      setSendError(t("messageFailed"));
     }
     setSending(false);
   };
@@ -259,7 +261,7 @@ export default function Conversation({ params }: { params: any }) {
     if (date >= startOfToday) {
       return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     } else if (date >= startOfYesterday) {
-      return "Yesterday";
+      return t("yesterday");
     } else if (date >= startOfWeek) {
       return date.toLocaleDateString([], { weekday: "long" });
     } else {
@@ -272,7 +274,7 @@ export default function Conversation({ params }: { params: any }) {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading conversation...</p>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
     </div>
   );
 
@@ -282,7 +284,7 @@ export default function Conversation({ params }: { params: any }) {
       {/* Navigation */}
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/messages" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to messages</a>
+        <a href="/messages" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.backToMessages")}</a>
       </nav>
 
       {/* Conversation header */}
@@ -300,7 +302,7 @@ export default function Conversation({ params }: { params: any }) {
         <div style={{maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px"}}>
           {messages.length === 0 ? (
             <div style={{textAlign: "center", padding: "48px 0"}}>
-              <p style={{fontSize: "14px", color: "#DDD0C0", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>No messages yet — start the conversation!</p>
+              <p style={{fontSize: "14px", color: "#DDD0C0", fontStyle: "italic", fontFamily: "'Jost', sans-serif"}}>{t("noMessages")}</p>
             </div>
           ) : messages.map((msg: any) => {
             const isMe = msg.sender_id === user?.id;
@@ -430,7 +432,7 @@ export default function Conversation({ params }: { params: any }) {
               value={newMessage}
               onChange={(e) => { setNewMessage(e.target.value); if (sendError) setSendError(null); }}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
-              placeholder="Type a message..."
+              placeholder={t("placeholder")}
               rows={1}
               style={{flex: 1, border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px 16px", fontSize: "14px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", resize: "none", fontFamily: "'Jost', sans-serif", overflow: "hidden"}}
             />
@@ -439,7 +441,7 @@ export default function Conversation({ params }: { params: any }) {
               disabled={!canSend}
               style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 24px", border: "none", borderRadius: "999px", cursor: canSend ? "pointer" : "default", fontWeight: "500", flexShrink: 0, opacity: canSend ? 1 : 0.5, fontFamily: "'Jost', sans-serif"}}
             >
-              {sending ? "..." : "Send"}
+              {sending ? "..." : t("send")}
             </button>
           </div>
         </div>

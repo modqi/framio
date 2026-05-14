@@ -334,5 +334,706 @@
       "fillRequired": "Vennligst fyll inn navn, e-post, telefonnummer og om-seksjonen.",
       "genericError": "Noe gikk galt. Prøv igjen."
     }
+  },
+  "ClientDashboard": {
+    "loading": "Laster...",
+    "nav": {
+      "hello": "Hei, {name}",
+      "messages": "Meldinger",
+      "signOut": "Logg ut"
+    },
+    "deletion": {
+      "bannerTitle": "Kontoen din er planlagt for sletting",
+      "bannerDesc": "Alle data vil bli permanent slettet {date}.",
+      "cancelDeletion": "Avbryt sletting",
+      "cancelling": "Avbryter…"
+    },
+    "paymentSuccess": "✓ Betaling bekreftet — bestillingsforespørselen din er sendt til fotografen.",
+    "welcome": {
+      "badge": "MIN KONTO",
+      "heading": "Velkommen tilbake",
+      "description": "Finn og bestill talentfulle fotografer over hele verden."
+    },
+    "stats": {
+      "totalBookings": "Totalt bestillinger",
+      "allTime": "Totalt sett",
+      "confirmed": "Bekreftet",
+      "upcomingSessions": "Kommende økter",
+      "pending": "Ventende",
+      "awaitingResponse": "Venter på svar"
+    },
+    "quickActions": {
+      "label": "HURTIGHANDLINGER",
+      "findPhotographer": "Finn en fotograf",
+      "findPhotographerDesc": "Bla gjennom alle fotografer",
+      "messages": "Meldinger",
+      "chatWith": "Chat med fotografene dine"
+    },
+    "phone": {
+      "title": "Få SMS-oppdateringer om bestillingene dine",
+      "description": "Valgfritt — inkluder landkode, f.eks. +47 900 00 000",
+      "save": "Lagre",
+      "saving": "Lagrer…"
+    },
+    "bookings": {
+      "label": "MINE BESTILLINGER",
+      "heading": "Dine økter",
+      "noneHeading": "Ingen bestillinger ennå",
+      "noneDescription": "Bestillingene dine vises her når du bestiller en fotograf",
+      "noneCta": "Finn en fotograf",
+      "date": "Dato",
+      "location": "Sted",
+      "price": "Pris",
+      "bookedOn": "Bestilt",
+      "notSet": "Ikke angitt",
+      "yourMessage": "Din melding",
+      "viewPhotos": "Se bildene dine",
+      "photosDeliveredWindow": "Bilder levert — disputvindu stenger {date}",
+      "raiseDispute": "Reiser tvist",
+      "disputeHeading": "Reis en tvist — beskriv problemet:",
+      "disputePlaceholder": "Beskriv hvorfor du bestrider (f.eks. bilder ikke levert, feil bilder, kvalitetsproblemer...)",
+      "submitDispute": "Send inn tvist",
+      "submittingDispute": "Sender inn…",
+      "sessionComplete": "✓ Økt fullført",
+      "disputeUnderReview": "⚠ Tvist under admingjennomgang — vi tar kontakt",
+      "cancel": "Avbryt",
+      "messagePhotographer": "Meld fotograf",
+      "leaveReview": "Legg igjen en anmeldelse",
+      "cancelBooking": "Avbestill",
+      "confirmCancelSuffix": "bekreft avbestilling?",
+      "yesCancel": "Ja, avbestill",
+      "cancelling": "Avbestiller…",
+      "keepBooking": "Behold bestilling"
+    },
+    "refund": {
+      "fullGuaranteed": "Full refusjon garantert",
+      "noRefundStrict": "Ingen refusjon (streng policy)",
+      "fullRefundIf": "Full refusjon ved avbestilling {hours} timer før økt",
+      "fullRefundAvailable": "Full refusjon tilgjengelig (avbestill mer enn {hours} timer før økt)",
+      "noRefundWithin": "Ingen refusjon — økt er innen {hours} timer"
+    },
+    "account": {
+      "label": "KONTOINNSTILLINGER",
+      "heading": "Slett kontoen min",
+      "scheduledDesc": "Kontoen din er planlagt for permanent sletting {date}. Du kan avbryte denne forespørselen før den datoen.",
+      "cancelRequest": "Avbryt slettingsforespørsel",
+      "cancelling": "Avbryter…",
+      "warningTitle": "Dette kan ikke angres. Før kontoen din slettes permanent:",
+      "warning1": "Alle ventende og bekreftede bestillinger vil bli kansellert og fullt refundert",
+      "warning2": "Du vil ha 30 dager til å ombestemme deg fra dashbordet ditt",
+      "warning3": "Etter 30 dager anonymiseres personopplysningene dine og kan ikke gjenopprettes",
+      "yesDelete": "Ja, slett kontoen min",
+      "requesting": "Forespør…",
+      "keepAccount": "Behold kontoen min",
+      "description": "Slett kontoen din permanent og alle tilknyttede data. Aktive bestillinger vil bli kansellert og fullt refundert. Du vil ha et 30-dagers vindu til å ombestemme deg.",
+      "deleteButton": "Slett kontoen min"
+    },
+    "errors": {
+      "cancelFailed": "Kunne ikke avbestille. Prøv igjen.",
+      "genericError": "Noe gikk galt. Prøv igjen.",
+      "alreadyPending": "En slettingsforespørsel finnes allerede.",
+      "deletionFailed": "Kunne ikke be om sletting. Prøv igjen."
+    }
+  },
+  "PhotographerDashboard": {
+    "loading": "Laster...",
+    "nav": {
+      "messages": "Meldinger",
+      "signOut": "Logg ut"
+    },
+    "stripe": {
+      "notVisible": "Profilen din er ikke synlig for klienter ennå",
+      "connectDesc": "Koble til bankkontoen din for å gå live og begynne å motta utbetalinger.",
+      "incompleteDesc": "Stripe-registrering ble ikke fullført. Fullfør oppsettet av kontoen din.",
+      "connect": "Koble til bankkonto →",
+      "resume": "Fortsett oppsett →",
+      "loading": "Laster…"
+    },
+    "deletion": {
+      "bannerTitle": "Kontoen din er planlagt for sletting",
+      "bannerDesc": "Alle data vil bli permanent slettet {date}.",
+      "cancelDeletion": "Avbryt sletting",
+      "cancelling": "Avbryter…"
+    },
+    "welcome": {
+      "badge": "FOTOGRAF-DASHBORD",
+      "heading": "Din fotografbedrift",
+      "description": "Administrer profil, bestillinger og inntekter på ett sted."
+    },
+    "tabs": {
+      "overview": "Oversikt",
+      "earnings": "Inntekter"
+    },
+    "profile": {
+      "editProfile": "Rediger profil",
+      "noLocation": "Ingen sted angitt",
+      "noSpecialty": "Ingen spesialitet angitt"
+    },
+    "stats": {
+      "totalBookings": "Totalt bestillinger",
+      "allTime": "Totalt sett",
+      "pending": "Ventende",
+      "awaitingResponse": "Venter på svar",
+      "confirmed": "Bekreftet",
+      "confirmedSessions": "Bekreftede økter",
+      "unreadMessages": "Uleste meldinger",
+      "newMessages": "Nye meldinger"
+    },
+    "completion": {
+      "label": "PROFILSTYRKE",
+      "heading": "Fullfør profilen din",
+      "description": "En fullstendig profil gir 3x flere bestillinger",
+      "addPhoto": "Legg til profilbilde",
+      "writeBio": "Skriv din biografi",
+      "addPortfolio": "Legg til porteføljebilder",
+      "addPackages": "Legg til pakker",
+      "addLocation": "Legg til stedet ditt"
+    },
+    "quickActions": {
+      "label": "HURTIGHANDLINGER",
+      "editProfile": "Rediger profilen min",
+      "editProfileDesc": "Oppdater biografi, bilder og priser",
+      "portfolio": "Min portefølje",
+      "portfolioDesc": "Legg til og administrer bildene dine",
+      "availability": "Min tilgjengelighet",
+      "availabilityDesc": "Angi tilgjengelige dager",
+      "packages": "Mine pakker",
+      "packagesDesc": "Administrer økter og tillegg",
+      "messages": "Meldinger",
+      "chatWith": "Chat med klientene dine"
+    },
+    "bookings": {
+      "label": "INNKOMMENDE",
+      "heading": "Bestillingsforespørsler",
+      "noneHeading": "Ingen bestillingsforespørsler ennå",
+      "noneDescription": "Fullfør profilen din for å begynne å motta bestillinger",
+      "noneCta": "Fullfør profilen min",
+      "session": "Økt",
+      "date": "Dato",
+      "location": "Sted",
+      "price": "Pris",
+      "notSet": "Ikke angitt",
+      "messageFromClient": "Melding fra klient",
+      "accept": "Godta bestilling",
+      "processing": "Behandler...",
+      "decline": "Avvis",
+      "cancelConfirm": "Avbestilling gir full refusjon til klienten. Bekreft?",
+      "yesCancel": "Ja, avbestill",
+      "cancelling": "Avbestiller…",
+      "keepBooking": "Behold bestilling",
+      "cancelBooking": "Avbestill",
+      "deliverPhotos": "Lever bilder →",
+      "payoutDue": "Utbetaling {date}",
+      "addMorePhotos": "Legg til flere bilder",
+      "viewDelivery": "Se levering",
+      "paymentReleased": "✓ Betaling frigitt",
+      "underAdminReview": "⚠ Under admingjennomgang",
+      "messageClient": "Meld klient"
+    },
+    "account": {
+      "label": "KONTOINNSTILLINGER",
+      "heading": "Slett kontoen min",
+      "scheduledDesc": "Kontoen din er planlagt for permanent sletting {date}. Du kan avbryte denne forespørselen før den datoen.",
+      "cancelRequest": "Avbryt slettingsforespørsel",
+      "cancelling": "Avbryter…",
+      "warningTitle": "Dette kan ikke angres. Før kontoen din slettes permanent:",
+      "warning1": "Alle ventende og bekreftede bestillinger vil bli kansellert og klienter fullt refundert",
+      "warning2": "Profilen og porteføljen din fjernes fra Lomissa umiddelbart",
+      "warning3": "Du vil ha 30 dager til å ombestemme deg fra dashbordet ditt",
+      "warning4": "Fullførte økter og tidligere Stripe-inntekter påvirkes ikke",
+      "yesDelete": "Ja, slett kontoen min",
+      "requesting": "Forespør…",
+      "keepAccount": "Behold kontoen min",
+      "description": "Slett kontoen din permanent og alle tilknyttede data. Aktive bestillinger vil bli kansellert og klienter fullt refundert. Fullførte økter og tidligere Stripe-inntekter påvirkes ikke. Du vil ha et 30-dagers vindu til å ombestemme deg.",
+      "deleteButton": "Slett kontoen min"
+    },
+    "earnings": {
+      "loadingStripe": "Laster Stripe-data…",
+      "totalEarned": "Totalt opptjent",
+      "afterFee": "Etter 10% Lomissa-gebyr",
+      "pendingEarnings": "Ventende inntekter",
+      "awaitingCompletion": "Venter på fullføring",
+      "availableForPayout": "Tilgjengelig for utbetaling",
+      "readyForPayout": "Klar for utbetaling",
+      "inTransit": "Under overføring",
+      "processingDays": "Behandles (2–7 dager)",
+      "fromStripe": "Fra Stripe-saldo",
+      "connectStripe": "Koble til Stripe for å se",
+      "payoutHistoryLabel": "UTBETALINGSHISTORIKK",
+      "bankPayouts": "Bankutbetalinger",
+      "connectStripeDesc": "Koble til Stripe-kontoen din for å se utbetalingshistorikk.",
+      "noPayouts": "Ingen utbetalinger ennå — utbetalinger vises her når Stripe overfører midler til banken din.",
+      "arrivalDate": "Ankomstdato",
+      "amount": "Beløp",
+      "status": "Status",
+      "reference": "Referanse",
+      "breakdownLabel": "OVERSIKT",
+      "earningsByBooking": "Inntekter per bestilling",
+      "breakdownDesc": "Viser bekreftede og kansellerte bestillinger. Lomissa beholder 10% av hvert øktgebyr.",
+      "noBookings": "Ingen bestillinger å vise ennå.",
+      "sessionFee": "ØKTGEBYR",
+      "lomissaFee": "LOMISSA-GEBYR (10%)",
+      "youReceive": "DU MOTTAR",
+      "completedSessions": "{count, plural, one {# fullført økt} other {# fullførte økter}}",
+      "upcomingSessions": "{count, plural, one {# kommende økt} other {# kommende økter}}",
+      "statusCancelled": "Kansellert",
+      "statusDisputed": "Bestridt",
+      "statusPaidOut": "Utbetalt",
+      "statusPhotosDelivered": "Bilder levert",
+      "statusCompleted": "Fullført",
+      "statusEarned": "Opptjent",
+      "statusUpcoming": "Kommende"
+    },
+    "errors": {
+      "cancelFailed": "Kunne ikke avbestille. Prøv igjen.",
+      "genericError": "Noe gikk galt. Prøv igjen.",
+      "alreadyPending": "En slettingsforespørsel finnes allerede.",
+      "deletionFailed": "Kunne ikke be om sletting. Prøv igjen.",
+      "updateFailed": "Kunne ikke oppdatere bestilling. Prøv igjen.",
+      "stripeError": "Kunne ikke laste Stripe-data. Bestillingstotalene dine vises fortsatt nedenfor.",
+      "stripeGenericError": "Noe gikk galt ved lasting av Stripe-data."
+    }
+  },
+  "Inbox": {
+    "nav": {
+      "dashboard": "Oversikt"
+    },
+    "badge": "INNBOKS",
+    "heading": "Meldinger",
+    "loading": "Laster meldinger...",
+    "empty": {
+      "heading": "Ingen meldinger ennå",
+      "description": "Meldinger fra bestillingene dine vises her."
+    },
+    "deleteConfirm": "Slette denne samtalen? Dette kan ikke angres.",
+    "cancel": "Avbryt",
+    "delete": "Slett",
+    "deleting": "Sletter…",
+    "youPrefix": "Du: ",
+    "noMessages": "Ingen meldinger ennå — start samtalen",
+    "newBadge": "{count} ny"
+  },
+  "Conversation": {
+    "nav": {
+      "backToMessages": "← Tilbake til meldinger"
+    },
+    "loading": "Laster samtale...",
+    "noMessages": "Ingen meldinger ennå — start samtalen!",
+    "yesterday": "I går",
+    "placeholder": "Skriv en melding...",
+    "send": "Send",
+    "imageTooLarge": "Bildet må være under 5 MB.",
+    "imageUploadFailed": "Bildeopplasting mislyktes. Prøv igjen.",
+    "messageFailed": "Meldingen ble ikke sendt. Prøv igjen."
+  },
+  "EditProfile": {
+    "loading": "Laster...",
+    "nav": {
+      "dashboard": "← Oversikt"
+    },
+    "badge": "DIN PROFIL",
+    "heading": "Rediger profilen din",
+    "description": "En fullstendig profil gir 3x flere bestillinger",
+    "photo": {
+      "uploading": "Laster opp…",
+      "change": "Endre bilde",
+      "upload": "Last opp profilbilde",
+      "hint": "JPG, PNG eller WEBP · Maks 10 MB",
+      "tooLarge": "Bildet må være under 10 MB.",
+      "uploadFailed": "Bildeopplasting mislyktes. Prøv igjen."
+    },
+    "form": {
+      "fullName": "Fullt navn",
+      "fullNamePlaceholder": "Ditt fulle navn",
+      "location": "Sted",
+      "locationPlaceholder": "f.eks. Bergen, Norge",
+      "categories": "Fotografikategorier (velg alle som gjelder)",
+      "other": "Annet",
+      "otherPlaceholder": "Beskriv din spesialitet...",
+      "bio": "Biografi",
+      "bioPlaceholder": "Fortell klienter om deg selv, din stil og erfaring...",
+      "instagram": "Instagram-håndtak",
+      "website": "Nettsted",
+      "websitePlaceholder": "https://ditt-nettsted.com",
+      "phone": "Telefonnummer",
+      "phonePlaceholder": "+47 900 00 000",
+      "phoneHelper": "Inkluder landkode. Brukes kun for bestillingsvarslinger."
+    },
+    "cancellation": {
+      "label": "AVBESTILLINGSPOLICY",
+      "description": "Vises til klienter før de bestiller. Gjelder alle nye bestillinger.",
+      "flexibleLabel": "Fleksibel",
+      "flexibleDesc": "Full refusjon opptil 24 timer før økten",
+      "moderateLabel": "Moderat",
+      "moderateDesc": "Full refusjon opptil 48 timer før økten",
+      "strictLabel": "Streng",
+      "strictDesc": "Ingen refusjon etter at bestillingen er bekreftet"
+    },
+    "sessionTerms": {
+      "label": "ØKTVILKÅR",
+      "description": "Vises til klienter på profilen din før de bestiller. La stå tomt for å skjule.",
+      "deliveryTime": "Leveringstid",
+      "deliveryTimePlaceholder": "Velg leveringstid",
+      "deliveryTimeHelper": "Leveringstid starter etter øktdatoen.",
+      "copyright": "Opphavsrett",
+      "copyrightPlaceholder": "Velg opphavsrettspolicy",
+      "editingStyle": "Redigeringsstil",
+      "editingStylePlaceholder": "f.eks. Naturlig og lys, filminspirert",
+      "revisions": "Revisjoner inkludert",
+      "revisionsPlaceholder": "f.eks. 2 runder med revisjoner inkludert"
+    },
+    "save": "Lagre profil",
+    "saving": "Lagrer...",
+    "saved": "Profil lagret ✓",
+    "saveFailed": "Kunne ikke lagre profil. Prøv igjen.",
+    "updateFailed": "Kunne ikke oppdatere offentlig profil. Prøv igjen."
+  },
+  "Packages": {
+    "loading": "Laster...",
+    "nav": {
+      "dashboard": "← Oversikt"
+    },
+    "badge": "DINE TILBUD",
+    "heading": "Pakker og tillegg",
+    "description": "Du trenger minst én pakke for å vises på søkesiden. Maksimalt 5 pakker.",
+    "packages": {
+      "label": "PAKKER",
+      "count": "{count}/5 pakker",
+      "addButton": "+ Legg til pakke",
+      "noPackages": "Ingen pakker ennå",
+      "noPackagesDesc": "Legg til din første pakke for å vises i søkeresultater",
+      "edit": "Rediger",
+      "delete": "Slett",
+      "confirm": "Bekreft",
+      "cancel": "Avbryt"
+    },
+    "addons": {
+      "label": "TILLEGG",
+      "description": "Valgfrie ekstra klienter kan legge til ved kassen",
+      "addButton": "+ Legg til ekstra",
+      "noAddons": "Ingen tillegg ennå",
+      "edit": "Rediger",
+      "delete": "Slett",
+      "confirm": "Bekreft",
+      "cancel": "Avbryt"
+    },
+    "packageForm": {
+      "editTitle": "REDIGER PAKKE",
+      "newTitle": "NY PAKKE",
+      "name": "Pakkenavn",
+      "namePlaceholder": "f.eks. Portrett, Bryllup, Familie",
+      "duration": "Varighet",
+      "durationPlaceholder": "f.eks. 1 time, Hel dag",
+      "photosDelivered": "Bilder levert",
+      "photosPlaceholder": "f.eks. 20",
+      "price": "Pris (NOK)",
+      "pricePlaceholder": "f.eks. 3500",
+      "description": "Beskrivelse (valgfritt)",
+      "descriptionPlaceholder": "Kort beskrivelse for klienter",
+      "category": "Kategori (valgfritt)",
+      "noCategory": "— Ingen kategori —",
+      "saveChanges": "Lagre endringer",
+      "addPackage": "Legg til pakke",
+      "saving": "Lagrer…",
+      "cancel": "Avbryt"
+    },
+    "addonForm": {
+      "title": "NYTT TILLEGG",
+      "name": "Navn",
+      "namePlaceholder": "f.eks. Ekstra time, Hasteleveranse",
+      "price": "Pris (NOK)",
+      "pricePlaceholder": "f.eks. 800",
+      "unit": "Enhet",
+      "unitPlaceholder": "f.eks. per time, fast avgift",
+      "addExtra": "Legg til ekstra",
+      "saving": "Lagrer…",
+      "cancel": "Avbryt"
+    },
+    "errors": {
+      "nameRequired": "Pakkenavn er påkrevd.",
+      "durationRequired": "Varighet er påkrevd.",
+      "photosInvalid": "Bilder levert må være et positivt tall.",
+      "priceInvalid": "Prisen må være et positivt tall.",
+      "maxPackages": "Maksimalt 5 pakker tillatt.",
+      "saveFailed": "Kunne ikke lagre. Prøv igjen.",
+      "addonNameRequired": "Navn er påkrevd.",
+      "addonPriceInvalid": "Prisen må være et positivt tall.",
+      "addonUnitRequired": "Enhet er påkrevd.",
+      "addonSaveFailed": "Kunne ikke lagre."
+    }
+  },
+  "Availability": {
+    "nav": {
+      "dashboard": "← Oversikt"
+    },
+    "badge": "MIN TIMEPLAN",
+    "heading": "Min tilgjengelighet",
+    "description": "Trykk på dager for å merke dem som utilgjengelige — alle andre dager er åpne for bestilling",
+    "stats": {
+      "availableDays": "Tilgjengelige dager",
+      "blockedDays": "Blokkerte dager",
+      "month": "Måned"
+    },
+    "calendar": {
+      "prev": "← Forrige",
+      "next": "Neste →",
+      "mo": "Ma",
+      "tu": "Ti",
+      "we": "On",
+      "th": "To",
+      "fr": "Fr",
+      "sa": "Lø",
+      "su": "Sø",
+      "available": "Tilgjengelig",
+      "unavailable": "Utilgjengelig",
+      "past": "Fortid"
+    },
+    "howItWorks": {
+      "label": "SLIK FUNGERER DET",
+      "tip1": "Alle fremtidige dager er tilgjengelige som standard",
+      "tip2": "Trykk på en dag for å merke den som utilgjengelig",
+      "tip3": "Trykk igjen for å gjøre den tilgjengelig igjen",
+      "tip4": "Klikk Lagre når du er ferdig"
+    },
+    "saved": "Tilgjengelighet lagret ✓",
+    "save": "Lagre tilgjengelighet",
+    "saving": "Lagrer..."
+  },
+  "Portfolio": {
+    "loading": "Laster...",
+    "nav": {
+      "dashboard": "← Oversikt"
+    },
+    "badge": "MITT ARBEID",
+    "heading": "Min portefølje",
+    "description": "Last opp de beste bildene dine — disse vises på din offentlige profil",
+    "upload": {
+      "uploading": "Laster opp...",
+      "uploadingDesc": "Vent mens vi laster opp bildene dine",
+      "heading": "Last opp bildene dine",
+      "description": "Klikk for å bla eller dra og slipp bildene dine her",
+      "choose": "Velg bilder",
+      "hint": "JPG, PNG opptil 10 MB hver — flere bilder tillatt",
+      "tooLarge": "Hvert bilde må være under 10 MB",
+      "failed": "Opplasting mislyktes. Prøv igjen."
+    },
+    "photos": {
+      "count": "{count} BILDER",
+      "noPhotos": "Ingen bilder ennå",
+      "noPhotosDesc": "Last opp ditt første bilde for å komme i gang",
+      "cancel": "Avbryt"
+    }
+  },
+  "Pending": {
+    "nav": {
+      "signOut": "Logg ut"
+    },
+    "badge": "SØKNAD UNDER GJENNOMGANG",
+    "heading": "Vi gjennomgår søknaden din",
+    "description": "Takk for at du søkte på Lomissa. Teamet vårt gjennomgår porteføljen din og vil komme tilbake til deg innen 3 virkedager.",
+    "step1": "Vi gjennomgår porteføljen og erfaringen din",
+    "step2": "Vi sjekker Instagram og nettstedet ditt",
+    "step3": "Du mottar en e-post med vår beslutning",
+    "step4": "Hvis godkjent kan du logge inn umiddelbart",
+    "contact": "Spørsmål? Send oss e-post på"
+  },
+  "Review": {
+    "loading": "Laster...",
+    "nav": {
+      "backToDashboard": "Tilbake til oversikt"
+    },
+    "badge": "LEGG IGJEN EN ANMELDELSE",
+    "heading": "Hvordan var økten?",
+    "description": "Del din erfaring med {name}",
+    "ratingLabel": "Din vurdering",
+    "ratings": {
+      "1": "Dårlig",
+      "2": "OK",
+      "3": "Bra",
+      "4": "Veldig bra",
+      "5": "Utmerket!"
+    },
+    "reviewLabel": "Din anmeldelse",
+    "reviewPlaceholder": "Fortell andre om din erfaring med {name}...",
+    "submit": "Send inn anmeldelse",
+    "submitting": "Sender inn...",
+    "done": {
+      "badge": "TAKK",
+      "heading": "Anmeldelse sendt!",
+      "description": "Takk for at du anmeldte {name}. Anmeldelsen din hjelper andre klienter med å finne gode fotografer.",
+      "backToBookings": "Tilbake til mine bestillinger"
+    },
+    "errors": {
+      "noRating": "Velg en stjernevurdering.",
+      "noComment": "Skriv en kort anmeldelse.",
+      "genericError": "Noe gikk galt. Prøv igjen."
+    },
+    "bookingNotFound": "Bestilling ikke funnet"
+  },
+  "Terms": {
+    "nav": { "backHome": "← Tilbake til forsiden" },
+    "badge": "JURIDISK",
+    "title": "Tjenestevilkår",
+    "lastUpdated": "Sist oppdatert: april 2026",
+    "legalNotice": "Juridisk innhold er foreløpig kun tilgjengelig på engelsk.",
+    "footer": {
+      "privacy": "Personvern",
+      "terms": "Tjenestevilkår"
+    }
+  },
+  "Privacy": {
+    "nav": { "backHome": "← Tilbake til forsiden" },
+    "badge": "JURIDISK",
+    "title": "Personvernerklæring",
+    "lastUpdated": "Sist oppdatert: april 2026",
+    "legalNotice": "Juridisk innhold er foreløpig kun tilgjengelig på engelsk.",
+    "footer": {
+      "privacy": "Personvern",
+      "terms": "Tjenestevilkår"
+    }
+  },
+  "Admin": {
+    "loading": "Laster...",
+    "nav": {
+      "badge": "ADMIN",
+      "viewSite": "Se nettsted",
+      "signOut": "Logg ut"
+    },
+    "header": {
+      "badge": "ADMIN-PANEL",
+      "title": "Lomissa HQ",
+      "description": "Administrer plattformen din fra ett sted"
+    },
+    "stats": {
+      "totalBookings": "Totale bestillinger",
+      "photographers": "Fotografer",
+      "clients": "Klienter",
+      "pendingApplications": "Ventende søknader",
+      "openDisputes": "Åpne tvister"
+    },
+    "tabs": {
+      "overview": "Oversikt",
+      "applications": "Søknader ({count})",
+      "photographers": "Fotografer",
+      "clients": "Klienter ({count})",
+      "bookings": "Bestillinger",
+      "disputes": "{count, plural, =0 {Tvister} other {Tvister ({count})}}"
+    },
+    "overview": {
+      "recentApplications": "NYLIGE SØKNADER",
+      "noApplications": "Ingen søknader ennå",
+      "viewAllApplications": "Se alle søknader →",
+      "recentBookings": "NYLIGE BESTILLINGER",
+      "noBookings": "Ingen bestillinger ennå",
+      "viewAllBookings": "Se alle bestillinger →"
+    },
+    "applications": {
+      "sectionTitle": "ALLE SØKNADER — {count} TOTALT",
+      "noApplications": "Ingen søknader ennå",
+      "portfolio": "Portefølje ↗",
+      "approve": "Godkjenn ✓",
+      "reject": "Avvis ✗"
+    },
+    "photographers": {
+      "sectionTitle": "ALLE FOTOGRAFER — {count} TOTALT",
+      "noPhotographers": "Ingen fotografer ennå",
+      "viewProfile": "Se profil →"
+    },
+    "clients": {
+      "sectionTitle": "ALLE KLIENTER — {count} TOTALT",
+      "pendingDeletion": "· {count} venter på sletting",
+      "noClients": "Ingen klienter ennå",
+      "noName": "Ingen navn angitt",
+      "joined": "Registrert {date}",
+      "bookingCount": "{count, plural, one {# bestilling} other {# bestillinger}}",
+      "pendingDeletionBadge": "Venter på sletting",
+      "activeBadge": "Aktiv",
+      "deletesOn": "Slettes {date}",
+      "hideHistory": "Skjul bestillingshistorikk ↑",
+      "viewHistory": "Se bestillingshistorikk ({count}) →",
+      "noDate": "Ingen dato"
+    },
+    "disputes": {
+      "sectionTitle": "ÅPNE TVISTER — {count} TOTALT",
+      "heading": "Løs tvister",
+      "clientReason": "KUNDENS GRUNN",
+      "adminNote": "ADMIN-NOTAT (valgfritt)",
+      "adminNotePlaceholder": "Legg til et notat om denne løsningen...",
+      "releasePayment": "Utbetal til fotograf",
+      "releasing": "Utbetaler…",
+      "refundClient": "Refunder klient",
+      "refunding": "Refunderer…",
+      "noDisputes": "Ingen åpne tvister",
+      "error": "Noe gikk galt. Prøv igjen."
+    },
+    "bookings": {
+      "sectionTitle": "ALLE BESTILLINGER — {count} TOTALT",
+      "noBookings": "Ingen bestillinger ennå"
+    },
+    "pagination": {
+      "prev": "← Forrige",
+      "page": "Side {current} av {total}",
+      "next": "Neste →"
+    }
+  },
+  "Deliveries": {
+    "loading": "Laster bildene dine…",
+    "nav": { "backToDashboard": "← Tilbake til oversikten" },
+    "header": {
+      "badge": "DINE BILDER",
+      "photoCount": "{count, plural, one {# bilde} other {# bilder}}"
+    },
+    "empty": {
+      "title": "Ingen bilder ennå",
+      "description": "Fotografen din vil levere de redigerte bildene her."
+    },
+    "delivery": {
+      "label": "LEVERING {number}",
+      "photoCount": "{count, plural, one {# bilde} other {# bilder}}",
+      "downloadAll": "Last ned alle ({count})",
+      "preparing": "Forbereder…",
+      "save": "Lagre"
+    }
+  },
+  "DeliverPhotos": {
+    "loading": "Laster…",
+    "nav": { "backToDashboard": "← Tilbake til oversikten" },
+    "done": {
+      "title": "Bilder levert!",
+      "description": "{count, plural, one {# bilde} other {# bilder}} sendt til {name}. De mottar en e-post med en lenke for å se og laste ned dem. 7-dagers tvistevinduet har startet.",
+      "backToDashboard": "Tilbake til oversikten"
+    },
+    "header": {
+      "badge": "LEVER BILDER",
+      "supplementary": "Du har allerede gjort en levering for denne bestillingen. Dette vil legge til et supplement."
+    },
+    "message": {
+      "label": "MELDING TIL KLIENT",
+      "optional": "(valgfritt)",
+      "placeholder": "Legg til en personlig hilsen — takk dem for sesjonen, beskriv din redigeringstilnærming, eller del noe annet…"
+    },
+    "photos": {
+      "label": "BILDER ({count}/{max})",
+      "selectPhotos": "Klikk for å velge bilder",
+      "fileTypes": "JPG, PNG, WEBP · Maks 20 MB hver · Opptil {max} bilder"
+    },
+    "fileStatus": {
+      "uploading": "Laster opp…",
+      "failed": "Feilet"
+    },
+    "errors": {
+      "oversized": "{count, plural, one {# fil overstiger 20 MB og ble hoppet over.} other {# filer overstiger 20 MB og ble hoppet over.}}",
+      "maxPhotos": "Maksimalt {max} bilder per levering. Kun de første {max} ble beholdt.",
+      "noPhotos": "Velg minst ett bilde.",
+      "allFailed": "Alle opplastinger mislyktes. Prøv igjen.",
+      "someFailed": "{count, plural, one {# bilde klarte ikke å laste opp og ble ekskludert.} other {# bilder klarte ikke å laste opp og ble ekskludert.}}",
+      "saveFailed": "Kunne ikke lagre leveransen. Prøv igjen."
+    },
+    "submit": {
+      "deliver": "{count, plural, one {Lever # bilde} other {Lever # bilder}}",
+      "deliverEmpty": "Lever bilder",
+      "keepOpen": "Hold siden åpen…"
+    },
+    "progress": "Laster opp {current} av {total}…"
   }
 }

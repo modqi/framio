@@ -334,5 +334,706 @@
       "fillRequired": "Please fill in your name, email, phone number and about section.",
       "genericError": "Something went wrong. Please try again."
     }
+  },
+  "ClientDashboard": {
+    "loading": "Loading...",
+    "nav": {
+      "hello": "Hello, {name}",
+      "messages": "Messages",
+      "signOut": "Sign out"
+    },
+    "deletion": {
+      "bannerTitle": "Your account is scheduled for deletion",
+      "bannerDesc": "All data will be permanently deleted on {date}.",
+      "cancelDeletion": "Cancel deletion",
+      "cancelling": "Cancelling…"
+    },
+    "paymentSuccess": "✓ Payment confirmed — your booking request has been sent to the photographer.",
+    "welcome": {
+      "badge": "MY ACCOUNT",
+      "heading": "Welcome back",
+      "description": "Find and book talented photographers around the world."
+    },
+    "stats": {
+      "totalBookings": "Total bookings",
+      "allTime": "All time",
+      "confirmed": "Confirmed",
+      "upcomingSessions": "Upcoming sessions",
+      "pending": "Pending",
+      "awaitingResponse": "Awaiting response"
+    },
+    "quickActions": {
+      "label": "QUICK ACTIONS",
+      "findPhotographer": "Find a photographer",
+      "findPhotographerDesc": "Browse all photographers",
+      "messages": "Messages",
+      "chatWith": "Chat with your photographers"
+    },
+    "phone": {
+      "title": "Get SMS updates about your bookings",
+      "description": "Optional — include country code, e.g. +47 900 00 000",
+      "save": "Save",
+      "saving": "Saving…"
+    },
+    "bookings": {
+      "label": "MY BOOKINGS",
+      "heading": "Your sessions",
+      "noneHeading": "No bookings yet",
+      "noneDescription": "Your bookings will appear here once you book a photographer",
+      "noneCta": "Find a photographer",
+      "date": "Date",
+      "location": "Location",
+      "price": "Price",
+      "bookedOn": "Booked on",
+      "notSet": "Not set",
+      "yourMessage": "Your message",
+      "viewPhotos": "View your photos",
+      "photosDeliveredWindow": "Photos delivered — dispute window closes {date}",
+      "raiseDispute": "Raise a dispute",
+      "disputeHeading": "Raise a dispute — describe the issue:",
+      "disputePlaceholder": "Describe why you're disputing (e.g. photos not delivered, wrong photos, quality issues...)",
+      "submitDispute": "Submit dispute",
+      "submittingDispute": "Submitting…",
+      "sessionComplete": "✓ Session complete",
+      "disputeUnderReview": "⚠ Dispute under admin review — we'll be in touch",
+      "cancel": "Cancel",
+      "messagePhotographer": "Message photographer",
+      "leaveReview": "Leave a review",
+      "cancelBooking": "Cancel booking",
+      "confirmCancelSuffix": "confirm cancel?",
+      "yesCancel": "Yes, cancel",
+      "cancelling": "Cancelling…",
+      "keepBooking": "Keep booking"
+    },
+    "refund": {
+      "fullGuaranteed": "Full refund guaranteed",
+      "noRefundStrict": "No refund (strict policy)",
+      "fullRefundIf": "Full refund if cancelled {hours}h before session",
+      "fullRefundAvailable": "Full refund available (cancel more than {hours}h before session)",
+      "noRefundWithin": "No refund — session is within {hours}h"
+    },
+    "account": {
+      "label": "ACCOUNT SETTINGS",
+      "heading": "Delete my account",
+      "scheduledDesc": "Your account is scheduled for permanent deletion on {date}. You can cancel this request before that date.",
+      "cancelRequest": "Cancel deletion request",
+      "cancelling": "Cancelling…",
+      "warningTitle": "This cannot be undone. Before your account is permanently deleted:",
+      "warning1": "All pending and confirmed bookings will be cancelled and fully refunded",
+      "warning2": "You will have 30 days to change your mind from your dashboard",
+      "warning3": "After 30 days, your personal data is anonymised and unrecoverable",
+      "yesDelete": "Yes, delete my account",
+      "requesting": "Requesting…",
+      "keepAccount": "Keep my account",
+      "description": "Permanently delete your account and all associated data. Active bookings will be cancelled and fully refunded. You will have a 30-day window to change your mind.",
+      "deleteButton": "Delete my account"
+    },
+    "errors": {
+      "cancelFailed": "Failed to cancel. Please try again.",
+      "genericError": "Something went wrong. Please try again.",
+      "alreadyPending": "A deletion request already exists.",
+      "deletionFailed": "Failed to request deletion. Please try again."
+    }
+  },
+  "PhotographerDashboard": {
+    "loading": "Loading...",
+    "nav": {
+      "messages": "Messages",
+      "signOut": "Sign out"
+    },
+    "stripe": {
+      "notVisible": "Your profile is not yet visible to clients",
+      "connectDesc": "Connect your bank account to go live and start receiving payouts.",
+      "incompleteDesc": "Stripe onboarding was not completed. Please finish setting up your account.",
+      "connect": "Connect bank account →",
+      "resume": "Resume setup →",
+      "loading": "Loading…"
+    },
+    "deletion": {
+      "bannerTitle": "Your account is scheduled for deletion",
+      "bannerDesc": "All data will be permanently deleted on {date}.",
+      "cancelDeletion": "Cancel deletion",
+      "cancelling": "Cancelling…"
+    },
+    "welcome": {
+      "badge": "PHOTOGRAPHER DASHBOARD",
+      "heading": "Your photography business",
+      "description": "Manage your profile, bookings and earnings all in one place."
+    },
+    "tabs": {
+      "overview": "Overview",
+      "earnings": "Earnings"
+    },
+    "profile": {
+      "editProfile": "Edit profile",
+      "noLocation": "No location set",
+      "noSpecialty": "No specialty set"
+    },
+    "stats": {
+      "totalBookings": "Total bookings",
+      "allTime": "All time",
+      "pending": "Pending",
+      "awaitingResponse": "Awaiting response",
+      "confirmed": "Confirmed",
+      "confirmedSessions": "Confirmed sessions",
+      "unreadMessages": "Unread messages",
+      "newMessages": "New messages"
+    },
+    "completion": {
+      "label": "PROFILE STRENGTH",
+      "heading": "Complete your profile",
+      "description": "A complete profile gets 3x more bookings",
+      "addPhoto": "Add profile photo",
+      "writeBio": "Write your bio",
+      "addPortfolio": "Add portfolio photos",
+      "addPackages": "Add packages",
+      "addLocation": "Add your location"
+    },
+    "quickActions": {
+      "label": "QUICK ACTIONS",
+      "editProfile": "Edit my profile",
+      "editProfileDesc": "Update your bio, photos and prices",
+      "portfolio": "My portfolio",
+      "portfolioDesc": "Add and manage your photos",
+      "availability": "My availability",
+      "availabilityDesc": "Set your available days",
+      "packages": "My packages",
+      "packagesDesc": "Manage your sessions and add-ons",
+      "messages": "Messages",
+      "chatWith": "Chat with your clients"
+    },
+    "bookings": {
+      "label": "INCOMING",
+      "heading": "Booking requests",
+      "noneHeading": "No booking requests yet",
+      "noneDescription": "Complete your profile to start receiving bookings",
+      "noneCta": "Complete my profile",
+      "session": "Session",
+      "date": "Date",
+      "location": "Location",
+      "price": "Price",
+      "notSet": "Not set",
+      "messageFromClient": "Message from client",
+      "accept": "Accept booking",
+      "processing": "Processing...",
+      "decline": "Decline",
+      "cancelConfirm": "Cancelling issues a full refund to the client. Confirm?",
+      "yesCancel": "Yes, cancel",
+      "cancelling": "Cancelling…",
+      "keepBooking": "Keep booking",
+      "cancelBooking": "Cancel booking",
+      "deliverPhotos": "Deliver photos →",
+      "payoutDue": "Payout due {date}",
+      "addMorePhotos": "Add more photos",
+      "viewDelivery": "View delivery",
+      "paymentReleased": "✓ Payment released",
+      "underAdminReview": "⚠ Under admin review",
+      "messageClient": "Message client"
+    },
+    "account": {
+      "label": "ACCOUNT SETTINGS",
+      "heading": "Delete my account",
+      "scheduledDesc": "Your account is scheduled for permanent deletion on {date}. You can cancel this request before that date.",
+      "cancelRequest": "Cancel deletion request",
+      "cancelling": "Cancelling…",
+      "warningTitle": "This cannot be undone. Before your account is permanently deleted:",
+      "warning1": "All pending and confirmed bookings will be cancelled and clients fully refunded",
+      "warning2": "Your profile and portfolio will be removed from Lomissa immediately",
+      "warning3": "You will have 30 days to change your mind from your dashboard",
+      "warning4": "Completed sessions and past earnings in Stripe are not affected",
+      "yesDelete": "Yes, delete my account",
+      "requesting": "Requesting…",
+      "keepAccount": "Keep my account",
+      "description": "Permanently delete your account and all associated data. Active bookings will be cancelled and clients fully refunded. Completed sessions and past Stripe earnings are not affected. You will have a 30-day window to change your mind.",
+      "deleteButton": "Delete my account"
+    },
+    "earnings": {
+      "loadingStripe": "Loading Stripe data…",
+      "totalEarned": "Total earned",
+      "afterFee": "After 10% Lomissa fee",
+      "pendingEarnings": "Pending earnings",
+      "awaitingCompletion": "Awaiting completion",
+      "availableForPayout": "Available for payout",
+      "readyForPayout": "Ready to pay out",
+      "inTransit": "In transit",
+      "processingDays": "Processing (2–7 days)",
+      "fromStripe": "From Stripe balance",
+      "connectStripe": "Connect Stripe to view",
+      "payoutHistoryLabel": "PAYOUT HISTORY",
+      "bankPayouts": "Bank payouts",
+      "connectStripeDesc": "Connect your Stripe account to see payout history.",
+      "noPayouts": "No payouts yet — payouts appear here once Stripe transfers funds to your bank.",
+      "arrivalDate": "Arrival date",
+      "amount": "Amount",
+      "status": "Status",
+      "reference": "Reference",
+      "breakdownLabel": "BREAKDOWN",
+      "earningsByBooking": "Earnings by booking",
+      "breakdownDesc": "Showing confirmed and cancelled bookings. Lomissa retains 10% of each session fee.",
+      "noBookings": "No bookings to show yet.",
+      "sessionFee": "SESSION FEE",
+      "lomissaFee": "LOMISSA FEE (10%)",
+      "youReceive": "YOU RECEIVE",
+      "completedSessions": "{count, plural, one {# completed session} other {# completed sessions}}",
+      "upcomingSessions": "{count, plural, one {# upcoming session} other {# upcoming sessions}}",
+      "statusCancelled": "Cancelled",
+      "statusDisputed": "Disputed",
+      "statusPaidOut": "Paid out",
+      "statusPhotosDelivered": "Photos delivered",
+      "statusCompleted": "Completed",
+      "statusEarned": "Earned",
+      "statusUpcoming": "Upcoming"
+    },
+    "errors": {
+      "cancelFailed": "Failed to cancel. Please try again.",
+      "genericError": "Something went wrong. Please try again.",
+      "alreadyPending": "A deletion request already exists.",
+      "deletionFailed": "Failed to request deletion. Please try again.",
+      "updateFailed": "Failed to update booking. Please try again.",
+      "stripeError": "Could not load Stripe data. Your booking totals are still shown below.",
+      "stripeGenericError": "Something went wrong loading Stripe data."
+    }
+  },
+  "Inbox": {
+    "nav": {
+      "dashboard": "Dashboard"
+    },
+    "badge": "INBOX",
+    "heading": "Messages",
+    "loading": "Loading messages...",
+    "empty": {
+      "heading": "No messages yet",
+      "description": "Messages from your bookings will appear here."
+    },
+    "deleteConfirm": "Delete this conversation? This cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting…",
+    "youPrefix": "You: ",
+    "noMessages": "No messages yet — start the conversation",
+    "newBadge": "{count} new"
+  },
+  "Conversation": {
+    "nav": {
+      "backToMessages": "← Back to messages"
+    },
+    "loading": "Loading conversation...",
+    "noMessages": "No messages yet — start the conversation!",
+    "yesterday": "Yesterday",
+    "placeholder": "Type a message...",
+    "send": "Send",
+    "imageTooLarge": "Image must be under 5 MB.",
+    "imageUploadFailed": "Image upload failed. Please try again.",
+    "messageFailed": "Message failed to send. Please try again."
+  },
+  "EditProfile": {
+    "loading": "Loading...",
+    "nav": {
+      "dashboard": "← Dashboard"
+    },
+    "badge": "YOUR PROFILE",
+    "heading": "Edit your profile",
+    "description": "A complete profile gets 3x more bookings",
+    "photo": {
+      "uploading": "Uploading…",
+      "change": "Change photo",
+      "upload": "Upload profile photo",
+      "hint": "JPG, PNG or WEBP · Max 10 MB",
+      "tooLarge": "Photo must be under 10 MB.",
+      "uploadFailed": "Photo upload failed. Please try again."
+    },
+    "form": {
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "location": "Location",
+      "locationPlaceholder": "e.g. Bergen, Norway",
+      "categories": "Photography categories (select all that apply)",
+      "other": "Other",
+      "otherPlaceholder": "Describe your specialty...",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell clients about yourself, your style and your experience...",
+      "instagram": "Instagram handle",
+      "website": "Website",
+      "websitePlaceholder": "https://yourwebsite.com",
+      "phone": "Phone number",
+      "phonePlaceholder": "+47 900 00 000",
+      "phoneHelper": "Include country code. Used for booking notifications only."
+    },
+    "cancellation": {
+      "label": "CANCELLATION POLICY",
+      "description": "Shown to clients before they book. Applies to all new bookings.",
+      "flexibleLabel": "Flexible",
+      "flexibleDesc": "Full refund up to 24 hours before the session",
+      "moderateLabel": "Moderate",
+      "moderateDesc": "Full refund up to 48 hours before the session",
+      "strictLabel": "Strict",
+      "strictDesc": "No refund once the booking is confirmed"
+    },
+    "sessionTerms": {
+      "label": "SESSION TERMS",
+      "description": "Shown to clients on your profile before they book. Leave blank to hide.",
+      "deliveryTime": "Delivery time",
+      "deliveryTimePlaceholder": "Select delivery time",
+      "deliveryTimeHelper": "Delivery time starts after the session date.",
+      "copyright": "Copyright ownership",
+      "copyrightPlaceholder": "Select copyright policy",
+      "editingStyle": "Editing style",
+      "editingStylePlaceholder": "e.g. Natural and light, film-inspired",
+      "revisions": "Revisions included",
+      "revisionsPlaceholder": "e.g. 2 rounds of revisions included"
+    },
+    "save": "Save profile",
+    "saving": "Saving...",
+    "saved": "Profile saved successfully ✓",
+    "saveFailed": "Failed to save profile. Please try again.",
+    "updateFailed": "Failed to update public profile. Please try again."
+  },
+  "Packages": {
+    "loading": "Loading...",
+    "nav": {
+      "dashboard": "← Dashboard"
+    },
+    "badge": "YOUR OFFERINGS",
+    "heading": "Packages & add-ons",
+    "description": "You need at least one package to appear on the browse page. Maximum 5 packages.",
+    "packages": {
+      "label": "PACKAGES",
+      "count": "{count}/5 packages",
+      "addButton": "+ Add package",
+      "noPackages": "No packages yet",
+      "noPackagesDesc": "Add your first package to appear in search results",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "addons": {
+      "label": "ADD-ONS",
+      "description": "Optional extras clients can add at checkout",
+      "addButton": "+ Add extra",
+      "noAddons": "No add-ons yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "packageForm": {
+      "editTitle": "EDIT PACKAGE",
+      "newTitle": "NEW PACKAGE",
+      "name": "Package name",
+      "namePlaceholder": "e.g. Portrait, Wedding, Family",
+      "duration": "Duration",
+      "durationPlaceholder": "e.g. 1 hour, Full day",
+      "photosDelivered": "Photos delivered",
+      "photosPlaceholder": "e.g. 20",
+      "price": "Price (NOK)",
+      "pricePlaceholder": "e.g. 3500",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Short description for clients",
+      "category": "Category (optional)",
+      "noCategory": "— No category —",
+      "saveChanges": "Save changes",
+      "addPackage": "Add package",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    },
+    "addonForm": {
+      "title": "NEW ADD-ON",
+      "name": "Name",
+      "namePlaceholder": "e.g. Extra hour, Rush delivery",
+      "price": "Price (NOK)",
+      "pricePlaceholder": "e.g. 800",
+      "unit": "Unit",
+      "unitPlaceholder": "e.g. per hour, flat fee",
+      "addExtra": "Add extra",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "nameRequired": "Package name is required.",
+      "durationRequired": "Duration is required.",
+      "photosInvalid": "Photos delivered must be a positive number.",
+      "priceInvalid": "Price must be a positive number.",
+      "maxPackages": "Maximum 5 packages allowed.",
+      "saveFailed": "Failed to save. Please try again.",
+      "addonNameRequired": "Name is required.",
+      "addonPriceInvalid": "Price must be a positive number.",
+      "addonUnitRequired": "Unit is required.",
+      "addonSaveFailed": "Failed to save."
+    }
+  },
+  "Availability": {
+    "nav": {
+      "dashboard": "← Dashboard"
+    },
+    "badge": "MY SCHEDULE",
+    "heading": "My availability",
+    "description": "Tap days to mark them as unavailable — all other days are open for booking",
+    "stats": {
+      "availableDays": "Available days",
+      "blockedDays": "Blocked days",
+      "month": "Month"
+    },
+    "calendar": {
+      "prev": "← Prev",
+      "next": "Next →",
+      "mo": "Mo",
+      "tu": "Tu",
+      "we": "We",
+      "th": "Th",
+      "fr": "Fr",
+      "sa": "Sa",
+      "su": "Su",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "past": "Past"
+    },
+    "howItWorks": {
+      "label": "HOW IT WORKS",
+      "tip1": "All future days are available by default",
+      "tip2": "Tap any day to mark it as unavailable",
+      "tip3": "Tap again to make it available again",
+      "tip4": "Click Save when you are done"
+    },
+    "saved": "Availability saved successfully ✓",
+    "save": "Save availability",
+    "saving": "Saving..."
+  },
+  "Portfolio": {
+    "loading": "Loading...",
+    "nav": {
+      "dashboard": "← Dashboard"
+    },
+    "badge": "MY WORK",
+    "heading": "My portfolio",
+    "description": "Upload your best photos — these appear on your public profile",
+    "upload": {
+      "uploading": "Uploading...",
+      "uploadingDesc": "Please wait while we upload your photos",
+      "heading": "Upload your photos",
+      "description": "Click to browse or drag and drop your photos here",
+      "choose": "Choose photos",
+      "hint": "JPG, PNG up to 10MB each — multiple photos allowed",
+      "tooLarge": "Each photo must be under 10MB",
+      "failed": "Upload failed. Please try again."
+    },
+    "photos": {
+      "count": "{count} PHOTOS",
+      "noPhotos": "No photos yet",
+      "noPhotosDesc": "Upload your first photo to get started",
+      "cancel": "Cancel"
+    }
+  },
+  "Pending": {
+    "nav": {
+      "signOut": "Sign out"
+    },
+    "badge": "APPLICATION UNDER REVIEW",
+    "heading": "We are reviewing your application",
+    "description": "Thank you for applying to Lomissa. Our team is reviewing your portfolio and will get back to you within 3 business days.",
+    "step1": "We review your portfolio and experience",
+    "step2": "We check your Instagram and website",
+    "step3": "You receive an email with our decision",
+    "step4": "If approved you can log in immediately",
+    "contact": "Questions? Email us at"
+  },
+  "Review": {
+    "loading": "Loading...",
+    "nav": {
+      "backToDashboard": "Back to dashboard"
+    },
+    "badge": "LEAVE A REVIEW",
+    "heading": "How was your session?",
+    "description": "Share your experience with {name}",
+    "ratingLabel": "Your rating",
+    "ratings": {
+      "1": "Poor",
+      "2": "Fair",
+      "3": "Good",
+      "4": "Very good",
+      "5": "Excellent!"
+    },
+    "reviewLabel": "Your review",
+    "reviewPlaceholder": "Tell others about your experience with {name}...",
+    "submit": "Submit review",
+    "submitting": "Submitting...",
+    "done": {
+      "badge": "THANK YOU",
+      "heading": "Review submitted!",
+      "description": "Thank you for reviewing {name}. Your review helps other clients find great photographers.",
+      "backToBookings": "Back to my bookings"
+    },
+    "errors": {
+      "noRating": "Please select a star rating.",
+      "noComment": "Please write a short review.",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "bookingNotFound": "Booking not found"
+  },
+  "Terms": {
+    "nav": { "backHome": "← Back to home" },
+    "badge": "LEGAL",
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: April 2026",
+    "legalNotice": "",
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "Privacy": {
+    "nav": { "backHome": "← Back to home" },
+    "badge": "LEGAL",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: April 2026",
+    "legalNotice": "",
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "Admin": {
+    "loading": "Loading...",
+    "nav": {
+      "badge": "ADMIN",
+      "viewSite": "View site",
+      "signOut": "Sign out"
+    },
+    "header": {
+      "badge": "ADMIN PANEL",
+      "title": "Lomissa HQ",
+      "description": "Manage your platform from one place"
+    },
+    "stats": {
+      "totalBookings": "Total bookings",
+      "photographers": "Photographers",
+      "clients": "Clients",
+      "pendingApplications": "Pending applications",
+      "openDisputes": "Open disputes"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "applications": "Applications ({count})",
+      "photographers": "Photographers",
+      "clients": "Clients ({count})",
+      "bookings": "Bookings",
+      "disputes": "{count, plural, =0 {Disputes} other {Disputes ({count})}}"
+    },
+    "overview": {
+      "recentApplications": "RECENT APPLICATIONS",
+      "noApplications": "No applications yet",
+      "viewAllApplications": "View all applications →",
+      "recentBookings": "RECENT BOOKINGS",
+      "noBookings": "No bookings yet",
+      "viewAllBookings": "View all bookings →"
+    },
+    "applications": {
+      "sectionTitle": "ALL APPLICATIONS — {count} TOTAL",
+      "noApplications": "No applications yet",
+      "portfolio": "Portfolio ↗",
+      "approve": "Approve ✓",
+      "reject": "Reject ✗"
+    },
+    "photographers": {
+      "sectionTitle": "ALL PHOTOGRAPHERS — {count} TOTAL",
+      "noPhotographers": "No photographers yet",
+      "viewProfile": "View profile →"
+    },
+    "clients": {
+      "sectionTitle": "ALL CLIENTS — {count} TOTAL",
+      "pendingDeletion": "· {count} pending deletion",
+      "noClients": "No clients yet",
+      "noName": "No name set",
+      "joined": "Joined {date}",
+      "bookingCount": "{count, plural, one {# booking} other {# bookings}}",
+      "pendingDeletionBadge": "Pending deletion",
+      "activeBadge": "Active",
+      "deletesOn": "Deletes {date}",
+      "hideHistory": "Hide booking history ↑",
+      "viewHistory": "View booking history ({count}) →",
+      "noDate": "No date"
+    },
+    "disputes": {
+      "sectionTitle": "OPEN DISPUTES — {count} TOTAL",
+      "heading": "Resolve disputes",
+      "clientReason": "CLIENT REASON",
+      "adminNote": "ADMIN NOTE (optional)",
+      "adminNotePlaceholder": "Add a note about this resolution...",
+      "releasePayment": "Release payment to photographer",
+      "releasing": "Releasing…",
+      "refundClient": "Refund client",
+      "refunding": "Refunding…",
+      "noDisputes": "No open disputes",
+      "error": "Something went wrong. Please try again."
+    },
+    "bookings": {
+      "sectionTitle": "ALL BOOKINGS — {count} TOTAL",
+      "noBookings": "No bookings yet"
+    },
+    "pagination": {
+      "prev": "← Prev",
+      "page": "Page {current} of {total}",
+      "next": "Next →"
+    }
+  },
+  "Deliveries": {
+    "loading": "Loading your photos…",
+    "nav": { "backToDashboard": "← Back to dashboard" },
+    "header": {
+      "badge": "YOUR PHOTOS",
+      "photoCount": "{count, plural, one {# photo} other {# photos}}"
+    },
+    "empty": {
+      "title": "No photos yet",
+      "description": "Your photographer will deliver the edited photos here."
+    },
+    "delivery": {
+      "label": "DELIVERY {number}",
+      "photoCount": "{count, plural, one {# photo} other {# photos}}",
+      "downloadAll": "Download all ({count})",
+      "preparing": "Preparing…",
+      "save": "Save"
+    }
+  },
+  "DeliverPhotos": {
+    "loading": "Loading…",
+    "nav": { "backToDashboard": "← Back to dashboard" },
+    "done": {
+      "title": "Photos delivered!",
+      "description": "{count, plural, one {# photo} other {# photos}} sent to {name}. They'll receive an email with a link to view and download them. The 7-day dispute window has started.",
+      "backToDashboard": "Back to dashboard"
+    },
+    "header": {
+      "badge": "DELIVER PHOTOS",
+      "supplementary": "You've already made a delivery for this booking. This will add a supplementary batch."
+    },
+    "message": {
+      "label": "MESSAGE TO CLIENT",
+      "optional": "(optional)",
+      "placeholder": "Add a personal note — thank them for the session, describe your editing approach, or share anything else…"
+    },
+    "photos": {
+      "label": "PHOTOS ({count}/{max})",
+      "selectPhotos": "Click to select photos",
+      "fileTypes": "JPG, PNG, WEBP · Max 20 MB each · Up to {max} photos"
+    },
+    "fileStatus": {
+      "uploading": "Uploading…",
+      "failed": "Failed"
+    },
+    "errors": {
+      "oversized": "{count, plural, one {# file exceeds 20 MB and was skipped.} other {# files exceed 20 MB and were skipped.}}",
+      "maxPhotos": "Maximum {max} photos per delivery. Only the first {max} were kept.",
+      "noPhotos": "Please select at least one photo.",
+      "allFailed": "All uploads failed. Please try again.",
+      "someFailed": "{count, plural, one {# photo failed to upload and was excluded.} other {# photos failed to upload and were excluded.}}",
+      "saveFailed": "Failed to save delivery. Please try again."
+    },
+    "submit": {
+      "deliver": "{count, plural, one {Deliver # photo} other {Deliver # photos}}",
+      "deliverEmpty": "Deliver photos",
+      "keepOpen": "Please keep this page open…"
+    },
+    "progress": "Uploading {current} of {total}…"
   }
 }

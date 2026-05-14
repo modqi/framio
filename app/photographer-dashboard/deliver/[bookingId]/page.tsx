@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { supabase } from "../../../../lib/supabase";
 import Logo from "../../../components/Logo";
 import { CameraIcon, CheckIcon, XIcon, ImageFileIcon } from "../../../components/Icons";
@@ -15,6 +16,7 @@ interface FileEntry {
 }
 
 export default function DeliverPhotos({ params }: { params: any }) {
+  const t = useTranslations("DeliverPhotos");
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [booking, setBooking] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
@@ -73,7 +75,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
     e.target.value = "";
     const oversized = picked.filter(f => f.size > MAX_FILE_SIZE);
     if (oversized.length) {
-      setError(`${oversized.length} file(s) exceed 20 MB and were skipped.`);
+      setError(t("errors.oversized", { count: oversized.length } as any));
     } else {
       setError(null);
     }
@@ -81,7 +83,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
     setFiles(prev => {
       const combined = [...prev, ...valid.map(f => ({ file: f, status: "pending" as const }))];
       if (combined.length > MAX_FILES) {
-        setError(`Maximum ${MAX_FILES} photos per delivery. Only the first ${MAX_FILES} were kept.`);
+        setError(t("errors.maxPhotos", { max: MAX_FILES } as any));
         return combined.slice(0, MAX_FILES);
       }
       return combined;
@@ -93,7 +95,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
   };
 
   const handleDeliver = async () => {
-    if (files.length === 0) { setError("Please select at least one photo."); return; }
+    if (files.length === 0) { setError(t("errors.noPhotos")); return; }
     setError(null);
     setSubmitting(true);
 
@@ -128,13 +130,13 @@ export default function DeliverPhotos({ params }: { params: any }) {
     setUploadingIndex(null);
 
     if (uploaded.length === 0) {
-      setError("All uploads failed. Please try again.");
+      setError(t("errors.allFailed"));
       setSubmitting(false);
       return;
     }
 
     if (uploaded.length < files.length) {
-      setError(`${files.length - uploaded.length} photo(s) failed to upload and were excluded.`);
+      setError(t("errors.someFailed", { count: files.length - uploaded.length } as any));
     }
 
     // Create delivery record
@@ -151,19 +153,19 @@ export default function DeliverPhotos({ params }: { params: any }) {
       setDone(true);
     } else {
       const data = await res.json();
-      setError(data.error || "Failed to save delivery. Please try again.");
+      setError(data.error || t("errors.saveFailed"));
     }
     setSubmitting(false);
   };
 
   const uploadedCount = files.filter(f => f.status === "done").length;
   const progress = files.length > 0 && submitting
-    ? `Uploading ${Math.min(uploadingIndex !== null ? uploadingIndex + 1 : uploadedCount, files.length)} of ${files.length}…`
+    ? t("progress", { current: Math.min(uploadingIndex !== null ? uploadingIndex + 1 : uploadedCount, files.length), total: files.length } as any)
     : null;
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading…</p>
+      <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
     </div>
   );
 
@@ -171,13 +173,12 @@ export default function DeliverPhotos({ params }: { params: any }) {
     <main className="min-h-screen flex flex-col items-center justify-center" style={{backgroundColor: "#FDFBF8", padding: "40px 24px"}}>
       <div style={{maxWidth: "480px", width: "100%", textAlign: "center"}}>
         <div style={{marginBottom: "24px"}}><CameraIcon size={56} color="#C8622A"/></div>
-        <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>Photos delivered!</h1>
+        <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>{t("done.title")}</h1>
         <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", lineHeight: "1.7", margin: "0 0 32px"}}>
-          {uploadedCount} photo{uploadedCount === 1 ? "" : "s"} sent to {booking?.client_name}. They'll receive an email with a link to view and download them.
-          The 7-day dispute window has started.
+          {t("done.description", { count: uploadedCount, name: booking?.client_name } as any)}
         </p>
         <a href="/photographer-dashboard" style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}>
-          Back to dashboard
+          {t("done.backToDashboard")}
         </a>
       </div>
     </main>
@@ -187,13 +188,13 @@ export default function DeliverPhotos({ params }: { params: any }) {
     <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
       <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>← Back to dashboard</a>
+        <a href="/photographer-dashboard" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.backToDashboard")}</a>
       </nav>
 
       <div style={{maxWidth: "720px", margin: "0 auto", padding: "48px 24px"}}>
         {/* Header */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>DELIVER PHOTOS</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("header.badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
             {booking?.client_name}
           </h1>
@@ -202,7 +203,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
           </p>
           {booking?.status === "photos_delivered" && (
             <p style={{fontSize: "13px", color: "#7c3aed", fontFamily: "'Jost', sans-serif", margin: "8px 0 0"}}>
-              You've already made a delivery for this booking. This will add a supplementary batch.
+              {t("header.supplementary")}
             </p>
           )}
         </div>
@@ -210,12 +211,12 @@ export default function DeliverPhotos({ params }: { params: any }) {
         {/* Message */}
         <div style={{marginBottom: "32px"}}>
           <label style={{display: "block", fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-            MESSAGE TO CLIENT <span style={{color: "#DDD0C0"}}>(optional)</span>
+            {t("message.label")} <span style={{color: "#DDD0C0"}}>{t("message.optional")}</span>
           </label>
           <textarea
             value={message}
             onChange={e => setMessage(e.target.value)}
-            placeholder="Add a personal note — thank them for the session, describe your editing approach, or share anything else…"
+            placeholder={t("message.placeholder")}
             rows={4}
             disabled={submitting}
             style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "12px", padding: "16px", fontSize: "14px", fontFamily: "'Jost', sans-serif", resize: "vertical", outline: "none", backgroundColor: "#FDFBF8", color: "#1A0E06", boxSizing: "border-box"}}
@@ -225,7 +226,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
         {/* File picker */}
         <div style={{marginBottom: "24px"}}>
           <label style={{display: "block", fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-            PHOTOS ({files.length}/{MAX_FILES})
+            {t("photos.label", { count: files.length, max: MAX_FILES } as any)}
           </label>
           <input
             ref={fileInputRef}
@@ -251,8 +252,8 @@ export default function DeliverPhotos({ params }: { params: any }) {
               <circle cx="8.5" cy="8.5" r="1.5"/>
               <polyline points="21 15 16 10 5 21"/>
             </svg>
-            <span>Click to select photos</span>
-            <span style={{fontSize: "12px", color: "#DDD0C0"}}>JPG, PNG, WEBP · Max 20 MB each · Up to {MAX_FILES} photos</span>
+            <span>{t("photos.selectPhotos")}</span>
+            <span style={{fontSize: "12px", color: "#DDD0C0"}}>{t("photos.fileTypes", { max: MAX_FILES } as any)}</span>
           </button>
         </div>
 
@@ -267,7 +268,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
                 <div style={{flex: 1, minWidth: 0}}>
                   <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>{entry.file.name}</p>
                   <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                    {entry.status === "uploading" ? "Uploading…" : entry.status === "error" ? (entry.error || "Failed") : (entry.file.size / (1024 * 1024)).toFixed(1) + " MB"}
+                    {entry.status === "uploading" ? t("fileStatus.uploading") : entry.status === "error" ? (entry.error || t("fileStatus.failed")) : (entry.file.size / (1024 * 1024)).toFixed(1) + " MB"}
                   </p>
                 </div>
                 {!submitting && entry.status === "pending" && (
@@ -292,11 +293,11 @@ export default function DeliverPhotos({ params }: { params: any }) {
             disabled={submitting || files.length === 0}
             style={{backgroundColor: files.length === 0 || submitting ? "#7A5C44" : "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 40px", border: "none", borderRadius: "999px", cursor: files.length === 0 || submitting ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", opacity: files.length === 0 ? 0.5 : 1}}
           >
-            {progress || `Deliver ${files.length > 0 ? files.length + " photo" + (files.length === 1 ? "" : "s") : "photos"}`}
+            {progress || (files.length > 0 ? t("submit.deliver", { count: files.length } as any) : t("submit.deliverEmpty"))}
           </button>
           {submitting && (
             <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-              Please keep this page open…
+              {t("submit.keepOpen")}
             </p>
           )}
         </div>

@@ -5,6 +5,7 @@ import Logo from "../components/Logo";
 import { CameraIcon, CalendarIcon, MessageIcon, ProfileIcon, PortfolioIcon, PackageIcon, EmptyInboxIcon, CheckIcon } from "../components/Icons";
 import GlobeModal from "../components/GlobeModal";
 import { useCurrency } from "../../lib/currency-context";
+import { useTranslations } from "next-intl";
 
 const parsePrice = (price: unknown): number => {
   const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
@@ -21,6 +22,7 @@ const fmtMoney = (amount: number, currency = "usd"): string => {
 
 export default function PhotographerDashboard() {
   const { convertPrice } = useCurrency();
+  const t = useTranslations("PhotographerDashboard");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
@@ -44,13 +46,7 @@ export default function PhotographerDashboard() {
   const [requestingDeletion, setRequestingDeletion] = useState(false);
   const [deletionError, setDeletionError] = useState("");
   const [cancellingDeletion, setCancellingDeletion] = useState(false);
-  const [tasks, setTasks] = useState([
-    { task: "Add profile photo", done: false },
-    { task: "Write your bio", done: false },
-    { task: "Add portfolio photos", done: false },
-    { task: "Add packages", done: false },
-    { task: "Add your location", done: false },
-  ]);
+  const [tasks, setTasks] = useState<{ task: string; done: boolean }[]>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -91,11 +87,11 @@ export default function PhotographerDashboard() {
 
         const hasPackages = (photographerRow?.photographer_packages?.length ?? 0) > 0;
         const updatedTasks = [
-          { task: "Add profile photo", done: !!photographerRow?.profile_photo },
-          { task: "Write your bio", done: !!meta?.bio },
-          { task: "Add portfolio photos", done: (photoCount || 0) > 0 },
-          { task: "Add packages", done: hasPackages },
-          { task: "Add your location", done: !!meta?.location },
+          { task: t("completion.addPhoto"), done: !!photographerRow?.profile_photo },
+          { task: t("completion.writeBio"), done: !!meta?.bio },
+          { task: t("completion.addPortfolio"), done: (photoCount || 0) > 0 },
+          { task: t("completion.addPackages"), done: hasPackages },
+          { task: t("completion.addLocation"), done: !!meta?.location },
         ];
         setTasks(updatedTasks);
         const done = updatedTasks.filter(t => t.done).length;
@@ -171,13 +167,13 @@ export default function PhotographerDashboard() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setDeletionError(data.error === "already_pending" ? "A deletion request already exists." : "Failed to request deletion. Please try again.");
+        setDeletionError(data.error === "already_pending" ? t("errors.alreadyPending") : t("errors.deletionFailed"));
       } else {
         setDeletionRequest({ scheduled_deletion_at: data.scheduledDate });
         setShowDeleteConfirm(false);
       }
     } catch {
-      setDeletionError("Something went wrong. Please try again.");
+      setDeletionError(t("errors.genericError"));
     }
     setRequestingDeletion(false);
   };
@@ -202,7 +198,7 @@ export default function PhotographerDashboard() {
     setActionError("");
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
     if (error) {
-      setActionError("Failed to update booking. Please try again.");
+      setActionError(t("errors.updateFailed"));
       setProcessingId(null);
       return;
     }
@@ -253,11 +249,11 @@ export default function PhotographerDashboard() {
       if (res.ok) {
         setEarningsData(await res.json());
       } else {
-        setEarningsError("Could not load Stripe data. Your booking totals are still shown below.");
+        setEarningsError(t("errors.stripeError"));
         setEarningsData({});
       }
     } catch {
-      setEarningsError("Something went wrong loading Stripe data.");
+      setEarningsError(t("errors.stripeGenericError"));
       setEarningsData({});
     }
     setEarningsLoading(false);
@@ -278,13 +274,13 @@ export default function PhotographerDashboard() {
         body: JSON.stringify({ bookingId: id }),
       });
       if (!res.ok) {
-        setCancelError("Failed to cancel. Please try again.");
+        setCancelError(t("errors.cancelFailed"));
       } else {
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status: "cancelled" } : b));
         setConfirmCancelId(null);
       }
     } catch {
-      setCancelError("Something went wrong. Please try again.");
+      setCancelError(t("errors.genericError"));
     }
     setCancellingId(null);
   };
@@ -292,7 +288,7 @@ export default function PhotographerDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
-        <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading...</p>
+        <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("loading")}</p>
       </div>
     );
   }
@@ -307,7 +303,7 @@ export default function PhotographerDashboard() {
           <GlobeModal />
           <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.name}</span>
           <a href="/messages" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "'Jost', sans-serif"}}>
-            <MessageIcon size={16} color="#7A5C44" /> Messages
+            <MessageIcon size={16} color="#7A5C44" /> {t("nav.messages")}
             {unreadCount > 0 && (
               <span style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "10px", fontWeight: "700", padding: "2px 6px", borderRadius: "999px"}}>
                 {unreadCount}
@@ -315,7 +311,7 @@ export default function PhotographerDashboard() {
             )}
           </a>
           <button onClick={handleSignOut} style={{fontSize: "12px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
-            Sign out
+            {t("nav.signOut")}
           </button>
         </div>
       </nav>
@@ -325,11 +321,9 @@ export default function PhotographerDashboard() {
         <div style={{backgroundColor: "#1A0E06", padding: "16px 32px"}}>
           <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
             <div>
-              <p style={{fontSize: "13px", color: "#FDFBF8", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>Your profile is not yet visible to clients</p>
+              <p style={{fontSize: "13px", color: "#FDFBF8", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("stripe.notVisible")}</p>
               <p style={{fontSize: "12px", color: "rgba(253,251,248,0.5)", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                {connectIncomplete
-                  ? "Stripe onboarding was not completed. Please finish setting up your account."
-                  : "Connect your bank account to go live and start receiving payouts."}
+                {connectIncomplete ? t("stripe.incompleteDesc") : t("stripe.connectDesc")}
               </p>
             </div>
             <button
@@ -337,7 +331,7 @@ export default function PhotographerDashboard() {
               disabled={connectLoading}
               style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: connectLoading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: connectLoading ? 0.7 : 1}}
             >
-              {connectLoading ? "Loading…" : connectIncomplete ? "Resume setup →" : "Connect bank account →"}
+              {connectLoading ? t("stripe.loading") : connectIncomplete ? t("stripe.resume") : t("stripe.connect")}
             </button>
           </div>
           {connectError && (
@@ -353,10 +347,10 @@ export default function PhotographerDashboard() {
           <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
             <div>
               <p style={{fontSize: "13px", color: "#dc2626", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-                Your account is scheduled for deletion
+                {t("deletion.bannerTitle")}
               </p>
               <p style={{fontSize: "12px", color: "#ef4444", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                All data will be permanently deleted on {new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}.
+                {t("deletion.bannerDesc", { date: new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) })}
               </p>
             </div>
             <button
@@ -364,7 +358,7 @@ export default function PhotographerDashboard() {
               disabled={cancellingDeletion}
               style={{backgroundColor: "#dc2626", color: "#fff", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: cancellingDeletion ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", flexShrink: 0, opacity: cancellingDeletion ? 0.7 : 1}}
             >
-              {cancellingDeletion ? "Cancelling…" : "Cancel deletion"}
+              {cancellingDeletion ? t("deletion.cancelling") : t("deletion.cancelDeletion")}
             </button>
           </div>
         </div>
@@ -374,18 +368,18 @@ export default function PhotographerDashboard() {
 
         {/* Welcome */}
         <div style={{marginBottom: "40px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PHOTOGRAPHER DASHBOARD</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("welcome.badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-            Your photography business
+            {t("welcome.heading")}
           </h1>
-          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>Manage your profile, bookings and earnings all in one place.</p>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("welcome.description")}</p>
         </div>
 
         {/* Tab navigation */}
         <div style={{display: "flex", borderBottom: "1px solid #E2D5C8", marginBottom: "32px"}}>
           {([
-            { id: "overview", label: "Overview" },
-            { id: "earnings", label: "Earnings" },
+            { id: "overview", label: t("tabs.overview") },
+            { id: "earnings", label: t("tabs.earnings") },
           ] as const).map((tab) => (
             <button
               key={tab.id}
@@ -407,21 +401,21 @@ export default function PhotographerDashboard() {
           </div>
           <div style={{flex: 1}}>
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{user?.user_metadata?.name || "Your name"}</p>
-            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.location || "No location set"}</p>
-            <p style={{fontSize: "12px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || "No specialty set"}</p>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.location || t("profile.noLocation")}</p>
+            <p style={{fontSize: "12px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || t("profile.noSpecialty")}</p>
           </div>
           <a href="/photographer-dashboard/edit-profile" style={{fontSize: "12px", color: "#1A0E06", border: "1px solid #E2D5C8", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", backgroundColor: "#FDFBF8", flexShrink: 0, fontFamily: "'Jost', sans-serif"}}>
-            Edit profile
+            {t("profile.editProfile")}
           </a>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Total bookings", value: bookings.length, desc: "All time" },
-            { label: "Pending", value: bookings.filter(b => b.status === "pending").length, desc: "Awaiting response" },
-            { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, desc: "Confirmed sessions" },
-            { label: "Unread messages", value: unreadCount, desc: "New messages" },
+            { label: t("stats.totalBookings"), value: bookings.length, desc: t("stats.allTime") },
+            { label: t("stats.pending"), value: bookings.filter(b => b.status === "pending").length, desc: t("stats.awaitingResponse") },
+            { label: t("stats.confirmed"), value: bookings.filter(b => b.status === "confirmed").length, desc: t("stats.confirmedSessions") },
+            { label: t("stats.unreadMessages"), value: unreadCount, desc: t("stats.newMessages") },
           ].map((stat) => (
             <div key={stat.label} style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px", border: "1px solid #E2D5C8"}}>
               <p style={{fontSize: "11px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{stat.label}</p>
@@ -435,9 +429,9 @@ export default function PhotographerDashboard() {
         <div style={{backgroundColor: "#1A0E06", borderRadius: "12px", padding: "32px", marginBottom: "32px"}}>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p style={{fontSize: "11px", color: "#C1622F", margin: "0 0 6px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PROFILE STRENGTH</p>
-              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#FDFBF8", margin: "0"}}>Complete your profile</h2>
-              <p style={{fontSize: "13px", color: "rgba(253,251,248,0.4)", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>A complete profile gets 3x more bookings</p>
+              <p style={{fontSize: "11px", color: "#C1622F", margin: "0 0 6px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("completion.label")}</p>
+              <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#FDFBF8", margin: "0"}}>{t("completion.heading")}</h2>
+              <p style={{fontSize: "13px", color: "rgba(253,251,248,0.4)", margin: "4px 0 0", fontFamily: "'Jost', sans-serif"}}>{t("completion.description")}</p>
             </div>
             <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "44px", fontWeight: "400", color: "#C1622F", letterSpacing: "-0.02em"}}>{completion}%</span>
           </div>
@@ -458,13 +452,13 @@ export default function PhotographerDashboard() {
 
         {/* Quick actions */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "32px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>QUICK ACTIONS</p>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("quickActions.label")}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: <ProfileIcon size={22} color="#FDFBF8"/>, title: "Edit my profile", desc: "Update your bio, photos and prices", href: "/photographer-dashboard/edit-profile" },
-              { icon: <PortfolioIcon size={22} color="#FDFBF8"/>, title: "My portfolio", desc: "Add and manage your photos", href: "/photographer-dashboard/portfolio" },
-              { icon: <CalendarIcon size={22} color="#FDFBF8"/>, title: "My availability", desc: "Set your available days", href: "/photographer-dashboard/availability" },
-              { icon: <PackageIcon size={22} color="#FDFBF8"/>, title: "My packages", desc: "Manage your sessions and add-ons", href: "/photographer-dashboard/packages" },
+              { icon: <ProfileIcon size={22} color="#FDFBF8"/>, title: t("quickActions.editProfile"), desc: t("quickActions.editProfileDesc"), href: "/photographer-dashboard/edit-profile" },
+              { icon: <PortfolioIcon size={22} color="#FDFBF8"/>, title: t("quickActions.portfolio"), desc: t("quickActions.portfolioDesc"), href: "/photographer-dashboard/portfolio" },
+              { icon: <CalendarIcon size={22} color="#FDFBF8"/>, title: t("quickActions.availability"), desc: t("quickActions.availabilityDesc"), href: "/photographer-dashboard/availability" },
+              { icon: <PackageIcon size={22} color="#FDFBF8"/>, title: t("quickActions.packages"), desc: t("quickActions.packagesDesc"), href: "/photographer-dashboard/packages" },
             ].map((action) => (
               <a key={action.title} href={action.href} style={{display: "flex", alignItems: "center", gap: "16px", padding: "16px", border: "1px solid #E2D5C8", borderRadius: "12px", textDecoration: "none", backgroundColor: "#FDFBF8"}}>
                 <div style={{width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#C8622A", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
@@ -486,8 +480,8 @@ export default function PhotographerDashboard() {
                 )}
               </div>
               <div>
-                <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>Messages</p>
-                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : "Chat with your clients"}</p>
+                <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{t("quickActions.messages")}</p>
+                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : t("quickActions.chatWith")}</p>
               </div>
             </a>
           </div>
@@ -495,16 +489,16 @@ export default function PhotographerDashboard() {
 
         {/* Booking requests */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>INCOMING</p>
-          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em"}}>Booking requests</h2>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("bookings.label")}</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em"}}>{t("bookings.heading")}</h2>
 
           {bookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div style={{marginBottom: "16px"}}><EmptyInboxIcon size={56} color="#C8622A"/></div>
-              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1A0E06", margin: "0 0 8px"}}>No booking requests yet</p>
-              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>Complete your profile to start receiving bookings</p>
+              <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", color: "#1A0E06", margin: "0 0 8px"}}>{t("bookings.noneHeading")}</p>
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>{t("bookings.noneDescription")}</p>
               <a href="/photographer-dashboard/edit-profile" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-                Complete my profile
+                {t("bookings.noneCta")}
               </a>
             </div>
           ) : (
@@ -522,10 +516,10 @@ export default function PhotographerDashboard() {
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                     {[
-                      { label: "Session", value: booking.session_type },
-                      { label: "Date", value: booking.date || "Not set" },
-                      { label: "Location", value: booking.location || "Not set" },
-                      { label: "Price", value: convertPrice(booking.price) },
+                      { label: t("bookings.session"), value: booking.session_type },
+                      { label: t("bookings.date"), value: booking.date || t("bookings.notSet") },
+                      { label: t("bookings.location"), value: booking.location || t("bookings.notSet") },
+                      { label: t("bookings.price"), value: convertPrice(booking.price) },
                     ].map((item) => (
                       <div key={item.label}>
                         <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{item.label}</p>
@@ -535,7 +529,7 @@ export default function PhotographerDashboard() {
                   </div>
                   {booking.message && (
                     <div style={{backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "12px", marginBottom: "16px"}}>
-                      <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>Message from client</p>
+                      <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", fontFamily: "'Jost', sans-serif"}}>{t("bookings.messageFromClient")}</p>
                       <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>"{booking.message}"</p>
                     </div>
                   )}
@@ -552,14 +546,14 @@ export default function PhotographerDashboard() {
                           disabled={processingId === booking.id}
                           style={{flex: 1, backgroundColor: processingId === booking.id ? "#7A5C44" : "#1A0E06", color: "#FDFBF8", padding: "10px", borderRadius: "999px", border: "none", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
                         >
-                          {processingId === booking.id ? "Processing..." : "Accept booking"}
+                          {processingId === booking.id ? t("bookings.processing") : t("bookings.accept")}
                         </button>
                         <button
                           onClick={() => handleBookingStatus(booking.id, "declined")}
                           disabled={processingId === booking.id}
                           style={{flex: 1, backgroundColor: "transparent", color: "#1A0E06", padding: "10px", borderRadius: "999px", border: "1px solid #E2D5C8", cursor: processingId === booking.id ? "not-allowed" : "pointer", fontSize: "13px", fontFamily: "'Jost', sans-serif", opacity: processingId === booking.id ? 0.5 : 1}}
                         >
-                          Decline
+                          {t("bookings.decline")}
                         </button>
                       </>
                     )}
@@ -567,20 +561,20 @@ export default function PhotographerDashboard() {
                       confirmCancelId === booking.id ? (
                         <div style={{display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap"}}>
                           <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                            Cancelling issues a full refund to the client. Confirm?
+                            {t("bookings.cancelConfirm")}
                           </p>
                           <button
                             onClick={() => handleCancelBooking(booking.id)}
                             disabled={cancellingId === booking.id}
                             style={{fontSize: "12px", color: "#FDFBF8", backgroundColor: "#dc2626", border: "none", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", opacity: cancellingId === booking.id ? 0.6 : 1}}
                           >
-                            {cancellingId === booking.id ? "Cancelling…" : "Yes, cancel"}
+                            {cancellingId === booking.id ? t("bookings.cancelling") : t("bookings.yesCancel")}
                           </button>
                           <button
                             onClick={() => { setConfirmCancelId(null); setCancelError(""); }}
                             style={{fontSize: "12px", color: "#7A5C44", backgroundColor: "transparent", border: "1px solid #E2D5C8", padding: "7px 16px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                           >
-                            Keep booking
+                            {t("bookings.keepBooking")}
                           </button>
                           {cancelError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{cancelError}</p>}
                         </div>
@@ -589,7 +583,7 @@ export default function PhotographerDashboard() {
                           onClick={() => { setConfirmCancelId(booking.id); setCancelError(""); }}
                           style={{fontSize: "13px", color: "#7A5C44", backgroundColor: "transparent", border: "1px solid #E2D5C8", padding: "8px 20px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                         >
-                          Cancel booking
+                          {t("bookings.cancelBooking")}
                         </button>
                       )
                     )}
@@ -598,36 +592,36 @@ export default function PhotographerDashboard() {
                         href={`/photographer-dashboard/deliver/${booking.id}`}
                         style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
                       >
-                        Deliver photos →
+                        {t("bookings.deliverPhotos")}
                       </a>
                     )}
                     {booking.status === "photos_delivered" && (
                       <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
                         <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
-                          Payout due {booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon"}
+                          {t("bookings.payoutDue", { date: booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon" })}
                         </span>
                         <a
                           href={`/photographer-dashboard/deliver/${booking.id}`}
                           style={{fontSize: "12px", color: "#7c3aed", border: "1px solid #ddd6fe", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
                         >
-                          Add more photos
+                          {t("bookings.addMorePhotos")}
                         </a>
                         <a
                           href={`/deliveries/${booking.id}`}
                           style={{fontSize: "12px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
                         >
-                          View delivery
+                          {t("bookings.viewDelivery")}
                         </a>
                       </div>
                     )}
                     {booking.status === "paid_out" && (
-                      <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>✓ Payment released</span>
+                      <span style={{fontSize: "12px", color: "#15803d", fontFamily: "'Jost', sans-serif"}}>{t("bookings.paymentReleased")}</span>
                     )}
                     {booking.status === "disputed" && (
-                      <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>⚠ Under admin review</span>
+                      <span style={{fontSize: "12px", color: "#b45309", fontFamily: "'Jost', sans-serif"}}>{t("bookings.underAdminReview")}</span>
                     )}
                     <a href={`/messages/${booking.id}`} style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", border: "1px solid #E2D5C8", padding: "8px 20px", borderRadius: "999px", display: "inline-block", fontFamily: "'Jost', sans-serif"}}>
-                      Message client
+                      {t("bookings.messageClient")}
                     </a>
                   </div>
                 </div>
@@ -638,31 +632,31 @@ export default function PhotographerDashboard() {
 
         {/* Account settings */}
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginTop: "32px"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ACCOUNT SETTINGS</p>
-          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>Delete my account</h2>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("account.label")}</p>
+          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>{t("account.heading")}</h2>
 
           {deletionRequest ? (
             <div>
               <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
-                Your account is scheduled for permanent deletion on <strong>{new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong>. You can cancel this request before that date.
+                {t("account.scheduledDesc", { date: new Date(deletionRequest.scheduled_deletion_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) })}
               </p>
               <button
                 onClick={handleCancelDeletion}
                 disabled={cancellingDeletion}
                 style={{backgroundColor: "transparent", color: "#15803d", fontSize: "13px", padding: "10px 24px", border: "1px solid #bbf7d0", borderRadius: "999px", cursor: cancellingDeletion ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: cancellingDeletion ? 0.7 : 1}}
               >
-                {cancellingDeletion ? "Cancelling…" : "Cancel deletion request"}
+                {cancellingDeletion ? t("account.cancelling") : t("account.cancelRequest")}
               </button>
             </div>
           ) : showDeleteConfirm ? (
             <div>
               <div style={{backgroundColor: "#fef2f2", borderRadius: "8px", padding: "16px", border: "1px solid #fecaca", marginBottom: "16px"}}>
-                <p style={{fontSize: "13px", fontWeight: "500", color: "#dc2626", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>This cannot be undone. Before your account is permanently deleted:</p>
+                <p style={{fontSize: "13px", fontWeight: "500", color: "#dc2626", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{t("account.warningTitle")}</p>
                 <ul style={{fontSize: "13px", color: "#7A5C44", margin: "0", paddingLeft: "18px", lineHeight: "2", fontFamily: "'Jost', sans-serif"}}>
-                  <li>All pending and confirmed bookings will be cancelled and clients fully refunded</li>
-                  <li>Your profile and portfolio will be removed from Lomissa immediately</li>
-                  <li>You will have 30 days to change your mind from your dashboard</li>
-                  <li>Completed sessions and past earnings in Stripe are not affected</li>
+                  <li>{t("account.warning1")}</li>
+                  <li>{t("account.warning2")}</li>
+                  <li>{t("account.warning3")}</li>
+                  <li>{t("account.warning4")}</li>
                 </ul>
               </div>
               {deletionError && <p style={{fontSize: "12px", color: "#dc2626", margin: "0 0 12px", fontFamily: "'Jost', sans-serif"}}>{deletionError}</p>}
@@ -672,26 +666,26 @@ export default function PhotographerDashboard() {
                   disabled={requestingDeletion}
                   style={{backgroundColor: "#dc2626", color: "#fff", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: requestingDeletion ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: requestingDeletion ? 0.7 : 1}}
                 >
-                  {requestingDeletion ? "Requesting…" : "Yes, delete my account"}
+                  {requestingDeletion ? t("account.requesting") : t("account.yesDelete")}
                 </button>
                 <button
                   onClick={() => { setShowDeleteConfirm(false); setDeletionError(""); }}
                   style={{backgroundColor: "transparent", color: "#7A5C44", fontSize: "13px", padding: "10px 24px", border: "1px solid #E2D5C8", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
                 >
-                  Keep my account
+                  {t("account.keepAccount")}
                 </button>
               </div>
             </div>
           ) : (
             <div>
               <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>
-                Permanently delete your account and all associated data. Active bookings will be cancelled and clients fully refunded. Completed sessions and past Stripe earnings are not affected. You will have a 30-day window to change your mind.
+                {t("account.description")}
               </p>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 style={{backgroundColor: "transparent", color: "#dc2626", fontSize: "13px", padding: "10px 24px", border: "1px solid #fecaca", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
               >
-                Delete my account
+                {t("account.deleteButton")}
               </button>
             </div>
           )}
@@ -728,7 +722,7 @@ export default function PhotographerDashboard() {
             <div>
               {earningsLoading ? (
                 <div style={{textAlign: "center", padding: "48px 0"}}>
-                  <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>Loading Stripe data…</p>
+                  <p style={{fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif"}}>{t("earnings.loadingStripe")}</p>
                 </div>
               ) : (
                 <>
@@ -742,28 +736,28 @@ export default function PhotographerDashboard() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     {[
                       {
-                        label: "Total earned",
+                        label: t("earnings.totalEarned"),
                         value: `~${fmtMoney(totalEarned, currency)}`,
-                        desc: `${completedBookings.length} completed session${completedBookings.length !== 1 ? "s" : ""}`,
-                        note: "After 10% Lomissa fee",
+                        desc: t("earnings.completedSessions", { count: completedBookings.length }),
+                        note: t("earnings.afterFee"),
                       },
                       {
-                        label: "Pending earnings",
+                        label: t("earnings.pendingEarnings"),
                         value: `~${fmtMoney(pendingEarnings, currency)}`,
-                        desc: `${upcomingBookings.length} upcoming session${upcomingBookings.length !== 1 ? "s" : ""}`,
-                        note: "Awaiting completion",
+                        desc: t("earnings.upcomingSessions", { count: upcomingBookings.length }),
+                        note: t("earnings.awaitingCompletion"),
                       },
                       {
-                        label: "Available for payout",
+                        label: t("earnings.availableForPayout"),
                         value: earningsData?.noStripeAccount ? "—" : fmtMoney(earningsData?.stripeAvailable ?? 0, currency),
-                        desc: earningsData?.noStripeAccount ? "Connect Stripe to view" : "Ready to pay out",
-                        note: "From Stripe balance",
+                        desc: earningsData?.noStripeAccount ? t("earnings.connectStripe") : t("earnings.readyForPayout"),
+                        note: t("earnings.fromStripe"),
                       },
                       {
-                        label: "In transit",
+                        label: t("earnings.inTransit"),
                         value: earningsData?.noStripeAccount ? "—" : fmtMoney(earningsData?.stripePending ?? 0, currency),
-                        desc: earningsData?.noStripeAccount ? "Connect Stripe to view" : "Processing (2–7 days)",
-                        note: "From Stripe balance",
+                        desc: earningsData?.noStripeAccount ? t("earnings.connectStripe") : t("earnings.processingDays"),
+                        note: t("earnings.fromStripe"),
                       },
                     ].map((stat) => (
                       <div key={stat.label} style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "20px", border: "1px solid #E2D5C8"}}>
@@ -777,24 +771,24 @@ export default function PhotographerDashboard() {
 
                   {/* Payout history */}
                   <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8", marginBottom: "24px"}}>
-                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PAYOUT HISTORY</p>
+                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("earnings.payoutHistoryLabel")}</p>
                     <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 20px", letterSpacing: "-0.02em"}}>
-                      Bank payouts
+                      {t("earnings.bankPayouts")}
                     </h2>
                     {earningsData?.noStripeAccount ? (
                       <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
-                        Connect your Stripe account to see payout history.
+                        {t("earnings.connectStripeDesc")}
                       </p>
                     ) : !earningsData?.payouts?.length ? (
                       <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>
-                        No payouts yet — payouts appear here once Stripe transfers funds to your bank.
+                        {t("earnings.noPayouts")}
                       </p>
                     ) : (
                       <div style={{overflowX: "auto"}}>
                         <table style={{width: "100%", borderCollapse: "collapse"}}>
                           <thead>
                             <tr style={{borderBottom: "1px solid #E2D5C8"}}>
-                              {["Arrival date", "Amount", "Status", "Reference"].map(h => (
+                              {[t("earnings.arrivalDate"), t("earnings.amount"), t("earnings.status"), t("earnings.reference")].map(h => (
                                 <th key={h} style={{textAlign: "left", padding: "8px 12px 12px 0", fontSize: "11px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{h.toUpperCase()}</th>
                               ))}
                             </tr>
@@ -829,15 +823,15 @@ export default function PhotographerDashboard() {
 
                   {/* Per-booking breakdown */}
                   <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8"}}>
-                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>BREAKDOWN</p>
+                    <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("earnings.breakdownLabel")}</p>
                     <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "400", color: "#1A0E06", margin: "0 0 4px", letterSpacing: "-0.02em"}}>
-                      Earnings by booking
+                      {t("earnings.earningsByBooking")}
                     </h2>
                     <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 20px", fontFamily: "'Jost', sans-serif"}}>
-                      Showing confirmed and cancelled bookings. Lomissa retains 10% of each session fee.
+                      {t("earnings.breakdownDesc")}
                     </p>
                     {earningRows.length === 0 ? (
-                      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>No bookings to show yet.</p>
+                      <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>{t("earnings.noBookings")}</p>
                     ) : (
                       <div style={{display: "flex", flexDirection: "column", gap: "12px"}}>
                         {earningRows.map((booking) => {
@@ -846,18 +840,18 @@ export default function PhotographerDashboard() {
                           const net = gross * 0.9;
                           const isPast = booking.date && new Date(booking.date + "T00:00:00") < now;
                           const rowStatus = booking.status === "cancelled"
-                            ? { label: "Cancelled", bg: "#fef2f2", color: "#dc2626" }
+                            ? { label: t("earnings.statusCancelled"), bg: "#fef2f2", color: "#dc2626" }
                             : booking.status === "disputed"
-                            ? { label: "Disputed", bg: "#fef3c7", color: "#b45309" }
+                            ? { label: t("earnings.statusDisputed"), bg: "#fef3c7", color: "#b45309" }
                             : booking.status === "paid_out"
-                            ? { label: "Paid out", bg: "#f0fdf4", color: "#15803d" }
+                            ? { label: t("earnings.statusPaidOut"), bg: "#f0fdf4", color: "#15803d" }
                             : booking.status === "photos_delivered"
-                            ? { label: "Photos delivered", bg: "#faf5ff", color: "#7c3aed" }
+                            ? { label: t("earnings.statusPhotosDelivered"), bg: "#faf5ff", color: "#7c3aed" }
                             : booking.status === "completed"
-                            ? { label: "Completed", bg: "#eff6ff", color: "#1d4ed8" }
+                            ? { label: t("earnings.statusCompleted"), bg: "#eff6ff", color: "#1d4ed8" }
                             : isPast
-                            ? { label: "Earned", bg: "#f0fdf4", color: "#15803d" }
-                            : { label: "Upcoming", bg: "#FBF0EA", color: "#C8622A" };
+                            ? { label: t("earnings.statusEarned"), bg: "#f0fdf4", color: "#15803d" }
+                            : { label: t("earnings.statusUpcoming"), bg: "#FBF0EA", color: "#C8622A" };
                           return (
                             <div key={booking.id} style={{border: "1px solid #E2D5C8", borderRadius: "10px", padding: "16px 20px", backgroundColor: "#FDFBF8"}}>
                               <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "12px"}}>
@@ -871,15 +865,15 @@ export default function PhotographerDashboard() {
                               </div>
                               <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", borderTop: "1px solid #E2D5C8", paddingTop: "12px"}}>
                                 <div>
-                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>SESSION FEE</p>
+                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("earnings.sessionFee")}</p>
                                   <p style={{fontSize: "15px", color: "#1A0E06", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{convertPrice(booking.price) || "—"}</p>
                                 </div>
                                 <div>
-                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>LOMISSA FEE (10%)</p>
+                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("earnings.lomissaFee")}</p>
                                   <p style={{fontSize: "15px", color: "#dc2626", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>−{fee.toFixed(2)}</p>
                                 </div>
                                 <div>
-                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>YOU RECEIVE</p>
+                                  <p style={{fontSize: "10px", color: "#DDD0C0", margin: "0 0 3px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("earnings.youReceive")}</p>
                                   <p style={{fontSize: "15px", color: booking.status === "cancelled" ? "#DDD0C0" : "#15803d", margin: "0", fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: "500"}}>{booking.status === "cancelled" ? "—" : net.toFixed(2)}</p>
                                 </div>
                               </div>
