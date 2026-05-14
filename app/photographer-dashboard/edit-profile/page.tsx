@@ -291,20 +291,20 @@ export default function EditProfile() {
                   >{tCat(CATEGORY_KEY[cat])}</button>
                 );
               })}
-              {selectedCategories.includes("Other") && (
-                <div style={{width: "100%", marginTop: "4px"}}>
-                  <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
-                  <input
-                    type="text"
-                    value={otherSpecialty}
-                    onChange={(e) => setOtherSpecialty(e.target.value)}
-                    placeholder={t("form.otherSpecialtyPlaceholder")}
-                    maxLength={80}
-                    style={inputStyle}
-                  />
-                </div>
-              )}
             </div>
+            {selectedCategories.includes("Other") && (
+              <div style={{marginTop: "12px"}}>
+                <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
+                <input
+                  type="text"
+                  value={otherSpecialty}
+                  onChange={(e) => setOtherSpecialty(e.target.value)}
+                  placeholder={t("form.otherSpecialtyPlaceholder")}
+                  maxLength={80}
+                  style={inputStyle}
+                />
+              </div>
+            )}
           </div>
 
           <div>
