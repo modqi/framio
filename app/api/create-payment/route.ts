@@ -152,7 +152,6 @@ export async function POST(request: NextRequest) {
     ];
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
       payment_intent_data: {
