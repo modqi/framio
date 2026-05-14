@@ -46,7 +46,14 @@ export default function PhotographerDashboard() {
   const [requestingDeletion, setRequestingDeletion] = useState(false);
   const [deletionError, setDeletionError] = useState("");
   const [cancellingDeletion, setCancellingDeletion] = useState(false);
-  const [tasks, setTasks] = useState<{ task: string; done: boolean }[]>([]);
+  const [tasksDone, setTasksDone] = useState<boolean[]>([]);
+  const TASK_KEYS = [
+    "completion.addPhoto",
+    "completion.writeBio",
+    "completion.addPortfolio",
+    "completion.addPackages",
+    "completion.addLocation",
+  ] as const;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -86,16 +93,16 @@ export default function PhotographerDashboard() {
         setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
 
         const hasPackages = (photographerRow?.photographer_packages?.length ?? 0) > 0;
-        const updatedTasks = [
-          { task: t("completion.addPhoto"), done: !!photographerRow?.profile_photo },
-          { task: t("completion.writeBio"), done: !!meta?.bio },
-          { task: t("completion.addPortfolio"), done: (photoCount || 0) > 0 },
-          { task: t("completion.addPackages"), done: hasPackages },
-          { task: t("completion.addLocation"), done: !!meta?.location },
+        const doneBooleans = [
+          !!photographerRow?.profile_photo,
+          !!meta?.bio,
+          (photoCount || 0) > 0,
+          hasPackages,
+          !!meta?.location,
         ];
-        setTasks(updatedTasks);
-        const done = updatedTasks.filter(t => t.done).length;
-        setCompletion(Math.round((done / updatedTasks.length) * 100));
+        setTasksDone(doneBooleans);
+        const done = doneBooleans.filter(Boolean).length;
+        setCompletion(Math.round((done / doneBooleans.length) * 100));
 
         const { data: delReq } = await supabase
           .from("account_deletion_requests")
@@ -439,12 +446,12 @@ export default function PhotographerDashboard() {
             <div style={{width: `${completion}%`, backgroundColor: "#C1622F", height: "4px", borderRadius: "4px", transition: "width 0.5s"}}></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {tasks.map((item) => (
-              <div key={item.task} className="flex items-center gap-3">
-                <div style={{width: "20px", height: "20px", borderRadius: "50%", backgroundColor: item.done ? "#C1622F" : "transparent", border: item.done ? "none" : "1px solid rgba(253,251,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
-                  {item.done && <CheckIcon size={11} color="#FDFBF8"/>}
+            {TASK_KEYS.map((key, i) => (
+              <div key={key} className="flex items-center gap-3">
+                <div style={{width: "20px", height: "20px", borderRadius: "50%", backgroundColor: tasksDone[i] ? "#C1622F" : "transparent", border: tasksDone[i] ? "none" : "1px solid rgba(253,251,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0}}>
+                  {tasksDone[i] && <CheckIcon size={11} color="#FDFBF8"/>}
                 </div>
-                <span style={{fontSize: "13px", color: item.done ? "rgba(253,251,248,0.4)" : "#FDFBF8", textDecoration: item.done ? "line-through" : "none", fontFamily: "'Jost', sans-serif"}}>{item.task}</span>
+                <span style={{fontSize: "13px", color: tasksDone[i] ? "rgba(253,251,248,0.4)" : "#FDFBF8", textDecoration: tasksDone[i] ? "line-through" : "none", fontFamily: "'Jost', sans-serif"}}>{t(key as any)}</span>
               </div>
             ))}
           </div>
