@@ -209,7 +209,11 @@ export default function JoinAsPhotographer() {
                       <button key={cat} type="button"
                         onClick={() => {
                           const nowSelected = !sel;
-                          setSelectedCategories(prev => nowSelected ? [...prev, cat] : prev.filter(c => c !== cat));
+                          setSelectedCategories(prev => {
+                            const next = nowSelected ? [...prev, cat] : prev.filter(c => c !== cat);
+                            console.log("[Join] cat clicked:", cat, "| nowSelected:", nowSelected, "| selectedCategories after:", next);
+                            return next;
+                          });
                           if (cat === "Other" && !nowSelected) setOtherSpecialty("");
                         }}
                         style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
