@@ -232,7 +232,7 @@ export async function GET(request: NextRequest) {
               </h2>
               <p style="font-size: 14px; color: #555; margin: 0 0 16px; line-height: 1.7;">
                 Unfortunately, <strong>${esc(booking.photographer_name)}</strong> did not respond to your booking
-                request for <strong>${esc(booking.session_type)}</strong> within 48 hours.
+                request for <strong>${esc(booking.session_type)}</strong> within 24 hours.
               </p>
               <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">
                 A full refund has been issued and will appear in your account within 5–10 business days.
@@ -269,7 +269,7 @@ export async function GET(request: NextRequest) {
               <p style="font-size: 14px; color: #555; margin: 0 0 16px; line-height: 1.7;">
                 The booking request from <strong>${esc(booking.client_name)}</strong> for
                 <strong>${esc(booking.session_type)}</strong> on ${esc(booking.date || "an unspecified date")}
-                was not responded to within 48 hours and has been automatically cancelled.
+                was not responded to within 24 hours and has been automatically cancelled.
                 The client has been fully refunded.
               </p>
               <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">

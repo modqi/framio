@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
         message,
         price: priceDisplay,
         status: "awaiting_payment",
-        expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         cancellation_policy_snapshot: photographer.cancellation_policy || "moderate",
         terms_snapshot: {
           photos_delivered: `${pkg.photos_delivered} photos`,
