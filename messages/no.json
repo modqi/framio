@@ -145,13 +145,18 @@
       "requestedDesc": "{name} vil svare innen 24 timer.",
       "viewBookings": "Se mine bestillinger",
       "units": {
-        "hour": "time",
+        "hour": "per time",
         "perHour": "per time",
         "perPhoto": "per bilde",
         "perPerson": "per person",
         "perLocation": "per sted",
         "flatFee": "engangsbeløp"
-      }
+      },
+      "pkgPhotos": "{count, plural, one {# bilde} other {# bilder}}",
+      "durationHour": "time",
+      "durationHours": "timer",
+      "durationMinute": "minutt",
+      "durationMinutes": "minutter"
     },
     "calendar": {
       "available": "Tilgjengelig",

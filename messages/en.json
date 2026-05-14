@@ -151,7 +151,12 @@
         "perPerson": "per person",
         "perLocation": "per location",
         "flatFee": "flat fee"
-      }
+      },
+      "pkgPhotos": "{count, plural, one {# photo} other {# photos}}",
+      "durationHour": "hour",
+      "durationHours": "hours",
+      "durationMinute": "minute",
+      "durationMinutes": "minutes"
     },
     "calendar": {
       "available": "Available",

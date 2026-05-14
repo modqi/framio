@@ -7,6 +7,7 @@ import { ReviewStarIcon } from "../../components/Icons";
 import GlobeModal from "../../components/GlobeModal";
 import { useCurrency } from "../../../lib/currency-context";
 import { useTranslations } from "next-intl";
+import { useLocale } from "../../../lib/locale-context";
 import { CATEGORY_KEY } from "../../../lib/categories";
 
 const TERM_VALUE_KEYS: Record<string, string> = {
@@ -34,10 +35,21 @@ const UNIT_KEYS: Record<string, string> = {
 
 export default function PhotographerProfile({ params }: { params: any }) {
   const { formatPrice } = useCurrency();
+  const { locale } = useLocale();
   const t = useTranslations("Profile");
   const tCat = useTranslations("Categories");
-  const translateTermValue = (v: string) => { const k = TERM_VALUE_KEYS[v]; return k ? t(k as any) : v; };
+  const translateTermValue = (v: string) => {
+    const trimmed = v?.trim();
+    const k = TERM_VALUE_KEYS[trimmed];
+    console.log("[translateTermValue]", { v, trimmed, k });
+    return k ? t(k as any) : (trimmed || v);
+  };
   const translateUnit = (u: string) => { const k = UNIT_KEYS[u?.toLowerCase()]; return k ? t(k as any) : u; };
+  const translateDuration = (d: string | null | undefined) => (d || "")
+    .replace(/\bhours\b/gi, t("booking.durationHours" as any))
+    .replace(/\bhour\b/gi, t("booking.durationHour" as any))
+    .replace(/\bminutes\b/gi, t("booking.durationMinutes" as any))
+    .replace(/\bminute\b/gi, t("booking.durationMinute" as any));
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -419,7 +431,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
                       <div>
                         <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{(review.client_name && review.client_name !== "Anonymous") ? review.client_name : t("reviews.anonymous")}</p>
-                        <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(review.created_at).toLocaleDateString()}</p>
+                        <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(review.created_at).toLocaleDateString(locale === "no" ? "nb-NO" : "en-US", { day: "numeric", month: "long", year: "numeric" })}</p>
                       </div>
                       <div style={{display: "flex", gap: "2px"}}>
                         {[1,2,3,4,5].map(star => (
@@ -476,7 +488,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                                 <p style={{fontSize: "13px", fontWeight: "500", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.name}</p>
                                 {pkg.category && <span style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "1px 7px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
                               </div>
-                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
+                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{translateDuration(pkg.duration)} · {t("booking.pkgPhotos", { count: pkg.photos_delivered } as any)}</p>
                               {pkg.description && <p style={{fontSize: "11px", color: "#7A5C44", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
                             </div>
                             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: selected ? "#C8622A" : "#1A0E06", margin: "0", flexShrink: 0}}>{formatPrice(pkg.price)}</p>
