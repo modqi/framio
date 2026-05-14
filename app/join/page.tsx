@@ -222,6 +222,9 @@ export default function JoinAsPhotographer() {
                 <p style={{fontSize: "11px", color: "#C8622A", margin: "8px 0 0", fontFamily: "monospace"}}>
                   DEBUG: [{selectedCategories.join(", ")}] — includesOther: {String(selectedCategories.includes("Other"))}
                 </p>
+                <div style={{color: "red", fontSize: "20px", fontWeight: "bold", padding: "10px"}}>
+                  DEBUG: {JSON.stringify(selectedCategories)} | includesOther: {String(selectedCategories.includes("Other"))}
+                </div>
                 {selectedCategories.includes("Other") && (
                   <div style={{marginTop: "12px"}}>
                     <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
