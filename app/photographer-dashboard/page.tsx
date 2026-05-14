@@ -511,7 +511,7 @@ export default function PhotographerDashboard() {
                       <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.client_email}</p>
                     </div>
                     <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
-                      {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                      {t(`bookings.statuses.${booking.status}` as any)}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">

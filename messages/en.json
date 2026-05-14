@@ -531,7 +531,17 @@
       "viewDelivery": "View delivery",
       "paymentReleased": "✓ Payment released",
       "underAdminReview": "⚠ Under admin review",
-      "messageClient": "Message client"
+      "messageClient": "Message client",
+      "statuses": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "photos_delivered": "Photos delivered",
+        "paid_out": "Paid out",
+        "disputed": "Disputed",
+        "awaiting_payment": "Awaiting payment"
+      }
     },
     "account": {
       "label": "ACCOUNT SETTINGS",

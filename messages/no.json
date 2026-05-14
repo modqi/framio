@@ -519,7 +519,7 @@
       "messageFromClient": "Melding fra klient",
       "accept": "Godta bestilling",
       "processing": "Behandler...",
-      "decline": "Avvis",
+      "decline": "Avslå",
       "cancelConfirm": "Avbestilling gir full refusjon til klienten. Bekreft?",
       "yesCancel": "Ja, avbestill",
       "cancelling": "Avbestiller…",
@@ -531,7 +531,17 @@
       "viewDelivery": "Se levering",
       "paymentReleased": "✓ Betaling frigitt",
       "underAdminReview": "⚠ Under admingjennomgang",
-      "messageClient": "Meld klient"
+      "messageClient": "Send melding til kunde",
+      "statuses": {
+        "pending": "Venter",
+        "confirmed": "Bekreftet",
+        "completed": "Fullført",
+        "cancelled": "Kansellert",
+        "photos_delivered": "Bilder levert",
+        "paid_out": "Utbetalt",
+        "disputed": "Tvistet",
+        "awaiting_payment": "Venter på betaling"
+      }
     },
     "account": {
       "label": "KONTOINNSTILLINGER",
