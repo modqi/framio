@@ -361,14 +361,14 @@ export default function EditProfile() {
               style={inputStyle}
             >
               <option value="">{t("sessionTerms.deliveryTimePlaceholder")}</option>
-              <option value="Within 3 days">Within 3 days</option>
-              <option value="Within 5 days">Within 5 days</option>
-              <option value="Within 1 week">Within 1 week</option>
-              <option value="Within 2 weeks">Within 2 weeks</option>
-              <option value="Within 3 weeks">Within 3 weeks</option>
-              <option value="Within 1 month">Within 1 month</option>
-              <option value="Within 2 months">Within 2 months</option>
-              <option value="Within 3 months">Within 3 months</option>
+              <option value="Within 3 days">{t("sessionTerms.within3Days")}</option>
+              <option value="Within 5 days">{t("sessionTerms.within5Days")}</option>
+              <option value="Within 1 week">{t("sessionTerms.within1Week")}</option>
+              <option value="Within 2 weeks">{t("sessionTerms.within2Weeks")}</option>
+              <option value="Within 3 weeks">{t("sessionTerms.within3Weeks")}</option>
+              <option value="Within 1 month">{t("sessionTerms.within1Month")}</option>
+              <option value="Within 2 months">{t("sessionTerms.within2Months")}</option>
+              <option value="Within 3 months">{t("sessionTerms.within3Months")}</option>
             </select>
             <p style={{fontSize: "11px", color: "#7A5C44", margin: "8px 0 0", fontFamily: "'Jost', sans-serif"}}>{t("sessionTerms.deliveryTimeHelper")}</p>
           </div>
@@ -381,15 +381,9 @@ export default function EditProfile() {
               style={inputStyle}
             >
               <option value="">{t("sessionTerms.copyrightPlaceholder")}</option>
-              <option value="Photographer retains copyright, client gets personal use license">
-                Photographer retains copyright, client gets personal use license
-              </option>
-              <option value="Client receives full copyright after payment">
-                Client receives full copyright after payment
-              </option>
-              <option value="Photographer keeps portfolio rights, client gets full usage rights">
-                Photographer keeps portfolio rights, client gets full usage rights
-              </option>
+              <option value="Photographer retains copyright, client gets personal use license">{t("sessionTerms.copyrightRetained")}</option>
+              <option value="Client receives full copyright after payment">{t("sessionTerms.copyrightFull")}</option>
+              <option value="Photographer keeps portfolio rights, client gets full usage rights">{t("sessionTerms.copyrightPortfolio")}</option>
             </select>
           </div>
 
