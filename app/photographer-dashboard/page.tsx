@@ -407,7 +407,7 @@ export default function PhotographerDashboard() {
             <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "500", color: "#C8622A"}}>{user?.user_metadata?.name?.[0] || "?"}</span>
           </div>
           <div style={{flex: 1}}>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{user?.user_metadata?.name || "Your name"}</p>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{user?.user_metadata?.name || t("profile.yourName")}</p>
             <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.location || t("profile.noLocation")}</p>
             <p style={{fontSize: "12px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{user?.user_metadata?.specialty || t("profile.noSpecialty")}</p>
           </div>
@@ -488,7 +488,7 @@ export default function PhotographerDashboard() {
               </div>
               <div>
                 <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{t("quickActions.messages")}</p>
-                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : t("quickActions.chatWith")}</p>
+                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? t("quickActions.unreadMessages", { count: unreadCount } as any) : t("quickActions.chatWith")}</p>
               </div>
             </a>
           </div>

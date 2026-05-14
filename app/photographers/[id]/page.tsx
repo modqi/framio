@@ -247,7 +247,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
   const isAdmin = authUser?.user_metadata?.role === "admin";
 
   const days = getDaysInMonth();
-  const monthName = currentMonth.toLocaleString("default", { month: "long", year: "numeric" });
+  const monthName = `${t(`calendar.months.${currentMonth.getMonth()}` as any)} ${currentMonth.getFullYear()}`;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const isCurrentMonth = currentMonth.getFullYear() === today.getFullYear() && currentMonth.getMonth() === today.getMonth();
@@ -418,7 +418,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   <div key={review.id} style={{padding: "16px", border: "1px solid #E2D5C8", borderRadius: "12px", backgroundColor: "#FDFBF8"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
                       <div>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{review.client_name || t("reviews.anonymous")}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{(review.client_name && review.client_name !== "Anonymous") ? review.client_name : t("reviews.anonymous")}</p>
                         <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(review.created_at).toLocaleDateString()}</p>
                       </div>
                       <div style={{display: "flex", gap: "2px"}}>

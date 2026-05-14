@@ -370,7 +370,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p style={{fontSize: "14px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{t("quickActions.messages")}</p>
-                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? "s" : ""}` : t("quickActions.chatWith")}</p>
+                <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{unreadCount > 0 ? t("quickActions.unreadMessages", { count: unreadCount } as any) : t("quickActions.chatWith")}</p>
               </div>
             </a>
           </div>
@@ -435,13 +435,13 @@ export default function Dashboard() {
                       <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{booking.session_type}</p>
                       {booking.package_snapshot && (
                         <p style={{fontSize: "11px", color: "#DDD0C0", margin: "2px 0 0", fontFamily: "'Jost', sans-serif"}}>
-                          {booking.package_snapshot.duration} · {booking.package_snapshot.photos_delivered} photos
+                          {booking.package_snapshot.duration} · {t("bookings.photos", { count: booking.package_snapshot.photos_delivered } as any)}
                         </p>
                       )}
                     </div>
                     <div style={{display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px"}}>
                       <span style={{...getStatusStyle(booking.status), fontSize: "12px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                        {t(`bookings.statuses.${booking.status}` as any)}
                       </span>
                       {getExpiryCountdown(booking) && (
                         <span style={{fontSize: "11px", color: "#b45309", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
@@ -516,7 +516,7 @@ export default function Dashboard() {
                       ) : (
                         <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
                           <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
-                            {t("bookings.photosDeliveredWindow", { date: booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon" })}
+                            {t("bookings.photosDeliveredWindow", { date: booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : t("bookings.soon") })}
                           </span>
                           <button
                             onClick={() => { setDisputeBookingId(booking.id); setDisputeError(""); }}

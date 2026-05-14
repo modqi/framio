@@ -163,7 +163,21 @@
       "thu": "T",
       "fri": "F",
       "sat": "L",
-      "sun": "S"
+      "sun": "S",
+      "months": {
+        "0": "Januar",
+        "1": "Februar",
+        "2": "Mars",
+        "3": "April",
+        "4": "Mai",
+        "5": "Juni",
+        "6": "Juli",
+        "7": "August",
+        "8": "September",
+        "9": "Oktober",
+        "10": "November",
+        "11": "Desember"
+      }
     },
     "policy": {
       "flexibleLabel": "Fleksibel avbestilling",
@@ -396,7 +410,8 @@
       "findPhotographer": "Finn en fotograf",
       "findPhotographerDesc": "Bla gjennom alle fotografer",
       "messages": "Meldinger",
-      "chatWith": "Chat med fotografene dine"
+      "chatWith": "Chat med fotografene dine",
+      "unreadMessages": "{count, plural, one {# ulest melding} other {# uleste meldinger}}"
     },
     "phone": {
       "title": "Få SMS-oppdateringer om bestillingene dine",
@@ -435,7 +450,19 @@
       "keepBooking": "Behold bestilling",
       "expiresInHours": "Venter på svar — utløper om {hours} timer",
       "expiresInMinutes": "Venter på svar — utløper om {minutes} min",
-      "expiresSoon": "Venter på svar — utløper snart"
+      "expiresSoon": "Venter på svar — utløper snart",
+      "photos": "{count} bilder",
+      "soon": "snart",
+      "statuses": {
+        "pending": "Venter",
+        "confirmed": "Bekreftet",
+        "completed": "Fullført",
+        "cancelled": "Kansellert",
+        "photos_delivered": "Bilder levert",
+        "paid_out": "Utbetalt",
+        "disputed": "Tvistet",
+        "declined": "Avslått"
+      }
     },
     "refund": {
       "fullGuaranteed": "Full refusjon garantert",
@@ -499,7 +526,8 @@
     "profile": {
       "editProfile": "Rediger profil",
       "noLocation": "Ingen sted angitt",
-      "noSpecialty": "Ingen spesialitet angitt"
+      "noSpecialty": "Ingen spesialitet angitt",
+      "yourName": "Ditt navn"
     },
     "stats": {
       "totalBookings": "Totalt bestillinger",
@@ -532,7 +560,8 @@
       "packages": "Mine pakker",
       "packagesDesc": "Administrer økter og tillegg",
       "messages": "Meldinger",
-      "chatWith": "Chat med klientene dine"
+      "chatWith": "Chat med klientene dine",
+      "unreadMessages": "{count, plural, one {# ulest melding} other {# uleste meldinger}}"
     },
     "bookings": {
       "label": "INNKOMMENDE",
