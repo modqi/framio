@@ -25,6 +25,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#C8622A" />
+        <meta name="google-site-verification" content="L0defMQayaQNMiBzaBuaiy2bBqkpzIYenDjusZTfglg" />
       </head>
       <body><BfcacheRefresh /><CurrencyProvider><LocaleProvider>{children}</LocaleProvider></CurrencyProvider></body>
     </html>
