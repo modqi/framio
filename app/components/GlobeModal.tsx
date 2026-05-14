@@ -98,7 +98,7 @@ export function CurrencyButton() {
           <circle cx="12" cy="12" r="2.5"/>
           <path d="M6 12h.01M18 12h.01"/>
         </svg>
-        {currency}
+        <span className="hidden sm:inline">{currency}</span>
       </button>
 
       {open && (

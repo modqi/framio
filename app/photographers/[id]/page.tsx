@@ -283,31 +283,31 @@ export default function PhotographerProfile({ params }: { params: any }) {
     <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-4 py-4 sm:px-8">
         <Logo size="sm" />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <GlobeModal />
           {isAdmin ? (
-            <a href="/admin" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.backToAdmin")}</a>
+            <a href="/admin" className="hidden sm:inline" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.backToAdmin")}</a>
           ) : (
-            <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.explore")}</a>
+            <a href="/photographers" className="hidden sm:inline" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.explore")}</a>
           )}
           {authUser ? (
             <>
-              <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
+              <span className="hidden sm:inline" style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
                 {authUser.user_metadata?.name?.split(" ")[0] || "Hi"}
               </span>
               <a
                 href={isAdmin ? "/admin" : authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
-                style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+                style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}
               >
                 {isAdmin ? t("nav.adminPanel") : t("nav.myDashboard")}
               </a>
             </>
           ) : (
             <>
-              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.logIn")}</a>
-              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("nav.signUp")}</a>
+              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", whiteSpace: "nowrap"}}>{t("nav.logIn")}</a>
+              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.signUp")}</a>
             </>
           )}
         </div>

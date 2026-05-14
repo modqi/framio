@@ -29,13 +29,13 @@ export default function Home() {
     <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
 
       {/* Navigation */}
-      <nav style={{position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-4 py-4 sm:px-8">
         <Logo size="sm" />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <GlobeModal />
-          <a href="/photographers" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.photographers")}</a>
-          <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.logIn")}</a>
-          <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>{t("nav.signUp")}</a>
+          <a href="/photographers" className="hidden sm:inline" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.photographers")}</a>
+          <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.logIn")}</a>
+          <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.signUp")}</a>
         </div>
       </nav>
 
