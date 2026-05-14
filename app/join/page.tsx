@@ -22,6 +22,7 @@ export default function JoinAsPhotographer() {
     about: "",
   });
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [otherSpecialty, setOtherSpecialty] = useState("");
   const t = useTranslations("Join");
   const tCat = useTranslations("Categories");
 
@@ -41,6 +42,7 @@ export default function JoinAsPhotographer() {
       phone_number: form.phone_number || null,
       location: form.location,
       specialty: finalSpecialities.join(", ") || "",
+      other_specialty: finalSpecialities.includes("Other") ? (otherSpecialty.trim() || null) : null,
       experience: form.experience,
       instagram: form.instagram,
       website: form.website,
@@ -205,11 +207,28 @@ export default function JoinAsPhotographer() {
                     const sel = selectedCategories.includes(cat);
                     return (
                       <button key={cat} type="button"
-                        onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
+                        onClick={() => {
+                          const nowSelected = !sel;
+                          setSelectedCategories(prev => nowSelected ? [...prev, cat] : prev.filter(c => c !== cat));
+                          if (cat === "Other" && !nowSelected) setOtherSpecialty("");
+                        }}
                         style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
                       >{tCat(CATEGORY_KEY[cat])}</button>
                     );
                   })}
+                  {selectedCategories.includes("Other") && (
+                    <div style={{width: "100%", marginTop: "4px"}}>
+                      <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
+                      <input
+                        type="text"
+                        value={otherSpecialty}
+                        onChange={(e) => setOtherSpecialty(e.target.value)}
+                        placeholder={t("form.otherSpecialtyPlaceholder")}
+                        maxLength={80}
+                        style={inputStyle}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <div>

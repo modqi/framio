@@ -19,6 +19,7 @@ export default function EditProfile() {
   const [photoError, setPhotoError] = useState("");
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [otherSpecialty, setOtherSpecialty] = useState("");
   const [form, setForm] = useState({
     name: "",
     bio: "",
@@ -45,7 +46,7 @@ export default function EditProfile() {
         const meta = user.user_metadata;
         const { data: row } = await supabase
           .from("photographers")
-          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities, profile_photo, phone_number")
+          .select("cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included, specialities, profile_photo, phone_number, other_specialty")
           .eq("user_id", user.id)
           .single();
         if (row?.profile_photo) setProfilePhoto(row.profile_photo);
@@ -64,6 +65,7 @@ export default function EditProfile() {
         });
         const loaded: string[] = row?.specialities || [];
         setSelectedCategories(loaded.filter((s: string) => (CATEGORIES as readonly string[]).includes(s)));
+        if (row?.other_specialty) setOtherSpecialty(row.other_specialty);
       }
       setLoading(false);
     };
@@ -112,6 +114,7 @@ export default function EditProfile() {
         editing_style: form.editing_style || null,
         revisions_included: form.revisions_included || null,
         profile_photo: profilePhoto || null,
+        other_specialty: finalSpecialities.includes("Other") ? (otherSpecialty.trim() || null) : null,
       }),
     });
     if (!res.ok) {
@@ -279,11 +282,28 @@ export default function EditProfile() {
                 const sel = selectedCategories.includes(cat);
                 return (
                   <button key={cat} type="button"
-                    onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
+                    onClick={() => {
+                      const nowSelected = !sel;
+                      setSelectedCategories(prev => nowSelected ? [...prev, cat] : prev.filter(c => c !== cat));
+                      if (cat === "Other" && !nowSelected) setOtherSpecialty("");
+                    }}
                     style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
                   >{tCat(CATEGORY_KEY[cat])}</button>
                 );
               })}
+              {selectedCategories.includes("Other") && (
+                <div style={{width: "100%", marginTop: "4px"}}>
+                  <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
+                  <input
+                    type="text"
+                    value={otherSpecialty}
+                    onChange={(e) => setOtherSpecialty(e.target.value)}
+                    placeholder={t("form.otherSpecialtyPlaceholder")}
+                    maxLength={80}
+                    style={inputStyle}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

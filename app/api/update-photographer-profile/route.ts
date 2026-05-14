@@ -38,6 +38,9 @@ export async function POST(request: NextRequest) {
       editing_style: body.editing_style || null,
       revisions_included: body.revisions_included || null,
       profile_photo: body.profile_photo || null,
+      other_specialty: (body.specialities ?? []).includes("Other")
+        ? (body.other_specialty?.trim() || null)
+        : null,
     };
 
     const { error } = await serviceClient

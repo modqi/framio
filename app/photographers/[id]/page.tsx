@@ -343,7 +343,9 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   <div style={{display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px"}}>
                     {cats.map((cat: string) => (
                       <span key={cat} style={{fontSize: "11px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "3px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
-                        {CATEGORY_KEY[cat] ? tCat(CATEGORY_KEY[cat]) : cat}
+                        {cat === "Other" && photographer.other_specialty
+                          ? photographer.other_specialty
+                          : CATEGORY_KEY[cat] ? tCat(CATEGORY_KEY[cat]) : cat}
                       </span>
                     ))}
                   </div>
