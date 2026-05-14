@@ -1,5 +1,5 @@
-"use client";
-import { useTranslations } from "next-intl";
+﻿"use client";
+import { useTranslations } from "../../../lib/i18n";
 import Logo from "../../components/Logo";
 
 export default function PayoutSetupComplete() {

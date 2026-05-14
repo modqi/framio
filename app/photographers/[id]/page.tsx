@@ -6,7 +6,7 @@ import Logo from "../../components/Logo";
 import { ReviewStarIcon } from "../../components/Icons";
 import GlobeModal from "../../components/GlobeModal";
 import { useCurrency } from "../../../lib/currency-context";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 import { useLocale } from "../../../lib/locale-context";
 import { CATEGORY_KEY } from "../../../lib/categories";
 

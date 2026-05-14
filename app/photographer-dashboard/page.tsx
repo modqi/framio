@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { CameraIcon, CalendarIcon, MessageIcon, ProfileIcon, PortfolioIcon, PackageIcon, EmptyInboxIcon, CheckIcon } from "../components/Icons";
 import GlobeModal from "../components/GlobeModal";
 import { useCurrency } from "../../lib/currency-context";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 
 const parsePrice = (price: unknown): number => {
   const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));

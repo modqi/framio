@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import GlobeModal from "../../components/GlobeModal";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 import { CATEGORIES, CATEGORY_KEY } from "../../../lib/categories";
 
 export default function EditProfile() {

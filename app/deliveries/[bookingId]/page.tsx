@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { EmptyInboxIcon } from "../../components/Icons";

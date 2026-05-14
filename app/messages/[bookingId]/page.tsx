@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 
 export default function Conversation({ params }: { params: any }) {
   const t = useTranslations("Conversation");

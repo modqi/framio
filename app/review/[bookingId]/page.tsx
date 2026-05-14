@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { ReviewStarIcon } from "../../components/Icons";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 
 export default function LeaveReview() {
   const t = useTranslations("Review");

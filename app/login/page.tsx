@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../lib/i18n";
 
 export default function Login() {
   const [email, setEmail] = useState("");

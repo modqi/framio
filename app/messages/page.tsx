@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 import { MessageIcon } from "../components/Icons";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../lib/i18n";
 
 export default function Messages() {
   const t = useTranslations("Inbox");

@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 import { useCurrency } from "../../lib/currency-context";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../lib/i18n";
 import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 
 const SPECIALTIES = ["All", ...CATEGORIES] as const;

@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../lib/i18n";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";

@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "../../../lib/i18n";
 
 export default function Availability() {
   const t = useTranslations("Availability");

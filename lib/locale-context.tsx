@@ -1,21 +1,16 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import { NextIntlClientProvider } from "next-intl";
 import en from "../messages/en.json";
 import no from "../messages/no.json";
 
 type Locale = "en" | "no";
-const messages: Record<Locale, any> = { en, no };
+const MESSAGES: Record<Locale, any> = { en, no };
 
-interface LocaleContextType {
+export const LocaleContext = createContext<{
   locale: Locale;
-  setLocale: (locale: Locale) => void;
-}
-
-const LocaleContext = createContext<LocaleContextType>({
-  locale: "en",
-  setLocale: () => {},
-});
+  setLocale: (l: Locale) => void;
+  messages: Record<string, any>;
+}>({ locale: "en", setLocale: () => {}, messages: en });
 
 export function useLocale() {
   return useContext(LocaleContext);
@@ -23,10 +18,12 @@ export function useLocale() {
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("lomissa_locale");
     if (saved === "en" || saved === "no") setLocaleState(saved as Locale);
+    setMounted(true);
   }, []);
 
   const setLocale = (l: Locale) => {
@@ -34,11 +31,10 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("lomissa_locale", l);
   };
 
+  const activeLocale: Locale = mounted ? locale : "en";
   return (
-    <LocaleContext.Provider value={{ locale, setLocale }}>
-      <NextIntlClientProvider locale={locale} messages={messages[locale]}>
-        {children}
-      </NextIntlClientProvider>
+    <LocaleContext.Provider value={{ locale: activeLocale, setLocale, messages: MESSAGES[activeLocale] }}>
+      {children}
     </LocaleContext.Provider>
   );
 }
