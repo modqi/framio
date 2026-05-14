@@ -7,10 +7,12 @@ import { ReviewStarIcon } from "../../components/Icons";
 import GlobeModal from "../../components/GlobeModal";
 import { useCurrency } from "../../../lib/currency-context";
 import { useTranslations } from "next-intl";
+import { CATEGORY_KEY } from "../../../lib/categories";
 
 export default function PhotographerProfile({ params }: { params: any }) {
   const { formatPrice } = useCurrency();
   const t = useTranslations("Profile");
+  const tCat = useTranslations("Categories");
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -313,7 +315,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   <div style={{display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px"}}>
                     {cats.map((cat: string) => (
                       <span key={cat} style={{fontSize: "11px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "3px 12px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>
-                        {cat}
+                        {CATEGORY_KEY[cat] ? tCat(CATEGORY_KEY[cat]) : cat}
                       </span>
                     ))}
                   </div>

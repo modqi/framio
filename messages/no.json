@@ -1099,5 +1099,17 @@
       "4": "Utbetalinger ankommer vanligvis innen 2–7 virkedager"
     },
     "goToDashboard": "Gå til dashbordet mitt →"
+  },
+  "Categories": {
+    "all": "Alle",
+    "weddings": "Bryllup",
+    "portraits": "Portretter",
+    "family_newborn": "Familie og nyfødte",
+    "real_estate": "Eiendom",
+    "products": "Produkter",
+    "events": "Arrangementer",
+    "fashion": "Mote",
+    "artistic": "Kunstnerisk",
+    "other": "Annet"
   }
 }

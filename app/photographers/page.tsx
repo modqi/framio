@@ -5,10 +5,14 @@ import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 import { useCurrency } from "../../lib/currency-context";
 import { useTranslations } from "next-intl";
+import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
+
+const SPECIALTIES = ["All", ...CATEGORIES] as const;
 
 export default function Photographers() {
   const { formatPrice } = useCurrency();
   const t = useTranslations("Browse");
+  const tCat = useTranslations("Categories");
   const [photographers, setPhotographers] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,8 +20,6 @@ export default function Photographers() {
   const [specialty, setSpecialty] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
   const [authUser, setAuthUser] = useState<any>(null);
-
-  const specialties = ["All", "Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
 
   useEffect(() => {
     const getData = async () => {
@@ -148,13 +150,13 @@ export default function Photographers() {
 
         {/* Specialty filters */}
         <div style={{display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px"}}>
-          {specialties.map((s) => (
+          {SPECIALTIES.map((s) => (
             <button
               key={s}
               onClick={() => setSpecialty(s)}
               style={{padding: "6px 16px", borderRadius: "999px", border: specialty === s ? "1px solid #C8622A" : "1px solid #E2D5C8", backgroundColor: specialty === s ? "#C8622A" : "#FDFBF8", color: specialty === s ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontWeight: specialty === s ? "500" : "400", fontFamily: "'Jost', sans-serif", letterSpacing: "0.03em"}}
             >
-              {s}
+              {s === "All" ? tCat("all") : tCat(CATEGORY_KEY[s])}
             </button>
           ))}
         </div>
@@ -205,7 +207,7 @@ export default function Photographers() {
                       ? photographer.specialities.slice(0, 2)
                       : photographer.specialty ? [photographer.specialty] : []
                     ).map((cat: string) => (
-                      <span key={cat} style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.03em"}}>{cat}</span>
+                      <span key={cat} style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.03em"}}>{CATEGORY_KEY[cat] ? tCat(CATEGORY_KEY[cat]) : cat}</span>
                     ))}
                   </div>
                   <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{photographer.name}</h3>

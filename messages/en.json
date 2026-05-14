@@ -1099,5 +1099,17 @@
       "4": "Payouts typically arrive within 2–7 business days"
     },
     "goToDashboard": "Go to my dashboard →"
+  },
+  "Categories": {
+    "all": "All",
+    "weddings": "Weddings",
+    "portraits": "Portraits",
+    "family_newborn": "Family & Newborn",
+    "real_estate": "Real Estate",
+    "products": "Products",
+    "events": "Events",
+    "fashion": "Fashion",
+    "artistic": "Artistic",
+    "other": "Other"
   }
 }

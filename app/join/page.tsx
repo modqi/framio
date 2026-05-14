@@ -4,8 +4,7 @@ import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
 import { useTranslations } from "next-intl";
-
-const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
+import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 
 export default function JoinAsPhotographer() {
   const [saving, setSaving] = useState(false);
@@ -23,9 +22,8 @@ export default function JoinAsPhotographer() {
     about: "",
   });
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [otherChecked, setOtherChecked] = useState(false);
-  const [otherCategory, setOtherCategory] = useState("");
   const t = useTranslations("Join");
+  const tCat = useTranslations("Categories");
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.phone_number || !form.about) {
@@ -35,10 +33,7 @@ export default function JoinAsPhotographer() {
     setSaving(true);
     setError("");
 
-    const finalSpecialities = [
-      ...selectedCategories,
-      ...(otherChecked && otherCategory.trim() ? [otherCategory.trim()] : []),
-    ];
+    const finalSpecialities = [...selectedCategories];
 
     const { error } = await supabase.from("applications").insert({
       name: form.name,
@@ -205,24 +200,17 @@ export default function JoinAsPhotographer() {
             <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
               <div>
                 <label style={labelStyle}>{t("form.categoriesLabel")}</label>
-                <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: otherChecked ? "10px" : "0"}}>
+                <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
                   {CATEGORIES.map(cat => {
                     const sel = selectedCategories.includes(cat);
                     return (
                       <button key={cat} type="button"
                         onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
                         style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
-                      >{cat}</button>
+                      >{tCat(CATEGORY_KEY[cat])}</button>
                     );
                   })}
-                  <button type="button"
-                    onClick={() => { setOtherChecked(!otherChecked); if (otherChecked) setOtherCategory(""); }}
-                    style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${otherChecked ? "#C8622A" : "#E2D5C8"}`, backgroundColor: otherChecked ? "#C8622A" : "#FDFBF8", color: otherChecked ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: otherChecked ? "500" : "400"}}
-                  >{t("form.otherCategory")}</button>
                 </div>
-                {otherChecked && (
-                  <input type="text" value={otherCategory} onChange={(e) => setOtherCategory(e.target.value)} placeholder={t("form.otherCategoryPlaceholder")} style={inputStyle} />
-                )}
               </div>
               <div>
                 <label style={labelStyle}>{t("form.experienceLabel")}</label>

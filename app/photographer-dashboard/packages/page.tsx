@@ -5,13 +5,13 @@ import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import GlobeModal from "../../components/GlobeModal";
 import { useCurrency } from "../../../lib/currency-context";
-
-const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
+import { CATEGORIES, CATEGORY_KEY } from "../../../lib/categories";
 const BLANK_PKG = { name: "", duration: "", photos_delivered: "", price: "", description: "", category: "" };
 const BLANK_ADDON = { name: "", price: "", unit: "flat fee" };
 
 export default function ManagePackages() {
   const t = useTranslations("Packages");
+  const tCat = useTranslations("Categories");
   const { formatPrice } = useCurrency();
   const [photographerId, setPhotographerId] = useState<string | null>(null);
   const [packages, setPackages] = useState<any[]>([]);
@@ -268,7 +268,7 @@ export default function ManagePackages() {
                       <div style={{flex: 1}}>
                         <div style={{display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px"}}>
                           <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06", margin: "0"}}>{pkg.name}</p>
-                          {pkg.category && <span style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{pkg.category}</span>}
+                          {pkg.category && <span style={{fontSize: "10px", color: "#C8622A", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{CATEGORY_KEY[pkg.category] ? tCat(CATEGORY_KEY[pkg.category]) : pkg.category}</span>}
                         </div>
                         <p style={{fontSize: "12px", color: "#7A5C44", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{pkg.duration} · {pkg.photos_delivered} photos</p>
                         {pkg.description && <p style={{fontSize: "12px", color: "#7A5C44", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif"}}>{pkg.description}</p>}
@@ -395,6 +395,7 @@ export default function ManagePackages() {
 
 function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyle, labelStyle, isEdit }: any) {
   const t = useTranslations("Packages");
+  const tCat = useTranslations("Categories");
   return (
     <div style={{border: "1px solid #C8622A", borderRadius: "10px", padding: "20px", backgroundColor: "#FBF0EA"}}>
       <p style={{fontSize: "12px", color: "#C8622A", margin: "0 0 16px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em"}}>
@@ -427,7 +428,7 @@ function PackageForm({ form, setForm, onSave, onCancel, saving, error, inputStyl
           <label style={labelStyle}>{t("packageForm.category")}</label>
           <select value={form.category} onChange={(e) => setForm((f: any) => ({...f, category: e.target.value}))} style={inputStyle}>
             <option value="">{t("packageForm.noCategory")}</option>
-            {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            {CATEGORIES.map(cat => <option key={cat} value={cat}>{tCat(CATEGORY_KEY[cat])}</option>)}
           </select>
         </div>
         {error && <p style={{fontSize: "12px", color: "#dc2626", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>}

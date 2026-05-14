@@ -4,11 +4,11 @@ import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import GlobeModal from "../../components/GlobeModal";
 import { useTranslations } from "next-intl";
-
-const CATEGORIES = ["Weddings", "Portraits", "Family & Newborn", "Real Estate", "Products", "Events", "Lomissa"];
+import { CATEGORIES, CATEGORY_KEY } from "../../../lib/categories";
 
 export default function EditProfile() {
   const t = useTranslations("EditProfile");
+  const tCat = useTranslations("Categories");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -19,8 +19,6 @@ export default function EditProfile() {
   const [photoError, setPhotoError] = useState("");
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [otherChecked, setOtherChecked] = useState(false);
-  const [otherCategory, setOtherCategory] = useState("");
   const [form, setForm] = useState({
     name: "",
     bio: "",
@@ -65,9 +63,7 @@ export default function EditProfile() {
           revisions_included: row?.revisions_included || "",
         });
         const loaded: string[] = row?.specialities || [];
-        setSelectedCategories(loaded.filter((s: string) => CATEGORIES.includes(s)));
-        const otherVal = loaded.find((s: string) => !CATEGORIES.includes(s)) || "";
-        if (otherVal) { setOtherChecked(true); setOtherCategory(otherVal); }
+        setSelectedCategories(loaded.filter((s: string) => (CATEGORIES as readonly string[]).includes(s)));
       }
       setLoading(false);
     };
@@ -77,10 +73,7 @@ export default function EditProfile() {
   const handleSave = async () => {
     setSaving(true);
     setSaveError("");
-    const finalSpecialities = [
-      ...selectedCategories,
-      ...(otherChecked && otherCategory.trim() ? [otherCategory.trim()] : []),
-    ];
+    const finalSpecialities = [...selectedCategories];
     const primarySpecialty = finalSpecialities[0] || "";
     const { error: authError } = await supabase.auth.updateUser({
       data: {
@@ -281,24 +274,17 @@ export default function EditProfile() {
 
           <div>
             <label style={labelStyle}>{t("form.categories")}</label>
-            <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: otherChecked ? "10px" : "0"}}>
+            <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
               {CATEGORIES.map(cat => {
                 const sel = selectedCategories.includes(cat);
                 return (
                   <button key={cat} type="button"
                     onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
                     style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
-                  >{cat}</button>
+                  >{tCat(CATEGORY_KEY[cat])}</button>
                 );
               })}
-              <button type="button"
-                onClick={() => { setOtherChecked(!otherChecked); if (otherChecked) setOtherCategory(""); }}
-                style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${otherChecked ? "#C8622A" : "#E2D5C8"}`, backgroundColor: otherChecked ? "#C8622A" : "#FDFBF8", color: otherChecked ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: otherChecked ? "500" : "400"}}
-              >{t("form.other")}</button>
             </div>
-            {otherChecked && (
-              <input type="text" value={otherCategory} onChange={(e) => setOtherCategory(e.target.value)} placeholder={t("form.otherPlaceholder")} style={{...inputStyle, marginTop: "10px"}} />
-            )}
           </div>
 
           <div>
