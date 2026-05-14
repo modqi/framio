@@ -9,10 +9,35 @@ import { useCurrency } from "../../../lib/currency-context";
 import { useTranslations } from "next-intl";
 import { CATEGORY_KEY } from "../../../lib/categories";
 
+const TERM_VALUE_KEYS: Record<string, string> = {
+  "Within 3 days": "terms.values.within3Days",
+  "Within 5 days": "terms.values.within5Days",
+  "Within 1 week": "terms.values.within1Week",
+  "Within 2 weeks": "terms.values.within2Weeks",
+  "Within 3 weeks": "terms.values.within3Weeks",
+  "Within 1 month": "terms.values.within1Month",
+  "Within 2 months": "terms.values.within2Months",
+  "Within 3 months": "terms.values.within3Months",
+  "Photographer retains copyright, client gets personal use license": "terms.values.copyrightRetained",
+  "Client receives full copyright after payment": "terms.values.copyrightFull",
+  "Photographer keeps portfolio rights, client gets full usage rights": "terms.values.copyrightPortfolio",
+};
+
+const UNIT_KEYS: Record<string, string> = {
+  "hour": "booking.units.hour",
+  "per hour": "booking.units.perHour",
+  "per photo": "booking.units.perPhoto",
+  "per person": "booking.units.perPerson",
+  "per location": "booking.units.perLocation",
+  "flat fee": "booking.units.flatFee",
+};
+
 export default function PhotographerProfile({ params }: { params: any }) {
   const { formatPrice } = useCurrency();
   const t = useTranslations("Profile");
   const tCat = useTranslations("Categories");
+  const translateTermValue = (v: string) => { const k = TERM_VALUE_KEYS[v]; return k ? t(k as any) : v; };
+  const translateUnit = (u: string) => { const k = UNIT_KEYS[u?.toLowerCase()]; return k ? t(k as any) : u; };
   const [photographer, setPhotographer] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -349,7 +374,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   <div style={{width: "36px", height: "36px", borderRadius: "8px", backgroundColor: "#F5EFE4", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0}}>{term.icon}</div>
                   <div>
                     <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 3px", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t(term.labelKey as any)}</p>
-                    <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{term.value}</p>
+                    <p style={{fontSize: "13px", color: "#1A0E06", margin: "0", fontFamily: "'Jost', sans-serif", lineHeight: "1.5"}}>{translateTermValue(term.value)}</p>
                   </div>
                 </div>
               ))}
@@ -393,7 +418,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                   <div key={review.id} style={{padding: "16px", border: "1px solid #E2D5C8", borderRadius: "12px", backgroundColor: "#FDFBF8"}}>
                     <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px"}}>
                       <div>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{review.client_name}</p>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: "500", color: "#1A0E06", margin: "0 0 2px"}}>{review.client_name || t("reviews.anonymous")}</p>
                         <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{new Date(review.created_at).toLocaleDateString()}</p>
                       </div>
                       <div style={{display: "flex", gap: "2px"}}>
@@ -473,7 +498,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
                           <div key={addon.id} style={{border: `1px solid ${qty > 0 ? "#C8622A" : "#E2D5C8"}`, borderRadius: "8px", padding: "10px 12px", backgroundColor: qty > 0 ? "#FBF0EA" : "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", transition: "all 0.1s"}}>
                             <div style={{flex: 1}}>
                               <p style={{fontSize: "13px", color: "#1A0E06", margin: "0 0 2px", fontFamily: "'Jost', sans-serif"}}>{addon.name}</p>
-                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{formatPrice(addon.price)} {addon.unit}</p>
+                              <p style={{fontSize: "11px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>{formatPrice(addon.price)} {translateUnit(addon.unit)}</p>
                             </div>
                             {qty === 0 ? (
                               <button onClick={() => setAddonQuantity(addon.id, 1)} style={{fontSize: "12px", color: "#C8622A", background: "none", border: "1px solid #E8A97E", borderRadius: "999px", padding: "4px 14px", cursor: "pointer", fontFamily: "'Jost', sans-serif", flexShrink: 0}}>{t("booking.add")}</button>
@@ -503,7 +528,10 @@ export default function PhotographerProfile({ params }: { params: any }) {
                       <button onClick={nextMonth} style={{border: "none", backgroundColor: "transparent", cursor: "pointer", fontSize: "16px", color: "#7A5C44", padding: "4px 8px"}}>→</button>
                     </div>
                     <div style={{display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px"}}>
-                      {["M","T","W","T","F","S","S"].map((d, i) => (
+                      {([
+                        t("calendar.mon"), t("calendar.tue"), t("calendar.wed"), t("calendar.thu"),
+                        t("calendar.fri"), t("calendar.sat"), t("calendar.sun"),
+                      ] as string[]).map((d, i) => (
                         <div key={i} style={{textAlign: "center", fontSize: "10px", color: "#DDD0C0", padding: "2px", fontFamily: "'Jost', sans-serif"}}>{d}</div>
                       ))}
                     </div>

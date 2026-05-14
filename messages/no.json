@@ -98,7 +98,20 @@
       "deliveryTime": "LEVERINGSTID",
       "copyright": "OPPHAVSRETT",
       "editingStyle": "REDIGERINGSSTIL",
-      "revisions": "REVISJONER"
+      "revisions": "REVISJONER",
+      "values": {
+        "within3Days": "Innen 3 dager",
+        "within5Days": "Innen 5 dager",
+        "within1Week": "Innen 1 uke",
+        "within2Weeks": "Innen 2 uker",
+        "within3Weeks": "Innen 3 uker",
+        "within1Month": "Innen 1 måned",
+        "within2Months": "Innen 2 måneder",
+        "within3Months": "Innen 3 måneder",
+        "copyrightRetained": "Fotografen beholder opphavsretten, kunden får en personlig brukslisens",
+        "copyrightFull": "Kunden mottar fullt opphavsrett etter betaling",
+        "copyrightPortfolio": "Fotografen beholder porteføljerettigheter, kunden får fulle bruksrettigheter"
+      }
     },
     "portfolio": {
       "label": "PORTEFØLJE",
@@ -106,7 +119,8 @@
     },
     "reviews": {
       "label": "VURDERINGER",
-      "noReviews": "Ingen vurderinger ennå"
+      "noReviews": "Ingen vurderinger ennå",
+      "anonymous": "Anonym"
     },
     "booking": {
       "title": "BESTILL EN ØKT",
@@ -129,12 +143,27 @@
       "selectPackageAndDate": "Velg en pakke og dato",
       "requestedHeading": "Bestilling sendt!",
       "requestedDesc": "{name} vil svare innen 24 timer.",
-      "viewBookings": "Se mine bestillinger"
+      "viewBookings": "Se mine bestillinger",
+      "units": {
+        "hour": "time",
+        "perHour": "per time",
+        "perPhoto": "per bilde",
+        "perPerson": "per person",
+        "perLocation": "per sted",
+        "flatFee": "engangsbeløp"
+      }
     },
     "calendar": {
       "available": "Tilgjengelig",
       "unavailable": "Ikke tilgjengelig",
-      "selected": "Valgt"
+      "selected": "Valgt",
+      "mon": "M",
+      "tue": "T",
+      "wed": "O",
+      "thu": "T",
+      "fri": "F",
+      "sat": "L",
+      "sun": "S"
     },
     "policy": {
       "flexibleLabel": "Fleksibel avbestilling",
