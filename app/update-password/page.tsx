@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 
 export default function UpdatePassword() {
+  const t = useTranslations("UpdatePassword");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,13 +16,13 @@ export default function UpdatePassword() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleUpdate = async () => {
-    if (!password) { setError("Please enter a new password."); return; }
-    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
-    if (password !== confirm) { setError("Passwords do not match."); return; }
+    if (!password) { setError(t("errors.required")); return; }
+    if (password.length < 8) { setError(t("errors.tooShort")); return; }
+    if (password !== confirm) { setError(t("errors.mismatch")); return; }
     setLoading(true);
     setError("");
     const { error } = await supabase.auth.updateUser({ password });
-    if (error) { setError("Something went wrong. Please try again."); }
+    if (error) { setError(t("errors.generic")); }
     else { setDone(true); }
     setLoading(false);
   };
@@ -57,33 +59,33 @@ export default function UpdatePassword() {
               </svg>
             </div>
             <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px", letterSpacing: "-0.02em"}}>
-              Password updated
+              {t("done.heading")}
             </h1>
             <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-              Your password has been successfully updated. You can now log in with your new password.
+              {t("done.description")}
             </p>
             <a href="/login" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-              Log in
+              {t("done.logIn")}
             </a>
           </div>
         ) : (
           <div style={{backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "48px 32px", border: "1px solid #E2D5C8"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>ACCOUNT RECOVERY</p>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
             <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-              Set new password
+              {t("heading")}
             </h1>
             <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-              Choose a strong password for your Lomissa account.
+              {t("description")}
             </p>
 
             <div style={{marginBottom: "16px"}}>
-              <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>New password</label>
+              <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>{t("newPassword")}</label>
               <div style={{position: "relative"}}>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 8 characters"
+                  placeholder={t("newPasswordPlaceholder")}
                   style={inputStyle}
                 />
                 <button
@@ -91,19 +93,19 @@ export default function UpdatePassword() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#7A5C44", padding: "0", fontFamily: "'Jost', sans-serif"}}
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? t("hide") : t("show")}
                 </button>
               </div>
             </div>
 
             <div style={{marginBottom: "24px"}}>
-              <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>Confirm password</label>
+              <label style={{fontSize: "11px", color: "#7A5C44", display: "block", marginBottom: "8px", letterSpacing: "0.05em", fontFamily: "'Jost', sans-serif"}}>{t("confirmPassword")}</label>
               <div style={{position: "relative"}}>
                 <input
                   type={showConfirm ? "text" : "password"}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="Repeat your password"
+                  placeholder={t("confirmPasswordPlaceholder")}
                   style={inputStyle}
                 />
                 <button
@@ -111,7 +113,7 @@ export default function UpdatePassword() {
                   onClick={() => setShowConfirm(!showConfirm)}
                   style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "#7A5C44", padding: "0", fontFamily: "'Jost', sans-serif"}}
                 >
-                  {showConfirm ? "Hide" : "Show"}
+                  {showConfirm ? t("hide") : t("show")}
                 </button>
               </div>
             </div>
@@ -127,7 +129,7 @@ export default function UpdatePassword() {
               disabled={loading}
               style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: loading ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", opacity: loading ? 0.7 : 1}}
             >
-              {loading ? "Updating…" : "Update password"}
+              {loading ? t("updating") : t("updateButton")}
             </button>
           </div>
         )}

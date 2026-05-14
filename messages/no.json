@@ -1035,5 +1035,66 @@
       "keepOpen": "Hold siden åpen…"
     },
     "progress": "Laster opp {current} av {total}…"
+  },
+  "ResetPassword": {
+    "nav": { "backToLogin": "← Tilbake til innlogging" },
+    "sent": {
+      "badge": "SJEKK E-POSTEN DIN",
+      "heading": "Tilbakestillingslenke sendt",
+      "description": "Vi sendte en tilbakestillingslenke til {email}. Sjekk innboksen din og klikk på lenken for å tilbakestille passordet ditt.",
+      "backToLogin": "Tilbake til innlogging"
+    },
+    "form": {
+      "badge": "KONTOOPPRETTING",
+      "heading": "Glemt passordet?",
+      "description": "Skriv inn e-postadressen din, så sender vi deg en lenke for å tilbakestille passordet.",
+      "emailLabel": "E-postadresse",
+      "emailPlaceholder": "din@epost.com",
+      "sendButton": "Send tilbakestillingslenke",
+      "sending": "Sender…",
+      "rememberPassword": "Husker du passordet?",
+      "logIn": "Logg inn"
+    },
+    "errors": {
+      "emailRequired": "Vennligst oppgi e-postadressen din.",
+      "generic": "Noe gikk galt. Prøv igjen."
+    }
+  },
+  "UpdatePassword": {
+    "badge": "KONTOOPPRETTING",
+    "heading": "Angi nytt passord",
+    "description": "Velg et sterkt passord for din Lomissa-konto.",
+    "newPassword": "Nytt passord",
+    "newPasswordPlaceholder": "Minst 8 tegn",
+    "confirmPassword": "Bekreft passord",
+    "confirmPasswordPlaceholder": "Gjenta passordet",
+    "show": "Vis",
+    "hide": "Skjul",
+    "updateButton": "Oppdater passord",
+    "updating": "Oppdaterer…",
+    "done": {
+      "heading": "Passord oppdatert",
+      "description": "Passordet ditt er oppdatert. Du kan nå logge inn med det nye passordet.",
+      "logIn": "Logg inn"
+    },
+    "errors": {
+      "required": "Vennligst oppgi et nytt passord.",
+      "tooShort": "Passordet må være minst 8 tegn.",
+      "mismatch": "Passordene stemmer ikke overens.",
+      "generic": "Noe gikk galt. Prøv igjen."
+    }
+  },
+  "PayoutSetupComplete": {
+    "badge": "BETALINGSOPPSETT FULLFØRT",
+    "heading": "Alt er klart",
+    "description": "Bankkontoen din er tilkoblet. Når klienter bestiller og betaler for sesjoner, vil Lomissa automatisk overføre inntektene dine etter fradrag av 10 % plattformavgift.",
+    "whatHappensNow": "HVA SKJER NÅ",
+    "steps": {
+      "1": "Profilen din er nå synlig for klienter på Lomissa",
+      "2": "Klienter kan bla, bestille og betale for sesjonene dine",
+      "3": "Etter hver sesjon overføres 90 % av gebyret til bankkontoen din",
+      "4": "Utbetalinger ankommer vanligvis innen 2–7 virkedager"
+    },
+    "goToDashboard": "Gå til dashbordet mitt →"
   }
 }

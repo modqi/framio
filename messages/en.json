@@ -1035,5 +1035,66 @@
       "keepOpen": "Please keep this page open…"
     },
     "progress": "Uploading {current} of {total}…"
+  },
+  "ResetPassword": {
+    "nav": { "backToLogin": "← Back to login" },
+    "sent": {
+      "badge": "CHECK YOUR EMAIL",
+      "heading": "Reset link sent",
+      "description": "We sent a password reset link to {email}. Check your inbox and click the link to reset your password.",
+      "backToLogin": "Back to login"
+    },
+    "form": {
+      "badge": "ACCOUNT RECOVERY",
+      "heading": "Forgot your password?",
+      "description": "Enter your email address and we will send you a link to reset your password.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "sendButton": "Send reset link",
+      "sending": "Sending…",
+      "rememberPassword": "Remember your password?",
+      "logIn": "Log in"
+    },
+    "errors": {
+      "emailRequired": "Please enter your email address.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "UpdatePassword": {
+    "badge": "ACCOUNT RECOVERY",
+    "heading": "Set new password",
+    "description": "Choose a strong password for your Lomissa account.",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "At least 8 characters",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "show": "Show",
+    "hide": "Hide",
+    "updateButton": "Update password",
+    "updating": "Updating…",
+    "done": {
+      "heading": "Password updated",
+      "description": "Your password has been successfully updated. You can now log in with your new password.",
+      "logIn": "Log in"
+    },
+    "errors": {
+      "required": "Please enter a new password.",
+      "tooShort": "Password must be at least 8 characters.",
+      "mismatch": "Passwords do not match.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "PayoutSetupComplete": {
+    "badge": "PAYMENT SETUP COMPLETE",
+    "heading": "You're all set",
+    "description": "Your bank account is connected. Once clients book and pay for sessions, Lomissa will automatically transfer your earnings after deducting the 10% platform fee.",
+    "whatHappensNow": "WHAT HAPPENS NOW",
+    "steps": {
+      "1": "Your profile is now visible to clients on Lomissa",
+      "2": "Clients can browse, book, and pay for your sessions",
+      "3": "After each session, 90% of the fee is transferred to your bank account",
+      "4": "Payouts typically arrive within 2–7 business days"
+    },
+    "goToDashboard": "Go to my dashboard →"
   }
 }
