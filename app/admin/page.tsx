@@ -30,7 +30,9 @@ export default function AdminPanel() {
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { window.location.href = "/studio-access"; return; }
+      if (!user) { window.location.href = "/login"; return; }
+
+      if (user.user_metadata?.role !== "admin") { window.location.href = "/login"; return; }
 
       const { data: adminData } = await supabase
         .from("admin_users")
@@ -38,7 +40,7 @@ export default function AdminPanel() {
         .eq("email", user.email)
         .single();
 
-      if (!adminData) { window.location.href = "/studio-access"; return; }
+      if (!adminData) { window.location.href = "/login"; return; }
       setAuthorized(true);
 
       const { data: { session } } = await supabase.auth.getSession();

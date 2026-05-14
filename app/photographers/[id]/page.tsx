@@ -20,7 +20,6 @@ export default function PhotographerProfile({ params }: { params: any }) {
   const [addons, setAddons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
   const [addonQty, setAddonQty] = useState<Record<string, number>>({});
@@ -57,16 +56,6 @@ export default function PhotographerProfile({ params }: { params: any }) {
       ]);
 
       setAuthUser(user);
-
-      if (user) {
-        const { data: adminRow } = await supabase
-          .from("admin_users")
-          .select("id")
-          .eq("email", user.email)
-          .single();
-        if (adminRow) setIsAdmin(true);
-      }
-
       setPhotographer(photographerData);
 
       if (photographerData) {
@@ -229,6 +218,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
       <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("notFound.back")}</a>
     </div>
   );
+
+  const isAdmin = authUser?.user_metadata?.role === "admin";
 
   const days = getDaysInMonth();
   const monthName = currentMonth.toLocaleString("default", { month: "long", year: "numeric" });
