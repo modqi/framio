@@ -23,6 +23,7 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [otherSpecialty, setOtherSpecialty] = useState("");
   const [experience, setExperience] = useState("");
   const [instagram, setInstagram] = useState("");
   const [portfolio, setPortfolio] = useState("");
@@ -70,8 +71,9 @@ export default function Signup() {
     if (signupError) { setError(signupError.message); setLoading(false); return; }
 
     const { error: appError } = await supabase.from("applications").insert({
-      name, email, location, specialty: selectedCategories.join(", "), experience,
-      instagram, portfolio_link: portfolio, about, status: "pending",
+      name, email, location, specialty: selectedCategories.join(", "),
+      other_specialty: selectedCategories.includes("Other") ? (otherSpecialty.trim() || null) : null,
+      experience, instagram, portfolio_link: portfolio, about, status: "pending",
     });
 
     if (appError) { setError("Something went wrong. Please try again."); setLoading(false); return; }
@@ -233,7 +235,7 @@ export default function Signup() {
             {t("form.roleBook")}
           </button>
           <button
-            onClick={() => router.push("/join")}
+          onClick={() => { setRole("photographer"); setError(""); }}
             style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "transparent", color: "#1A0E06", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
           >
             {t("form.rolePhotographer")}
@@ -333,12 +335,29 @@ export default function Signup() {
                   const sel = selectedCategories.includes(cat);
                   return (
                     <button key={cat} type="button"
-                      onClick={() => setSelectedCategories(prev => sel ? prev.filter(c => c !== cat) : [...prev, cat])}
+                      onClick={() => {
+                        const nowSelected = !sel;
+                        setSelectedCategories(prev => nowSelected ? [...prev, cat] : prev.filter(c => c !== cat));
+                        if (cat === "Other" && !nowSelected) setOtherSpecialty("");
+                      }}
                       style={{padding: "7px 16px", borderRadius: "999px", border: `1px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "12px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
                     >{tCat(CATEGORY_KEY[cat])}</button>
                   );
                 })}
               </div>
+              {selectedCategories.includes("Other") && (
+                <div style={{marginTop: "12px"}}>
+                  <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
+                  <input
+                    type="text"
+                    value={otherSpecialty}
+                    onChange={(e) => setOtherSpecialty(e.target.value)}
+                    placeholder={t("form.otherSpecialtyPlaceholder")}
+                    maxLength={80}
+                    style={inputStyle}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
