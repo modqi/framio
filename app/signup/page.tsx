@@ -170,11 +170,11 @@ export default function Signup() {
   }
 
   return (
-    <main className="min-h-screen flex" style={{backgroundColor: "#FDFBF8", position: "relative"}}>
+    <main style={{backgroundColor: "#FDFBF8", display: "flex", minHeight: "100vh"}}>
       <div style={{position: "absolute", top: "16px", right: "24px", zIndex: 10}}><GlobeModal /></div>
 
       {/* Left — dark panel */}
-      <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0, overflow: "hidden", minHeight: "100vh", position: "sticky", top: "0"}}>
+      <div className="hidden md:flex flex-col justify-between" style={{width: "45%", minWidth: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0, position: "sticky", top: "0", height: "100vh", overflow: "hidden"}}>
         <Logo size="sm" href="/" color="#FDFBF8" accent="#C1622F" />
         <div style={{marginTop: "auto", marginBottom: "auto"}}>
           {role === "client" ? (
@@ -213,7 +213,7 @@ export default function Signup() {
       </div>
 
       {/* Right — form */}
-      <div className="flex flex-col justify-center flex-1" style={{padding: "48px 32px", maxWidth: "600px", margin: "0 auto", overflowY: "auto"}}>
+      <div className="flex flex-col justify-center flex-1" style={{padding: "48px 32px", overflowY: "auto", maxWidth: "600px", margin: "0 auto"}}>
 
         <div style={{marginBottom: "32px"}}>
           <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("form.badge")}</p>
