@@ -174,9 +174,9 @@ export default function Signup() {
       <div style={{position: "absolute", top: "16px", right: "24px", zIndex: 10}}><GlobeModal /></div>
 
       {/* Left — dark panel */}
-      <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0}}>
+      <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0, overflow: "hidden"}}>
         <Logo size="sm" href="/" color="#FDFBF8" accent="#C1622F" />
-        <div>
+        <div style={{marginTop: "auto", marginBottom: "auto"}}>
           {role === "client" ? (
             <>
               <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#FDFBF8", margin: "0 0 16px", letterSpacing: "-0.02em", lineHeight: "1.2"}}>
