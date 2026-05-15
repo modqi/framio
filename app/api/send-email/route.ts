@@ -51,9 +51,9 @@ export async function POST(request: NextRequest) {
 
     // New message notification
     if (type === "new_message") {
-      // Throttle: skip the email if this sender already triggered one in the last 3 minutes.
-      // The current message is already in the DB, so >= 2 rows means there was a prior one.
-      const windowStart = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+      // Throttle: send at most 1 email per 10 minutes per booking per sender.
+      // The current message is already in the DB, so >= 2 rows means a prior one triggered an email.
+      const windowStart = new Date(Date.now() - 10 * 60 * 1000).toISOString();
       const { data: recentMessages } = await authClient!
         .from("messages")
         .select("id")

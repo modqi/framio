@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import BfcacheRefresh from "./components/BfcacheRefresh";
+import SessionSync from "./components/SessionSync";
 import { CurrencyProvider } from "../lib/currency-context";
 import { LocaleProvider } from "../lib/locale-context";
 
@@ -27,7 +28,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#C8622A" />
         <meta name="google-site-verification" content="L0defMQayaQNMiBzaBuaiy2bBqkpzIYenDjusZTfglg" />
       </head>
-      <body><BfcacheRefresh /><CurrencyProvider><LocaleProvider>{children}</LocaleProvider></CurrencyProvider></body>
+      <body><BfcacheRefresh /><SessionSync /><CurrencyProvider><LocaleProvider>{children}</LocaleProvider></CurrencyProvider></body>
     </html>
   );
 }
