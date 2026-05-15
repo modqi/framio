@@ -142,7 +142,7 @@ export default function JoinAsPhotographer() {
       {/* Left — dark espresso panel */}
       <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0}}>
         <Logo size="sm" href="/" color="#FDFBF8" accent="#C1622F" />
-        <div style={{flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "48px", paddingBottom: "48px"}}>
+        <div>
           <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
             {t("hero.badge")}
           </p>
@@ -169,8 +169,18 @@ export default function JoinAsPhotographer() {
       </div>
 
       {/* Right — form */}
-      <div className="flex flex-col flex-1" style={{padding: "48px 32px", overflowY: "auto"}}>
+      <div className="flex flex-col justify-center flex-1" style={{padding: "48px 32px", overflowY: "auto"}}>
         <div style={{maxWidth: "560px", width: "100%", margin: "0 auto"}}>
+
+          <div style={{marginBottom: "32px"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
+            <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
+              {t("hero.heading")}
+            </h1>
+            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
+              {t("hero.description")}
+            </p>
+          </div>
 
           {/* Role toggle — mirrors signup page */}
           <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F0EAE0", padding: "4px", borderRadius: "999px"}}>
@@ -185,16 +195,6 @@ export default function JoinAsPhotographer() {
             >
               {tSignup("form.rolePhotographer")}
             </button>
-          </div>
-
-          <div style={{marginBottom: "32px"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
-            <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>
-              {t("hero.heading")}
-            </h1>
-            <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
-              {t("hero.description")}
-            </p>
           </div>
 
           <div style={{display: "flex", flexDirection: "column", gap: "24px"}}>
