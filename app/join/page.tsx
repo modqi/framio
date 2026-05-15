@@ -181,7 +181,7 @@ export default function JoinAsPhotographer() {
               {tSignup("form.roleBook")}
             </button>
             <button
-              style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "default", backgroundColor: "#C8622A", color: "#FDFBF8", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
+              style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "#C8622A", color: "#FDFBF8", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
             >
               {tSignup("form.rolePhotographer")}
             </button>
