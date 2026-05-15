@@ -123,9 +123,18 @@ export default function Signup() {
 
   return (
     <main style={{backgroundColor: "#FDFBF8", display: "flex", flexDirection: "column", minHeight: "100vh"}}>
+      <style>{`
+        @media (max-width: 767px) {
+          .signup-nav  { padding: 16px 20px !important; }
+          .signup-grid { grid-template-columns: 1fr !important; }
+          .signup-left { display: none !important; }
+          .signup-right { padding: 28px 20px 48px !important; max-height: none !important; overflow-y: visible !important; }
+          .photo-inner-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
 
       {/* NAV */}
-      <nav style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 56px", borderBottom: "0.5px solid #E2D5C8", backgroundColor: "#FDFBF8"}}>
+      <nav className="signup-nav" style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 56px", borderBottom: "0.5px solid #E2D5C8", backgroundColor: "#FDFBF8"}}>
         <Logo size="sm" href="/" />
         <div style={{display: "flex", alignItems: "center", gap: "16px"}}>
           <GlobeModal />
@@ -133,10 +142,10 @@ export default function Signup() {
       </nav>
 
       {/* TWO COLUMN LAYOUT */}
-      <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1}}>
+      <div className="signup-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1}}>
 
         {/* LEFT — motivation */}
-        <div style={{padding: "72px 56px", display: "flex", flexDirection: "column", justifyContent: "center", borderRight: "0.5px solid #E2D5C8", position: "sticky", top: "0", height: "calc(100vh - 65px)", overflow: "hidden"}}>
+        <div className="signup-left" style={{padding: "72px 56px", display: "flex", flexDirection: "column", justifyContent: "center", borderRight: "0.5px solid #E2D5C8", position: "sticky", top: "0", height: "calc(100vh - 65px)", overflow: "hidden"}}>
 
           {/* CLIENT LEFT */}
           {role === "client" && (
@@ -199,7 +208,7 @@ export default function Signup() {
         </div>
 
         {/* RIGHT — form */}
-        <div style={{padding: "72px 56px", overflowY: "auto", maxHeight: "calc(100vh - 65px)"}}>
+        <div className="signup-right" style={{padding: "72px 56px", overflowY: "auto", maxHeight: "calc(100vh - 65px)"}}>
 
           <div style={{marginBottom: "28px"}}>
             <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", marginBottom: "8px"}}>
@@ -266,7 +275,7 @@ export default function Signup() {
               <div style={{backgroundColor: "#F5EFE4", borderRadius: "10px", padding: "11px 14px", border: "0.5px solid #E2D5C8"}}>
                 <p style={{fontSize: "12px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("form.photoReviewNote")}</p>
               </div>
-              <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px"}}>
+              <div className="photo-inner-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px"}}>
                 <div>
                   <label style={labelStyle}>{t("form.nameLabelRequired")}</label>
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("form.namePlaceholder")} style={inputStyle}/>
@@ -285,7 +294,7 @@ export default function Signup() {
                   </button>
                 </div>
               </div>
-              <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px"}}>
+              <div className="photo-inner-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px"}}>
                 <div>
                   <label style={labelStyle}>{t("form.locationLabel")}</label>
                   <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t("form.locationPlaceholder")} style={inputStyle}/>
