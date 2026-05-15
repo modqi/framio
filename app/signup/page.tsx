@@ -225,16 +225,16 @@ export default function Signup() {
         </div>
 
         {/* Role selector */}
-        <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F5EFE4", padding: "4px", borderRadius: "999px"}}>
+        <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F0EAE0", padding: "4px", borderRadius: "999px"}}>
           <button
             onClick={() => { setRole("client"); setError(""); }}
-            style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: role === "client" ? "#C8622A" : "transparent", color: role === "client" ? "#FDFBF8" : "#7A5C44", fontWeight: "500", transition: "all 0.2s", fontFamily: "'Jost', sans-serif"}}
+            style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "#C8622A", color: "#FDFBF8", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
           >
             {t("form.roleBook")}
           </button>
           <button
             onClick={() => router.push("/join")}
-            style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: role === "photographer" ? "#C8622A" : "transparent", color: role === "photographer" ? "#FDFBF8" : "#7A5C44", fontWeight: "500", transition: "all 0.2s", fontFamily: "'Jost', sans-serif"}}
+            style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "transparent", color: "#1A0E06", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
           >
             {t("form.rolePhotographer")}
           </button>
