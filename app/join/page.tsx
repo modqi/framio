@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
@@ -23,8 +24,10 @@ export default function JoinAsPhotographer() {
   });
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [otherSpecialty, setOtherSpecialty] = useState("");
+  const router = useRouter();
   const t = useTranslations("Join");
   const tCat = useTranslations("Categories");
+  const tSignup = useTranslations("Signup");
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.phone_number || !form.about) {
@@ -139,7 +142,7 @@ export default function JoinAsPhotographer() {
       {/* Left — dark espresso panel */}
       <div className="hidden md:flex flex-col justify-between" style={{width: "45%", backgroundColor: "#1A0E06", padding: "48px", flexShrink: 0}}>
         <Logo size="sm" href="/" color="#FDFBF8" accent="#C1622F" />
-        <div>
+        <div style={{flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: "48px", paddingBottom: "48px"}}>
           <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
             {t("hero.badge")}
           </p>
@@ -168,6 +171,21 @@ export default function JoinAsPhotographer() {
       {/* Right — form */}
       <div className="flex flex-col flex-1" style={{padding: "48px 32px", overflowY: "auto"}}>
         <div style={{maxWidth: "560px", width: "100%", margin: "0 auto"}}>
+
+          {/* Role toggle — mirrors signup page */}
+          <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F0EAE0", padding: "4px", borderRadius: "999px"}}>
+            <button
+              onClick={() => router.push("/signup")}
+              style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "transparent", color: "#1A0E06", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
+            >
+              {tSignup("form.roleBook")}
+            </button>
+            <button
+              style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "default", backgroundColor: "#C8622A", color: "#FDFBF8", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
+            >
+              {tSignup("form.rolePhotographer")}
+            </button>
+          </div>
 
           <div style={{marginBottom: "32px"}}>
             <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
