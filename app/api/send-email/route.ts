@@ -283,11 +283,11 @@ export async function POST(request: NextRequest) {
     // Booking confirmed — notify client. Look up booking from DB to avoid trusting body-supplied emails.
     if (type === "booking_confirmed") {
       if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
-      const { data: bkConfirmed } = await authClient!
+      const { data: bkConfirmed } = await (authClient as any)
         .from("bookings")
         .select("client_email, photographer_name, session_type, date, location, price")
         .eq("id", bookingId)
-        .eq("client_id", user!.id)
+        .eq("client_id", user.id)
         .single();
       if (!bkConfirmed) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
 
@@ -367,11 +367,11 @@ export async function POST(request: NextRequest) {
 
     // Look up booking from DB — never trust body-supplied photographer/client emails
     if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
-    const { data: bkRequest } = await authClient!
+    const { data: bkRequest } = await (authClient as any)
       .from("bookings")
       .select("photographer_email, photographer_name, client_name, client_email, session_type, date, location, price, message")
       .eq("id", bookingId)
-      .eq("client_id", user!.id)
+      .eq("client_id", user.id)
       .single();
     if (!bkRequest) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
 
