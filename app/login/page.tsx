@@ -119,7 +119,7 @@ export default function Login() {
             </p>
             <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
               {t("form.isPhotographer")}{" "}
-              <a href="/join" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.applyToJoin")}</a>
+              <a href="/signup" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.applyToJoin")}</a>
             </p>
           </div>
 

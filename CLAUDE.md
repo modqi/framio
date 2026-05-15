@@ -63,7 +63,7 @@ npm run lint     # ESLint 9
 - Email/password signup with role assignment (client vs photographer)
 - Email confirmation via Supabase (`/auth/confirm`)
 - Password reset + update flows
-- Photographer application form (`/join`) → pending approval page (`/pending`)
+- Photographer application form (`/signup`) → pending approval page (`/pending`)
 - Studio access gate (`/studio-access`)
 
 **Automated (cron)**
@@ -357,7 +357,7 @@ disputed → [admin issues refund]    → cancelled
 
 - **Commission:** 10% on every completed booking
 - **No subscription fees** for photographers
-- **Curated supply:** photographers apply via `/join`, admin approves
+- **Curated supply:** photographers apply via `/signup`, admin approves
 - **Escrow model:** funds held on Stripe until 7 days after photo delivery — protects clients while ensuring photographer is paid promptly if no dispute
 - **Dispute resolution:** admin-mediated; admin can either release to photographer or refund client
 
