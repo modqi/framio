@@ -23,23 +23,31 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    const str = (v: unknown, max: number): string | null => {
+      const s = typeof v === "string" ? v.slice(0, max).trim() : "";
+      return s || null;
+    };
+
+    const ALLOWED_POLICIES = ["flexible", "moderate", "strict"];
+    const policy = ALLOWED_POLICIES.includes(body.cancellation_policy) ? body.cancellation_policy : "moderate";
+
     const payload: Record<string, any> = {
-      name: body.name || null,
-      bio: body.bio || null,
-      specialty: body.specialty || null,
-      specialities: body.specialities ?? [],
-      location: body.location || null,
-      instagram: body.instagram || null,
-      website: body.website || null,
-      phone_number: body.phone_number || null,
-      cancellation_policy: body.cancellation_policy || "moderate",
-      delivery_time: body.delivery_time || null,
-      copyright_ownership: body.copyright_ownership || null,
-      editing_style: body.editing_style || null,
-      revisions_included: body.revisions_included || null,
-      profile_photo: body.profile_photo || null,
+      name: str(body.name, 100),
+      bio: str(body.bio, 2000),
+      specialty: str(body.specialty, 100),
+      specialities: Array.isArray(body.specialities) ? body.specialities.slice(0, 20) : [],
+      location: str(body.location, 200),
+      instagram: str(body.instagram, 100),
+      website: str(body.website, 300),
+      phone_number: str(body.phone_number, 30),
+      cancellation_policy: policy,
+      delivery_time: str(body.delivery_time, 200),
+      copyright_ownership: str(body.copyright_ownership, 200),
+      editing_style: str(body.editing_style, 200),
+      revisions_included: str(body.revisions_included, 200),
+      profile_photo: str(body.profile_photo, 500),
       other_specialty: (body.specialities ?? []).includes("Other")
-        ? (body.other_specialty?.trim() || null)
+        ? str(body.other_specialty, 100)
         : null,
     };
 

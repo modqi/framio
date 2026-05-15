@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { bookingId, reason } = await request.json();
+  const { bookingId, reason: rawReason } = await request.json();
+  const reason = typeof rawReason === "string" ? rawReason.slice(0, 2000) : "";
 
   const { data: booking } = await serviceClient
     .from("bookings")

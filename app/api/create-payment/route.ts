@@ -22,8 +22,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const {
-      photographerName,
-      photographerEmail,
       photographerId,
       packageId,
       addons: selectedAddons, // [{id: string, quantity: number}]
@@ -39,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Look up the photographer before touching DB — bail early if no Connect account
     const { data: photographer } = await serviceClient
       .from("photographers")
-      .select("id, stripe_account_id, cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included")
+      .select("id, name, email, stripe_account_id, cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included")
       .eq("user_id", photographerId)
       .single();
 
@@ -61,7 +59,7 @@ export async function POST(request: NextRequest) {
     // Fetch and verify add-ons — single batch query filtered to this photographer
     const resolvedAddons: Array<{id: string; name: string; price: number; unit: string; quantity: number}> = [];
     const requestedAddons = (selectedAddons || []).filter(
-      ({ id, quantity }: { id: string; quantity: number }) => id && quantity >= 1
+      ({ id, quantity }: { id: string; quantity: number }) => id && Number.isInteger(quantity) && quantity >= 1 && quantity <= 20
     );
     if (requestedAddons.length > 0) {
       const addonIds = requestedAddons.map(({ id }: { id: string }) => id);
@@ -83,19 +81,22 @@ export async function POST(request: NextRequest) {
     const priceDisplay = `${total.toLocaleString()} NOK`;
 
     // Insert booking — only after all pre-checks pass
+    const safeLocation = typeof location === "string" ? location.slice(0, 300) : null;
+    const safeMessage = typeof message === "string" ? message.slice(0, 2000) : null;
+
     const { data: booking, error: insertError } = await serviceClient
       .from("bookings")
       .insert({
         client_id: user.id,
         client_name: user.user_metadata?.name || "",
         client_email: user.email,
-        photographer_name: photographerName,
+        photographer_name: photographer.name,
         photographer_id: photographerId,
-        photographer_email: photographerEmail,
+        photographer_email: photographer.email,
         session_type: pkg.name,
         date,
-        location,
-        message,
+        location: safeLocation,
+        message: safeMessage,
         price: priceDisplay,
         status: "awaiting_payment",
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
         price_data: {
           currency,
           product_data: {
-            name: `${pkg.name} with ${photographerName}`,
+            name: `${pkg.name} with ${photographer.name}`,
             description: `${pkg.duration} · ${pkg.photos_delivered} photos${date ? ` — ${date}` : ""}`,
           },
           unit_amount: pkg.price * 100,

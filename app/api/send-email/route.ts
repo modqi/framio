@@ -33,26 +33,28 @@ export async function POST(request: NextRequest) {
       onboardingUrl,
     } = body;
 
-    // New message notification
-    if (type === "new_message") {
-      const authHeader = request.headers.get("authorization");
-      const token = authHeader?.replace("Bearer ", "").trim();
-      if (!token) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-      const authClient = createClient(
+    // Auth gate — all types require a valid user session except "photographer_application",
+    // which is submitted from the public join form before any account exists and sends
+    // only to the hardcoded admin address with HTML-escaped content.
+    const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
+    let authClient: ReturnType<typeof createClient> | null = null;
+
+    if (type !== "photographer_application") {
+      if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      authClient = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
-      const { data: { user: caller } } = await authClient.auth.getUser(token);
-      if (!caller) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
+      const { data: { user } } = await authClient.auth.getUser(token);
+      if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
+    // New message notification
+    if (type === "new_message") {
       // Throttle: skip the email if this sender already triggered one in the last 3 minutes.
       // The current message is already in the DB, so >= 2 rows means there was a prior one.
       const windowStart = new Date(Date.now() - 3 * 60 * 1000).toISOString();
-      const { data: recentMessages } = await authClient
+      const { data: recentMessages } = await authClient!
         .from("messages")
         .select("id")
         .eq("booking_id", bookingId)

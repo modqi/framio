@@ -24,11 +24,6 @@ export async function POST(request: NextRequest) {
   const sig = request.headers.get("stripe-signature");
 
   const secretSet = !!process.env.STRIPE_WEBHOOK_SECRET;
-  const secretPrefix = process.env.STRIPE_WEBHOOK_SECRET?.slice(0, 14) ?? "(not set)";
-
-  console.log("[webhook] sig present:", !!sig);
-  console.log("[webhook] body length:", body.length);
-  console.log("[webhook] STRIPE_WEBHOOK_SECRET set:", secretSet, "| prefix:", secretPrefix);
 
   if (!sig) {
     console.error("[webhook] No stripe-signature header");
@@ -44,7 +39,7 @@ export async function POST(request: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err: any) {
-    console.error("[webhook] constructEvent failed:", err?.message, "| secret prefix used:", secretPrefix);
+    console.error("[webhook] constructEvent failed:", err?.message);
     return NextResponse.json({
       error: "signature_mismatch",
       message: err?.message,
