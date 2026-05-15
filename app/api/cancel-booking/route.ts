@@ -82,7 +82,10 @@ export async function POST(request: NextRequest) {
   if (shouldRefund) {
     if (booking.stripe_payment_intent_id) {
       try {
-        await stripe.refunds.create({ payment_intent: booking.stripe_payment_intent_id });
+        await stripe.refunds.create(
+          { payment_intent: booking.stripe_payment_intent_id },
+          { idempotencyKey: `refund-${bookingId}` }
+        );
         refunded = true;
       } catch (err: any) {
         console.error("[cancel-booking] Stripe refund failed:", err?.message);

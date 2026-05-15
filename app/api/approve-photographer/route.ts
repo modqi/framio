@@ -33,7 +33,17 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { email, name, location, specialty } = await request.json();
+    const body = await request.json();
+    const str = (v: unknown, max: number) => (typeof v === "string" ? v.slice(0, max).trim() : "");
+    const email    = str(body.email, 254);
+    const name     = str(body.name, 100);
+    const location = str(body.location, 200);
+    const specialty = str(body.specialty, 100);
+
+    if (!email || !name) {
+      return NextResponse.json({ error: "email and name are required" }, { status: 400 });
+    }
+
     let found: any = null;
     let page = 1;
     while (!found) {

@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { v2 as cloudinary } from "cloudinary";
+import { fileTypeFromBuffer } from "file-type";
 import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
@@ -28,18 +29,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
-    if (!ALLOWED_MIME.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type. Only JPEG, PNG, WebP, GIF, and HEIC images are allowed." }, { status: 400 });
-    }
-
     const MAX_BYTES = type === "delivery" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;
     if (file.size > MAX_BYTES) {
       return NextResponse.json({ error: `File too large. Maximum size is ${type === "delivery" ? "50" : "20"} MB.` }, { status: 400 });
     }
 
+    // Read buffer first so magic bytes can be checked — never trust client-supplied Content-Type
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+    const detected = await fileTypeFromBuffer(buffer);
+    if (!detected || !ALLOWED_MIME.includes(detected.mime)) {
+      return NextResponse.json({ error: "Invalid file type. Only JPEG, PNG, WebP, and HEIC images are allowed." }, { status: 400 });
+    }
 
     const isMessage = type === "message";
     const isDelivery = type === "delivery";

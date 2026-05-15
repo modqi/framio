@@ -4,11 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const serviceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(request: NextRequest) {
   const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,6 +14,11 @@ export async function POST(request: NextRequest) {
   );
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const serviceClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
   try {
     const {
@@ -32,6 +32,10 @@ export async function POST(request: NextRequest) {
 
     if (!packageId) {
       return NextResponse.json({ error: "no_package_selected" }, { status: 400 });
+    }
+
+    if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
     }
 
     // Look up the photographer before touching DB — bail early if no Connect account

@@ -4,6 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
+const esc = (s: unknown): string =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 const serviceClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -55,7 +63,7 @@ export async function POST(request: NextRequest) {
       from: "Lomissa <noreply@lomissa.com>",
       to: booking.client_email,
       subject: "Your photos are ready to review",
-      html: `<p>Hi ${booking.client_name},</p><p>${booking.photographer_name} has delivered your photos from your ${booking.session_type} session on ${booking.date}.</p><p>You have <strong>7 days</strong> to review them and raise a dispute if needed. If no dispute is raised, payment will be automatically released to your photographer.</p><p>Log in to your <a href="${process.env.NEXT_PUBLIC_BASE_URL}/dashboard">Lomissa dashboard</a> to raise a dispute if needed.</p>`,
+      html: `<p>Hi ${esc(booking.client_name)},</p><p>${esc(booking.photographer_name)} has delivered your photos from your ${esc(booking.session_type)} session on ${esc(booking.date)}.</p><p>You have <strong>7 days</strong> to review them and raise a dispute if needed. If no dispute is raised, payment will be automatically released to your photographer.</p><p>Log in to your <a href="${esc(process.env.NEXT_PUBLIC_BASE_URL ?? "")}/dashboard">Lomissa dashboard</a> to raise a dispute if needed.</p>`,
     }).catch(console.error);
   }
 

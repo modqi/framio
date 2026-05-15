@@ -4,6 +4,10 @@ import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Per-IP rate limit for the unauthenticated photographer_application path.
+// Resets on cold start — intentional (serverless, not a hard quota).
+const applicationRateLimit = new Map<string, number[]>();
+
 const esc = (s: unknown): string =>
   String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -38,6 +42,7 @@ export async function POST(request: NextRequest) {
     // only to the hardcoded admin address with HTML-escaped content.
     const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
     let authClient: ReturnType<typeof createClient> | null = null;
+    let user: any = null;
 
     if (type !== "photographer_application") {
       if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -45,7 +50,8 @@ export async function POST(request: NextRequest) {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
-      const { data: { user } } = await authClient.auth.getUser(token);
+      const authResult = await authClient.auth.getUser(token);
+      user = authResult.data.user;
       if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -89,7 +95,7 @@ export async function POST(request: NextRequest) {
               <p style="font-size: 13px; color: #888; margin: 0;">Regarding your booking on ${esc(date)}</p>
             </div>
             <div style="text-align: center; margin-bottom: 32px;">
-              <a href="https://lomissa.com/messages/${bookingId}"
+              <a href="https://lomissa.com/messages/${esc(bookingId)}"
                  style="background: #C4907A; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
                 Reply on Lomissa →
               </a>
@@ -105,6 +111,15 @@ export async function POST(request: NextRequest) {
 
     // Application notification to admin
     if (type === "photographer_application") {
+      const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+      const now = Date.now();
+      const hour = 60 * 60 * 1000;
+      const hits = (applicationRateLimit.get(ip) ?? []).filter(t => now - t < hour);
+      if (hits.length >= 3) {
+        return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+      }
+      applicationRateLimit.set(ip, [...hits, now]);
+
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: "hello@lomissa.com",
@@ -265,12 +280,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Booking confirmed — notify client
+    // Booking confirmed — notify client. Look up booking from DB to avoid trusting body-supplied emails.
     if (type === "booking_confirmed") {
+      if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
+      const { data: bkConfirmed } = await authClient!
+        .from("bookings")
+        .select("client_email, photographer_name, session_type, date, location, price")
+        .eq("id", bookingId)
+        .eq("client_id", user!.id)
+        .single();
+      if (!bkConfirmed) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
-        to: clientEmail,
-        subject: `Your booking with ${esc(photographerName)} is confirmed!`,
+        to: bkConfirmed.client_email,
+        subject: `Your booking with ${esc(bkConfirmed.photographer_name)} is confirmed!`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
             <div style="text-align: center; margin-bottom: 40px;">
@@ -283,7 +307,7 @@ export async function POST(request: NextRequest) {
                 Your session is confirmed!
               </h2>
               <p style="font-size: 15px; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.8;">
-                ${esc(photographerName)} has accepted your booking request.
+                ${esc(bkConfirmed.photographer_name)} has accepted your booking request.
               </p>
             </div>
             <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
@@ -292,27 +316,27 @@ export async function POST(request: NextRequest) {
                 <tr>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PHOTOGRAPHER</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${esc(photographerName)}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(bkConfirmed.photographer_name)}</span>
                   </td>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">SESSION</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${esc(sessionType)}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(bkConfirmed.session_type)}</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${esc(date || "Not specified")}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(bkConfirmed.date || "Not specified")}</span>
                   </td>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">LOCATION</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${esc(location || "Not specified")}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(bkConfirmed.location || "Not specified")}</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding: 12px 0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PRICE</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${esc(price)}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(bkConfirmed.price)}</span>
                   </td>
                 </tr>
               </table>
@@ -341,10 +365,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unknown email type" }, { status: 400 });
     }
 
+    // Look up booking from DB — never trust body-supplied photographer/client emails
+    if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
+    const { data: bkRequest } = await authClient!
+      .from("bookings")
+      .select("photographer_email, photographer_name, client_name, client_email, session_type, date, location, price, message")
+      .eq("id", bookingId)
+      .eq("client_id", user!.id)
+      .single();
+    if (!bkRequest) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+
     await resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
-      to: photographerEmail || "hello@lomissa.com",
-      subject: `New booking request from ${esc(clientName)}!`,
+      to: bkRequest.photographer_email || "hello@lomissa.com",
+      subject: `New booking request from ${esc(bkRequest.client_name)}!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
           <div style="text-align: center; margin-bottom: 40px;">
@@ -354,44 +388,44 @@ export async function POST(request: NextRequest) {
           <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
             <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">NEW BOOKING REQUEST</p>
             <h2 style="font-family: Georgia, serif; font-size: 24px; color: #1a1a1a; margin: 0 0 24px;">
-              ${esc(clientName)} wants to book you!
+              ${esc(bkRequest.client_name)} wants to book you!
             </h2>
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">CLIENT</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(clientName)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.client_name)}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">EMAIL</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(clientEmail)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.client_email)}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">SESSION</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(sessionType)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.session_type)}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(date || "Not specified")}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.date || "Not specified")}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">LOCATION</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(location || "Not specified")}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.location || "Not specified")}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PRICE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(price)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.price)}</span>
                 </td>
               </tr>
             </table>
-            ${message ? `
+            ${bkRequest.message ? `
             <div style="margin-top: 20px; padding: 16px; background: #FDF8F5; border-radius: 8px; border: 1px solid #f0e8e0;">
               <p style="font-size: 11px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">MESSAGE FROM CLIENT</p>
-              <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${esc(message)}"</p>
+              <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${esc(bkRequest.message)}"</p>
             </div>
             ` : ""}
           </div>
@@ -411,8 +445,8 @@ export async function POST(request: NextRequest) {
     // Booking confirmation to client
     await resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
-      to: clientEmail,
-      subject: `Your booking request to ${esc(photographerName)} has been sent!`,
+      to: bkRequest.client_email,
+      subject: `Your booking request to ${esc(bkRequest.photographer_name)} has been sent!`,
       html: `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
           <div style="text-align: center; margin-bottom: 40px;">
@@ -425,27 +459,27 @@ export async function POST(request: NextRequest) {
               Your request has been sent!
             </h2>
             <p style="font-size: 14px; color: #888; margin: 0 0 24px; line-height: 1.7;">
-              ${esc(photographerName)} will respond to your booking request within 24 hours.
+              ${esc(bkRequest.photographer_name)} will respond to your booking request within 24 hours.
             </p>
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PHOTOGRAPHER</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(photographerName)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.photographer_name)}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">SESSION</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(sessionType)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.session_type)}</span>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(date || "Not specified")}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.date || "Not specified")}</span>
                 </td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                   <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">PRICE</span>
-                  <span style="font-size: 14px; color: #1a1a1a;">${esc(price)}</span>
+                  <span style="font-size: 14px; color: #1a1a1a;">${esc(bkRequest.price)}</span>
                 </td>
               </tr>
             </table>

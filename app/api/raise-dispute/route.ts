@@ -4,6 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
+const esc = (s: unknown): string =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 const serviceClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -60,7 +68,7 @@ export async function POST(request: NextRequest) {
       from: "Lomissa <noreply@lomissa.com>",
       to: adminEmails,
       subject: `Dispute raised — ${booking.client_name} vs ${booking.photographer_name}`,
-      html: `<p>A dispute has been raised on booking #${bookingId}.</p><p><strong>Client:</strong> ${booking.client_name} (${booking.client_email})</p><p><strong>Photographer:</strong> ${booking.photographer_name} (${booking.photographer_email})</p><p><strong>Session:</strong> ${booking.session_type} on ${booking.date} — ${booking.price}</p><p><strong>Reason:</strong> ${reason?.trim() || "No reason provided"}</p><p>Please resolve this dispute in the <a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin">Lomissa admin panel</a>.</p>`,
+      html: `<p>A dispute has been raised on booking #${esc(bookingId)}.</p><p><strong>Client:</strong> ${esc(booking.client_name)} (${esc(booking.client_email)})</p><p><strong>Photographer:</strong> ${esc(booking.photographer_name)} (${esc(booking.photographer_email)})</p><p><strong>Session:</strong> ${esc(booking.session_type)} on ${esc(booking.date)} — ${esc(booking.price)}</p><p><strong>Reason:</strong> ${esc(reason?.trim() || "No reason provided")}</p><p>Please resolve this dispute in the <a href="${esc(process.env.NEXT_PUBLIC_BASE_URL ?? "")}/admin">Lomissa admin panel</a>.</p>`,
     }).catch(console.error);
   }
 

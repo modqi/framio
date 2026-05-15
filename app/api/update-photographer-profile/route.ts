@@ -20,6 +20,14 @@ export async function POST(request: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
+  // Verify the photographer row exists in the DB — JWT metadata can be stale
+  const { data: photographerRow } = await serviceClient
+    .from("photographers")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+  if (!photographerRow) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
   try {
     const body = await request.json();
 

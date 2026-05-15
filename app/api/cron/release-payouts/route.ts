@@ -75,6 +75,15 @@ export async function GET(request: NextRequest) {
         continue;
       }
 
+      // Optimistic lock — only proceed if this run exclusively claims the row.
+      // Guards against double-payout if the cron fires twice concurrently.
+      const { count } = await serviceClient
+        .from("bookings")
+        .update({ status: "releasing" }, { count: "exact" })
+        .eq("id", booking.id)
+        .eq("status", "photos_delivered");
+      if (!count || count === 0) continue;
+
       const { data: photographerRow } = await serviceClient
         .from("photographers")
         .select("stripe_account_id")
@@ -82,33 +91,40 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (!photographerRow?.stripe_account_id) {
+        await serviceClient.from("bookings").update({ status: "photos_delivered" }).eq("id", booking.id);
         results.errors.push(`Booking ${booking.id}: photographer has no Stripe account`);
         continue;
       }
 
-      const paymentIntent = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
-      const amount = paymentIntent.amount;
-      const currency = paymentIntent.currency;
-      const netAmount = amount - Math.round(amount * 0.10);
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
+        const amount = paymentIntent.amount;
+        const currency = paymentIntent.currency;
+        const netAmount = amount - Math.round(amount * 0.10);
 
-      const transfer = await stripe.transfers.create({
-        amount: netAmount,
-        currency,
-        destination: photographerRow.stripe_account_id,
-        transfer_group: booking.id,
-        source_transaction: paymentIntent.latest_charge as string,
-      });
+        const transfer = await stripe.transfers.create({
+          amount: netAmount,
+          currency,
+          destination: photographerRow.stripe_account_id,
+          transfer_group: booking.id,
+          source_transaction: paymentIntent.latest_charge as string,
+        });
 
-      await serviceClient
-        .from("bookings")
-        .update({
-          status: "paid_out",
-          payout_released_at: now.toISOString(),
-          stripe_transfer_id: transfer.id,
-        })
-        .eq("id", booking.id);
+        await serviceClient
+          .from("bookings")
+          .update({
+            status: "paid_out",
+            payout_released_at: now.toISOString(),
+            stripe_transfer_id: transfer.id,
+          })
+          .eq("id", booking.id);
 
-      results.released++;
+        results.released++;
+      } catch (stripeErr: any) {
+        // Roll back so the next cron run can retry
+        await serviceClient.from("bookings").update({ status: "photos_delivered" }).eq("id", booking.id);
+        throw stripeErr;
+      }
     } catch (err: any) {
       results.errors.push(`Booking ${booking.id}: ${err?.message}`);
     }

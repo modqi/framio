@@ -6,6 +6,14 @@ import { NextRequest, NextResponse } from "next/server";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
+const esc = (s: unknown): string =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 const serviceClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -29,7 +37,10 @@ export async function POST(request: NextRequest) {
     .single();
   if (!adminData) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const { bookingId, action, adminNote } = await request.json();
+  const body = await request.json();
+  const bookingId = typeof body.bookingId === "string" ? body.bookingId : "";
+  const action = typeof body.action === "string" ? body.action : "";
+  const adminNote = typeof body.adminNote === "string" ? body.adminNote.slice(0, 1000) : null;
   if (!["release", "refund"].includes(action)) {
     return NextResponse.json({ error: "action must be release or refund" }, { status: 400 });
   }
@@ -86,7 +97,7 @@ export async function POST(request: NextRequest) {
           from: "Lomissa <noreply@lomissa.com>",
           to: booking.photographer_email,
           subject: "Dispute resolved — payment released",
-          html: `<p>Hi ${booking.photographer_name}, the dispute for your ${booking.session_type} session with ${booking.client_name} on ${booking.date} has been resolved in your favour. Your payment has been released.</p>`,
+          html: `<p>Hi ${esc(booking.photographer_name)}, the dispute for your ${esc(booking.session_type)} session with ${esc(booking.client_name)} on ${esc(booking.date)} has been resolved in your favour. Your payment has been released.</p>`,
         }).catch(console.error);
       }
 
@@ -106,7 +117,7 @@ export async function POST(request: NextRequest) {
           from: "Lomissa <noreply@lomissa.com>",
           to: booking.client_email,
           subject: "Dispute resolved — refund issued",
-          html: `<p>Hi ${booking.client_name}, your dispute for the ${booking.session_type} session with ${booking.photographer_name} on ${booking.date} has been resolved. A full refund has been issued to your original payment method.</p>`,
+          html: `<p>Hi ${esc(booking.client_name)}, your dispute for the ${esc(booking.session_type)} session with ${esc(booking.photographer_name)} on ${esc(booking.date)} has been resolved. A full refund has been issued to your original payment method.</p>`,
         }).catch(console.error);
       }
     }
