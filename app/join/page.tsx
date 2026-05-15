@@ -219,21 +219,19 @@ export default function JoinAsPhotographer() {
                     );
                   })}
                 </div>
-                <div style={{
-                  overflow: "hidden",
-                  maxHeight: selectedCategories.includes("Other") ? "120px" : "0",
-                  marginTop: selectedCategories.includes("Other") ? "12px" : "0",
-                }}>
-                  <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
-                  <input
-                    type="text"
-                    value={otherSpecialty}
-                    onChange={(e) => setOtherSpecialty(e.target.value)}
-                    placeholder={t("form.otherSpecialtyPlaceholder")}
-                    maxLength={80}
-                    style={inputStyle}
-                  />
-                </div>
+                {selectedCategories.includes("Other") && (
+                  <div style={{marginTop: "12px"}}>
+                    <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
+                    <input
+                      type="text"
+                      value={otherSpecialty}
+                      onChange={(e) => setOtherSpecialty(e.target.value)}
+                      placeholder={t("form.otherSpecialtyPlaceholder")}
+                      maxLength={80}
+                      style={inputStyle}
+                    />
+                  </div>
+                )}
               </div>
               <div>
                 <label style={labelStyle}>{t("form.experienceLabel")}</label>
