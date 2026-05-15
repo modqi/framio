@@ -1,5 +1,6 @@
 ﻿"use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
@@ -8,6 +9,7 @@ import { useTranslations } from "../../lib/i18n";
 import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 
 export default function Signup() {
+  const router = useRouter();
   const [role, setRole] = useState("client");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -231,7 +233,7 @@ export default function Signup() {
             {t("form.roleBook")}
           </button>
           <button
-            onClick={() => { setRole("photographer"); setError(""); }}
+            onClick={() => router.push("/join")}
             style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: role === "photographer" ? "#C8622A" : "transparent", color: role === "photographer" ? "#FDFBF8" : "#7A5C44", fontWeight: "500", transition: "all 0.2s", fontFamily: "'Jost', sans-serif"}}
           >
             {t("form.rolePhotographer")}
