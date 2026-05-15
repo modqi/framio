@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
@@ -24,10 +23,8 @@ export default function JoinAsPhotographer() {
   });
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [otherSpecialty, setOtherSpecialty] = useState("");
-  const router = useRouter();
   const t = useTranslations("Join");
   const tCat = useTranslations("Categories");
-  const tSignup = useTranslations("Signup");
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.phone_number || !form.about) {
@@ -169,7 +166,7 @@ export default function JoinAsPhotographer() {
       </div>
 
       {/* Right — form */}
-      <div className="flex flex-col justify-center flex-1" style={{padding: "48px 32px", overflowY: "auto"}}>
+      <div className="flex flex-col flex-1" style={{padding: "48px 32px", overflowY: "auto"}}>
         <div style={{maxWidth: "560px", width: "100%", margin: "0 auto"}}>
 
           <div style={{marginBottom: "32px"}}>
@@ -180,21 +177,6 @@ export default function JoinAsPhotographer() {
             <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
               {t("hero.description")}
             </p>
-          </div>
-
-          {/* Role toggle — mirrors signup page */}
-          <div style={{display: "flex", gap: "8px", marginBottom: "32px", backgroundColor: "#F0EAE0", padding: "4px", borderRadius: "999px"}}>
-            <button
-              onClick={() => router.push("/signup")}
-              style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "transparent", color: "#1A0E06", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
-            >
-              {tSignup("form.roleBook")}
-            </button>
-            <button
-              style={{flex: 1, padding: "10px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: "#C8622A", color: "#FDFBF8", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
-            >
-              {tSignup("form.rolePhotographer")}
-            </button>
           </div>
 
           <div style={{display: "flex", flexDirection: "column", gap: "24px"}}>
