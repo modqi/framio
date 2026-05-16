@@ -26,6 +26,40 @@ export default function AdminPanel() {
   const [disputeNotes, setDisputeNotes] = useState<Record<string, string>>({});
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [resolveError, setResolveError] = useState("");
+  const [mfaStep, setMfaStep] = useState<"checking" | "verify" | "setup_required" | "authorized">("checking");
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaFactorId, setMfaFactorId] = useState("");
+  const [mfaVerifying, setMfaVerifying] = useState(false);
+  const [mfaError, setMfaError] = useState("");
+
+  const loadData = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const [
+      { data: apps },
+      { data: bks },
+      { data: photos },
+      clientsRes,
+    ] = await Promise.all([
+      supabase.from("applications").select("*").order("created_at", { ascending: false }),
+      supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+      supabase.from("photographers").select("*").order("created_at", { ascending: false }),
+      fetch("/api/admin/clients", {
+        headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+      }).then((r) => r.json()).catch(() => ({ clients: [] })),
+    ]);
+    setApplications(apps || []);
+    setBookings(bks || []);
+    setPhotographers(photos || []);
+    setClients(clientsRes.clients || []);
+    setStats({
+      totalBookings: (bks || []).length,
+      totalPhotographers: (photos || []).length,
+      totalClients: (clientsRes.clients || []).length,
+      pendingApplications: (apps || []).filter((a: any) => a.status === "pending").length,
+      openDisputes: (bks || []).filter((b: any) => b.status === "disputed").length,
+    });
+    setLoading(false);
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -43,34 +77,22 @@ export default function AdminPanel() {
       if (!adminData) { window.location.href = "/login"; return; }
       setAuthorized(true);
 
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const [
-        { data: apps },
-        { data: bks },
-        { data: photos },
-        clientsRes,
-      ] = await Promise.all([
-        supabase.from("applications").select("*").order("created_at", { ascending: false }),
-        supabase.from("bookings").select("*").order("created_at", { ascending: false }),
-        supabase.from("photographers").select("*").order("created_at", { ascending: false }),
-        fetch("/api/admin/clients", {
-          headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
-        }).then((r) => r.json()).catch(() => ({ clients: [] })),
-      ]);
-
-      setApplications(apps || []);
-      setBookings(bks || []);
-      setPhotographers(photos || []);
-      setClients(clientsRes.clients || []);
-      setStats({
-        totalBookings: (bks || []).length,
-        totalPhotographers: (photos || []).length,
-        totalClients: (clientsRes.clients || []).length,
-        pendingApplications: (apps || []).filter((a: any) => a.status === "pending").length,
-        openDisputes: (bks || []).filter((b: any) => b.status === "disputed").length,
-      });
-      setLoading(false);
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aal?.currentLevel === "aal2") {
+        setMfaStep("authorized");
+        await loadData();
+      } else if (aal?.nextLevel === "aal2") {
+        // Factor enrolled but TOTP not yet verified this session
+        const { data: factors } = await supabase.auth.mfa.listFactors();
+        const totp = factors?.totp?.[0];
+        if (totp) setMfaFactorId(totp.id);
+        setMfaStep("verify");
+        setLoading(false);
+      } else {
+        // No factor enrolled — must set up MFA before accessing the panel
+        setMfaStep("setup_required");
+        setLoading(false);
+      }
     };
     init();
   }, []);
@@ -146,6 +168,28 @@ export default function AdminPanel() {
     setResolvingId(null);
   };
 
+  const handleMfaVerify = async () => {
+    if (!/^\d{6}$/.test(mfaCode.trim())) {
+      setMfaError("Please enter a valid 6-digit code.");
+      return;
+    }
+    setMfaVerifying(true);
+    setMfaError("");
+    const { error } = await supabase.auth.mfa.challengeAndVerify({
+      factorId: mfaFactorId,
+      code: mfaCode.trim(),
+    });
+    if (error) {
+      setMfaError("Invalid code. Check your authenticator app and try again.");
+      setMfaCode("");
+      setMfaVerifying(false);
+      return;
+    }
+    setMfaStep("authorized");
+    setMfaVerifying(false);
+    await loadData();
+  };
+
   const handleReject = async (app: any) => {
     await supabase.from("applications").update({ status: "rejected" }).eq("id", app.id);
     setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: "rejected" } : a));
@@ -175,6 +219,87 @@ export default function AdminPanel() {
   );
 
   if (!authorized) return null;
+
+  if (mfaStep === "setup_required") return (
+    <main className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FDFBF8" }}>
+      <div style={{ maxWidth: "480px", width: "100%", padding: "0 24px" }}>
+        <div style={{ marginBottom: "32px", textAlign: "center" }}><Logo size="sm" /></div>
+        <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "40px", border: "1px solid #E2D5C8" }}>
+          <p style={{ fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500" }}>ADMIN SECURITY</p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "400", color: "#1A0E06", margin: "0 0 16px" }}>
+            Two-factor authentication required
+          </h2>
+          <p style={{ fontSize: "14px", color: "#7A5C44", margin: "0 0 32px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300" }}>
+            Your admin account must have MFA enabled before you can access the panel. Set it up now — it only takes a minute.
+          </p>
+          <button
+            onClick={() => { window.location.href = "/admin/mfa-setup"; }}
+            style={{ width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em" }}
+          >
+            Set up authenticator →
+          </button>
+        </div>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button
+            onClick={() => supabase.auth.signOut().then(() => { window.location.href = "/login"; })}
+            style={{ fontSize: "13px", color: "#7A5C44", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif" }}
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+
+  if (mfaStep === "verify") return (
+    <main className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FDFBF8" }}>
+      <div style={{ maxWidth: "480px", width: "100%", padding: "0 24px" }}>
+        <div style={{ marginBottom: "32px", textAlign: "center" }}><Logo size="sm" /></div>
+        <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "40px", border: "1px solid #E2D5C8" }}>
+          <p style={{ fontSize: "11px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500" }}>ADMIN ACCESS</p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px" }}>
+            Enter your authenticator code
+          </h2>
+          <p style={{ fontSize: "14px", color: "#7A5C44", margin: "0 0 28px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300" }}>
+            Open Microsoft Authenticator and enter the 6-digit code for Lomissa Admin.
+          </p>
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={mfaCode}
+              onChange={e => setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              onKeyDown={e => e.key === "Enter" && handleMfaVerify()}
+              autoFocus
+              placeholder="000000"
+              style={{ width: "160px", textAlign: "center", fontSize: "28px", letterSpacing: "0.25em", fontFamily: "monospace", border: "1px solid #E2D5C8", borderRadius: "12px", padding: "16px", backgroundColor: "#FDFBF8", outline: "none", color: "#1A0E06" }}
+            />
+          </div>
+          {mfaError && (
+            <div style={{ marginBottom: "20px", padding: "12px 16px", borderRadius: "8px", backgroundColor: "#FBF0EA", border: "1px solid #E8A97E" }}>
+              <p style={{ fontSize: "13px", color: "#8F3A14", margin: "0", fontFamily: "'Jost', sans-serif" }}>{mfaError}</p>
+            </div>
+          )}
+          <button
+            onClick={handleMfaVerify}
+            disabled={mfaVerifying || mfaCode.length !== 6}
+            style={{ width: "100%", backgroundColor: mfaCode.length === 6 ? "#C8622A" : "#E2D5C8", color: "#FDFBF8", fontSize: "14px", padding: "14px", border: "none", borderRadius: "999px", cursor: mfaVerifying || mfaCode.length !== 6 ? "not-allowed" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", transition: "background-color 0.15s" }}
+          >
+            {mfaVerifying ? "Verifying…" : "Confirm"}
+          </button>
+        </div>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button
+            onClick={() => supabase.auth.signOut().then(() => { window.location.href = "/login"; })}
+            style={{ fontSize: "13px", color: "#7A5C44", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif" }}
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    </main>
+  );
 
   const tabStyle = (key: string): React.CSSProperties => ({
     padding: "8px 20px",
