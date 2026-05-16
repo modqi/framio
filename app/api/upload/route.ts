@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { v2 as cloudinary } from "cloudinary";
 import { fileTypeFromBuffer } from "file-type";
+import sharp from "sharp";
 import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
@@ -44,6 +45,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid file type. Only JPEG, PNG, WebP, and HEIC images are allowed." }, { status: 400 });
     }
 
+    // Strip all EXIF metadata (GPS, camera serial, device info) before upload.
+    // JPEG is re-encoded at quality 90 to also remove any payload hidden in the
+    // JPEG structure. All other formats get a clean passthrough via Sharp which
+    // drops metadata without lossy re-encoding.
+    const stripped = detected.mime === "image/jpeg"
+      ? await sharp(buffer).jpeg({ quality: 90 }).toBuffer()
+      : await sharp(buffer).toBuffer();
+
     const isMessage = type === "message";
     const isDelivery = type === "delivery";
     const isProfile = type === "profile";
@@ -63,7 +72,7 @@ export async function POST(request: NextRequest) {
           if (error) reject(error);
           else resolve(result);
         }
-      ).end(buffer);
+      ).end(stripped);
     });
 
     const uploadResult = result as any;
