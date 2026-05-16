@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "font-src 'self' fonts.gstatic.com",
               "img-src 'self' data: blob: res.cloudinary.com *.cloudinary.com",
-              "connect-src 'self' *.supabase.co wss://*.supabase.co api.anthropic.com exchangerate-api.com *.exchangerate-api.com",
+              "connect-src 'self' *.supabase.co wss://*.supabase.co api.anthropic.com exchangerate-api.com *.exchangerate-api.com api.cloudinary.com",
               "frame-src 'self' js.stripe.com hooks.stripe.com challenges.cloudflare.com",
               "script-src-elem 'self' 'unsafe-inline' js.stripe.com challenges.cloudflare.com",
             ].join("; "),

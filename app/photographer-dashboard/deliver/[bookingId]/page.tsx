@@ -124,7 +124,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
         formData.append("timestamp", String(sig.timestamp));
         formData.append("api_key", sig.apiKey);
         formData.append("folder", sig.folder);
-        formData.append("type", sig.type);
+        if (sig.type) formData.append("type", sig.type);
         const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
           method: "POST",
           body: formData,
