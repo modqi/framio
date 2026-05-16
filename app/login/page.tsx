@@ -6,6 +6,8 @@ import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 import { useTranslations } from "../../lib/i18n";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +20,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     if (!email || !password) { setError(t("errors.fillAll")); return; }
-    if (!turnstileToken) { setError(t("errors.securityCheck")); return; }
+    if (!isDev && !turnstileToken) { setError(t("errors.securityCheck")); return; }
     setLoading(true);
     setError("");
     const verifyRes = await fetch("/api/verify-turnstile", {

@@ -2,6 +2,8 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+
+const isDev = process.env.NODE_ENV === "development";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
@@ -33,7 +35,7 @@ export default function Signup() {
   const [about, setAbout] = useState("");
 
   const verifyTurnstile = async (): Promise<boolean> => {
-    if (!turnstileToken) { setError(t("errors.securityCheck")); return false; }
+    if (!isDev && !turnstileToken) { setError(t("errors.securityCheck")); return false; }
     const res = await fetch("/api/verify-turnstile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
