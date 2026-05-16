@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import Logo from "./components/Logo";
-import { CalendarIcon, ReviewStarIcon } from "./components/Icons";
 import GlobeModal from "./components/GlobeModal";
 import { useCurrency } from "../lib/currency-context";
 import { CATEGORY_KEY } from "../lib/categories";
@@ -29,6 +28,20 @@ export default function Home() {
 
   return (
     <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
+      <style>{`
+        @media (max-width: 767px) {
+          .hero-grid { grid-template-columns: 1fr !important; }
+          .hero-left { padding: 100px 24px 60px !important; }
+          .hero-right { display: none !important; }
+          .hero-buttons { flex-wrap: wrap !important; justify-content: flex-start !important; }
+          .forphoto-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .trust-stats { flex-direction: column !important; gap: 24px !important; }
+          .trust-stat-item { flex-direction: row !important; align-items: center !important; gap: 16px !important; }
+          .trust-stat-divider { display: none !important; }
+          .trust-bar-inner { flex-direction: column !important; gap: 10px !important; text-align: center !important; }
+          .trust-bar-dot { display: none !important; }
+        }
+      `}</style>
 
       {/* Navigation */}
       <nav style={{position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-4 py-4 sm:px-8">
@@ -42,27 +55,76 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section style={{minHeight: "100vh", backgroundColor: "#FDFBF8", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 48px 80px", textAlign: "center", position: "relative", overflow: "hidden"}}>
-        <div style={{position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 20% 50%, rgba(184,85,40,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(193,98,47,0.04) 0%, transparent 40%)", pointerEvents: "none"}}/>
-        <div style={{position: "relative", zIndex: 1, maxWidth: "800px"}}>
-          <div style={{display: "flex", justifyContent: "center", marginBottom: "48px"}}>
-            <Logo size="xl" asLink={false} />
+      <section className="hero-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh", paddingTop: "65px"}}>
+
+        {/* Left — content */}
+        <div className="hero-left" style={{padding: "80px 56px", display: "flex", flexDirection: "column", justifyContent: "center", borderRight: "1px solid #E2D5C8"}}>
+          <div style={{display: "inline-block", backgroundColor: "rgba(184,85,40,0.08)", border: "1px solid rgba(184,85,40,0.2)", borderRadius: "999px", padding: "6px 16px", marginBottom: "32px", alignSelf: "flex-start"}}>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
           </div>
-          <div style={{display: "inline-block", backgroundColor: "rgba(184,85,40,0.08)", border: "1px solid rgba(184,85,40,0.2)", borderRadius: "999px", padding: "6px 16px", marginBottom: "40px"}}>
-            <p style={{fontSize: "12px", color: "#C8622A", margin: "0", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
-          </div>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(44px, 7vw, 84px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em", lineHeight: "1.05"}}>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px, 4.5vw, 72px)", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em", lineHeight: "1.05"}}>
             {t("hero.headline")}
           </h1>
-          <p style={{fontSize: "clamp(15px, 2vw, 18px)", color: "#7A5C44", margin: "0 0 52px", lineHeight: "1.8", maxWidth: "520px", marginLeft: "auto", marginRight: "auto", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
+          <p style={{fontSize: "15px", color: "#7A5C44", margin: "0 0 40px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "440px"}}>
             {t("hero.description")}
           </p>
-          <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "15px", padding: "16px 44px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.35)"}}>
-            {t("hero.cta")}
-          </a>
-          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "28px 0 0", letterSpacing: "0.1em", fontFamily: "'Jost', sans-serif"}}>
+          <div className="hero-buttons" style={{display: "flex", gap: "12px", marginBottom: "32px"}}>
+            <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)", whiteSpace: "nowrap"}}>
+              {t("hero.cta")}
+            </a>
+            <a href="/signup" style={{color: "#1A0E06", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "1px solid #1A0E06", whiteSpace: "nowrap"}}>
+              {t("hero.ctaSecondary")}
+            </a>
+          </div>
+          <p style={{fontSize: "11px", color: "#DDD0C0", margin: "0", letterSpacing: "0.12em", fontFamily: "'Jost', sans-serif"}}>
             {t("hero.trust")}
           </p>
+        </div>
+
+        {/* Right — decorative card collage */}
+        <div className="hero-right" style={{backgroundColor: "#F5EFE4", display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 56px", position: "relative", overflow: "hidden"}}>
+          <div style={{position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 70% 30%, rgba(184,85,40,0.07) 0%, transparent 55%)", pointerEvents: "none"}} />
+          <div style={{position: "relative", width: "260px", height: "360px"}}>
+            {/* Back card */}
+            <div style={{position: "absolute", inset: 0, background: "#DDD0C0", borderRadius: "12px", transform: "rotate(5deg) translateY(14px) translateX(10px)", boxShadow: "0 8px 32px rgba(28,16,9,0.10)"}} />
+            {/* Middle card */}
+            <div style={{position: "absolute", inset: 0, background: "#EDE3D1", borderRadius: "12px", transform: "rotate(-3deg) translateY(7px)", boxShadow: "0 8px 32px rgba(28,16,9,0.08)"}} />
+            {/* Front card */}
+            <div style={{position: "absolute", inset: 0, background: "#FDFBF8", borderRadius: "12px", border: "1px solid #E2D5C8", boxShadow: "0 12px 40px rgba(28,16,9,0.12)", overflow: "hidden", display: "flex", flexDirection: "column"}}>
+              <div style={{flex: 1, backgroundImage: "repeating-linear-gradient(-45deg,#E2D5C8,#E2D5C8 5px,#EDE3D1 5px,#EDE3D1 12px)", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "80px", fontWeight: "300", color: "#C8622A", opacity: 0.3}}>L</span>
+              </div>
+              <div style={{padding: "16px 18px", borderTop: "1px solid #E2D5C8"}}>
+                <div style={{display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px"}}>
+                  <div style={{width: "6px", height: "6px", borderRadius: "50%", background: "#C8622A", flexShrink: 0}} />
+                  <div style={{height: "8px", width: "90px", background: "#E2D5C8", borderRadius: "4px"}} />
+                </div>
+                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                  <div style={{height: "6px", width: "56px", background: "#F0EAE0", borderRadius: "4px"}} />
+                  <div style={{height: "6px", width: "38px", background: "#E8A97E", borderRadius: "4px", opacity: 0.55}} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust bar */}
+      <section style={{backgroundColor: "#1A0E06", padding: "18px 48px"}}>
+        <div className="trust-bar-inner" style={{maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap"}}>
+          {([
+            t("trustBar.item1"),
+            t("trustBar.item2"),
+            t("trustBar.item3"),
+            t("trustBar.item4"),
+          ] as string[]).map((item, i, arr) => (
+            <span key={i} style={{display: "flex", alignItems: "center"}}>
+              <span style={{fontSize: "11px", color: "#DDD0C0", letterSpacing: "0.12em", fontFamily: "'Jost', sans-serif", fontWeight: "400", whiteSpace: "nowrap"}}>{item}</span>
+              {i < arr.length - 1 && (
+                <span className="trust-bar-dot" style={{color: "#3A2A1E", margin: "0 20px", fontSize: "16px", lineHeight: "1"}}>·</span>
+              )}
+            </span>
+          ))}
         </div>
       </section>
 
@@ -82,7 +144,7 @@ export default function Home() {
               { number: "03", titleKey: "howItWorks.step3Title", descKey: "howItWorks.step3Desc" },
             ].map((step) => (
               <div key={step.number}>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "56px", fontWeight: "300", color: "#E2D5C8", margin: "0 0 20px", letterSpacing: "-0.04em", lineHeight: "1"}}>{step.number}</p>
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "48px", fontWeight: "300", color: "#E2D5C8", margin: "0 0 20px", letterSpacing: "-0.04em", lineHeight: "1"}}>{step.number}</p>
                 <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{t(step.titleKey as any)}</h3>
                 <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t(step.descKey as any)}</p>
               </div>
@@ -144,27 +206,50 @@ export default function Home() {
         </section>
       )}
 
-      {/* Trust section */}
-      <section style={{backgroundColor: "#F5EFE4", padding: "100px 48px"}}>
-        <div style={{maxWidth: "800px", margin: "0 auto", textAlign: "center"}}>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("trust.label")}</p>
-          <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 56px", letterSpacing: "-0.02em", lineHeight: "1.1"}}>
-            {t("trust.heading")}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              { icon: <svg viewBox="0 0 64 64" width="22" height="22" fill="none"><circle cx="32" cy="32" r="22" stroke="#FDFBF8" strokeWidth="1.6"/><polyline points="20,32 28,40 44,24" stroke="#FDFBF8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>, titleKey: "trust.vettedTitle", descKey: "trust.vettedDesc" },
-              { icon: <CalendarIcon size={22} color="#FDFBF8"/>, titleKey: "trust.bookingTitle", descKey: "trust.bookingDesc" },
-              { icon: <ReviewStarIcon size={22} color="#FDFBF8"/>, titleKey: "trust.reviewsTitle", descKey: "trust.reviewsDesc" },
-            ].map((item) => (
-              <div key={item.titleKey}>
-                <div style={{width: "52px", height: "52px", borderRadius: "50%", backgroundColor: "#FDFBF8", border: "1px solid #E2D5C8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", margin: "0 auto 20px"}}>
-                  {item.icon}
+      {/* For photographers */}
+      <section style={{backgroundColor: "#1A0E06", padding: "100px 48px"}}>
+        <div className="forphoto-grid" style={{maxWidth: "1100px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px", alignItems: "center"}}>
+
+          {/* Left — pitch */}
+          <div>
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("forPhotographers.label")}</p>
+            <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(32px, 4vw, 56px)", fontWeight: "400", fontStyle: "italic", color: "#FDFBF8", margin: "0 0 20px", letterSpacing: "-0.02em", lineHeight: "1.1"}}>
+              {t("forPhotographers.heading")}
+            </h2>
+            <p style={{fontSize: "14px", color: "#DDD0C0", margin: "0 0 48px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "420px"}}>
+              {t("forPhotographers.description")}
+            </p>
+            <div className="trust-stats" style={{display: "flex", alignItems: "stretch"}}>
+              {[
+                { value: t("forPhotographers.stat1Value"), label: t("forPhotographers.stat1Label") },
+                { value: t("forPhotographers.stat2Value"), label: t("forPhotographers.stat2Label") },
+                { value: t("forPhotographers.stat3Value"), label: t("forPhotographers.stat3Label") },
+              ].map((stat, i) => (
+                <div key={i} className="trust-stat-item" style={{display: "flex", alignItems: "center"}}>
+                  <div style={{paddingRight: i < 2 ? "32px" : "0"}}>
+                    <div style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "300", color: "#C8622A", lineHeight: "1", marginBottom: "4px"}}>{stat.value}</div>
+                    <div style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{stat.label}</div>
+                  </div>
+                  {i < 2 && <div className="trust-stat-divider" style={{width: "1px", height: "48px", background: "#3A2A1E", marginRight: "32px", flexShrink: 0}} />}
                 </div>
-                <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{t(item.titleKey as any)}</h3>
-                <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t(item.descKey as any)}</p>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Right — CTA card */}
+          <div style={{background: "#221510", borderRadius: "16px", padding: "40px", border: "1px solid #3A2A1E"}}>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "300", fontStyle: "italic", color: "#FDFBF8", margin: "0 0 12px", lineHeight: "1.4"}}>
+              {t("forPhotographers.quote")}
+            </p>
+            <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "300", margin: "0 0 36px", lineHeight: "1.7"}}>
+              {t("forPhotographers.quoteNote")}
+            </p>
+            <a href="/signup" style={{display: "block", textAlign: "center", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", marginBottom: "12px"}}>
+              {t("forPhotographers.cta")}
+            </a>
+            <p style={{fontSize: "12px", color: "#7A5C44", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+              {t("forPhotographers.ctaNote")}
+            </p>
           </div>
         </div>
       </section>

@@ -10,7 +10,14 @@
       "headline": "Øyeblikket ditt fortjener den perfekte fotografen",
       "description": "Lomissa kobler deg med håndplukkede fotografer for portretter, bryllup, arrangementer og mer.",
       "cta": "Finn en fotograf",
+      "ctaSecondary": "Bli med som fotograf",
       "trust": "HÅNDPLUKKET · ØYEBLIKKELIG BESTILLING · SIKRE BETALINGER"
+    },
+    "trustBar": {
+      "item1": "Håndplukkede fotografer",
+      "item2": "Sikre betalinger",
+      "item3": "Fotolevering inkludert",
+      "item4": "Lanseres nå over hele verden"
     },
     "howItWorks": {
       "label": "SLIK FUNGERER DET",
@@ -36,6 +43,21 @@
       "bookingDesc": "Se faktisk tilgjengelighet og bestill på sekunder. Ingen ventetid, ingen e-poster frem og tilbake.",
       "reviewsTitle": "Verifiserte anmeldelser",
       "reviewsDesc": "Alle anmeldelser kommer fra en ekte klient som fullførte en ekte økt. Ingen falske vurderinger."
+    },
+    "forPhotographers": {
+      "label": "FOR FOTOGRAFER",
+      "heading": "Gjør lidenskapen din til inntekt",
+      "description": "Lomissa kobler deg med klienter som er klare til å bestille. Ingen abonnement — bare en enkel provisjon når du får betalt.",
+      "stat1Value": "Gratis",
+      "stat1Label": "Å bli med i Lomissa",
+      "stat2Value": "10%",
+      "stat2Label": "Kun provisjon",
+      "stat3Value": "3 dager",
+      "stat3Label": "Gjennomsnittlig responstid",
+      "quote": "Bli med i fotografmarkedsplassen som lanseres over hele verden",
+      "quoteNote": "Vær blant de første fotografene på Lomissa.",
+      "cta": "Søk om å bli med",
+      "ctaNote": "Søknader behandles innen 3 dager"
     },
     "footer": {
       "tagline": "Markedsplassen som kobler klienter med håndplukkede fotografer over hele verden.",
