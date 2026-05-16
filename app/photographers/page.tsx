@@ -106,10 +106,10 @@ export default function Photographers() {
                 {authUser.user_metadata?.name?.split(" ")[0] || "Hi"}
               </span>
               <a
-                href={authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
+                href={authUser.user_metadata?.role === "admin" ? "/admin" : authUser.user_metadata?.role === "photographer" ? "/photographer-dashboard" : "/dashboard"}
                 style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}
               >
-                {t("nav.myDashboard")}
+                {authUser.user_metadata?.role === "admin" ? t("nav.adminPanel") : t("nav.myDashboard")}
               </a>
             </>
           ) : (
