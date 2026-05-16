@@ -60,7 +60,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
         window.location.href = "/photographer-dashboard";
         return;
       }
-      if (!["completed", "photos_delivered"].includes(bk.status)) {
+      if (!["confirmed", "completed", "photos_delivered"].includes(bk.status)) {
         window.location.href = "/photographer-dashboard";
         return;
       }

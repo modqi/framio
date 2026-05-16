@@ -597,7 +597,7 @@ export default function PhotographerDashboard() {
                     {(booking.status === "completed" || booking.status === "confirmed") && (
                       <a
                         href={`/photographer-dashboard/deliver/${booking.id}`}
-                        style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
+                        style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#C8622A", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
                       >
                         {t("bookings.deliverPhotos")}
                       </a>
