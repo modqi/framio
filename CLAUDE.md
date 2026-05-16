@@ -64,8 +64,6 @@ npm run lint     # ESLint 9
 - Email confirmation via Supabase (`/auth/confirm`)
 - Password reset + update flows
 - Photographer application form (`/signup`) → pending approval page (`/pending`)
-- Studio access gate (`/studio-access`)
-
 **Automated (cron)**
 - Daily 9 AM: confirm→completed for past-date sessions; auto-release payouts after 7-day dispute window
 - Daily 10 AM: process account deletions (anonymize PII, delete auth user)
@@ -96,7 +94,6 @@ app/
   admin/page.tsx                        # Admin panel (all tabs)
   join/page.tsx                         # Photographer application
   pending/page.tsx                      # Post-application waiting page
-  studio-access/page.tsx
   login/ signup/ reset-password/ update-password/
   auth/confirm/                         # Supabase email confirm callback
   terms/page.tsx
