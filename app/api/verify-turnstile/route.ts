@@ -22,10 +22,8 @@ export async function POST(req: NextRequest) {
 
   const data = await res.json();
 
-  console.log("[verify-turnstile] Cloudflare response:", JSON.stringify(data));
-
   if (!data.success) {
-    return NextResponse.json({ success: false, error: "Security check failed.", debug: data }, { status: 400 });
+    return NextResponse.json({ success: false, error: "Security check failed." }, { status: 400 });
   }
 
   return NextResponse.json({ success: true });

@@ -47,21 +47,34 @@ export default function Portfolio() {
         continue;
       }
       try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token ?? "";
+
+        const sigRes = await fetch("/api/cloudinary-signature", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ isDelivery: false }),
+        });
+        if (!sigRes.ok) throw new Error("Failed to get upload signature");
+        const sig = await sigRes.json();
+
         const formData = new FormData();
         formData.append("file", file);
-        const { data: { session } } = await supabase.auth.getSession();
-        const response = await fetch("/api/upload", {
+        formData.append("signature", sig.signature);
+        formData.append("timestamp", String(sig.timestamp));
+        formData.append("api_key", sig.apiKey);
+        formData.append("folder", sig.folder);
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
           method: "POST",
-          headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
           body: formData,
         });
         const data = await response.json();
-        if (data.url) {
+        if (data.secure_url) {
           const { data: photo } = await supabase
             .from("portfolio_photos")
             .insert({
               photographer_id: user.id,
-              url: data.url,
+              url: data.secure_url,
               order_index: nextIndex,
             })
             .select()

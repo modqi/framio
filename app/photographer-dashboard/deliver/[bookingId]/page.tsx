@@ -102,8 +102,17 @@ export default function DeliverPhotos({ params }: { params: any }) {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? "";
 
-    // Upload each file sequentially, showing progress
-    const uploaded: { url: string; filename: string }[] = [];
+    // Fetch Cloudinary signed upload params once for all files
+    const sigRes = await fetch("/api/cloudinary-signature", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ isDelivery: true }),
+    });
+    if (!sigRes.ok) { setError(t("errors.uploadFailed")); setSubmitting(false); return; }
+    const sig = await sigRes.json();
+
+    // Upload each file directly to Cloudinary (bypasses Vercel body limit)
+    const uploaded: { url: string; filename: string; public_id?: string }[] = [];
     for (let i = 0; i < files.length; i++) {
       setUploadingIndex(i);
       setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "uploading" } : f));
@@ -111,17 +120,20 @@ export default function DeliverPhotos({ params }: { params: any }) {
       try {
         const formData = new FormData();
         formData.append("file", files[i].file);
-        formData.append("type", "delivery");
-        const res = await fetch("/api/upload", {
+        formData.append("signature", sig.signature);
+        formData.append("timestamp", String(sig.timestamp));
+        formData.append("api_key", sig.apiKey);
+        formData.append("folder", sig.folder);
+        formData.append("type", sig.type);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
         const data = await res.json();
-        if (!data.url) throw new Error(data.error || "Upload failed");
+        if (!data.secure_url) throw new Error(data.error?.message || "Upload failed");
 
-        uploaded.push({ url: data.url, filename: files[i].file.name });
-        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done", url: data.url } : f));
+        uploaded.push({ url: data.secure_url, filename: files[i].file.name, public_id: data.public_id });
+        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done", url: data.secure_url } : f));
       } catch (err: any) {
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "error", error: err.message } : f));
       }
