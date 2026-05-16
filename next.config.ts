@@ -18,13 +18,13 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' challenges.cloudflare.com",
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "font-src 'self' fonts.gstatic.com",
               "img-src 'self' data: blob: res.cloudinary.com *.cloudinary.com",
               "connect-src 'self' *.supabase.co wss://*.supabase.co api.anthropic.com exchangerate-api.com *.exchangerate-api.com",
-              "frame-src 'self' js.stripe.com hooks.stripe.com",
-              "script-src-elem 'self' 'unsafe-inline' js.stripe.com",
+              "frame-src 'self' js.stripe.com hooks.stripe.com challenges.cloudflare.com",
+              "script-src-elem 'self' 'unsafe-inline' js.stripe.com challenges.cloudflare.com",
             ].join("; "),
           },
           {
