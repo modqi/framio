@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { logAudit } from "@/lib/audit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -108,6 +109,16 @@ export async function POST(request: NextRequest) {
   }
 
   const cancelledBy = isClient ? "client" : "photographer";
+
+  await logAudit(serviceClient, {
+    action: "booking_cancelled",
+    actorId: user.id,
+    actorEmail: user.email,
+    bookingId,
+    stripeId: booking.stripe_payment_intent_id ?? null,
+    meta: { cancelled_by: cancelledBy, refunded, policy: booking.cancellation_policy_snapshot },
+  });
+
   const refundLine = refunded
     ? "A full refund has been issued and will appear in 5–10 business days."
     : shouldRefund

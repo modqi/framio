@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { logAudit } from "@/lib/audit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY!);
@@ -92,6 +93,17 @@ export async function POST(request: NextRequest) {
         })
         .eq("id", bookingId);
 
+      await logAudit(serviceClient, {
+        action: "dispute_resolved_release",
+        actorId: user.id,
+        actorEmail: user.email,
+        bookingId,
+        stripeId: transfer.id,
+        amountCents: netAmount,
+        currency,
+        meta: { admin_note: adminNote },
+      });
+
       if (booking.photographer_email) {
         resend.emails.send({
           from: "Lomissa <noreply@lomissa.com>",
@@ -111,6 +123,15 @@ export async function POST(request: NextRequest) {
           admin_note: adminNote || null,
         })
         .eq("id", bookingId);
+
+      await logAudit(serviceClient, {
+        action: "dispute_resolved_refund",
+        actorId: user.id,
+        actorEmail: user.email,
+        bookingId,
+        stripeId: booking.stripe_payment_intent_id,
+        meta: { admin_note: adminNote },
+      });
 
       if (booking.client_email) {
         resend.emails.send({

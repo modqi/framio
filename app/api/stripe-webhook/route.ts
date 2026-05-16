@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { logAudit } from "@/lib/audit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -62,6 +63,15 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!booking) return NextResponse.json({ received: true });
+
+    await logAudit(serviceClient, {
+      action: "booking_payment_received",
+      actorId: null,
+      bookingId,
+      stripeId: session.payment_intent as string,
+      amountCents: session.amount_total,
+      currency: session.currency,
+    });
 
     const {
       photographer_name: photographerName,

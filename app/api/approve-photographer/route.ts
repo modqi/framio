@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { logAudit } from "@/lib/audit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -98,6 +99,15 @@ export async function POST(request: NextRequest) {
     // Invalidate existing sessions so the photographer's next login issues a
     // fresh JWT containing role: "photographer" rather than "pending_photographer".
     await serviceClient.auth.admin.signOut(user.id, "global");
+
+    await logAudit(serviceClient, {
+      action: "photographer_approved",
+      actorId: caller.id,
+      actorEmail: caller.email,
+      bookingId: null,
+      stripeId: account.id,
+      meta: { photographer_user_id: user.id, photographer_email: email, photographer_name: name },
+    });
 
     return NextResponse.json({ success: true, onboardingUrl: accountLink.url });
   } catch (error) {

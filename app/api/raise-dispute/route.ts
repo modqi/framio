@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { logAudit } from "@/lib/audit";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -59,6 +60,14 @@ export async function POST(request: NextRequest) {
     console.error("raise-dispute update error:", error);
     return NextResponse.json({ error: "Failed to raise dispute" }, { status: 500 });
   }
+
+  await logAudit(serviceClient, {
+    action: "dispute_raised",
+    actorId: user.id,
+    actorEmail: user.email,
+    bookingId,
+    meta: { dispute_reason: reason },
+  });
 
   const { data: admins } = await serviceClient.from("admin_users").select("email");
   const adminEmails = (admins || []).map((a: any) => a.email).filter(Boolean);

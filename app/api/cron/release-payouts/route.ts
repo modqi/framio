@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { logAudit } from "@/lib/audit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -119,6 +120,16 @@ export async function GET(request: NextRequest) {
           })
           .eq("id", booking.id);
 
+        await logAudit(serviceClient, {
+          action: "payout_released",
+          actorId: null,
+          bookingId: booking.id,
+          stripeId: transfer.id,
+          amountCents: netAmount,
+          currency,
+          meta: { source: "cron_auto" },
+        });
+
         results.released++;
       } catch (stripeErr: any) {
         // Roll back so the next cron run can retry
@@ -232,6 +243,14 @@ export async function GET(request: NextRequest) {
         .from("bookings")
         .update({ status: "cancelled" })
         .eq("id", booking.id);
+
+      await logAudit(serviceClient, {
+        action: "booking_expired",
+        actorId: null,
+        bookingId: booking.id,
+        stripeId: booking.stripe_payment_intent_id ?? null,
+        meta: { refund_attempted: !!booking.stripe_payment_intent_id },
+      });
 
       // Email to client
       await resend.emails.send({

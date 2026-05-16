@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { logAudit } from "@/lib/audit";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -57,6 +58,13 @@ export async function POST(request: NextRequest) {
     console.error("mark-photos-delivered update error:", error);
     return NextResponse.json({ error: "Failed to update booking" }, { status: 500 });
   }
+
+  await logAudit(serviceClient, {
+    action: "photos_delivered",
+    actorId: user.id,
+    bookingId,
+    meta: { payout_due_at: payoutDueAt },
+  });
 
   if (booking.client_email) {
     resend.emails.send({
