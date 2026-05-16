@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local database dumps (backups/ folder is managed by GitHub Actions only)
+backups/*.sql.gz
