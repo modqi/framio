@@ -1105,18 +1105,18 @@
     "photos": {
       "label": "PHOTOS ({count}/{max})",
       "selectPhotos": "Click to select photos",
-      "fileTypes": "JPG, PNG, WEBP · Max 20 MB each · Up to {max} photos"
+      "fileTypes": "JPG, PNG, WEBP · Max 100 MB each · Up to {max} photos"
     },
     "fileStatus": {
       "uploading": "Uploading…",
       "failed": "Failed"
     },
     "errors": {
-      "oversized": "{count, plural, one {# file exceeds 20 MB and was skipped.} other {# files exceed 20 MB and were skipped.}}",
+      "oversized": "Some photos exceed 100 MB and were skipped.",
       "maxPhotos": "Maximum {max} photos per delivery. Only the first {max} were kept.",
       "noPhotos": "Please select at least one photo.",
       "allFailed": "All uploads failed. Please try again.",
-      "someFailed": "{count, plural, one {# photo failed to upload and was excluded.} other {# photos failed to upload and were excluded.}}",
+      "someFailed": "Some photos failed to upload and were excluded.",
       "saveFailed": "Failed to save delivery. Please try again."
     },
     "submit": {

@@ -5,7 +5,7 @@ import { supabase } from "../../../../lib/supabase";
 import Logo from "../../../components/Logo";
 import { CameraIcon, CheckIcon, XIcon, ImageFileIcon } from "../../../components/Icons";
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
 const MAX_FILES = 100;
 
 interface FileEntry {
@@ -75,7 +75,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
     e.target.value = "";
     const oversized = picked.filter(f => f.size > MAX_FILE_SIZE);
     if (oversized.length) {
-      setError(t("errors.oversized", { count: oversized.length } as any));
+      setError(t("errors.oversized"));
     } else {
       setError(null);
     }
@@ -148,7 +148,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
     }
 
     if (uploaded.length < files.length) {
-      setError(t("errors.someFailed", { count: files.length - uploaded.length } as any));
+      setError(t("errors.someFailed"));
     }
 
     // Create delivery record

@@ -1105,18 +1105,18 @@
     "photos": {
       "label": "BILDER ({count}/{max})",
       "selectPhotos": "Klikk for å velge bilder",
-      "fileTypes": "JPG, PNG, WEBP · Maks 20 MB hver · Opptil {max} bilder"
+      "fileTypes": "JPG, PNG, WEBP · Maks 100 MB hver · Opptil {max} bilder"
     },
     "fileStatus": {
       "uploading": "Laster opp…",
       "failed": "Feilet"
     },
     "errors": {
-      "oversized": "{count, plural, one {# fil overstiger 20 MB og ble hoppet over.} other {# filer overstiger 20 MB og ble hoppet over.}}",
+      "oversized": "Noen bilder overstiger 100 MB og ble hoppet over.",
       "maxPhotos": "Maksimalt {max} bilder per levering. Kun de første {max} ble beholdt.",
       "noPhotos": "Velg minst ett bilde.",
       "allFailed": "Alle opplastinger mislyktes. Prøv igjen.",
-      "someFailed": "{count, plural, one {# bilde klarte ikke å laste opp og ble ekskludert.} other {# bilder klarte ikke å laste opp og ble ekskludert.}}",
+      "someFailed": "Noen bilder klarte ikke å laste opp og ble ekskludert.",
       "saveFailed": "Kunne ikke lagre leveransen. Prøv igjen."
     },
     "submit": {
