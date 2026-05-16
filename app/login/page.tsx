@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
@@ -11,12 +12,27 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
   const t = useTranslations("Login");
 
   const handleLogin = async () => {
     if (!email || !password) { setError(t("errors.fillAll")); return; }
+    if (!turnstileToken) { setError(t("errors.securityCheck")); return; }
     setLoading(true);
     setError("");
+    const verifyRes = await fetch("/api/verify-turnstile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: turnstileToken }),
+    });
+    if (!verifyRes.ok) {
+      setError(t("errors.securityCheck"));
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
+      setLoading(false);
+      return;
+    }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(t("errors.invalidCredentials")); setLoading(false); return; }
     const user = data.user;
@@ -152,6 +168,16 @@ export default function Login() {
                 <p style={{fontSize: "13px", color: "#8F3A14", margin: "0", fontFamily: "'Jost', sans-serif"}}>{error}</p>
               </div>
             )}
+
+            {/* Turnstile */}
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setTurnstileToken(token)}
+              onError={() => { setTurnstileToken(null); }}
+              onExpire={() => { setTurnstileToken(null); }}
+              options={{ size: "invisible" }}
+            />
 
             {/* Submit */}
             <button

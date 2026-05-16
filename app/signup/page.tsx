@@ -1,6 +1,7 @@
 ﻿"use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
 import { ReviewStarIcon } from "../components/Icons";
@@ -17,6 +18,8 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
   const t = useTranslations("Signup");
   const tCat = useTranslations("Categories");
 
@@ -29,10 +32,27 @@ export default function Signup() {
   const [portfolio, setPortfolio] = useState("");
   const [about, setAbout] = useState("");
 
+  const verifyTurnstile = async (): Promise<boolean> => {
+    if (!turnstileToken) { setError(t("errors.securityCheck")); return false; }
+    const res = await fetch("/api/verify-turnstile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: turnstileToken }),
+    });
+    if (!res.ok) {
+      setError(t("errors.securityCheck"));
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
+      return false;
+    }
+    return true;
+  };
+
   const handleClientSignup = async () => {
     if (!name || !email || !password) { setError(t("errors.fillAll")); return; }
     if (password.length < 8) { setError(t("errors.passwordLength")); return; }
     setLoading(true); setError("");
+    if (!await verifyTurnstile()) { setLoading(false); return; }
     const { error } = await supabase.auth.signUp({
       email, password,
       options: { data: { role: "client", name }, emailRedirectTo: "https://lomissa.com/auth/confirm" },
@@ -47,6 +67,7 @@ export default function Signup() {
     }
     if (password.length < 8) { setError(t("errors.passwordLength")); return; }
     setLoading(true); setError("");
+    if (!await verifyTurnstile()) { setLoading(false); return; }
     const { error: signupError } = await supabase.auth.signUp({
       email, password,
       options: { data: { role: "pending_photographer", name, specialties: selectedCategories }, emailRedirectTo: "https://lomissa.com/auth/confirm" },
@@ -219,6 +240,16 @@ export default function Signup() {
               <a href="/login" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.logIn")}</a>
             </p>
           </div>
+
+          {/* Turnstile — invisible, shared by both client and photographer submit handlers */}
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={(token) => setTurnstileToken(token)}
+            onError={() => { setTurnstileToken(null); }}
+            onExpire={() => { setTurnstileToken(null); }}
+            options={{ size: "invisible" }}
+          />
 
           {/* TOGGLE */}
           <div style={{display: "flex", gap: "6px", backgroundColor: "#F0EAE0", padding: "4px", borderRadius: "999px", marginBottom: "28px"}}>

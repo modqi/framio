@@ -228,7 +228,8 @@
     },
     "errors": {
       "fillAll": "Please fill in all fields.",
-      "invalidCredentials": "Invalid email or password. Please try again."
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "securityCheck": "Security check failed. Please try again."
     }
   },
   "Signup": {
@@ -310,7 +311,8 @@
     "errors": {
       "fillAll": "Please fill in all fields.",
       "passwordLength": "Password must be at least 8 characters.",
-      "fillRequired": "Please fill in all required fields."
+      "fillRequired": "Please fill in all required fields.",
+      "securityCheck": "Security check failed. Please try again."
     }
   },
   "Join": {
