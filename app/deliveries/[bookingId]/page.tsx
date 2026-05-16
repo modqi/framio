@@ -5,8 +5,8 @@ import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { EmptyInboxIcon } from "../../components/Icons";
 
-// Force Cloudinary to serve the file as a download attachment
-const downloadUrl = (url: string) => url.replace("/upload/", "/upload/fl_attachment/");
+// Force Cloudinary to serve the file as a download attachment (handles both upload and authenticated URL formats)
+const downloadUrl = (url: string) => url.replace(/\/(upload|authenticated)\//, "/$1/fl_attachment/");
 
 export default function PhotoGallery({ params }: { params: any }) {
   const t = useTranslations("Deliveries");
@@ -15,8 +15,11 @@ export default function PhotoGallery({ params }: { params: any }) {
   const [booking, setBooking] = useState<any>(null);
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{ view: string; dl: string } | null>(null);
   const [zipping, setZipping] = useState<string | null>(null);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [downloadUrls, setDownloadUrls] = useState<Record<string, string>>({});
+  const [urlsExpiresAt, setUrlsExpiresAt] = useState(0);
 
   useEffect(() => {
     const resolve = async () => {
@@ -27,6 +30,29 @@ export default function PhotoGallery({ params }: { params: any }) {
     };
     resolve();
   }, [params]);
+
+  const fetchSignedUrls = async (deliveryIds: string[], token: string) => {
+    const newSigned: Record<string, string> = {};
+    const newDownload: Record<string, string> = {};
+    let latestExpiry = 0;
+    for (const deliveryId of deliveryIds) {
+      try {
+        const res = await fetch(`/api/deliveries/${deliveryId}/signed-urls`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) continue;
+        const data = await res.json();
+        Object.assign(newSigned, data.signedUrls || {});
+        Object.assign(newDownload, data.downloadUrls || {});
+        if (data.expiresAt) latestExpiry = new Date(data.expiresAt).getTime();
+      } catch {
+        // silent — page falls back to stored URLs
+      }
+    }
+    setSignedUrls(prev => ({ ...prev, ...newSigned }));
+    setDownloadUrls(prev => ({ ...prev, ...newDownload }));
+    if (latestExpiry) setUrlsExpiresAt(latestExpiry);
+  };
 
   useEffect(() => {
     if (!bookingId) return;
@@ -72,6 +98,12 @@ export default function PhotoGallery({ params }: { params: any }) {
           ...d,
           photos: photosByDelivery[d.id] || [],
         })));
+
+        // Fetch signed URLs before showing photos so authenticated resources render correctly
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          await fetchSignedUrls(deliveryIds, session.access_token);
+        }
       }
 
       setLoading(false);
@@ -97,6 +129,31 @@ export default function PhotoGallery({ params }: { params: any }) {
     }
     setZipping(null);
   };
+
+  // Refresh signed URLs 10 minutes before they expire (self-perpetuating 50-minute cycle)
+  useEffect(() => {
+    if (!urlsExpiresAt || !deliveries.length) return;
+    const msUntilRefresh = urlsExpiresAt - Date.now() - 10 * 60 * 1000;
+    const timer = setTimeout(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) fetchSignedUrls(deliveries.map((d: any) => d.id), session.access_token);
+    }, Math.max(msUntilRefresh, 5000));
+    return () => clearTimeout(timer);
+  }, [urlsExpiresAt]);
+
+  // Also refresh when the tab regains focus if URLs are nearly expired
+  useEffect(() => {
+    if (!urlsExpiresAt || !deliveries.length) return;
+    const handleVisibility = async () => {
+      if (document.visibilityState !== "visible") return;
+      if (urlsExpiresAt - Date.now() < 10 * 60 * 1000) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) fetchSignedUrls(deliveries.map((d: any) => d.id), session.access_token);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [urlsExpiresAt, deliveries]);
 
   const totalPhotos = deliveries.reduce((s, d) => s + d.photos.length, 0);
   const isPhotographer = user?.id === booking?.photographer_id;
@@ -168,70 +225,74 @@ export default function PhotoGallery({ params }: { params: any }) {
 
             {/* Photo grid */}
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "8px"}}>
-              {delivery.photos.map((photo: any) => (
-                <div
-                  key={photo.id}
-                  style={{position: "relative", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E2D5C8", cursor: "zoom-in"}}
-                  onClick={() => setLightboxUrl(photo.cloudinary_url)}
-                >
-                  <img
-                    src={photo.cloudinary_url}
-                    alt={photo.filename || "Delivered photo"}
-                    style={{width: "100%", height: "100%", objectFit: "cover", display: "block"}}
-                    loading="lazy"
-                  />
-                  {/* Download hover overlay */}
-                  <a
-                    href={downloadUrl(photo.cloudinary_url)}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={e => e.stopPropagation()}
-                    style={{
-                      position: "absolute", bottom: "8px", right: "8px",
-                      backgroundColor: "rgba(0,0,0,0.55)", color: "#fff",
-                      borderRadius: "6px", padding: "5px 10px",
-                      fontSize: "11px", fontFamily: "'Jost', sans-serif",
-                      textDecoration: "none", backdropFilter: "blur(4px)",
-                      opacity: 0,
-                      transition: "opacity 0.15s",
-                    }}
-                    className="photo-dl-btn"
-                    title="Download"
+              {delivery.photos.map((photo: any) => {
+                const viewUrl = signedUrls[photo.id] || photo.cloudinary_url;
+                const dlUrl = downloadUrls[photo.id] || downloadUrl(photo.cloudinary_url);
+                return (
+                  <div
+                    key={photo.id}
+                    style={{position: "relative", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E2D5C8", cursor: "zoom-in"}}
+                    onClick={() => setLightbox({ view: viewUrl, dl: dlUrl })}
                   >
-                    {t("delivery.save")}
-                  </a>
-                </div>
-              ))}
+                    <img
+                      src={viewUrl}
+                      alt={photo.filename || "Delivered photo"}
+                      style={{width: "100%", height: "100%", objectFit: "cover", display: "block"}}
+                      loading="lazy"
+                    />
+                    {/* Download hover overlay */}
+                    <a
+                      href={dlUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        position: "absolute", bottom: "8px", right: "8px",
+                        backgroundColor: "rgba(0,0,0,0.55)", color: "#fff",
+                        borderRadius: "6px", padding: "5px 10px",
+                        fontSize: "11px", fontFamily: "'Jost', sans-serif",
+                        textDecoration: "none", backdropFilter: "blur(4px)",
+                        opacity: 0,
+                        transition: "opacity 0.15s",
+                      }}
+                      className="photo-dl-btn"
+                      title="Download"
+                    >
+                      {t("delivery.save")}
+                    </a>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}
       </div>
 
       {/* Lightbox */}
-      {lightboxUrl && (
+      {lightbox && (
         <div
-          onClick={() => setLightboxUrl(null)}
+          onClick={() => setLightbox(null)}
           style={{position: "fixed", inset: 0, zIndex: 50, backgroundColor: "rgba(0,0,0,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "zoom-out", padding: "24px"}}
         >
           <img
-            src={lightboxUrl}
+            src={lightbox.view}
             alt="Full size"
             style={{maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "4px"}}
             onClick={e => e.stopPropagation()}
           />
           <div style={{position: "absolute", top: "20px", right: "20px", display: "flex", gap: "10px"}}>
             <a
-              href={downloadUrl(lightboxUrl)}
+              href={lightbox.dl}
               target="_blank"
               rel="noreferrer"
               onClick={e => e.stopPropagation()}
               style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", backdropFilter: "blur(4px)"}}
               title="Download"
             >
-              
+
             </a>
             <button
-              onClick={() => setLightboxUrl(null)}
+              onClick={() => setLightbox(null)}
               style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center"}}
               aria-label="Close"
             >

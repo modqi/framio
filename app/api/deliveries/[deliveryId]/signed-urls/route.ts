@@ -13,8 +13,6 @@ const serviceClient = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Extracts the Cloudinary public_id from a secure_url.
-// Handles both type:upload and type:authenticated URL formats.
 function extractPublicId(url: string): string {
   const clean = url.split("?")[0];
   const match = clean.match(/\/image\/(?:upload|authenticated)\/(?:[^/]+\/)*v\d+\/(.+)$/);
@@ -44,7 +42,6 @@ export async function GET(
     ? (await params).deliveryId
     : params.deliveryId;
 
-  // Verify the caller is a party to this delivery
   const { data: delivery } = await serviceClient
     .from("photo_deliveries")
     .select("id, photographer_id, client_id")
@@ -58,26 +55,37 @@ export async function GET(
 
   const { data: photos } = await serviceClient
     .from("delivered_photos")
-    .select("cloudinary_url, cloudinary_public_id, filename")
+    .select("id, cloudinary_url, cloudinary_public_id")
     .eq("delivery_id", deliveryId);
 
-  if (!photos?.length) return NextResponse.json({ error: "No photos found" }, { status: 404 });
+  const expiresAt = Math.floor(Date.now() / 1000) + 3600;
+  const signedUrls: Record<string, string> = {};
+  const downloadUrls: Record<string, string> = {};
 
-  const publicIds = photos.map((p: any) =>
-    p.cloudinary_public_id || extractPublicId(p.cloudinary_url)
-  );
+  for (const photo of photos || []) {
+    const publicId = photo.cloudinary_public_id || extractPublicId(photo.cloudinary_url);
+    // Authenticated type requires signed URL; upload type (legacy) is public but we sign anyway
+    const type = photo.cloudinary_public_id ? "authenticated" : "upload";
 
-  // Use authenticated type if any photo was uploaded as authenticated (post-migration)
-  const deliveryType = photos.some((p: any) =>
-    p.cloudinary_public_id || p.cloudinary_url.includes("/authenticated/")
-  ) ? "authenticated" : "upload";
+    signedUrls[photo.id] = cloudinary.url(publicId, {
+      sign_url: true,
+      type,
+      expires_at: expiresAt,
+      secure: true,
+    });
 
-  const zipUrl = cloudinary.utils.download_zip_url({
-    public_ids: publicIds,
-    resource_type: "image",
-    type: deliveryType,
-    expires_at: Math.floor(Date.now() / 1000) + 3600,
+    downloadUrls[photo.id] = cloudinary.url(publicId, {
+      sign_url: true,
+      type,
+      expires_at: expiresAt,
+      flags: "attachment",
+      secure: true,
+    });
+  }
+
+  return NextResponse.json({
+    signedUrls,
+    downloadUrls,
+    expiresAt: new Date(expiresAt * 1000).toISOString(),
   });
-
-  return NextResponse.redirect(zipUrl);
 }

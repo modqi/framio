@@ -66,10 +66,11 @@ export async function POST(request: NextRequest) {
   const { error: photosError } = await serviceClient
     .from("delivered_photos")
     .insert(
-      photos.map((p: { url: string; filename: string }) => ({
+      photos.map((p: { url: string; filename: string; public_id?: string }) => ({
         delivery_id: delivery.id,
         cloudinary_url: p.url,
         filename: p.filename || null,
+        cloudinary_public_id: p.public_id || null,
       }))
     );
 

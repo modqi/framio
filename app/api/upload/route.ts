@@ -65,9 +65,12 @@ export async function POST(request: NextRequest) {
       ? [{ width: 800, height: 800, crop: "fill", gravity: "face" }, { quality: "auto" }, { fetch_format: "auto" }]
       : [{ width: 1200, height: 1600, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }];
 
+    const uploadOptions: Record<string, unknown> = { resource_type: "image", folder, transformation };
+    if (isDelivery) uploadOptions.type = "authenticated";
+
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { resource_type: "image", folder, transformation },
+        uploadOptions as any,
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
@@ -76,7 +79,9 @@ export async function POST(request: NextRequest) {
     });
 
     const uploadResult = result as any;
-    return NextResponse.json({ url: uploadResult.secure_url });
+    const response: Record<string, string> = { url: uploadResult.secure_url };
+    if (isDelivery) response.public_id = uploadResult.public_id;
+    return NextResponse.json(response);
 
   } catch (error) {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
