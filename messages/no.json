@@ -199,11 +199,18 @@
   },
   "Login": {
     "panel": {
-      "heading": "Velkommen tilbake til Lomissa",
-      "description": "Logg inn for å administrere bestillingene dine og koble deg til fotografer."
+      "badge": "VELKOMMEN TILBAKE",
+      "headingBefore": "Din neste økt",
+      "headingAccent": "venter",
+      "description": "Logg inn for å administrere bestillingene dine, meldinger og bilder — alt på ett sted.",
+      "feature1Title": "Dine bestillinger",
+      "feature1Desc": "Se kommende økter, behandle forespørsler og følg leveranser",
+      "feature2Title": "Dine meldinger",
+      "feature2Desc": "Hold kontakten med fotografen din eller kunder direkte",
+      "feature3Title": "Dine bilder",
+      "feature3Desc": "Åpne og last ned de leverte fotogalleriene dine når som helst"
     },
     "form": {
-      "badge": "VELKOMMEN TILBAKE",
       "heading": "Logg inn",
       "noAccount": "Har du ikke konto?",
       "signUp": "Registrer deg",
@@ -215,7 +222,8 @@
       "submit": "Logg inn",
       "submitting": "Logger inn...",
       "signUpFree": "Registrer deg gratis",
-      "isPhotographer": "Er du fotograf?",
+      "divider": "Ny på Lomissa?",
+      "photographerBox": "Er du fotograf som ønsker å bli med på plattformen vår?",
       "applyToJoin": "Søk om å bli med"
     },
     "errors": {

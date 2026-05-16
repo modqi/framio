@@ -199,11 +199,18 @@
   },
   "Login": {
     "panel": {
-      "heading": "Welcome back to Lomissa",
-      "description": "Log in to manage your bookings and connect with photographers."
+      "badge": "WELCOME BACK",
+      "headingBefore": "Your next session",
+      "headingAccent": "awaits",
+      "description": "Log in to manage your bookings, messages, and photos — all in one place.",
+      "feature1Title": "Your bookings",
+      "feature1Desc": "View upcoming sessions, manage requests and track deliveries",
+      "feature2Title": "Your messages",
+      "feature2Desc": "Stay in touch with your photographer or clients directly",
+      "feature3Title": "Your photos",
+      "feature3Desc": "Access and download your delivered photo galleries anytime"
     },
     "form": {
-      "badge": "WELCOME BACK",
       "heading": "Log in",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
@@ -215,7 +222,8 @@
       "submit": "Log in",
       "submitting": "Logging in...",
       "signUpFree": "Sign up free",
-      "isPhotographer": "Are you a photographer?",
+      "divider": "New to Lomissa?",
+      "photographerBox": "Are you a photographer looking to join our platform?",
       "applyToJoin": "Apply to join"
     },
     "errors": {
