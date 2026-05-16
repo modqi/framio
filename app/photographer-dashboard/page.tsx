@@ -594,7 +594,7 @@ export default function PhotographerDashboard() {
                         </button>
                       )
                     )}
-                    {booking.status === "completed" && (
+                    {(booking.status === "completed" || booking.status === "confirmed") && (
                       <a
                         href={`/photographer-dashboard/deliver/${booking.id}`}
                         style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
