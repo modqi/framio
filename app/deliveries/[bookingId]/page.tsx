@@ -74,36 +74,20 @@ export default function PhotoGallery({ params }: { params: any }) {
       }
       setBooking(bk);
 
-      // Fetch deliveries and their photos
-      const { data: deliveryRows } = await supabase
-        .from("photo_deliveries")
-        .select("id, message, created_at")
-        .eq("booking_id", bookingId)
-        .order("created_at", { ascending: true });
+      // Fetch deliveries and their photos via API (service client bypasses RLS, manual auth check inside)
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token ?? "";
 
-      if (deliveryRows?.length) {
-        const deliveryIds = deliveryRows.map((d: any) => d.id);
-        const { data: photoRows } = await supabase
-          .from("delivered_photos")
-          .select("id, delivery_id, cloudinary_url, filename")
-          .in("delivery_id", deliveryIds)
-          .order("created_at", { ascending: true });
+      const dlRes = await fetch(`/api/photo-deliveries?bookingId=${bookingId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        const photosByDelivery: Record<string, any[]> = {};
-        for (const p of photoRows || []) {
-          if (!photosByDelivery[p.delivery_id]) photosByDelivery[p.delivery_id] = [];
-          photosByDelivery[p.delivery_id].push(p);
-        }
-
-        setDeliveries(deliveryRows.map((d: any) => ({
-          ...d,
-          photos: photosByDelivery[d.id] || [],
-        })));
-
-        // Fetch signed URLs before showing photos so authenticated resources render correctly
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          await fetchSignedUrls(deliveryIds, session.access_token);
+      if (dlRes.ok) {
+        const { deliveries: rows } = await dlRes.json();
+        if (rows?.length) {
+          setDeliveries(rows);
+          const deliveryIds = rows.map((d: any) => d.id);
+          await fetchSignedUrls(deliveryIds, token);
         }
       }
 
@@ -240,8 +224,8 @@ export default function PhotoGallery({ params }: { params: any }) {
             {/* Photo grid */}
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "8px"}}>
               {delivery.photos.map((photo: any) => {
-                const viewUrl = signedUrls[photo.id] || photo.cloudinary_url;
-                const dlUrl = downloadUrls[photo.id] || downloadUrl(photo.cloudinary_url);
+                const viewUrl = signedUrls[photo.id] || photo.cloudinary_url || "";
+                const dlUrl = downloadUrls[photo.id] || (photo.cloudinary_url ? downloadUrl(photo.cloudinary_url) : "");
                 return (
                   <div
                     key={photo.id}

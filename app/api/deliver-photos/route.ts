@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-  if (!["completed", "photos_delivered"].includes(booking.status)) {
-    return NextResponse.json({ error: "Booking must be completed before delivering photos" }, { status: 400 });
+  if (!["confirmed", "completed", "photos_delivered"].includes(booking.status)) {
+    return NextResponse.json({ error: "Booking not eligible for delivery" }, { status: 400 });
   }
 
   // Create the delivery record
@@ -82,8 +82,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to save photos" }, { status: 500 });
   }
 
-  // Transition booking status if this is the first delivery
-  if (booking.status === "completed") {
+  // Transition booking status if this is the first delivery (confirmed or completed)
+  if (booking.status === "confirmed" || booking.status === "completed") {
     const payoutDueAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
     await serviceClient
       .from("bookings")
