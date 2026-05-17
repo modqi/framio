@@ -25,7 +25,6 @@ export default function Photographers() {
   const [sortBy, setSortBy] = useState("newest");
   const [authUser, setAuthUser] = useState<any>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<"login" | "signup">("login");
 
   useEffect(() => {
     const getData = async () => {
@@ -154,8 +153,7 @@ export default function Photographers() {
             </>
           ) : (
             <>
-              <button onClick={() => { setAuthModalMode("login"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", color: "#7A5C44", fontSize: "13px", fontFamily: "'Jost', sans-serif", whiteSpace: "nowrap", padding: "0"}}>{t("nav.logIn")}</button>
-              <button onClick={() => { setAuthModalMode("signup"); setAuthModalOpen(true); }} style={{backgroundColor: "#C8622A", color: "#FDFBF8", border: "none", cursor: "pointer", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.signUp")}</button>
+              <button onClick={() => setAuthModalOpen(true)} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", border: "none", cursor: "pointer", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.logInOrSignUp")}</button>
               <a href="/signup?role=photographer" className="hidden sm:inline" style={{border: "1px solid #C8622A", color: "#C8622A", backgroundColor: "transparent", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.joinAsPhotographer")}</a>
             </>
           )}
@@ -314,7 +312,7 @@ export default function Photographers() {
         <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
-      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode={authModalMode} />
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </main>
   );
 }

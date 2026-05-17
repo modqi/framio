@@ -4,6 +4,7 @@
       "photographers": "Fotografer",
       "logIn": "Logg inn",
       "signUp": "Registrer deg",
+      "logInOrSignUp": "Logg inn eller registrer deg",
       "joinAsPhotographer": "Bli fotograf"
     },
     "hero": {
@@ -76,6 +77,7 @@
       "myDashboard": "Min oversikt",
       "logIn": "Logg inn",
       "signUp": "Registrer deg",
+      "logInOrSignUp": "Logg inn eller registrer deg",
       "joinAsPhotographer": "Bli fotograf"
     },
     "header": {
@@ -115,6 +117,7 @@
       "explore": "Utforsk",
       "logIn": "Logg inn",
       "signUp": "Registrer deg",
+      "logInOrSignUp": "Logg inn eller registrer deg",
       "joinAsPhotographer": "Bli fotograf",
       "myDashboard": "Min oversikt",
       "adminPanel": "Adminpanel",
@@ -1251,6 +1254,7 @@
     "goToDashboard": "Gå til dashbordet mitt →"
   },
   "AuthModal": {
+    "heading": "Logg inn eller registrer deg",
     "loginHeading": "Logg inn",
     "signupHeading": "Opprett konto",
     "googleLogin": "Fortsett med Google",

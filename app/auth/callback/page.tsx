@@ -16,7 +16,8 @@ export default function AuthCallback() {
         window.location.href = "/dashboard";
         return;
       }
-      if (role === "photographer") window.location.href = "/photographer-dashboard";
+      if (role === "pending_photographer") window.location.href = "/pending";
+      else if (role === "photographer") window.location.href = "/photographer-dashboard";
       else if (role === "admin") window.location.href = "/admin";
       else window.location.href = "/dashboard";
     };

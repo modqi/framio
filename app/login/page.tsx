@@ -203,7 +203,7 @@ export default function Login() {
                 {t("form.photographerBox")}
               </p>
               <a
-                href="/signup"
+                href="/signup?role=photographer"
                 style={{fontSize: "12px", color: "#1A0E06", border: "0.5px solid #E2D5C8", padding: "8px 16px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", flexShrink: 0, whiteSpace: "nowrap"}}
               >
                 {t("form.applyToJoin")} →

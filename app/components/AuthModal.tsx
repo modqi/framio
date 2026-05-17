@@ -68,7 +68,8 @@ export default function AuthModal({ open, onClose, defaultMode = "login" }: Auth
       }
       const { data: { session } } = await supabase.auth.getSession();
       const role = session?.user?.user_metadata?.role;
-      if (role === "photographer") window.location.href = "/photographer-dashboard";
+      if (role === "pending_photographer") window.location.href = "/pending";
+      else if (role === "photographer") window.location.href = "/photographer-dashboard";
       else if (role === "admin") window.location.href = "/admin";
       else window.location.href = "/dashboard";
     } else {
@@ -139,7 +140,7 @@ export default function AuthModal({ open, onClose, defaultMode = "login" }: Auth
 
         {/* Heading */}
         <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "30px", fontWeight: "400", color: "#1A0E06", margin: "0 0 28px", letterSpacing: "-0.01em"}}>
-          {mode === "login" ? t("loginHeading") : t("signupHeading")}
+          {t("heading")}
         </h2>
 
         {/* Google */}

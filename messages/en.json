@@ -4,6 +4,7 @@
       "photographers": "Photographers",
       "logIn": "Log in",
       "signUp": "Sign up",
+      "logInOrSignUp": "Log in or sign up",
       "joinAsPhotographer": "Join as photographer"
     },
     "hero": {
@@ -76,6 +77,7 @@
       "myDashboard": "My dashboard",
       "logIn": "Log in",
       "signUp": "Sign up",
+      "logInOrSignUp": "Log in or sign up",
       "joinAsPhotographer": "Join as photographer"
     },
     "header": {
@@ -115,6 +117,7 @@
       "explore": "Explore",
       "logIn": "Log in",
       "signUp": "Sign up",
+      "logInOrSignUp": "Log in or sign up",
       "joinAsPhotographer": "Join as photographer",
       "myDashboard": "My dashboard",
       "adminPanel": "Admin panel",
@@ -1251,6 +1254,7 @@
     "goToDashboard": "Go to my dashboard →"
   },
   "AuthModal": {
+    "heading": "Log in or sign up",
     "loginHeading": "Log in",
     "signupHeading": "Create account",
     "googleLogin": "Continue with Google",

@@ -52,8 +52,7 @@ export default function Home() {
         <div className="flex items-center gap-2 sm:gap-4">
           <GlobeModal />
           <a href="/photographers" className="hidden sm:inline" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.photographers")}</a>
-          <button onClick={() => { setAuthModalMode("login"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", color: "#7A5C44", fontSize: "13px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap", padding: "0"}}>{t("nav.logIn")}</button>
-          <button onClick={() => { setAuthModalMode("signup"); setAuthModalOpen(true); }} style={{backgroundColor: "#C8622A", color: "#FDFBF8", border: "none", cursor: "pointer", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.signUp")}</button>
+          <button onClick={() => setAuthModalOpen(true)} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", border: "none", cursor: "pointer", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.logInOrSignUp")}</button>
           <a href="/signup?role=photographer" className="hidden sm:inline" style={{border: "1px solid #C8622A", color: "#C8622A", backgroundColor: "transparent", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.joinAsPhotographer")}</a>
         </div>
       </nav>
@@ -76,7 +75,7 @@ export default function Home() {
             <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)", whiteSpace: "nowrap"}}>
               {t("hero.cta")}
             </a>
-            <a href="/signup" style={{color: "#1A0E06", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "1px solid #1A0E06", whiteSpace: "nowrap"}}>
+            <a href="/signup?role=photographer" style={{color: "#1A0E06", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "1px solid #1A0E06", whiteSpace: "nowrap"}}>
               {t("hero.ctaSecondary")}
             </a>
           </div>
@@ -248,7 +247,7 @@ export default function Home() {
             <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "300", margin: "0 0 36px", lineHeight: "1.7"}}>
               {t("forPhotographers.quoteNote")}
             </p>
-            <a href="/signup" style={{display: "block", textAlign: "center", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", marginBottom: "12px"}}>
+            <a href="/signup?role=photographer" style={{display: "block", textAlign: "center", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", marginBottom: "12px"}}>
               {t("forPhotographers.cta")}
             </a>
             <p style={{fontSize: "12px", color: "#7A5C44", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>
@@ -270,8 +269,8 @@ export default function Home() {
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.platformLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
                 <a href="/photographers" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.findPhotographers")}</a>
-                <a href="/signup" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.createAccount")}</a>
-                <a href="/login" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.logIn")}</a>
+                <button onClick={() => { setAuthModalMode("signup"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textAlign: "left"}}>{t("footer.createAccount")}</button>
+                <button onClick={() => { setAuthModalMode("login"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textAlign: "left"}}>{t("nav.logIn")}</button>
               </div>
             </div>
             <div>
@@ -284,7 +283,7 @@ export default function Home() {
             <div>
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.photographersLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/signup" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.applyToJoin")}</a>
+                <a href="/signup?role=photographer" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.applyToJoin")}</a>
                 <a href="mailto:hello@lomissa.com" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>hello@lomissa.com</a>
               </div>
             </div>
