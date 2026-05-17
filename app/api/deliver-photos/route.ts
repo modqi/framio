@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { bookingId, message, photos } = await request.json();
-  // photos: Array<{ url: string; filename: string }>
+  // photos: Array<{ storagePath?: string; url?: string; filename: string; public_id?: string }>
 
   if (!bookingId || !Array.isArray(photos) || photos.length === 0) {
     return NextResponse.json({ error: "bookingId and at least one photo are required" }, { status: 400 });
@@ -66,11 +66,12 @@ export async function POST(request: NextRequest) {
   const { error: photosError } = await serviceClient
     .from("delivered_photos")
     .insert(
-      photos.map((p: { url: string; filename: string; public_id?: string }) => ({
+      photos.map((p: { storagePath?: string; url?: string; filename: string; public_id?: string }) => ({
         delivery_id: delivery.id,
-        cloudinary_url: p.url,
+        storage_path: p.storagePath ?? null,
+        cloudinary_url: p.url ?? null,
         filename: p.filename || null,
-        cloudinary_public_id: p.public_id || null,
+        cloudinary_public_id: p.public_id ?? null,
       }))
     );
 

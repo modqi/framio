@@ -11,7 +11,7 @@ const MAX_FILES = 100;
 interface FileEntry {
   file: File;
   status: "pending" | "uploading" | "done" | "error";
-  url?: string;
+  storagePath?: string;
   error?: string;
 }
 
@@ -102,38 +102,36 @@ export default function DeliverPhotos({ params }: { params: any }) {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? "";
 
-    // Fetch Cloudinary signed upload params once for all files
-    const sigRes = await fetch("/api/cloudinary-signature", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ isDelivery: true }),
-    });
-    if (!sigRes.ok) { setError(t("errors.uploadFailed")); setSubmitting(false); return; }
-    const sig = await sigRes.json();
-
-    // Upload each file directly to Cloudinary (bypasses Vercel body limit)
-    const uploaded: { url: string; filename: string; public_id?: string }[] = [];
+    // Upload each file directly to Supabase Storage via server-signed upload URL (bypasses Vercel body limit)
+    const uploaded: { storagePath: string; filename: string }[] = [];
     for (let i = 0; i < files.length; i++) {
       setUploadingIndex(i);
       setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "uploading" } : f));
 
       try {
-        const formData = new FormData();
-        formData.append("file", files[i].file);
-        formData.append("signature", sig.signature);
-        formData.append("timestamp", String(sig.timestamp));
-        formData.append("api_key", sig.apiKey);
-        formData.append("folder", sig.folder);
-        if (sig.type) formData.append("type", sig.type);
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
+        // Get a signed upload URL for this file from our API
+        const sigRes = await fetch("/api/storage-signature", {
           method: "POST",
-          body: formData,
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            bookingId,
+            filename: files[i].file.name,
+            contentType: files[i].file.type,
+          }),
         });
-        const data = await res.json();
-        if (!data.secure_url) throw new Error(data.error?.message || "Upload failed");
+        if (!sigRes.ok) throw new Error("Failed to get upload URL");
+        const { signedUrl, path } = await sigRes.json();
 
-        uploaded.push({ url: data.secure_url, filename: files[i].file.name, public_id: data.public_id });
-        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done", url: data.secure_url } : f));
+        // PUT the file directly to Supabase Storage
+        const uploadRes = await fetch(signedUrl, {
+          method: "PUT",
+          body: files[i].file,
+          headers: { "Content-Type": files[i].file.type || "application/octet-stream" },
+        });
+        if (!uploadRes.ok) throw new Error("Upload failed");
+
+        uploaded.push({ storagePath: path, filename: files[i].file.name });
+        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done" } : f));
       } catch (err: any) {
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "error", error: err.message } : f));
       }

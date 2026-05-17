@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import JSZip from "jszip";
 import { useTranslations } from "../../../lib/i18n";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
@@ -111,19 +112,32 @@ export default function PhotoGallery({ params }: { params: any }) {
     init();
   }, [bookingId]);
 
-  const handleDownloadAll = async (deliveryId: string) => {
-    setZipping(deliveryId);
+  const handleDownloadAll = async (delivery: { id: string; photos: any[] }) => {
+    setZipping(delivery.id);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`/api/deliveries/${deliveryId}/download-zip`, {
-        headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
-      });
-      if (res.ok && res.redirected) {
-        window.open(res.url, "_blank");
-      } else if (res.ok) {
-        const data = await res.json();
-        if (data.url) window.open(data.url, "_blank");
-      }
+      const zip = new JSZip();
+      await Promise.all(
+        delivery.photos.map(async (photo: any, i: number) => {
+          const url = downloadUrls[photo.id];
+          if (!url) return;
+          try {
+            const res = await fetch(url);
+            if (!res.ok) return;
+            const buf = await res.arrayBuffer();
+            const name = photo.filename || `photo-${i + 1}.jpg`;
+            zip.file(name, buf);
+          } catch {
+            // skip failed photos — user can still download individually
+          }
+        })
+      );
+      const blob = await zip.generateAsync({ type: "blob" });
+      const href = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = `${booking?.session_type || "photos"}.zip`;
+      a.click();
+      URL.revokeObjectURL(href);
     } catch {
       // silent — user can still download individually
     }
@@ -215,7 +229,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                 )}
               </div>
               <button
-                onClick={() => handleDownloadAll(delivery.id)}
+                onClick={() => handleDownloadAll(delivery)}
                 disabled={zipping === delivery.id}
                 style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: zipping === delivery.id ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: zipping === delivery.id ? 0.6 : 1}}
               >

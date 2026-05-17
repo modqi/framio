@@ -55,37 +55,68 @@ export async function GET(
 
   const { data: photos } = await serviceClient
     .from("delivered_photos")
-    .select("id, cloudinary_url, cloudinary_public_id")
+    .select("id, cloudinary_url, cloudinary_public_id, storage_path, filename")
     .eq("delivery_id", deliveryId);
 
-  const expiresAt = Math.floor(Date.now() / 1000) + 3600;
   const signedUrls: Record<string, string> = {};
   const downloadUrls: Record<string, string> = {};
 
+  // Track the longest expiry so the client knows when to refresh
+  let expiresAtMs = 0;
+
+  const cloudinaryExpiresAt = Math.floor(Date.now() / 1000) + 3600; // 1 hour for Cloudinary
+  const storageExpiresIn = 86400; // 24 hours for Supabase Storage
+
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
   for (const photo of photos || []) {
-    const publicId = photo.cloudinary_public_id || extractPublicId(photo.cloudinary_url);
-    // Authenticated type requires signed URL; upload type (legacy) is public but we sign anyway
-    const type = photo.cloudinary_public_id ? "authenticated" : "upload";
+    if (photo.storage_path) {
+      // New Supabase Storage photo
+      const [viewResult, dlResult] = await Promise.all([
+        serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn),
+        serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn, {
+          download: photo.filename || true,
+        }),
+      ]);
 
-    signedUrls[photo.id] = cloudinary.url(publicId, {
-      sign_url: true,
-      type,
-      expires_at: expiresAt,
-      secure: true,
-    });
+      if (viewResult.data?.signedUrl) {
+        // Wrap in Cloudinary Fetch for CDN caching + auto quality/format on the gallery grid
+        signedUrls[photo.id] = `https://res.cloudinary.com/${cloudName}/image/fetch/q_auto,f_auto/${encodeURIComponent(viewResult.data.signedUrl)}`;
+        const expiryMs = Date.now() + storageExpiresIn * 1000;
+        if (expiryMs > expiresAtMs) expiresAtMs = expiryMs;
+      }
 
-    downloadUrls[photo.id] = cloudinary.url(publicId, {
-      sign_url: true,
-      type,
-      expires_at: expiresAt,
-      flags: "attachment",
-      secure: true,
-    });
+      if (dlResult.data?.signedUrl) {
+        downloadUrls[photo.id] = dlResult.data.signedUrl;
+      }
+    } else if (photo.cloudinary_url) {
+      // Legacy Cloudinary photo — existing logic unchanged
+      const publicId = photo.cloudinary_public_id || extractPublicId(photo.cloudinary_url);
+      const type = photo.cloudinary_public_id ? "authenticated" : "upload";
+
+      signedUrls[photo.id] = cloudinary.url(publicId, {
+        sign_url: true,
+        type,
+        expires_at: cloudinaryExpiresAt,
+        secure: true,
+      });
+
+      downloadUrls[photo.id] = cloudinary.url(publicId, {
+        sign_url: true,
+        type,
+        expires_at: cloudinaryExpiresAt,
+        flags: "attachment",
+        secure: true,
+      });
+
+      const cloudinaryExpiryMs = cloudinaryExpiresAt * 1000;
+      if (cloudinaryExpiryMs > expiresAtMs) expiresAtMs = cloudinaryExpiryMs;
+    }
   }
 
   return NextResponse.json({
     signedUrls,
     downloadUrls,
-    expiresAt: new Date(expiresAt * 1000).toISOString(),
+    expiresAt: new Date(expiresAtMs).toISOString(),
   });
 }
