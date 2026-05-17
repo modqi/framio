@@ -1112,7 +1112,8 @@
     "nav": { "backToDashboard": "← Tilbake til oversikten" },
     "done": {
       "title": "Bilder levert!",
-      "description": "{count, plural, one {# bilde} other {# bilder}} sendt til {name}. De mottar en e-post med en lenke for å se og laste ned dem. 7-dagers tvistevinduet har startet.",
+      "descriptionSingular": "1 bilde sendt til {name}. De mottar en e-post med en lenke for å se og laste ned dem. 7-dagers tvistevinduet har startet.",
+      "descriptionPlural": "{count} bilder sendt til {name}. De mottar en e-post med en lenke for å se og laste ned dem. 7-dagers tvistevinduet har startet.",
       "backToDashboard": "Tilbake til oversikten"
     },
     "header": {

@@ -1112,7 +1112,8 @@
     "nav": { "backToDashboard": "← Back to dashboard" },
     "done": {
       "title": "Photos delivered!",
-      "description": "{count, plural, one {# photo} other {# photos}} sent to {name}. They'll receive an email with a link to view and download them. The 7-day dispute window has started.",
+      "descriptionSingular": "1 photo sent to {name}. They'll receive an email with a link to view and download them. The 7-day dispute window has started.",
+      "descriptionPlural": "{count} photos sent to {name}. They'll receive an email with a link to view and download them. The 7-day dispute window has started.",
       "backToDashboard": "Back to dashboard"
     },
     "header": {

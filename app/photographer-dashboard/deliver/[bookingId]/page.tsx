@@ -185,7 +185,9 @@ export default function DeliverPhotos({ params }: { params: any }) {
         <div style={{marginBottom: "24px"}}><CameraIcon size={56} color="#C8622A"/></div>
         <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", color: "#1A0E06", margin: "0 0 12px"}}>{t("done.title")}</h1>
         <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", lineHeight: "1.7", margin: "0 0 32px"}}>
-          {t("done.description", { count: uploadedCount, name: booking?.client_name } as any)}
+          {uploadedCount === 1
+            ? t("done.descriptionSingular", { name: booking?.client_name ?? "" } as any)
+            : t("done.descriptionPlural", { count: uploadedCount, name: booking?.client_name ?? "" } as any)}
         </p>
         <a href="/photographer-dashboard" style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}>
           {t("done.backToDashboard")}
