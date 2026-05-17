@@ -76,7 +76,12 @@ export async function POST(request: NextRequest) {
     );
 
   if (photosError) {
-    console.error("[deliver-photos] photos insert error:", photosError);
+    console.error("[deliver-photos] photos insert error", {
+      code: photosError.code,
+      message: photosError.message,
+      details: photosError.details,
+      hint: photosError.hint,
+    });
     // Delivery record created but photos failed — clean up
     await serviceClient.from("photo_deliveries").delete().eq("id", delivery.id);
     return NextResponse.json({ error: "Failed to save photos" }, { status: 500 });
