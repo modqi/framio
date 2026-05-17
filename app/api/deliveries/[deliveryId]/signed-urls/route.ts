@@ -58,8 +58,9 @@ export async function GET(
     .select("id, cloudinary_url, cloudinary_public_id, storage_path, filename")
     .eq("delivery_id", deliveryId);
 
-  const signedUrls: Record<string, string> = {};
-  const downloadUrls: Record<string, string> = {};
+  const signedUrls: Record<string, string> = {};  // 600px WebP thumbnails for grid
+  const fullUrls: Record<string, string> = {};    // original quality for lightbox view
+  const downloadUrls: Record<string, string> = {}; // original quality with download flag
 
   // Track the longest expiry so the client knows when to refresh
   let expiresAtMs = 0;
@@ -69,34 +70,41 @@ export async function GET(
 
   for (const photo of photos || []) {
     if (photo.storage_path) {
-      // New Supabase Storage photo
-      const [viewResult, dlResult] = await Promise.all([
+      // New Supabase Storage photo — three URLs: thumbnail, full view, download
+      const [thumbResult, fullResult, dlResult] = await Promise.all([
+        serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn, {
+          transform: { width: 600, height: 600, resize: "cover", quality: 80 },
+        }),
         serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn),
         serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn, {
           download: photo.filename || true,
         }),
       ]);
 
-      if (viewResult.data?.signedUrl) {
-        signedUrls[photo.id] = viewResult.data.signedUrl;
+      if (thumbResult.data?.signedUrl) {
+        signedUrls[photo.id] = thumbResult.data.signedUrl;
         const expiryMs = Date.now() + storageExpiresIn * 1000;
         if (expiryMs > expiresAtMs) expiresAtMs = expiryMs;
       }
-
+      if (fullResult.data?.signedUrl) {
+        fullUrls[photo.id] = fullResult.data.signedUrl;
+      }
       if (dlResult.data?.signedUrl) {
         downloadUrls[photo.id] = dlResult.data.signedUrl;
       }
     } else if (photo.cloudinary_url) {
-      // Legacy Cloudinary photo — existing logic unchanged
+      // Legacy Cloudinary photo — existing logic unchanged; full res for both grid and lightbox
       const publicId = photo.cloudinary_public_id || extractPublicId(photo.cloudinary_url);
       const type = photo.cloudinary_public_id ? "authenticated" : "upload";
 
-      signedUrls[photo.id] = cloudinary.url(publicId, {
+      const viewUrl = cloudinary.url(publicId, {
         sign_url: true,
         type,
         expires_at: cloudinaryExpiresAt,
         secure: true,
       });
+      signedUrls[photo.id] = viewUrl;
+      fullUrls[photo.id] = viewUrl;
 
       downloadUrls[photo.id] = cloudinary.url(publicId, {
         sign_url: true,
@@ -113,6 +121,7 @@ export async function GET(
 
   return NextResponse.json({
     signedUrls,
+    fullUrls,
     downloadUrls,
     expiresAt: new Date(expiresAtMs).toISOString(),
   });

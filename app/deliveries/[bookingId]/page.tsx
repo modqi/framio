@@ -17,6 +17,7 @@ export default function PhotoGallery({ params }: { params: any }) {
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ view: string; dl: string } | null>(null);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [fullUrls, setFullUrls] = useState<Record<string, string>>({});
   const [downloadUrls, setDownloadUrls] = useState<Record<string, string>>({});
   const [urlsExpiresAt, setUrlsExpiresAt] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -33,6 +34,7 @@ export default function PhotoGallery({ params }: { params: any }) {
 
   const fetchSignedUrls = async (deliveryIds: string[], token: string) => {
     const newSigned: Record<string, string> = {};
+    const newFull: Record<string, string> = {};
     const newDownload: Record<string, string> = {};
     let latestExpiry = 0;
     for (const deliveryId of deliveryIds) {
@@ -43,6 +45,7 @@ export default function PhotoGallery({ params }: { params: any }) {
         if (!res.ok) continue;
         const data = await res.json();
         Object.assign(newSigned, data.signedUrls || {});
+        Object.assign(newFull, data.fullUrls || {});
         Object.assign(newDownload, data.downloadUrls || {});
         if (data.expiresAt) latestExpiry = new Date(data.expiresAt).getTime();
       } catch {
@@ -50,6 +53,7 @@ export default function PhotoGallery({ params }: { params: any }) {
       }
     }
     setSignedUrls(prev => ({ ...prev, ...newSigned }));
+    setFullUrls(prev => ({ ...prev, ...newFull }));
     setDownloadUrls(prev => ({ ...prev, ...newDownload }));
     if (latestExpiry) setUrlsExpiresAt(latestExpiry);
   };
@@ -211,7 +215,8 @@ export default function PhotoGallery({ params }: { params: any }) {
             {/* Photo grid */}
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "8px"}}>
               {delivery.photos.map((photo: any) => {
-                const viewUrl = signedUrls[photo.id] || photo.cloudinary_url || "";
+                const thumbUrl = signedUrls[photo.id] || photo.cloudinary_url || "";
+                const fullUrl = fullUrls[photo.id] || photo.cloudinary_url || thumbUrl;
                 const dlUrl = downloadUrls[photo.id] || (photo.cloudinary_url ? toDownloadUrl(photo.cloudinary_url) : "");
                 const isSelected = selected.has(photo.id);
                 return (
@@ -228,7 +233,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                       outline: isSelected ? "2px solid #C8622A" : "none",
                       outlineOffset: "2px",
                     }}
-                    onClick={() => setLightbox({ view: viewUrl, dl: dlUrl })}
+                    onClick={() => setLightbox({ view: fullUrl, dl: dlUrl })}
                   >
                     {/* Selection overlay tint */}
                     {isSelected && (
@@ -236,7 +241,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                     )}
 
                     <img
-                      src={viewUrl}
+                      src={thumbUrl}
                       alt={photo.filename || "Delivered photo"}
                       style={{width: "100%", height: "100%", objectFit: "cover", display: "block"}}
                       loading="lazy"
