@@ -1281,6 +1281,23 @@
     "joinAsPhotographer": "Søker du som fotograf?",
     "applyHere": "Søk her",
     "close": "Forstått",
+    "step1": {
+      "continue": "Fortsett",
+      "continuing": "Sjekker…"
+    },
+    "step2": {
+      "loginHeading": "Velkommen tilbake",
+      "signupHeading": "Opprett kontoen din",
+      "change": "Endre",
+      "loginSubmit": "Logg inn",
+      "loginSubmitting": "Logger inn…",
+      "signupSubmit": "Opprett konto",
+      "signupSubmitting": "Oppretter konto…",
+      "tosText": "Jeg godtar",
+      "tosTerms": "Vilkårene for bruk",
+      "tosAnd": "og",
+      "tosPrivacy": "Personvernerklæringen"
+    },
     "checkEmail": {
       "heading": "Sjekk e-posten din",
       "description": "Vi sendte en bekreftelseslenke til {email}. Klikk på den for å aktivere kontoen din."
@@ -1288,6 +1305,10 @@
     "errors": {
       "fillAll": "Vennligst fyll inn alle feltene.",
       "passwordLength": "Passordet må være minst 8 tegn.",
+      "emailRequired": "Vennligst skriv inn e-postadressen din.",
+      "passwordRequired": "Vennligst skriv inn passordet ditt.",
+      "nameRequired": "Vennligst skriv inn fullt navn.",
+      "tosRequired": "Du må godta vilkårene for å fortsette.",
       "invalidCredentials": "Ugyldig e-post eller passord. Prøv igjen.",
       "genericError": "Noe gikk galt. Prøv igjen."
     }

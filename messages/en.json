@@ -1281,6 +1281,23 @@
     "joinAsPhotographer": "Applying as a photographer?",
     "applyHere": "Apply here",
     "close": "Got it",
+    "step1": {
+      "continue": "Continue",
+      "continuing": "Checking…"
+    },
+    "step2": {
+      "loginHeading": "Welcome back",
+      "signupHeading": "Create your account",
+      "change": "Change",
+      "loginSubmit": "Log in",
+      "loginSubmitting": "Logging in…",
+      "signupSubmit": "Create account",
+      "signupSubmitting": "Creating account…",
+      "tosText": "I agree to the",
+      "tosTerms": "Terms of Service",
+      "tosAnd": "and",
+      "tosPrivacy": "Privacy Policy"
+    },
     "checkEmail": {
       "heading": "Check your email",
       "description": "We sent a confirmation link to {email}. Click it to activate your account."
@@ -1288,6 +1305,10 @@
     "errors": {
       "fillAll": "Please fill in all fields.",
       "passwordLength": "Password must be at least 8 characters.",
+      "emailRequired": "Please enter your email address.",
+      "passwordRequired": "Please enter your password.",
+      "nameRequired": "Please enter your full name.",
+      "tosRequired": "Please agree to the terms to continue.",
       "invalidCredentials": "Invalid email or password. Please try again.",
       "genericError": "Something went wrong. Please try again."
     }

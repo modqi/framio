@@ -11,7 +11,6 @@ import { useTranslations } from "../lib/i18n";
 export default function Home() {
   const [photographers, setPhotographers] = useState<any[]>([]);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<"login" | "signup">("login");
   const { formatPrice } = useCurrency();
   const t = useTranslations("Home");
   const tCat = useTranslations("Categories");
@@ -269,8 +268,8 @@ export default function Home() {
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.platformLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
                 <a href="/photographers" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.findPhotographers")}</a>
-                <button onClick={() => { setAuthModalMode("signup"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textAlign: "left"}}>{t("footer.createAccount")}</button>
-                <button onClick={() => { setAuthModalMode("login"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textAlign: "left"}}>{t("nav.logIn")}</button>
+                <button onClick={() => setAuthModalOpen(true)} style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textAlign: "left"}}>{t("footer.createAccount")}</button>
+                <button onClick={() => setAuthModalOpen(true)} style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textAlign: "left"}}>{t("nav.logIn")}</button>
               </div>
             </div>
             <div>
@@ -295,7 +294,7 @@ export default function Home() {
         </div>
       </footer>
 
-      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode={authModalMode} />
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </main>
   );
 }
