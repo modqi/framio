@@ -174,19 +174,19 @@ export default function Signup() {
           {role === "client" && (
             <>
               <p style={{fontSize: "10px", fontWeight: "500", letterSpacing: "0.18em", textTransform: "uppercase", color: "#C8622A", marginBottom: "20px", fontFamily: "'Jost', sans-serif"}}>
-                Welcome to Lomissa
+                {t("panel.clientBadge")}
               </p>
               <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "52px", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", lineHeight: "1.05", marginBottom: "20px"}}>
-                Find your<br/><em style={{color: "#C8622A"}}>perfect</em><br/>photographer
+                {t("panel.clientHeadline")}
               </h1>
               <p style={{fontSize: "14px", color: "#4A3020", fontWeight: "300", lineHeight: "1.9", marginBottom: "40px", maxWidth: "380px", fontFamily: "'Jost', sans-serif"}}>
-                Join clients worldwide who discovered their perfect photographer on Lomissa. Browse hand-picked talent, book securely, and receive your photos delivered digitally.
+                {t("panel.clientDesc")}
               </p>
               <div style={{display: "flex", flexDirection: "column", gap: "20px"}}>
                 {[
-                  { title: "Hand-picked photographers", desc: "Every photographer is personally reviewed before joining" },
-                  { title: "Secure payments", desc: "Your payment is protected until photos are delivered" },
-                  { title: "Now launching worldwide", desc: "Be among the first to discover Lomissa — a new way to find and book photographers" },
+                  { title: t("panel.feature1Title"), desc: t("panel.feature1Desc") },
+                  { title: t("panel.feature2Title"), desc: t("panel.feature2Desc") },
+                  { title: t("panel.feature3Title"), desc: t("panel.feature3Desc") },
                 ].map((f, i) => (
                   <div key={i} style={{display: "flex", alignItems: "flex-start", gap: "16px"}}>
                     <div style={{width: "6px", height: "6px", borderRadius: "50%", background: "#C8622A", flexShrink: 0, marginTop: "6px"}}></div>
@@ -204,19 +204,19 @@ export default function Signup() {
           {role === "photographer" && (
             <>
               <p style={{fontSize: "10px", fontWeight: "500", letterSpacing: "0.18em", textTransform: "uppercase", color: "#C8622A", marginBottom: "20px", fontFamily: "'Jost', sans-serif"}}>
-                Join Lomissa
+                {t("panel.photographerBadge")}
               </p>
               <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "52px", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", lineHeight: "1.05", marginBottom: "20px"}}>
-                Turn your passion<br/>into <em style={{color: "#C8622A"}}>income</em>
+                {t("panel.photographerHeadline")}
               </h1>
               <p style={{fontSize: "14px", color: "#4A3020", fontWeight: "300", lineHeight: "1.9", marginBottom: "40px", maxWidth: "380px", fontFamily: "'Jost', sans-serif"}}>
-                We hand-pick every photographer on Lomissa. Apply today and start receiving bookings from clients worldwide. You set your prices, we handle the rest.
+                {t("panel.photographerDesc")}
               </p>
               <div style={{display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}>
                 {[
-                  { value: "Free", label: "To join Lomissa" },
-                  { value: "10%", label: "Commission only — you keep 90%" },
-                  { value: "3 days", label: "Average response time" },
+                  { value: t("panel.statFree"), label: t("panel.statFreeLabel") },
+                  { value: t("panel.statCommission"), label: t("panel.statCommissionLabel") },
+                  { value: t("panel.statResponse"), label: t("panel.statResponseLabel") },
                 ].map((s, i) => (
                   <div key={i} style={{display: "flex", alignItems: "center", gap: "20px"}}>
                     <div style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "300", color: "#C8622A", lineHeight: "1", minWidth: "70px"}}>{s.value}</div>
