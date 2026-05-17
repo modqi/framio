@@ -3,7 +3,8 @@
     "nav": {
       "photographers": "Photographers",
       "logIn": "Log in",
-      "signUp": "Sign up"
+      "signUp": "Sign up",
+      "joinAsPhotographer": "Join as photographer"
     },
     "hero": {
       "badge": "NOW LAUNCHING WORLDWIDE",
@@ -74,7 +75,8 @@
     "nav": {
       "myDashboard": "My dashboard",
       "logIn": "Log in",
-      "signUp": "Sign up"
+      "signUp": "Sign up",
+      "joinAsPhotographer": "Join as photographer"
     },
     "header": {
       "label": "OUR PHOTOGRAPHERS",
@@ -113,6 +115,7 @@
       "explore": "Explore",
       "logIn": "Log in",
       "signUp": "Sign up",
+      "joinAsPhotographer": "Join as photographer",
       "myDashboard": "My dashboard",
       "adminPanel": "Admin panel",
       "backToAdmin": "← Admin panel"

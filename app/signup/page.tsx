@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
@@ -14,6 +14,11 @@ import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 export default function Signup() {
   const router = useRouter();
   const [role, setRole] = useState("client");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("role") === "photographer") setRole("photographer");
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

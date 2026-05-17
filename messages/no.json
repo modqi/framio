@@ -3,7 +3,8 @@
     "nav": {
       "photographers": "Fotografer",
       "logIn": "Logg inn",
-      "signUp": "Registrer deg"
+      "signUp": "Registrer deg",
+      "joinAsPhotographer": "Bli fotograf"
     },
     "hero": {
       "badge": "NÅ TILGJENGELIG OVER HELE VERDEN",
@@ -74,7 +75,8 @@
     "nav": {
       "myDashboard": "Min oversikt",
       "logIn": "Logg inn",
-      "signUp": "Registrer deg"
+      "signUp": "Registrer deg",
+      "joinAsPhotographer": "Bli fotograf"
     },
     "header": {
       "label": "VÅRE FOTOGRAFER",
@@ -113,6 +115,7 @@
       "explore": "Utforsk",
       "logIn": "Logg inn",
       "signUp": "Registrer deg",
+      "joinAsPhotographer": "Bli fotograf",
       "myDashboard": "Min oversikt",
       "adminPanel": "Adminpanel",
       "backToAdmin": "← Adminpanel"
