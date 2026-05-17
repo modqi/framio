@@ -214,7 +214,7 @@ export default function DeliverPhotos({ params }: { params: any }) {
             {booking?.session_type} · {booking?.date}
           </p>
           {booking?.status === "photos_delivered" && (
-            <p style={{fontSize: "13px", color: "#7c3aed", fontFamily: "'Jost', sans-serif", margin: "8px 0 0"}}>
+            <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "8px 0 0"}}>
               {t("header.supplementary")}
             </p>
           )}

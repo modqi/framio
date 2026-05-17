@@ -236,7 +236,7 @@ export default function PhotographerDashboard() {
   const getStatusStyle = (status: string) => {
     if (status === "confirmed") return { backgroundColor: "#f0fdf4", color: "#15803d" };
     if (status === "completed") return { backgroundColor: "#eff6ff", color: "#1d4ed8" };
-    if (status === "photos_delivered") return { backgroundColor: "#faf5ff", color: "#7c3aed" };
+    if (status === "photos_delivered") return { backgroundColor: "#FBF0EA", color: "#C8622A" };
     if (status === "paid_out") return { backgroundColor: "#f0fdf4", color: "#15803d" };
     if (status === "disputed") return { backgroundColor: "#fef3c7", color: "#b45309" };
     if (status === "declined") return { backgroundColor: "#fef2f2", color: "#dc2626" };
@@ -604,12 +604,12 @@ export default function PhotographerDashboard() {
                     )}
                     {booking.status === "photos_delivered" && (
                       <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
-                        <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
+                        <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
                           {t("bookings.payoutDue", { date: booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "soon" })}
                         </span>
                         <a
                           href={`/photographer-dashboard/deliver/${booking.id}`}
-                          style={{fontSize: "12px", color: "#7c3aed", border: "1px solid #ddd6fe", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
+                          style={{fontSize: "12px", color: "#C8622A", border: "1px solid #E2D5C8", padding: "5px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}
                         >
                           {t("bookings.addMorePhotos")}
                         </a>
@@ -853,7 +853,7 @@ export default function PhotographerDashboard() {
                             : booking.status === "paid_out"
                             ? { label: t("earnings.statusPaidOut"), bg: "#f0fdf4", color: "#15803d" }
                             : booking.status === "photos_delivered"
-                            ? { label: t("earnings.statusPhotosDelivered"), bg: "#faf5ff", color: "#7c3aed" }
+                            ? { label: t("earnings.statusPhotosDelivered"), bg: "#FBF0EA", color: "#C8622A" }
                             : booking.status === "completed"
                             ? { label: t("earnings.statusCompleted"), bg: "#eff6ff", color: "#1d4ed8" }
                             : isPast
