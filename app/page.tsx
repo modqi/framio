@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import Logo from "./components/Logo";
 import GlobeModal from "./components/GlobeModal";
+import AuthModal from "./components/AuthModal";
 import { useCurrency } from "../lib/currency-context";
 import { CATEGORY_KEY } from "../lib/categories";
 import { useTranslations } from "../lib/i18n";
 
 export default function Home() {
   const [photographers, setPhotographers] = useState<any[]>([]);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<"login" | "signup">("login");
   const { formatPrice } = useCurrency();
   const t = useTranslations("Home");
   const tCat = useTranslations("Categories");
@@ -49,8 +52,8 @@ export default function Home() {
         <div className="flex items-center gap-2 sm:gap-4">
           <GlobeModal />
           <a href="/photographers" className="hidden sm:inline" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em"}}>{t("nav.photographers")}</a>
-          <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.logIn")}</a>
-          <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.signUp")}</a>
+          <button onClick={() => { setAuthModalMode("login"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", color: "#7A5C44", fontSize: "13px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap", padding: "0"}}>{t("nav.logIn")}</button>
+          <button onClick={() => { setAuthModalMode("signup"); setAuthModalOpen(true); }} style={{backgroundColor: "#C8622A", color: "#FDFBF8", border: "none", cursor: "pointer", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.signUp")}</button>
           <a href="/signup?role=photographer" className="hidden sm:inline" style={{border: "1px solid #C8622A", color: "#C8622A", backgroundColor: "transparent", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", whiteSpace: "nowrap"}}>{t("nav.joinAsPhotographer")}</a>
         </div>
       </nav>
@@ -293,6 +296,7 @@ export default function Home() {
         </div>
       </footer>
 
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode={authModalMode} />
     </main>
   );
 }

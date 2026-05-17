@@ -1250,6 +1250,40 @@
     },
     "goToDashboard": "Go to my dashboard →"
   },
+  "AuthModal": {
+    "loginHeading": "Log in",
+    "signupHeading": "Create account",
+    "googleLogin": "Continue with Google",
+    "divider": "or",
+    "emailLabel": "Email address",
+    "passwordLabel": "Password",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Your full name",
+    "show": "Show",
+    "hide": "Hide",
+    "forgotPassword": "Forgot your password?",
+    "submit": "Log in",
+    "submitting": "Logging in…",
+    "submitSignup": "Create account",
+    "submittingSignup": "Creating account…",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "haveAccount": "Already have an account?",
+    "logIn": "Log in",
+    "joinAsPhotographer": "Applying as a photographer?",
+    "applyHere": "Apply here",
+    "close": "Got it",
+    "checkEmail": {
+      "heading": "Check your email",
+      "description": "We sent a confirmation link to {email}. Click it to activate your account."
+    },
+    "errors": {
+      "fillAll": "Please fill in all fields.",
+      "passwordLength": "Password must be at least 8 characters.",
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "genericError": "Something went wrong. Please try again."
+    }
+  },
   "Categories": {
     "all": "All",
     "weddings": "Weddings",

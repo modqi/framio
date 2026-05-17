@@ -1250,6 +1250,40 @@
     },
     "goToDashboard": "Gå til dashbordet mitt →"
   },
+  "AuthModal": {
+    "loginHeading": "Logg inn",
+    "signupHeading": "Opprett konto",
+    "googleLogin": "Fortsett med Google",
+    "divider": "eller",
+    "emailLabel": "E-postadresse",
+    "passwordLabel": "Passord",
+    "nameLabel": "Fullt navn",
+    "namePlaceholder": "Ditt fulle navn",
+    "show": "Vis",
+    "hide": "Skjul",
+    "forgotPassword": "Glemt passordet?",
+    "submit": "Logg inn",
+    "submitting": "Logger inn…",
+    "submitSignup": "Opprett konto",
+    "submittingSignup": "Oppretter konto…",
+    "noAccount": "Har du ikke en konto?",
+    "signUp": "Registrer deg",
+    "haveAccount": "Har du allerede en konto?",
+    "logIn": "Logg inn",
+    "joinAsPhotographer": "Søker du som fotograf?",
+    "applyHere": "Søk her",
+    "close": "Forstått",
+    "checkEmail": {
+      "heading": "Sjekk e-posten din",
+      "description": "Vi sendte en bekreftelseslenke til {email}. Klikk på den for å aktivere kontoen din."
+    },
+    "errors": {
+      "fillAll": "Vennligst fyll inn alle feltene.",
+      "passwordLength": "Passordet må være minst 8 tegn.",
+      "invalidCredentials": "Ugyldig e-post eller passord. Prøv igjen.",
+      "genericError": "Noe gikk galt. Prøv igjen."
+    }
+  },
   "Categories": {
     "all": "Alle",
     "weddings": "Bryllup",

@@ -5,6 +5,7 @@ import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { ReviewStarIcon } from "../../components/Icons";
 import GlobeModal from "../../components/GlobeModal";
+import AuthModal from "../../components/AuthModal";
 import { useCurrency } from "../../../lib/currency-context";
 import { useTranslations } from "../../../lib/i18n";
 import { useLocale } from "../../../lib/locale-context";
@@ -57,6 +58,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
   const [addons, setAddons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState<any>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<"login" | "signup">("login");
 
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
   const [addonQty, setAddonQty] = useState<Record<string, number>>({});
@@ -306,8 +309,8 @@ export default function PhotographerProfile({ params }: { params: any }) {
             </>
           ) : (
             <>
-              <a href="/login" style={{color: "#7A5C44", fontSize: "13px", textDecoration: "none", fontFamily: "'Jost', sans-serif", whiteSpace: "nowrap"}}>{t("nav.logIn")}</a>
-              <a href="/signup" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.signUp")}</a>
+              <button onClick={() => { setAuthModalMode("login"); setAuthModalOpen(true); }} style={{background: "none", border: "none", cursor: "pointer", color: "#7A5C44", fontSize: "13px", fontFamily: "'Jost', sans-serif", whiteSpace: "nowrap", padding: "0"}}>{t("nav.logIn")}</button>
+              <button onClick={() => { setAuthModalMode("signup"); setAuthModalOpen(true); }} style={{backgroundColor: "#C8622A", color: "#FDFBF8", border: "none", cursor: "pointer", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.signUp")}</button>
               <a href="/signup?role=photographer" className="hidden sm:inline" style={{border: "1px solid #C8622A", color: "#C8622A", backgroundColor: "transparent", fontSize: "13px", padding: "8px 14px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", whiteSpace: "nowrap"}}>{t("nav.joinAsPhotographer")}</a>
             </>
           )}
@@ -644,6 +647,7 @@ export default function PhotographerProfile({ params }: { params: any }) {
         <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode={authModalMode} />
     </main>
   );
 }
