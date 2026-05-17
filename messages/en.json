@@ -90,7 +90,14 @@
       "priceLow": "Price — low to high",
       "priceHigh": "Price — high to low"
     },
-    "count": "{count, plural, one {# photographer} other {# photographers}}",
+    "countSingular": "1 photographer",
+    "countPlural": "{count} photographers",
+    "filter": {
+      "location": "Location",
+      "locationPlaceholder": "City or region…",
+      "availability": "Available on",
+      "clearDate": "Clear"
+    },
     "noResults": {
       "heading": "No photographers found",
       "description": "Try a different search or filter",

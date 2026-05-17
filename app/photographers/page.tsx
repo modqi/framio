@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import Logo from "../components/Logo";
@@ -17,6 +17,9 @@ export default function Photographers() {
   const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [availabilityDate, setAvailabilityDate] = useState("");
+  const [blockedIds, setBlockedIds] = useState<Set<string>>(new Set());
   const [specialty, setSpecialty] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
   const [authUser, setAuthUser] = useState<any>(null);
@@ -40,15 +43,41 @@ export default function Photographers() {
     getData();
   }, []);
 
+  // When availability date changes, fetch blocked photographer IDs for that date
+  useEffect(() => {
+    if (!availabilityDate) {
+      setBlockedIds(new Set());
+      return;
+    }
+    const fetchBlocked = async () => {
+      const { data } = await supabase
+        .from("availability")
+        .select("photographer_id")
+        .eq("date", availabilityDate)
+        .eq("is_available", false);
+      setBlockedIds(new Set((data || []).map((r: any) => r.photographer_id)));
+    };
+    fetchBlocked();
+  }, [availabilityDate]);
+
   useEffect(() => {
     let results = [...photographers];
 
     if (search) {
       results = results.filter(p =>
         p.name?.toLowerCase().includes(search.toLowerCase()) ||
-        p.location?.toLowerCase().includes(search.toLowerCase()) ||
         p.specialty?.toLowerCase().includes(search.toLowerCase())
       );
+    }
+
+    if (locationFilter) {
+      results = results.filter(p =>
+        p.location?.toLowerCase().includes(locationFilter.toLowerCase())
+      );
+    }
+
+    if (availabilityDate) {
+      results = results.filter(p => !blockedIds.has(p.user_id));
     }
 
     if (specialty !== "All") {
@@ -84,7 +113,15 @@ export default function Photographers() {
     }
 
     setFiltered(results);
-  }, [search, specialty, sortBy, photographers]);
+  }, [search, locationFilter, specialty, sortBy, photographers, availabilityDate, blockedIds]);
+
+  const clearAllFilters = () => {
+    setSearch("");
+    setLocationFilter("");
+    setAvailabilityDate("");
+    setSpecialty("All");
+    setSortBy("newest");
+  };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
@@ -128,8 +165,8 @@ export default function Photographers() {
           {t("header.heading")}
         </h1>
 
-        {/* Search bar */}
-        <div style={{position: "relative", maxWidth: "560px", marginBottom: "24px"}}>
+        {/* Name / specialty search bar */}
+        <div style={{position: "relative", maxWidth: "560px", marginBottom: "16px"}}>
           <input
             type="text"
             value={search}
@@ -137,15 +174,47 @@ export default function Photographers() {
             placeholder={t("search.placeholder")}
             style={{width: "100%", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "12px 24px", paddingLeft: "48px", fontSize: "14px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", boxSizing: "border-box", fontFamily: "'Jost', sans-serif"}}
           />
-          <span style={{position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", }}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#7A5C44" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></span>
+          <span style={{position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)"}}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#7A5C44" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></span>
           {search && (
-            <button
-              onClick={() => setSearch("")}
-              style={{position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "16px", color: "#7A5C44"}}
-            >
-              ✕
-            </button>
+            <button onClick={() => setSearch("")} style={{position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "16px", color: "#7A5C44"}}>✕</button>
           )}
+        </div>
+
+        {/* Location + Availability filters */}
+        <div style={{display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px", alignItems: "center"}}>
+          {/* Location */}
+          <div style={{position: "relative", minWidth: "200px"}}>
+            <span style={{position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none"}}>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#7A5C44" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            </span>
+            <input
+              type="text"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              placeholder={t("filter.locationPlaceholder" as any)}
+              style={{border: "1px solid #E2D5C8", borderRadius: "999px", padding: "8px 36px 8px 34px", fontSize: "13px", outline: "none", color: "#1A0E06", backgroundColor: "#FDFBF8", fontFamily: "'Jost', sans-serif", width: "100%", boxSizing: "border-box"}}
+            />
+            {locationFilter && (
+              <button onClick={() => setLocationFilter("")} style={{position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "14px", color: "#7A5C44", padding: "0", lineHeight: "1"}}>✕</button>
+            )}
+          </div>
+
+          {/* Availability date */}
+          <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+            <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", whiteSpace: "nowrap"}}>{t("filter.availability" as any)}</span>
+            <input
+              type="date"
+              value={availabilityDate}
+              min={new Date().toISOString().split("T")[0]}
+              onChange={(e) => setAvailabilityDate(e.target.value)}
+              style={{border: "1px solid #E2D5C8", borderRadius: "999px", padding: "7px 16px", fontSize: "13px", outline: "none", color: availabilityDate ? "#1A0E06" : "#7A5C44", backgroundColor: availabilityDate ? "#FBF0EA" : "#FDFBF8", fontFamily: "'Jost', sans-serif", cursor: "pointer", borderColor: availabilityDate ? "#C8622A" : "#E2D5C8"}}
+            />
+            {availabilityDate && (
+              <button onClick={() => setAvailabilityDate("")} style={{fontSize: "12px", color: "#7A5C44", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", padding: "0", textDecoration: "underline"}}>
+                {t("filter.clearDate" as any)}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Specialty filters */}
@@ -161,7 +230,7 @@ export default function Photographers() {
           ))}
         </div>
 
-        {/* Sort */}
+        {/* Sort + count */}
         <div style={{display: "flex", alignItems: "center", gap: "12px"}}>
           <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{t("sort.label")}</span>
           <select
@@ -175,7 +244,7 @@ export default function Photographers() {
             <option value="price_high">{t("sort.priceHigh")}</option>
           </select>
           <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
-            {t("count", { count: filtered.length })}
+            {filtered.length === 1 ? t("countSingular" as any) : t("countPlural" as any, { count: filtered.length } as any)}
           </span>
         </div>
       </section>
@@ -188,7 +257,7 @@ export default function Photographers() {
             <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", color: "#1A0E06", margin: "0 0 8px"}}>{t("noResults.heading")}</p>
             <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 24px", fontFamily: "'Jost', sans-serif"}}>{t("noResults.description")}</p>
             <button
-              onClick={() => { setSearch(""); setSpecialty("All"); setSortBy("newest"); }}
+              onClick={clearAllFilters}
               style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
             >
               {t("noResults.clear")}

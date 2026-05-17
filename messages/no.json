@@ -90,7 +90,14 @@
       "priceLow": "Pris — lav til høy",
       "priceHigh": "Pris — høy til lav"
     },
-    "count": "{count, plural, one {# fotograf} other {# fotografer}}",
+    "countSingular": "1 fotograf",
+    "countPlural": "{count} fotografer",
+    "filter": {
+      "location": "Sted",
+      "locationPlaceholder": "By eller region…",
+      "availability": "Tilgjengelig",
+      "clearDate": "Fjern"
+    },
     "noResults": {
       "heading": "Ingen fotografer funnet",
       "description": "Prøv et annet søk eller filter",
