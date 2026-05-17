@@ -1104,9 +1104,14 @@
       "label": "LEVERING {number}",
       "photoCountSingular": "1 bilde",
       "photoCountPlural": "{count} bilder",
-      "downloadAll": "Last ned alle ({count})",
-      "preparing": "Forbereder…",
       "save": "Lagre"
+    },
+    "selection": {
+      "selectedSingular": "1 bilde valgt",
+      "selectedPlural": "{count} bilder valgt",
+      "downloadSelected": "Last ned valgte",
+      "selectAll": "Velg alle",
+      "deselectAll": "Fjern alle"
     }
   },
   "DeliverPhotos": {

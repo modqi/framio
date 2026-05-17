@@ -1,13 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import JSZip from "jszip";
 import { useTranslations } from "../../../lib/i18n";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { EmptyInboxIcon } from "../../components/Icons";
 
 // Force Cloudinary to serve the file as a download attachment (handles both upload and authenticated URL formats)
-const downloadUrl = (url: string) => url.replace(/\/(upload|authenticated)\//, "/$1/fl_attachment/");
+const toDownloadUrl = (url: string) => url.replace(/\/(upload|authenticated)\//, "/$1/fl_attachment/");
 
 export default function PhotoGallery({ params }: { params: any }) {
   const t = useTranslations("Deliveries");
@@ -17,10 +16,10 @@ export default function PhotoGallery({ params }: { params: any }) {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ view: string; dl: string } | null>(null);
-  const [zipping, setZipping] = useState<string | null>(null);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [downloadUrls, setDownloadUrls] = useState<Record<string, string>>({});
   const [urlsExpiresAt, setUrlsExpiresAt] = useState(0);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const resolve = async () => {
@@ -74,7 +73,6 @@ export default function PhotoGallery({ params }: { params: any }) {
       }
       setBooking(bk);
 
-      // Fetch deliveries and their photos via API (service client bypasses RLS, manual auth check inside)
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token ?? "";
 
@@ -96,39 +94,7 @@ export default function PhotoGallery({ params }: { params: any }) {
     init();
   }, [bookingId]);
 
-  const handleDownloadAll = async (delivery: { id: string; photos: any[] }) => {
-    setZipping(delivery.id);
-    try {
-      const zip = new JSZip();
-      await Promise.all(
-        delivery.photos.map(async (photo: any, i: number) => {
-          const url = downloadUrls[photo.id];
-          if (!url) return;
-          try {
-            const res = await fetch(url);
-            if (!res.ok) return;
-            const buf = await res.arrayBuffer();
-            const name = photo.filename || `photo-${i + 1}.jpg`;
-            zip.file(name, buf);
-          } catch {
-            // skip failed photos — user can still download individually
-          }
-        })
-      );
-      const blob = await zip.generateAsync({ type: "blob" });
-      const href = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = href;
-      a.download = `${booking?.session_type || "photos"}.zip`;
-      a.click();
-      URL.revokeObjectURL(href);
-    } catch {
-      // silent — user can still download individually
-    }
-    setZipping(null);
-  };
-
-  // Refresh signed URLs 10 minutes before they expire (self-perpetuating 50-minute cycle)
+  // Refresh signed URLs 10 minutes before they expire
   useEffect(() => {
     if (!urlsExpiresAt || !deliveries.length) return;
     const msUntilRefresh = urlsExpiresAt - Date.now() - 10 * 60 * 1000;
@@ -153,9 +119,39 @@ export default function PhotoGallery({ params }: { params: any }) {
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, [urlsExpiresAt, deliveries]);
 
-  const totalPhotos = deliveries.reduce((s, d) => s + d.photos.length, 0);
+  const allPhotos = deliveries.flatMap((d: any) => d.photos);
+  const totalPhotos = allPhotos.length;
   const isPhotographer = user?.id === booking?.photographer_id;
   const backHref = isPhotographer ? "/photographer-dashboard" : "/dashboard";
+
+  const toggleSelect = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => setSelected(new Set(allPhotos.map((p: any) => p.id)));
+  const handleDeselectAll = () => setSelected(new Set());
+
+  const handleDownloadSelected = () => {
+    const photos = allPhotos.filter((p: any) => selected.has(p.id));
+    photos.forEach((photo: any, i: number) => {
+      const url = downloadUrls[photo.id];
+      if (!url) return;
+      // Stagger downloads to avoid browser popup blockers
+      setTimeout(() => {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = photo.filename || `photo-${i + 1}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }, i * 300);
+    });
+  };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: "#FDFBF8"}}>
@@ -186,7 +182,7 @@ export default function PhotoGallery({ params }: { params: any }) {
       </div>
 
       {/* Deliveries */}
-      <div style={{maxWidth: "1100px", margin: "0 auto", padding: "40px 32px"}}>
+      <div style={{maxWidth: "1100px", margin: "0 auto", padding: `40px 32px ${selected.size > 0 ? "120px" : "40px"} 32px`}}>
         {deliveries.length === 0 ? (
           <div style={{textAlign: "center", padding: "80px 0"}}>
             <div style={{marginBottom: "16px"}}><EmptyInboxIcon size={56} color="#C8622A"/></div>
@@ -196,62 +192,93 @@ export default function PhotoGallery({ params }: { params: any }) {
         ) : deliveries.map((delivery, di) => (
           <div key={delivery.id} style={{marginBottom: "64px"}}>
             {/* Delivery header */}
-            <div style={{display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "24px"}}>
-              <div>
-                {deliveries.length > 1 && (
-                  <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
-                    {t("delivery.label", { number: di + 1 } as any)}
-                  </p>
-                )}
-                <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                  {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length === 1 ? t("delivery.photoCountSingular" as any) : t("delivery.photoCountPlural", { count: delivery.photos.length } as any)}
+            <div style={{marginBottom: "24px"}}>
+              {deliveries.length > 1 && (
+                <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 4px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                  {t("delivery.label", { number: di + 1 } as any)}
                 </p>
-                {delivery.message && (
-                  <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>
-                    "{delivery.message}"
-                  </p>
-                )}
-              </div>
-              <button
-                onClick={() => handleDownloadAll(delivery)}
-                disabled={zipping === delivery.id}
-                style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: zipping === delivery.id ? "default" : "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, opacity: zipping === delivery.id ? 0.6 : 1}}
-              >
-                {zipping === delivery.id ? t("delivery.preparing") : t("delivery.downloadAll", { count: delivery.photos.length } as any)}
-              </button>
+              )}
+              <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length === 1 ? t("delivery.photoCountSingular" as any) : t("delivery.photoCountPlural", { count: delivery.photos.length } as any)}
+              </p>
+              {delivery.message && (
+                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>
+                  "{delivery.message}"
+                </p>
+              )}
             </div>
 
             {/* Photo grid */}
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "8px"}}>
               {delivery.photos.map((photo: any) => {
                 const viewUrl = signedUrls[photo.id] || photo.cloudinary_url || "";
-                const dlUrl = downloadUrls[photo.id] || (photo.cloudinary_url ? downloadUrl(photo.cloudinary_url) : "");
+                const dlUrl = downloadUrls[photo.id] || (photo.cloudinary_url ? toDownloadUrl(photo.cloudinary_url) : "");
+                const isSelected = selected.has(photo.id);
                 return (
                   <div
                     key={photo.id}
-                    style={{position: "relative", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", backgroundColor: "#E2D5C8", cursor: "zoom-in"}}
+                    className="photo-card"
+                    style={{
+                      position: "relative",
+                      aspectRatio: "1",
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      backgroundColor: "#E2D5C8",
+                      cursor: "zoom-in",
+                      outline: isSelected ? "2px solid #C8622A" : "none",
+                      outlineOffset: "2px",
+                    }}
                     onClick={() => setLightbox({ view: viewUrl, dl: dlUrl })}
                   >
+                    {/* Selection overlay tint */}
+                    {isSelected && (
+                      <div style={{position: "absolute", inset: 0, backgroundColor: "rgba(200,98,42,0.18)", zIndex: 2, pointerEvents: "none"}} />
+                    )}
+
                     <img
                       src={viewUrl}
                       alt={photo.filename || "Delivered photo"}
                       style={{width: "100%", height: "100%", objectFit: "cover", display: "block"}}
                       loading="lazy"
                     />
-                    {/* Download hover overlay */}
+
+                    {/* Checkbox */}
+                    <button
+                      className={`photo-checkbox${isSelected ? " photo-checkbox--on" : ""}`}
+                      onClick={e => toggleSelect(photo.id, e)}
+                      aria-label="Select photo"
+                      style={{
+                        position: "absolute", top: "8px", left: "8px", zIndex: 3,
+                        width: "24px", height: "24px", borderRadius: "50%",
+                        border: isSelected ? "2px solid #C8622A" : "2px solid rgba(255,255,255,0.85)",
+                        backgroundColor: isSelected ? "#C8622A" : "rgba(0,0,0,0.32)",
+                        backdropFilter: "blur(4px)",
+                        cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        transition: "opacity 0.15s, background-color 0.15s, border-color 0.15s",
+                        padding: 0,
+                      }}
+                    >
+                      {isSelected && (
+                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                          <path d="M1.5 5.5l2.5 2.5 5-5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Individual download button */}
                     <a
                       href={dlUrl}
                       target="_blank"
                       rel="noreferrer"
                       onClick={e => e.stopPropagation()}
                       style={{
-                        position: "absolute", bottom: "8px", right: "8px",
+                        position: "absolute", bottom: "8px", right: "8px", zIndex: 3,
                         backgroundColor: "rgba(0,0,0,0.55)", color: "#fff",
                         borderRadius: "6px", padding: "5px 10px",
                         fontSize: "11px", fontFamily: "'Jost', sans-serif",
                         textDecoration: "none", backdropFilter: "blur(4px)",
-                        opacity: 0,
-                        transition: "opacity 0.15s",
+                        opacity: 0, transition: "opacity 0.15s",
                       }}
                       className="photo-dl-btn"
                       title="Download"
@@ -287,7 +314,7 @@ export default function PhotoGallery({ params }: { params: any }) {
               style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", backdropFilter: "blur(4px)"}}
               title="Download"
             >
-
+              ↓
             </a>
             <button
               onClick={() => setLightbox(null)}
@@ -300,9 +327,55 @@ export default function PhotoGallery({ params }: { params: any }) {
         </div>
       )}
 
-      {/* Hover effect for download buttons */}
+      {/* Sticky selection bar */}
+      {selected.size > 0 && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40,
+          backgroundColor: "#FAF7F1",
+          borderTop: "1px solid #E2D5C8",
+          boxShadow: "0 -4px 24px rgba(28,16,9,0.08)",
+          padding: "14px 32px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          gap: "16px", flexWrap: "wrap",
+        }}>
+          <div style={{display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap"}}>
+            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "400", color: "#1A0E06", margin: "0"}}>
+              {selected.size === 1 ? t("selection.selectedSingular" as any) : t("selection.selectedPlural", { count: selected.size } as any)}
+            </p>
+            <button
+              onClick={handleSelectAll}
+              style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#C8622A", fontFamily: "'Jost', sans-serif", padding: "0", textDecoration: "underline"}}
+            >
+              {t("selection.selectAll" as any)}
+            </button>
+            <button
+              onClick={handleDeselectAll}
+              style={{background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", padding: "0", textDecoration: "underline"}}
+            >
+              {t("selection.deselectAll" as any)}
+            </button>
+          </div>
+          <button
+            onClick={handleDownloadSelected}
+            style={{
+              backgroundColor: "#C8622A", color: "#FDFBF8",
+              fontSize: "13px", fontWeight: "500", fontFamily: "'Jost', sans-serif",
+              padding: "12px 28px", border: "none", borderRadius: "999px",
+              cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0,
+            }}
+          >
+            {t("selection.downloadSelected" as any)}
+          </button>
+        </div>
+      )}
+
       <style>{`
-        div:hover > .photo-dl-btn { opacity: 1 !important; }
+        .photo-card:hover .photo-checkbox { opacity: 1 !important; }
+        .photo-checkbox--on { opacity: 1 !important; }
+        .photo-card:hover .photo-dl-btn { opacity: 1 !important; }
+        @media (max-width: 768px) {
+          .photo-checkbox { opacity: 1 !important; }
+        }
       `}</style>
     </main>
   );

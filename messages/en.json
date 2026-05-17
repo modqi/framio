@@ -1104,9 +1104,14 @@
       "label": "DELIVERY {number}",
       "photoCountSingular": "1 photo",
       "photoCountPlural": "{count} photos",
-      "downloadAll": "Download all ({count})",
-      "preparing": "Preparing…",
       "save": "Save"
+    },
+    "selection": {
+      "selectedSingular": "1 photo selected",
+      "selectedPlural": "{count} photos selected",
+      "downloadSelected": "Download selected",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all"
     }
   },
   "DeliverPhotos": {
