@@ -19,6 +19,10 @@ export default function PhotoGallery({ params }: { params: any }) {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ view: string; dl: string } | null>(null);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [approveSuccess, setApproveSuccess] = useState(false);
+  const [approveError, setApproveError] = useState("");
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [fullUrls, setFullUrls] = useState<Record<string, string>>({});
   const [downloadUrls, setDownloadUrls] = useState<Record<string, string>>({});
@@ -70,7 +74,7 @@ export default function PhotoGallery({ params }: { params: any }) {
 
       const { data: bk } = await supabase
         .from("bookings")
-        .select("id, photographer_name, session_type, date, client_id, photographer_id")
+        .select("id, photographer_name, session_type, date, client_id, photographer_id, status, stripe_payment_intent_id")
         .eq("id", bookingId)
         .single();
 
@@ -143,6 +147,31 @@ export default function PhotoGallery({ params }: { params: any }) {
   const handleSelectAll = () => setSelected(new Set(allPhotos.map((p: any) => p.id)));
   const handleDeselectAll = () => setSelected(new Set());
 
+  const handleApproveDelivery = async () => {
+    setApproving(true);
+    setApproveError("");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/approve-delivery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
+        body: JSON.stringify({ bookingId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setApproveError(data.error || t("approve.error" as any));
+      } else {
+        setBooking((prev: any) => ({ ...prev, status: "paid_out" }));
+        setApproveSuccess(true);
+        setShowApproveModal(false);
+      }
+    } catch {
+      setApproveError(t("approve.error" as any));
+    } finally {
+      setApproving(false);
+    }
+  };
+
   const handleDownloadSelected = () => {
     const photos = allPhotos.filter((p: any) => selected.has(p.id));
     photos.forEach((photo: any, i: number) => {
@@ -185,6 +214,24 @@ export default function PhotoGallery({ params }: { params: any }) {
           <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>
             {booking?.photographer_name} · {booking?.date} · {totalPhotos === 1 ? t("header.photoCountSingular" as any) : t("header.photoCountPlural", { count: totalPhotos } as any)}
           </p>
+
+          {/* Approve delivery */}
+          {booking?.status === "photos_delivered" && user?.id === booking?.client_id && (
+            <div style={{marginTop: "20px"}}>
+              {approveSuccess ? (
+                <p style={{fontSize: "13px", color: "#15803d", fontFamily: "'Jost', sans-serif", fontWeight: "500", margin: "0"}}>
+                  ✓ {t("approve.success" as any)}
+                </p>
+              ) : (
+                <button
+                  onClick={() => { setShowApproveModal(true); setApproveError(""); }}
+                  style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#C8622A", border: "none", padding: "10px 24px", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}
+                >
+                  {t("approve.button" as any)}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -385,6 +432,57 @@ export default function PhotoGallery({ params }: { params: any }) {
           .photo-checkbox { opacity: 1 !important; }
         }
       `}</style>
+
+      {/* Approve delivery modal */}
+      {showApproveModal && (
+        <div
+          onClick={() => !approving && setShowApproveModal(false)}
+          style={{position: "fixed", inset: 0, backgroundColor: "rgba(28,16,9,0.6)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px"}}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{backgroundColor: "#FDFBF8", borderRadius: "16px", padding: "40px", maxWidth: "460px", width: "100%", boxShadow: "0 24px 64px rgba(28,16,9,0.2)"}}
+          >
+            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+              {t("header.badge")}
+            </p>
+            <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "28px", fontWeight: "400", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.01em"}}>
+              {t("approve.modalTitle" as any)}
+            </h2>
+            <div style={{display: "flex", flexDirection: "column", gap: "12px", marginBottom: "32px"}}>
+              {[
+                t("approve.modalCheck1" as any, { name: booking?.photographer_name } as any),
+                t("approve.modalCheck2" as any),
+                t("approve.modalCheck3" as any),
+              ].map((line, i) => (
+                <div key={i} style={{display: "flex", alignItems: "flex-start", gap: "12px"}}>
+                  <span style={{color: "#C8622A", fontWeight: "500", flexShrink: 0, fontFamily: "'Jost', sans-serif", fontSize: "14px"}}>✓</span>
+                  <span style={{fontSize: "14px", color: "#4A3020", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>{line}</span>
+                </div>
+              ))}
+            </div>
+            {approveError && (
+              <p style={{fontSize: "13px", color: "#dc2626", fontFamily: "'Jost', sans-serif", margin: "0 0 16px"}}>{approveError}</p>
+            )}
+            <div style={{display: "flex", gap: "12px", flexWrap: "wrap"}}>
+              <button
+                onClick={() => setShowApproveModal(false)}
+                disabled={approving}
+                style={{flex: 1, fontSize: "13px", color: "#7A5C44", backgroundColor: "transparent", border: "1px solid #E2D5C8", padding: "12px 20px", borderRadius: "999px", cursor: approving ? "default" : "pointer", fontFamily: "'Jost', sans-serif", opacity: approving ? 0.5 : 1}}
+              >
+                {t("approve.cancel" as any)}
+              </button>
+              <button
+                onClick={handleApproveDelivery}
+                disabled={approving}
+                style={{flex: 2, fontSize: "13px", color: "#FDFBF8", backgroundColor: "#C8622A", border: "none", padding: "12px 24px", borderRadius: "999px", cursor: approving ? "default" : "pointer", fontFamily: "'Jost', sans-serif", fontWeight: "500", opacity: approving ? 0.7 : 1}}
+              >
+                {approving ? t("approve.confirming" as any) : t("approve.confirm" as any)}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

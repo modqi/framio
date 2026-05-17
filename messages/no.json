@@ -1123,6 +1123,18 @@
       "downloadSelected": "Last ned valgte",
       "selectAll": "Velg alle",
       "deselectAll": "Fjern alle"
+    },
+    "approve": {
+      "button": "Godkjenn levering",
+      "modalTitle": "Godkjenn denne leveringen?",
+      "modalCheck1": "Dette vil overføre betaling til {name} umiddelbart",
+      "modalCheck2": "Du bekrefter at du er fornøyd med bildene",
+      "modalCheck3": "Denne handlingen kan ikke angres",
+      "cancel": "Avbryt",
+      "confirm": "Ja, godkjenn levering",
+      "confirming": "Godkjenner…",
+      "success": "Betaling overført til fotografen",
+      "error": "Noe gikk galt. Prøv igjen."
     }
   },
   "DeliverPhotos": {

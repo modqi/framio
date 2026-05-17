@@ -1123,6 +1123,18 @@
       "downloadSelected": "Download selected",
       "selectAll": "Select all",
       "deselectAll": "Deselect all"
+    },
+    "approve": {
+      "button": "Approve delivery",
+      "modalTitle": "Approve this delivery?",
+      "modalCheck1": "This will release payment to {name} immediately",
+      "modalCheck2": "You confirm you are satisfied with the photos",
+      "modalCheck3": "This action cannot be undone",
+      "cancel": "Cancel",
+      "confirm": "Yes, approve delivery",
+      "confirming": "Approving…",
+      "success": "Payment released to photographer",
+      "error": "Something went wrong. Please try again."
     }
   },
   "DeliverPhotos": {
