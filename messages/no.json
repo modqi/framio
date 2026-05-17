@@ -1093,7 +1093,8 @@
     "nav": { "backToDashboard": "← Tilbake til oversikten" },
     "header": {
       "badge": "DINE BILDER",
-      "photoCount": "{count, plural, one {# bilde} other {# bilder}}"
+      "photoCountSingular": "1 bilde",
+      "photoCountPlural": "{count} bilder"
     },
     "empty": {
       "title": "Ingen bilder ennå",
@@ -1101,7 +1102,8 @@
     },
     "delivery": {
       "label": "LEVERING {number}",
-      "photoCount": "{count, plural, one {# bilde} other {# bilder}}",
+      "photoCountSingular": "1 bilde",
+      "photoCountPlural": "{count} bilder",
       "downloadAll": "Last ned alle ({count})",
       "preparing": "Forbereder…",
       "save": "Lagre"

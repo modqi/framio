@@ -180,7 +180,7 @@ export default function PhotoGallery({ params }: { params: any }) {
             {booking?.session_type}
           </h1>
           <p style={{fontSize: "14px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", margin: "0"}}>
-            {booking?.photographer_name} · {booking?.date} · {t("header.photoCount", { count: totalPhotos } as any)}
+            {booking?.photographer_name} · {booking?.date} · {totalPhotos === 1 ? t("header.photoCountSingular" as any) : t("header.photoCountPlural", { count: totalPhotos } as any)}
           </p>
         </div>
       </div>
@@ -204,7 +204,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                   </p>
                 )}
                 <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                  {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {t("delivery.photoCount", { count: delivery.photos.length } as any)}
+                  {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length === 1 ? t("delivery.photoCountSingular" as any) : t("delivery.photoCountPlural", { count: delivery.photos.length } as any)}
                 </p>
                 {delivery.message && (
                   <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>

@@ -1093,7 +1093,8 @@
     "nav": { "backToDashboard": "← Back to dashboard" },
     "header": {
       "badge": "YOUR PHOTOS",
-      "photoCount": "{count, plural, one {# photo} other {# photos}}"
+      "photoCountSingular": "1 photo",
+      "photoCountPlural": "{count} photos"
     },
     "empty": {
       "title": "No photos yet",
@@ -1101,7 +1102,8 @@
     },
     "delivery": {
       "label": "DELIVERY {number}",
-      "photoCount": "{count, plural, one {# photo} other {# photos}}",
+      "photoCountSingular": "1 photo",
+      "photoCountPlural": "{count} photos",
       "downloadAll": "Download all ({count})",
       "preparing": "Preparing…",
       "save": "Save"

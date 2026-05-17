@@ -67,8 +67,6 @@ export async function GET(
   const cloudinaryExpiresAt = Math.floor(Date.now() / 1000) + 3600; // 1 hour for Cloudinary
   const storageExpiresIn = 86400; // 24 hours for Supabase Storage
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
   for (const photo of photos || []) {
     if (photo.storage_path) {
       // New Supabase Storage photo
@@ -80,8 +78,13 @@ export async function GET(
       ]);
 
       if (viewResult.data?.signedUrl) {
-        // Wrap in Cloudinary Fetch for CDN caching + auto quality/format on the gallery grid
-        signedUrls[photo.id] = `https://res.cloudinary.com/${cloudName}/image/fetch/q_auto,f_auto/${encodeURIComponent(viewResult.data.signedUrl)}`;
+        // Cloudinary Fetch: SDK handles URL encoding correctly for source URLs with query strings
+        signedUrls[photo.id] = cloudinary.url(viewResult.data.signedUrl, {
+          type: "fetch",
+          quality: "auto",
+          fetch_format: "auto",
+          secure: true,
+        });
         const expiryMs = Date.now() + storageExpiresIn * 1000;
         if (expiryMs > expiresAtMs) expiresAtMs = expiryMs;
       }
