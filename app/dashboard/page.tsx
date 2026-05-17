@@ -166,7 +166,7 @@ export default function Dashboard() {
     switch (status) {
       case "confirmed": return { backgroundColor: "#f0fdf4", color: "#15803d" };
       case "completed": return { backgroundColor: "#eff6ff", color: "#1d4ed8" };
-      case "photos_delivered": return { backgroundColor: "#faf5ff", color: "#7c3aed" };
+      case "photos_delivered": return { backgroundColor: "#FBF0EA", color: "#C8622A" };
       case "paid_out": return { backgroundColor: "#f0fdf4", color: "#15803d" };
       case "disputed": return { backgroundColor: "#fef3c7", color: "#b45309" };
       case "pending": return { backgroundColor: "#FBF0EA", color: "#C8622A" };
@@ -478,7 +478,7 @@ export default function Dashboard() {
                     {(booking.status === "photos_delivered" || booking.status === "paid_out") && deliveredBookingIds.has(booking.id) && (
                       <a
                         href={`/deliveries/${booking.id}`}
-                        style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#7c3aed", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
+                        style={{fontSize: "13px", color: "#FDFBF8", backgroundColor: "#C8622A", padding: "8px 20px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", display: "inline-block"}}
                       >
                         {t("bookings.viewPhotos")}
                       </a>
@@ -486,7 +486,7 @@ export default function Dashboard() {
                     {booking.status === "photos_delivered" && (
                       disputeBookingId === booking.id ? (
                         <div style={{width: "100%", display: "flex", flexDirection: "column", gap: "10px"}}>
-                          <p style={{fontSize: "13px", color: "#7c3aed", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                          <p style={{fontSize: "13px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
                             {t("bookings.disputeHeading")}
                           </p>
                           <textarea
@@ -515,7 +515,7 @@ export default function Dashboard() {
                         </div>
                       ) : (
                         <div style={{display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap"}}>
-                          <span style={{fontSize: "12px", color: "#7c3aed", fontFamily: "'Jost', sans-serif"}}>
+                          <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>
                             {t("bookings.photosDeliveredWindow", { date: booking.payout_due_at ? new Date(booking.payout_due_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : t("bookings.soon") })}
                           </span>
                           <button
