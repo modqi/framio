@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useTranslations } from "../../../lib/i18n";
+import { useLocale } from "../../../lib/locale-context";
 import { supabase } from "../../../lib/supabase";
 import Logo from "../../components/Logo";
 import { EmptyInboxIcon } from "../../components/Icons";
@@ -10,6 +11,8 @@ const toDownloadUrl = (url: string) => url.replace(/\/(upload|authenticated)\//,
 
 export default function PhotoGallery({ params }: { params: any }) {
   const t = useTranslations("Deliveries");
+  const { locale: currentLocale } = useLocale();
+  const dateLocale = currentLocale === "no" ? "nb-NO" : "en-GB";
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [booking, setBooking] = useState<any>(null);
@@ -203,7 +206,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                 </p>
               )}
               <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-                {new Date(delivery.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length === 1 ? t("delivery.photoCountSingular" as any) : t("delivery.photoCountPlural", { count: delivery.photos.length } as any)}
+                {new Date(delivery.created_at).toLocaleDateString(dateLocale, { year: "numeric", month: "long", day: "numeric" })} · {delivery.photos.length === 1 ? t("delivery.photoCountSingular" as any) : t("delivery.photoCountPlural", { count: delivery.photos.length } as any)}
               </p>
               {delivery.message && (
                 <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#7A5C44", fontStyle: "italic", margin: "8px 0 0", maxWidth: "600px", lineHeight: "1.7"}}>
