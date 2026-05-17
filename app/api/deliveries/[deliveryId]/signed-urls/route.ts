@@ -78,13 +78,7 @@ export async function GET(
       ]);
 
       if (viewResult.data?.signedUrl) {
-        // Cloudinary Fetch: SDK handles URL encoding correctly for source URLs with query strings
-        signedUrls[photo.id] = cloudinary.url(viewResult.data.signedUrl, {
-          type: "fetch",
-          quality: "auto",
-          fetch_format: "auto",
-          secure: true,
-        });
+        signedUrls[photo.id] = viewResult.data.signedUrl;
         const expiryMs = Date.now() + storageExpiresIn * 1000;
         if (expiryMs > expiresAtMs) expiresAtMs = expiryMs;
       }
