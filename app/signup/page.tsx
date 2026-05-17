@@ -1,6 +1,5 @@
 ﻿"use client";
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -12,7 +11,6 @@ import { useTranslations } from "../../lib/i18n";
 import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 
 export default function Signup() {
-  const router = useRouter();
   const [role, setRole] = useState("client");
 
   useEffect(() => {
@@ -240,7 +238,10 @@ export default function Signup() {
 
           <div style={{marginBottom: "28px"}}>
             <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", marginBottom: "8px"}}>
-              {role === "client" ? t("form.headingClient") : t("form.headingPhotographer")}
+              {role === "client"
+                ? t("form.headingClient")
+                : <>{t("form.headingPhotographerPart1")}{" "}<em style={{color: "#C8622A"}}>{t("form.headingPhotographerAccent")}</em></>
+              }
             </h1>
             <p style={{fontSize: "13px", color: "#7A5C44", fontWeight: "300", fontFamily: "'Jost', sans-serif"}}>
               {t("form.haveAccount")}{" "}
@@ -257,18 +258,6 @@ export default function Signup() {
             onExpire={() => { setTurnstileToken(null); }}
             options={{ size: "invisible" }}
           />
-
-          {/* TOGGLE */}
-          <div style={{display: "flex", gap: "6px", backgroundColor: "#F0EAE0", padding: "4px", borderRadius: "999px", marginBottom: "28px"}}>
-            <button
-              onClick={() => { setRole("client"); setError(""); }}
-              style={{flex: 1, padding: "11px 20px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: role === "client" ? "#C8622A" : "transparent", color: role === "client" ? "#FDFBF8" : "#1A0E06", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
-            >{t("form.roleBook")}</button>
-            <button
-              onClick={() => { setRole("photographer"); setError(""); }}
-              style={{flex: 1, padding: "11px 20px", border: "none", borderRadius: "999px", fontSize: "13px", cursor: "pointer", backgroundColor: role === "photographer" ? "#C8622A" : "transparent", color: role === "photographer" ? "#FDFBF8" : "#1A0E06", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}
-            >{t("form.rolePhotographer")}</button>
-          </div>
 
           {/* CLIENT FORM */}
           {role === "client" && (
@@ -303,6 +292,9 @@ export default function Signup() {
                 <a href="/terms" style={{color: "#7A5C44", textDecoration: "none"}}>{t("form.tosTerms")}</a>
                 {" "}{t("form.tosAnd")}{" "}
                 <a href="/privacy" style={{color: "#7A5C44", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
+              </p>
+              <p style={{fontSize: "12px", color: "#7A5C44", textAlign: "center", margin: "4px 0 0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
+                {t("form.wantToJoinAsPhotographer")}{" "}<a href="/signup?role=photographer" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.applyHere")}</a>
               </p>
             </div>
           )}
