@@ -257,7 +257,9 @@
   "Signup": {
     "panel": {
       "clientBadge": "Velkommen til Lomissa",
-      "clientHeadline": "Finn din perfekte fotograf",
+      "clientHeadlinePart1": "Finn din",
+      "clientHeadlinePart2": "perfekte",
+      "clientHeadlinePart3": "fotograf",
       "clientDesc": "Bli med kunder verden over som fant sin perfekte fotograf på Lomissa. Bla gjennom håndplukkede fotografer, bestill trygt og motta bildene dine digitalt.",
       "feature1Title": "Håndplukkede fotografer",
       "feature1Desc": "Hver fotograf vurderes personlig før de blir med",
@@ -266,7 +268,8 @@
       "feature3Title": "Lanserer nå globalt",
       "feature3Desc": "Vær blant de første til å oppdage Lomissa — en ny måte å finne og bestille fotografer",
       "photographerBadge": "Bli med på Lomissa",
-      "photographerHeadline": "Gjør lidenskapen din til inntekt",
+      "photographerHeadlinePart1": "Gjør lidenskapen din til",
+      "photographerHeadlinePart2": "inntekt",
       "photographerDesc": "Vi håndplukker hver fotograf på Lomissa. Søk i dag og begynn å motta bestillinger fra kunder verden over. Du setter prisene, vi tar oss av resten.",
       "statFree": "Gratis",
       "statFreeLabel": "Å bli med på Lomissa",

@@ -257,7 +257,9 @@
   "Signup": {
     "panel": {
       "clientBadge": "Welcome to Lomissa",
-      "clientHeadline": "Find your perfect photographer",
+      "clientHeadlinePart1": "Find your",
+      "clientHeadlinePart2": "perfect",
+      "clientHeadlinePart3": "photographer",
       "clientDesc": "Join clients worldwide who discovered their perfect photographer on Lomissa. Browse hand-picked talent, book securely, and receive your photos delivered digitally.",
       "feature1Title": "Hand-picked photographers",
       "feature1Desc": "Every photographer is personally reviewed before joining",
@@ -266,7 +268,8 @@
       "feature3Title": "Now launching worldwide",
       "feature3Desc": "Be among the first to discover Lomissa — a new way to find and book photographers",
       "photographerBadge": "Join Lomissa",
-      "photographerHeadline": "Turn your passion into income",
+      "photographerHeadlinePart1": "Turn your passion into",
+      "photographerHeadlinePart2": "income",
       "photographerDesc": "We hand-pick every photographer on Lomissa. Apply today and start receiving bookings from clients worldwide. You set your prices, we handle the rest.",
       "statFree": "Free",
       "statFreeLabel": "To join Lomissa",

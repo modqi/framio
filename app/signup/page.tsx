@@ -177,7 +177,7 @@ export default function Signup() {
                 {t("panel.clientBadge")}
               </p>
               <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "52px", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", lineHeight: "1.05", marginBottom: "20px"}}>
-                {t("panel.clientHeadline")}
+                {t("panel.clientHeadlinePart1")}<br/><em style={{color: "#C8622A"}}>{t("panel.clientHeadlinePart2")}</em><br/>{t("panel.clientHeadlinePart3")}
               </h1>
               <p style={{fontSize: "14px", color: "#4A3020", fontWeight: "300", lineHeight: "1.9", marginBottom: "40px", maxWidth: "380px", fontFamily: "'Jost', sans-serif"}}>
                 {t("panel.clientDesc")}
@@ -207,7 +207,7 @@ export default function Signup() {
                 {t("panel.photographerBadge")}
               </p>
               <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "52px", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", lineHeight: "1.05", marginBottom: "20px"}}>
-                {t("panel.photographerHeadline")}
+                {t("panel.photographerHeadlinePart1")}<br/><em style={{color: "#C8622A"}}>{t("panel.photographerHeadlinePart2")}</em>
               </h1>
               <p style={{fontSize: "14px", color: "#4A3020", fontWeight: "300", lineHeight: "1.9", marginBottom: "40px", maxWidth: "380px", fontFamily: "'Jost', sans-serif"}}>
                 {t("panel.photographerDesc")}
