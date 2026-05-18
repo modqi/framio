@@ -146,6 +146,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("[admin-resolve-dispute] error:", err?.message);
-    return NextResponse.json({ error: err?.message || "Failed to resolve dispute" }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

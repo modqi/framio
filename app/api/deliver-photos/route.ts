@@ -33,6 +33,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Maximum 100 photos per delivery" }, { status: 400 });
   }
 
+  for (const photo of photos) {
+    if (photo.url && !String(photo.url).startsWith("https://res.cloudinary.com/")) {
+      return NextResponse.json({ error: "Invalid photo URL" }, { status: 400 });
+    }
+  }
+
   const { data: booking } = await serviceClient
     .from("bookings")
     .select("*")

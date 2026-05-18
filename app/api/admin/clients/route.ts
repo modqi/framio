@@ -2,13 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  console.log("[admin/clients] route reached");
-
   const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
-  if (!token) {
-    console.log("[admin/clients] no token");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const anonClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,17 +11,13 @@ export async function GET(request: NextRequest) {
   );
   const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
   if (!user) {
-    console.log("[admin/clients] auth failed:", authError?.message);
+    console.error("[admin/clients] auth failed:", authError?.message);
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  console.log("[admin/clients] caller:", user.email);
-
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  console.log("[admin/clients] service role key present:", !!serviceRoleKey, "length:", serviceRoleKey?.length ?? 0);
 
   const serviceClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceRoleKey!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
   const { data: adminRow } = await serviceClient
@@ -34,23 +25,18 @@ export async function GET(request: NextRequest) {
     .select("id")
     .eq("email", user.email)
     .single();
-  if (!adminRow) {
-    console.log("[admin/clients] caller is not admin:", user.email);
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  if (!adminRow) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const allUsers: any[] = [];
   let pg = 1;
   while (true) {
-    console.log("[admin/clients] calling listUsers page", pg);
     const { data, error } = await serviceClient.auth.admin.listUsers({
       page: pg,
       perPage: 1000,
     });
-    console.log("[admin/clients] listUsers result — error:", error?.message ?? null, "users:", data?.users?.length ?? 0, "total:", (data as any)?.total ?? "n/a");
 
     if (error) {
-      console.error("[admin/clients] listUsers error:", error.message, error);
+      console.error("[admin/clients] listUsers error:", error.message);
       break;
     }
     const batch = data?.users ?? [];
@@ -61,14 +47,11 @@ export async function GET(request: NextRequest) {
     pg++;
   }
 
-  console.log("[admin/clients] total users fetched:", allUsers.length);
-
   // Read role from both fields to handle either SDK response shape
   const getRole = (u: any): string =>
     u.user_metadata?.role ?? (u as any).raw_user_meta_data?.role ?? "";
 
   const clientUsers = allUsers.filter((u) => getRole(u) === "client");
-  console.log("[admin/clients] users with role=client:", clientUsers.length);
 
   if (clientUsers.length === 0) return NextResponse.json({ clients: [] });
 
@@ -109,6 +92,5 @@ export async function GET(request: NextRequest) {
     }))
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  console.log("[admin/clients] returning", result.length, "clients");
   return NextResponse.json({ clients: result });
 }

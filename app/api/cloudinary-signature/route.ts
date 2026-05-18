@@ -19,7 +19,32 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { isDelivery } = await request.json();
+  if (user.user_metadata?.role !== "photographer") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const body = await request.json();
+  const { isDelivery, bookingId } = body as { isDelivery?: boolean; bookingId?: string };
+
+  if (isDelivery) {
+    if (!bookingId) {
+      return NextResponse.json({ error: "bookingId is required for delivery uploads" }, { status: 400 });
+    }
+
+    const serviceClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: booking } = await serviceClient
+      .from("bookings")
+      .select("photographer_id")
+      .eq("id", bookingId)
+      .single();
+
+    if (!booking || booking.photographer_id !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+  }
 
   const timestamp = Math.round(Date.now() / 1000);
   const folder = isDelivery ? "lomissa/deliveries" : "lomissa/portfolio";

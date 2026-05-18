@@ -39,6 +39,25 @@ export async function POST(request: NextRequest) {
     const ALLOWED_POLICIES = ["flexible", "moderate", "strict"];
     const policy = ALLOWED_POLICIES.includes(body.cancellation_policy) ? body.cancellation_policy : "moderate";
 
+    const rawWebsite = str(body.website, 300);
+    if (rawWebsite && !/^https?:\/\//i.test(rawWebsite)) {
+      return NextResponse.json({ error: "Website must start with http:// or https://" }, { status: 400 });
+    }
+
+    const rawProfilePhoto = str(body.profile_photo, 500);
+    if (rawProfilePhoto) {
+      let validCloudinaryUrl = false;
+      try {
+        const url = new URL(rawProfilePhoto);
+        validCloudinaryUrl = url.hostname.endsWith("cloudinary.com") || url.hostname.endsWith("res.cloudinary.com");
+      } catch {
+        validCloudinaryUrl = false;
+      }
+      if (!validCloudinaryUrl) {
+        return NextResponse.json({ error: "profile_photo must be a Cloudinary URL" }, { status: 400 });
+      }
+    }
+
     const payload: Record<string, any> = {
       name: str(body.name, 100),
       bio: str(body.bio, 2000),
@@ -46,14 +65,14 @@ export async function POST(request: NextRequest) {
       specialities: Array.isArray(body.specialities) ? body.specialities.slice(0, 20) : [],
       location: str(body.location, 200),
       instagram: str(body.instagram, 100),
-      website: str(body.website, 300),
+      website: rawWebsite,
       phone_number: str(body.phone_number, 30),
       cancellation_policy: policy,
       delivery_time: str(body.delivery_time, 200),
       copyright_ownership: str(body.copyright_ownership, 200),
       editing_style: str(body.editing_style, 200),
       revisions_included: str(body.revisions_included, 200),
-      profile_photo: str(body.profile_photo, 500),
+      profile_photo: rawProfilePhoto,
       other_specialty: (body.specialities ?? []).includes("Other")
         ? str(body.other_specialty, 100)
         : null,

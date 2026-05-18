@@ -21,20 +21,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       type,
-      photographerEmail,
-      photographerName,
-      clientName,
-      clientEmail,
-      sessionType,
-      date,
-      location,
-      message,
-      price,
       senderName,
       senderId,
       clientId,
       bookingId,
-      onboardingUrl,
+      message,
+      date,
     } = body;
 
     // Auth gate — all types require a valid user session except "photographer_application",
@@ -55,24 +47,50 @@ export async function POST(request: NextRequest) {
       if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // New message notification
+    // Service client for DB lookups that require elevated access
+    const serviceClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    // ── New message notification ──────────────────────────────────────────────
     if (type === "new_message") {
+      if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
+
+      // Fetch booking parties from DB — never trust body-supplied emails
+      const { data: msgBooking } = await serviceClient
+        .from("bookings")
+        .select("client_id, photographer_id, client_email, photographer_email, date")
+        .eq("id", bookingId)
+        .single();
+
+      if (!msgBooking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+
+      const isMessageClient = msgBooking.client_id === user.id;
+      const isMessagePhotographer = msgBooking.photographer_id === user.id;
+      if (!isMessageClient && !isMessagePhotographer) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+
       // Throttle: send at most 1 email per 10 minutes per booking per sender.
-      // The current message is already in the DB, so >= 2 rows means a prior one triggered an email.
       const windowStart = new Date(Date.now() - 10 * 60 * 1000).toISOString();
       const { data: recentMessages } = await authClient!
         .from("messages")
         .select("id")
         .eq("booking_id", bookingId)
-        .eq("sender_id", senderId)
+        .eq("sender_id", user.id)   // use authenticated user ID, not body-supplied senderId
         .gte("created_at", windowStart);
 
       if ((recentMessages?.length ?? 0) >= 2) {
         return NextResponse.json({ success: true });
       }
 
-      const isClientSender = senderId === clientId;
-      const recipientEmail = isClientSender ? (photographerEmail || "hello@lomissa.com") : clientEmail;
+      // Recipient is always the other party, fetched from DB
+      const recipientEmail = isMessageClient
+        ? msgBooking.photographer_email
+        : msgBooking.client_email;
+
+      if (!recipientEmail) return NextResponse.json({ success: true });
 
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
@@ -92,7 +110,7 @@ export async function POST(request: NextRequest) {
               <div style="background: #FDF8F5; border-radius: 8px; padding: 16px; border: 1px solid #f0e8e0; margin-bottom: 24px;">
                 <p style="font-size: 14px; color: #555; margin: 0; font-style: italic; line-height: 1.7;">"${esc(message)}"</p>
               </div>
-              <p style="font-size: 13px; color: #888; margin: 0;">Regarding your booking on ${esc(date)}</p>
+              <p style="font-size: 13px; color: #888; margin: 0;">Regarding your booking on ${esc(msgBooking.date || "")}</p>
             </div>
             <div style="text-align: center; margin-bottom: 32px;">
               <a href="https://lomissa.com/messages/${esc(bookingId)}"
@@ -109,8 +127,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Application notification to admin
+    // ── Application notification to admin (unauthenticated, rate-limited) ─────
     if (type === "photographer_application") {
+      const { clientName, clientEmail, location, message: appMessage, date: appDate } = body;
+
       const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
       const now = Date.now();
       const hour = 60 * 60 * 1000;
@@ -153,14 +173,14 @@ export async function POST(request: NextRequest) {
                   </td>
                   <td style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
                     <span style="font-size: 11px; color: #C4907A; display: block; margin-bottom: 4px;">DATE</span>
-                    <span style="font-size: 14px; color: #1a1a1a;">${esc(date)}</span>
+                    <span style="font-size: 14px; color: #1a1a1a;">${esc(appDate)}</span>
                   </td>
                 </tr>
               </table>
-              ${message ? `
+              ${appMessage ? `
               <div style="margin-top: 20px; padding: 16px; background: #FDF8F5; border-radius: 8px; border: 1px solid #f0e8e0;">
                 <p style="font-size: 11px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">APPLICATION DETAILS</p>
-                <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">${esc(message)}</p>
+                <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">${esc(appMessage)}</p>
               </div>
               ` : ""}
             </div>
@@ -179,73 +199,86 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Photographer approval email
-    if (type === "photographer_approved") {
-      const ctaUrl = onboardingUrl || "https://lomissa.com/login";
-      await resend.emails.send({
-        from: "Lomissa <hello@lomissa.com>",
-        to: clientEmail,
-        subject: `Welcome to Lomissa, ${esc(clientName)}!`,
-        html: `
-          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
-            <div style="text-align: center; margin-bottom: 40px;">
-              <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Lomissa</h1>
-              <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
-            </div>
-            <div style="background: #1a1a1a; border-radius: 12px; padding: 40px 32px; text-align: center; margin-bottom: 24px;">
-              <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">YOU HAVE BEEN SELECTED</p>
-              <h2 style="font-family: Georgia, serif; font-size: 32px; color: #fff; margin: 0 0 16px; letter-spacing: -1px;">
-                Welcome to Lomissa, ${esc(clientName)}!
-              </h2>
-              <p style="font-size: 15px; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.8;">
-                Your application has been reviewed and approved. You are now part of our hand-picked community of photographers.
-              </p>
-            </div>
-            <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
-              <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">ONE STEP BEFORE YOU GO LIVE</p>
-              <p style="font-size: 14px; color: #555; margin: 0 0 20px; line-height: 1.7;">
-                To receive payouts from your bookings, you need to connect your bank account via Stripe. This takes about 5 minutes and your profile will go live automatically once complete.
-              </p>
-              <div style="background: #FDF8F5; border-radius: 8px; padding: 16px; border: 1px solid #f0e8e0; margin-bottom: 20px;">
-                <p style="font-size: 12px; color: #C4907A; margin: 0 0 4px; letter-spacing: 1px;">NOTE</p>
-                <p style="font-size: 13px; color: #888; margin: 0; line-height: 1.6;">This link expires in 24 hours. If it expires, log in to your dashboard to generate a new one.</p>
+    // ── Admin-only email types: photographer_approved / photographer_rejected ──
+    // These send emails on behalf of the platform. Only admins may trigger them.
+    if (type === "photographer_approved" || type === "photographer_rejected") {
+      const { data: adminRow } = await serviceClient
+        .from("admin_users")
+        .select("email")
+        .eq("email", user.email)
+        .single();
+      if (!adminRow) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+      const { clientEmail, clientName, onboardingUrl, message: rejMsg } = body;
+
+      if (type === "photographer_approved") {
+        const ctaUrl = typeof onboardingUrl === "string" && onboardingUrl.startsWith("https://")
+          ? onboardingUrl
+          : "https://lomissa.com/login";
+
+        await resend.emails.send({
+          from: "Lomissa <hello@lomissa.com>",
+          to: clientEmail,
+          subject: `Welcome to Lomissa, ${esc(clientName)}!`,
+          html: `
+            <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #FAFAF8;">
+              <div style="text-align: center; margin-bottom: 40px;">
+                <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Lomissa</h1>
+                <p style="font-size: 11px; letter-spacing: 3px; color: #C4907A; margin: 0;">PHOTOGRAPHY MARKETPLACE</p>
+              </div>
+              <div style="background: #1a1a1a; border-radius: 12px; padding: 40px 32px; text-align: center; margin-bottom: 24px;">
+                <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">YOU HAVE BEEN SELECTED</p>
+                <h2 style="font-family: Georgia, serif; font-size: 32px; color: #fff; margin: 0 0 16px; letter-spacing: -1px;">
+                  Welcome to Lomissa, ${esc(clientName)}!
+                </h2>
+                <p style="font-size: 15px; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.8;">
+                  Your application has been reviewed and approved. You are now part of our hand-picked community of photographers.
+                </p>
+              </div>
+              <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
+                <p style="font-size: 12px; color: #C4907A; margin: 0 0 8px; letter-spacing: 1px;">ONE STEP BEFORE YOU GO LIVE</p>
+                <p style="font-size: 14px; color: #555; margin: 0 0 20px; line-height: 1.7;">
+                  To receive payouts from your bookings, you need to connect your bank account via Stripe. This takes about 5 minutes and your profile will go live automatically once complete.
+                </p>
+                <div style="background: #FDF8F5; border-radius: 8px; padding: 16px; border: 1px solid #f0e8e0; margin-bottom: 20px;">
+                  <p style="font-size: 12px; color: #C4907A; margin: 0 0 4px; letter-spacing: 1px;">NOTE</p>
+                  <p style="font-size: 13px; color: #888; margin: 0; line-height: 1.6;">This link expires in 24 hours. If it expires, log in to your dashboard to generate a new one.</p>
+                </div>
+              </div>
+              <div style="text-align: center; margin-bottom: 24px;">
+                <a href="${esc(ctaUrl)}"
+                   style="background: #C4907A; color: #fff; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">
+                  Connect your bank account →
+                </a>
+              </div>
+              <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
+                <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">AFTER YOU CONNECT</p>
+                ${[
+                  "Your profile goes live — clients can browse and book you",
+                  "Complete your profile: add bio, portfolio photos, and set your price",
+                  "Set your availability calendar",
+                  "Accept bookings and receive 90% of every session fee",
+                ].map((step, i) => `
+                  <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;">
+                    <span style="font-size: 12px; color: #C4907A; font-weight: 600; flex-shrink: 0; min-width: 24px;">0${i + 1}</span>
+                    <span style="font-size: 14px; color: #555;">${step}</span>
+                  </div>
+                `).join("")}
+              </div>
+              <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
+                <p style="font-size: 13px; color: #888; margin: 0 0 4px;">Questions? We are here to help.</p>
+                <a href="mailto:hello@lomissa.com" style="font-size: 13px; color: #C4907A; text-decoration: none;">hello@lomissa.com</a>
+              </div>
+              <div style="text-align: center;">
+                <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
               </div>
             </div>
-            <div style="text-align: center; margin-bottom: 24px;">
-              <a href="${esc(ctaUrl)}"
-                 style="background: #C4907A; color: #fff; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; display: inline-block;">
-                Connect your bank account →
-              </a>
-            </div>
-            <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #f0f0f0; margin-bottom: 24px;">
-              <p style="font-size: 12px; color: #C4907A; margin: 0 0 16px; letter-spacing: 1px;">AFTER YOU CONNECT</p>
-              ${[
-                "Your profile goes live — clients can browse and book you",
-                "Complete your profile: add bio, portfolio photos, and set your price",
-                "Set your availability calendar",
-                "Accept bookings and receive 90% of every session fee",
-              ].map((step, i) => `
-                <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;">
-                  <span style="font-size: 12px; color: #C4907A; font-weight: 600; flex-shrink: 0; min-width: 24px;">0${i + 1}</span>
-                  <span style="font-size: 14px; color: #555;">${step}</span>
-                </div>
-              `).join("")}
-            </div>
-            <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
-              <p style="font-size: 13px; color: #888; margin: 0 0 4px;">Questions? We are here to help.</p>
-              <a href="mailto:hello@lomissa.com" style="font-size: 13px; color: #C4907A; text-decoration: none;">hello@lomissa.com</a>
-            </div>
-            <div style="text-align: center;">
-              <p style="font-size: 11px; color: #aaa; margin: 0;">© 2026 Lomissa. All rights reserved.</p>
-            </div>
-          </div>
-        `,
-      });
-      return NextResponse.json({ success: true });
-    }
+          `,
+        });
+        return NextResponse.json({ success: true });
+      }
 
-    // Photographer rejection email
-    if (type === "photographer_rejected") {
+      // photographer_rejected
       await resend.emails.send({
         from: "Lomissa <hello@lomissa.com>",
         to: clientEmail,
@@ -264,7 +297,7 @@ export async function POST(request: NextRequest) {
                 After carefully reviewing your application we have decided not to move forward at this time.
               </p>
               <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.8;">
-                ${esc(message)}
+                ${esc(rejMsg)}
               </p>
             </div>
             <div style="background: #FDF8F5; border-radius: 12px; padding: 20px; border: 1px solid #f0e8e0; text-align: center; margin-bottom: 32px;">
@@ -280,7 +313,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Booking confirmed — notify client. Look up booking from DB to avoid trusting body-supplied emails.
+    // ── Booking confirmed — notify client ─────────────────────────────────────
     if (type === "booking_confirmed") {
       if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
       const { data: bkConfirmed } = await (authClient as any)
@@ -360,12 +393,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Booking notification to photographer + confirmation to client
+    // ── Booking request notification ──────────────────────────────────────────
     if (type !== "booking_request") {
       return NextResponse.json({ error: "Unknown email type" }, { status: 400 });
     }
 
-    // Look up booking from DB — never trust body-supplied photographer/client emails
     if (!bookingId) return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
     const { data: bkRequest } = await (authClient as any)
       .from("bookings")
@@ -442,7 +474,6 @@ export async function POST(request: NextRequest) {
       `,
     });
 
-    // Booking confirmation to client
     await resend.emails.send({
       from: "Lomissa <hello@lomissa.com>",
       to: bkRequest.client_email,

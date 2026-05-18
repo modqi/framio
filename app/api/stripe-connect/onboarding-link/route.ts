@@ -1,12 +1,19 @@
+import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-const serviceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
+function generateStateToken(userId: string, accountId: string): string {
+  const expiry = Math.floor(Date.now() / 1000) + 15 * 60;
+  const payload = Buffer.from(`${userId}:${accountId}:${expiry}`).toString("base64url");
+  const hmac = crypto
+    .createHmac("sha256", process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    .update(payload)
+    .digest("base64url");
+  return `${payload}.${hmac}`;
+}
 
 export async function POST(request: NextRequest) {
   const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
@@ -22,6 +29,11 @@ export async function POST(request: NextRequest) {
     if (!user || user.user_metadata?.role !== "photographer") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const serviceClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     const { data: photographer } = await serviceClient
       .from("photographers")
@@ -39,8 +51,6 @@ export async function POST(request: NextRequest) {
 
     let accountId = photographer.stripe_account_id;
 
-    // Create the Express account if it wasn't saved during approval
-    // (handles cases where approval-time account creation failed silently)
     if (!accountId) {
       const account = await stripe.accounts.create({
         type: "express",
@@ -58,11 +68,12 @@ export async function POST(request: NextRequest) {
         .eq("user_id", user.id);
     }
 
+    const state = generateStateToken(user.id, accountId);
     const base = process.env.NEXT_PUBLIC_BASE_URL!;
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
       refresh_url: `${base}/photographer-dashboard`,
-      return_url: `${base}/api/stripe-connect/callback?account=${accountId}&userId=${user.id}`,
+      return_url: `${base}/api/stripe-connect/callback?account=${accountId}&state=${encodeURIComponent(state)}`,
       type: "account_onboarding",
     });
 

@@ -140,6 +140,6 @@ export async function POST(request: NextRequest) {
     // Roll back so client can retry or cron can pick it up
     await serviceClient.from("bookings").update({ status: "photos_delivered" }).eq("id", bookingId);
     console.error("[approve-delivery] error:", err?.message);
-    return NextResponse.json({ error: err?.message || "Failed to release payment" }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

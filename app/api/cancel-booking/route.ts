@@ -61,18 +61,22 @@ export async function POST(request: NextRequest) {
   if (isClient && booking.status === "pending") {
     shouldRefund = true;
   } else if (isClient && booking.status === "confirmed") {
-    const policy = booking.cancellation_policy_snapshot || "moderate";
-    if (policy === "flexible") {
-      const sessionDate = new Date(booking.date + "T00:00:00");
-      const hoursUntil = (sessionDate.getTime() - Date.now()) / (1000 * 60 * 60);
-      shouldRefund = hoursUntil > 24;
-    } else if (policy === "moderate") {
-      const sessionDate = new Date(booking.date + "T00:00:00");
-      const hoursUntil = (sessionDate.getTime() - Date.now()) / (1000 * 60 * 60);
-      shouldRefund = hoursUntil > 48;
+    if (!booking.date) {
+      shouldRefund = true;
     } else {
-      // strict — no refund
-      shouldRefund = false;
+      const policy = booking.cancellation_policy_snapshot || "moderate";
+      if (policy === "flexible") {
+        const sessionDate = new Date(booking.date + "T00:00:00");
+        const hoursUntil = (sessionDate.getTime() - Date.now()) / (1000 * 60 * 60);
+        shouldRefund = hoursUntil > 24;
+      } else if (policy === "moderate") {
+        const sessionDate = new Date(booking.date + "T00:00:00");
+        const hoursUntil = (sessionDate.getTime() - Date.now()) / (1000 * 60 * 60);
+        shouldRefund = hoursUntil > 48;
+      } else {
+        // strict — no refund
+        shouldRefund = false;
+      }
     }
   } else if (isPhotographer && booking.status === "confirmed") {
     shouldRefund = true;
@@ -90,7 +94,7 @@ export async function POST(request: NextRequest) {
         refunded = true;
       } catch (err: any) {
         console.error("[cancel-booking] Stripe refund failed:", err?.message);
-        return NextResponse.json({ error: "refund_failed", message: err?.message }, { status: 500 });
+        return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
       }
     } else {
       console.error("[cancel-booking] Refund due but no stripe_payment_intent_id on booking", bookingId);

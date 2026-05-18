@@ -41,12 +41,16 @@ export async function POST(request: NextRequest) {
     // Look up the photographer before touching DB — bail early if no Connect account
     const { data: photographer } = await serviceClient
       .from("photographers")
-      .select("id, name, email, stripe_account_id, cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included")
+      .select("id, name, email, stripe_account_id, stripe_onboarding_completed, cancellation_policy, delivery_time, copyright_ownership, editing_style, revisions_included")
       .eq("user_id", photographerId)
       .single();
 
     if (!photographer?.stripe_account_id) {
       return NextResponse.json({ error: "no_payment_account" }, { status: 400 });
+    }
+
+    if (!photographer.stripe_onboarding_completed) {
+      return NextResponse.json({ error: "Photographer not available for booking" }, { status: 400 });
     }
 
     // Fetch and verify the selected package belongs to this photographer
