@@ -21,7 +21,16 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
+  const [isInAppBrowser, setIsInAppBrowser] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    setIsInAppBrowser(
+      ua.includes("Instagram") || ua.includes("FBAN") || ua.includes("FBAV")
+    );
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -59,6 +68,16 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
+  };
+
+  const handleOpenInBrowser = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setUrlCopied(true);
+      setTimeout(() => setUrlCopied(false), 3000);
+    } catch {
+      window.open(window.location.href, "_blank");
+    }
   };
 
   const handleEmailContinue = async (e: React.FormEvent) => {
@@ -206,6 +225,26 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     </button>
   );
 
+  const inAppBrowserNotice = (
+    <div style={{backgroundColor: "#FBF0EA", border: "1px solid #E8C8B0", borderRadius: "10px", padding: "16px", marginBottom: "20px"}}>
+      <div style={{display: "flex", alignItems: "flex-start", gap: "10px"}}>
+        <span style={{fontSize: "20px", lineHeight: "1.3", flexShrink: 0}}>🌐</span>
+        <div style={{flex: 1}}>
+          <p style={{fontSize: "13px", color: "#1A0E06", fontFamily: "'Jost', sans-serif", fontWeight: "400", margin: "0 0 10px", lineHeight: "1.6"}}>
+            {t("inAppBrowser.notice")}
+          </p>
+          <button
+            type="button"
+            onClick={handleOpenInBrowser}
+            style={{backgroundColor: urlCopied ? "#2E7D32" : "#1A0E06", color: "#FDFBF8", border: "none", borderRadius: "999px", padding: "9px 18px", fontSize: "12px", fontFamily: "'Jost', sans-serif", fontWeight: "500", cursor: "pointer", letterSpacing: "0.04em", transition: "background-color 0.2s"}}
+          >
+            {urlCopied ? t("inAppBrowser.copied") : t("inAppBrowser.openButton")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   const divider = (
     <div style={{display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px"}}>
       <div style={{flex: 1, height: "1px", backgroundColor: "#E2D5C8"}}/>
@@ -272,7 +311,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
         {step === "email" && (
           <>
             {heading(t("heading"))}
-            {googleBtn}
+            {isInAppBrowser ? inAppBrowserNotice : googleBtn}
             {divider}
             <form onSubmit={handleEmailContinue} style={{display: "flex", flexDirection: "column", gap: "14px"}}>
               <div>

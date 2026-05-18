@@ -1298,6 +1298,11 @@
       "tosAnd": "og",
       "tosPrivacy": "Personvernerklæringen"
     },
+    "inAppBrowser": {
+      "notice": "For best opplevelse, åpne Lomissa i nettleseren din for å bruke Google-innlogging.",
+      "openButton": "Åpne i nettleser",
+      "copied": "Lenke kopiert — lim inn i nettleseren din"
+    },
     "checkEmail": {
       "heading": "Sjekk e-posten din",
       "description": "Vi sendte en bekreftelseslenke til {email}. Klikk på den for å aktivere kontoen din."
