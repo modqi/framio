@@ -1058,7 +1058,7 @@
       "photographers": "Fotografer",
       "clients": "Klienter ({count})",
       "bookings": "Bestillinger",
-      "disputes": "{count, plural, =0 {Tvister} other {Tvister ({count})}}",
+      "disputes": "Tvister",
       "users": "Brukere ({count})"
     },
     "overview": {
@@ -1087,7 +1087,8 @@
       "noClients": "Ingen klienter ennå",
       "noName": "Ingen navn angitt",
       "joined": "Registrert {date}",
-      "bookingCount": "{count, plural, one {# bestilling} other {# bestillinger}}",
+      "bookingCountSingular": "1 bestilling",
+      "bookingCountPlural": "{count} bestillinger",
       "pendingDeletionBadge": "Venter på sletting",
       "activeBadge": "Aktiv",
       "deletesOn": "Slettes {date}",

@@ -386,7 +386,7 @@ export default function AdminPanel() {
             { key: "photographers", label: t("tabs.photographers") },
             { key: "clients", label: t("tabs.clients", { count: stats.totalClients } as any) },
             { key: "bookings", label: t("tabs.bookings") },
-            { key: "disputes", label: t("tabs.disputes", { count: stats.openDisputes } as any) },
+            { key: "disputes", label: stats.openDisputes === 0 ? t("tabs.disputes") : `${t("tabs.disputes")} (${stats.openDisputes})` },
             { key: "users", label: t("tabs.users", { count: users.length } as any) },
           ].map((tab_item) => (
             <button key={tab_item.key} onClick={() => { setTab(tab_item.key); setPage(0); }} style={tabStyle(tab_item.key)}>{tab_item.label}</button>
@@ -555,7 +555,7 @@ export default function AdminPanel() {
                         <div style={{display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px"}}>
                           <div style={{display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end"}}>
                             <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#F5EFE4", color: "#7A5C44"}}>
-                              {t("clients.bookingCount", { count: client.booking_count } as any)}
+                              {client.booking_count === 1 ? t("clients.bookingCountSingular") : t("clients.bookingCountPlural", { count: client.booking_count } as any)}
                             </span>
                             {client.pending_deletion ? (
                               <span style={{fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: "#fef2f2", color: "#dc2626"}}>
