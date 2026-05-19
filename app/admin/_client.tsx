@@ -16,6 +16,9 @@ export default function AdminPanel() {
   const [photographers, setPhotographers] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const [expandedClientId, setExpandedClientId] = useState<string | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
+  const [userSearch, setUserSearch] = useState("");
+  const [userRoleFilter, setUserRoleFilter] = useState("");
   const [stats, setStats] = useState({
     totalBookings: 0,
     totalPhotographers: 0,
@@ -39,6 +42,7 @@ export default function AdminPanel() {
       { data: bks },
       { data: photos },
       clientsRes,
+      usersRes,
     ] = await Promise.all([
       supabase.from("applications").select("*").order("created_at", { ascending: false }),
       supabase.from("bookings").select("*").order("created_at", { ascending: false }),
@@ -46,11 +50,15 @@ export default function AdminPanel() {
       fetch("/api/admin/clients", {
         headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
       }).then((r) => r.json()).catch(() => ({ clients: [] })),
+      fetch("/api/admin/users", {
+        headers: { "Authorization": `Bearer ${session?.access_token ?? ""}` },
+      }).then((r) => r.json()).catch(() => ({ users: [] })),
     ]);
     setApplications(apps || []);
     setBookings(bks || []);
     setPhotographers(photos || []);
     setClients(clientsRes.clients || []);
+    setUsers(usersRes.users || []);
     setStats({
       totalBookings: (bks || []).length,
       totalPhotographers: (photos || []).length,
@@ -379,6 +387,7 @@ export default function AdminPanel() {
             { key: "clients", label: t("tabs.clients", { count: stats.totalClients } as any) },
             { key: "bookings", label: t("tabs.bookings") },
             { key: "disputes", label: t("tabs.disputes", { count: stats.openDisputes } as any) },
+            { key: "users", label: t("tabs.users", { count: users.length } as any) },
           ].map((tab_item) => (
             <button key={tab_item.key} onClick={() => { setTab(tab_item.key); setPage(0); }} style={tabStyle(tab_item.key)}>{tab_item.label}</button>
           ))}
@@ -602,6 +611,86 @@ export default function AdminPanel() {
             )}
           </div>
         )}
+
+        {/* Users */}
+        {tab === "users" && (() => {
+          const roleBadgeStyle = (role: string): React.CSSProperties => {
+            if (role === "photographer") return { backgroundColor: "#FBF0EA", color: "#C8622A" };
+            if (role === "pending_photographer") return { backgroundColor: "#fffbeb", color: "#b45309" };
+            if (role === "admin") return { backgroundColor: "#F5EFE4", color: "#1A0E06" };
+            return { backgroundColor: "#EFF6FF", color: "#1d4ed8" };
+          };
+          const roleLabel = (role: string) => {
+            if (role === "photographer") return t("users.roles.photographer");
+            if (role === "pending_photographer") return t("users.roles.pending");
+            if (role === "admin") return t("users.roles.admin");
+            return t("users.roles.client");
+          };
+          const filteredUsers = users
+            .filter(u => !userSearch || u.email.toLowerCase().includes(userSearch.toLowerCase()))
+            .filter(u => !userRoleFilter || u.role === userRoleFilter);
+          return (
+            <div style={{ backgroundColor: "#FDFBF8", borderRadius: "12px", padding: "32px", border: "1px solid #E2D5C8" }}>
+              <p style={{ fontSize: "11px", color: "#C8622A", margin: "0 0 24px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500" }}>
+                {t("users.sectionTitle", { count: filteredUsers.length } as any)}
+              </p>
+              <div style={{ display: "flex", gap: "12px", marginBottom: "24px", flexWrap: "wrap" }}>
+                <input
+                  type="text"
+                  value={userSearch}
+                  onChange={e => { setUserSearch(e.target.value); setPage(0); }}
+                  placeholder={t("users.searchPlaceholder")}
+                  style={{ flex: "1", minWidth: "200px", border: "1px solid #E2D5C8", borderRadius: "8px", padding: "8px 14px", fontSize: "13px", fontFamily: "'Jost', sans-serif", outline: "none", backgroundColor: "#FDFBF8", color: "#1A0E06" }}
+                />
+                <select
+                  value={userRoleFilter}
+                  onChange={e => { setUserRoleFilter(e.target.value); setPage(0); }}
+                  style={{ border: "1px solid #E2D5C8", borderRadius: "8px", padding: "8px 14px", fontSize: "13px", fontFamily: "'Jost', sans-serif", outline: "none", backgroundColor: "#FDFBF8", color: "#7A5C44", cursor: "pointer" }}
+                >
+                  <option value="">{t("users.filterAll")}</option>
+                  <option value="client">{t("users.roles.client")}</option>
+                  <option value="photographer">{t("users.roles.photographer")}</option>
+                  <option value="pending_photographer">{t("users.roles.pending")}</option>
+                  <option value="admin">{t("users.roles.admin")}</option>
+                </select>
+              </div>
+              {filteredUsers.length === 0 ? (
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "18px", color: "#DDD0C0", fontStyle: "italic" }}>{t("users.noUsers")}</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {filteredUsers.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((u) => (
+                    <div key={u.id} style={{ border: "1px solid #E2D5C8", borderRadius: "12px", padding: "16px 20px", backgroundColor: "#FDFBF8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+                      <div>
+                        <p style={{ fontSize: "14px", color: "#1A0E06", margin: "0 0 4px", fontFamily: "'Jost', sans-serif", fontWeight: "400" }}>{u.email}</p>
+                        <p style={{ fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif" }}>
+                          {t("users.joined", { date: new Date(u.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) } as any)}
+                          {u.last_sign_in_at && (
+                            <> · {t("users.lastSeen", { date: new Date(u.last_sign_in_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) } as any)}</>
+                          )}
+                        </p>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", ...roleBadgeStyle(u.role) }}>
+                          {roleLabel(u.role)}
+                        </span>
+                        <span style={{ fontSize: "11px", padding: "4px 12px", borderRadius: "999px", fontWeight: "500", fontFamily: "'Jost', sans-serif", backgroundColor: u.banned ? "#fef2f2" : "#f0fdf4", color: u.banned ? "#dc2626" : "#15803d" }}>
+                          {u.banned ? t("users.banned") : t("users.active")}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {filteredUsers.length > PAGE_SIZE && (
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "24px", justifyContent: "center" }}>
+                  <button onClick={() => setPage(p => p - 1)} disabled={page === 0} style={{ fontSize: "12px", color: page === 0 ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: page === 0 ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif" }}>{t("pagination.prev")}</button>
+                  <span style={{ fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif" }}>{t("pagination.page", { current: page + 1, total: Math.ceil(filteredUsers.length / PAGE_SIZE) } as any)}</span>
+                  <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= filteredUsers.length} style={{ fontSize: "12px", color: (page + 1) * PAGE_SIZE >= filteredUsers.length ? "#DDD0C0" : "#7A5C44", background: "none", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "6px 16px", cursor: (page + 1) * PAGE_SIZE >= filteredUsers.length ? "not-allowed" : "pointer", fontFamily: "'Jost', sans-serif" }}>{t("pagination.next")}</button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Disputes */}
         {tab === "disputes" && (() => {

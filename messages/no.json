@@ -1058,7 +1058,8 @@
       "photographers": "Fotografer",
       "clients": "Klienter ({count})",
       "bookings": "Bestillinger",
-      "disputes": "{count, plural, =0 {Tvister} other {Tvister ({count})}}"
+      "disputes": "{count, plural, =0 {Tvister} other {Tvister ({count})}}",
+      "users": "Brukere ({count})"
     },
     "overview": {
       "recentApplications": "NYLIGE SØKNADER",
@@ -1110,6 +1111,22 @@
     "bookings": {
       "sectionTitle": "ALLE BESTILLINGER — {count} TOTALT",
       "noBookings": "Ingen bestillinger ennå"
+    },
+    "users": {
+      "sectionTitle": "ALLE BRUKERE — {count} TOTALT",
+      "searchPlaceholder": "Søk etter e-post…",
+      "filterAll": "Alle roller",
+      "noUsers": "Ingen brukere funnet",
+      "joined": "Registrert {date}",
+      "lastSeen": "sist sett {date}",
+      "active": "Aktiv",
+      "banned": "Utestengt",
+      "roles": {
+        "client": "Klient",
+        "photographer": "Fotograf",
+        "pending": "Søknad sendt",
+        "admin": "Admin"
+      }
     },
     "pagination": {
       "prev": "← Forrige",

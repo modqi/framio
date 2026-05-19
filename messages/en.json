@@ -1058,7 +1058,8 @@
       "photographers": "Photographers",
       "clients": "Clients ({count})",
       "bookings": "Bookings",
-      "disputes": "{count, plural, =0 {Disputes} other {Disputes ({count})}}"
+      "disputes": "{count, plural, =0 {Disputes} other {Disputes ({count})}}",
+      "users": "Users ({count})"
     },
     "overview": {
       "recentApplications": "RECENT APPLICATIONS",
@@ -1110,6 +1111,22 @@
     "bookings": {
       "sectionTitle": "ALL BOOKINGS — {count} TOTAL",
       "noBookings": "No bookings yet"
+    },
+    "users": {
+      "sectionTitle": "ALL USERS — {count} TOTAL",
+      "searchPlaceholder": "Search by email…",
+      "filterAll": "All roles",
+      "noUsers": "No users found",
+      "joined": "Joined {date}",
+      "lastSeen": "last seen {date}",
+      "active": "Active",
+      "banned": "Banned",
+      "roles": {
+        "client": "Client",
+        "photographer": "Photographer",
+        "pending": "Pending",
+        "admin": "Admin"
+      }
     },
     "pagination": {
       "prev": "← Prev",
