@@ -1318,9 +1318,7 @@
       "tosPrivacy": "Personvernerklæringen"
     },
     "inAppBrowser": {
-      "notice": "For best opplevelse, åpne Lomissa i nettleseren din for å bruke Google-innlogging.",
-      "openButton": "Åpne i nettleser",
-      "copied": "Lenke kopiert — lim inn i nettleseren din"
+      "opensInBrowser": "Åpnes i nettleseren din"
     },
     "checkEmail": {
       "heading": "Sjekk e-posten din",
@@ -1336,6 +1334,9 @@
       "invalidCredentials": "Ugyldig e-post eller passord. Prøv igjen.",
       "genericError": "Noe gikk galt. Prøv igjen."
     }
+  },
+  "AuthGoogle": {
+    "loading": "Omdirigerer til Google..."
   },
   "Categories": {
     "all": "Alle",

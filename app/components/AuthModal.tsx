@@ -22,14 +22,10 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   const [isInAppBrowser, setIsInAppBrowser] = useState(false);
-  const [urlCopied, setUrlCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const ua = navigator.userAgent;
-    setIsInAppBrowser(
-      ua.includes("Instagram") || ua.includes("FBAN") || ua.includes("FBAV")
-    );
+    setIsInAppBrowser(/Instagram|FBAN|FBAV|FB_IAB|FB4A|FBIOS/.test(navigator.userAgent));
   }, []);
 
   useEffect(() => {
@@ -70,13 +66,12 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     });
   };
 
-  const handleOpenInBrowser = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setUrlCopied(true);
-      setTimeout(() => setUrlCopied(false), 3000);
-    } catch {
-      window.open(window.location.href, "_blank");
+  const handleGoogleInAppBrowser = () => {
+    const url = `${window.location.origin}/auth/google`;
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      window.location.href = `x-safari-${url}`;
+    } else {
+      window.open(url, "_blank");
     }
   };
 
@@ -225,23 +220,15 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     </button>
   );
 
-  const inAppBrowserNotice = (
-    <div style={{backgroundColor: "#FBF0EA", border: "1px solid #E8C8B0", borderRadius: "10px", padding: "16px", marginBottom: "20px"}}>
-      <div style={{display: "flex", alignItems: "flex-start", gap: "10px"}}>
-        <span style={{fontSize: "20px", lineHeight: "1.3", flexShrink: 0}}>🌐</span>
-        <div style={{flex: 1}}>
-          <p style={{fontSize: "13px", color: "#1A0E06", fontFamily: "'Jost', sans-serif", fontWeight: "400", margin: "0 0 10px", lineHeight: "1.6"}}>
-            {t("inAppBrowser.notice")}
-          </p>
-          <button
-            type="button"
-            onClick={handleOpenInBrowser}
-            style={{backgroundColor: urlCopied ? "#2E7D32" : "#1A0E06", color: "#FDFBF8", border: "none", borderRadius: "999px", padding: "9px 18px", fontSize: "12px", fontFamily: "'Jost', sans-serif", fontWeight: "500", cursor: "pointer", letterSpacing: "0.04em", transition: "background-color 0.2s"}}
-          >
-            {urlCopied ? t("inAppBrowser.copied") : t("inAppBrowser.openButton")}
-          </button>
-        </div>
-      </div>
+  const inAppGoogleBtn = (
+    <div style={{marginBottom: "20px"}}>
+      <button type="button" onClick={handleGoogleInAppBrowser} style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "12px 20px", backgroundColor: "#fff", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "14px", fontWeight: "500", color: "#1A0E06", marginBottom: "6px"}}>
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        {t("googleLogin")}
+      </button>
+      <p style={{textAlign: "center", fontSize: "12px", color: "#C4907A", fontFamily: "'Jost', sans-serif", margin: "0"}}>
+        {t("inAppBrowser.opensInBrowser")}
+      </p>
     </div>
   );
 
@@ -311,7 +298,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
         {step === "email" && (
           <>
             {heading(t("heading"))}
-            {isInAppBrowser ? inAppBrowserNotice : googleBtn}
+            {isInAppBrowser ? inAppGoogleBtn : googleBtn}
             {divider}
             <form onSubmit={handleEmailContinue} style={{display: "flex", flexDirection: "column", gap: "14px"}}>
               <div>

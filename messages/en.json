@@ -1318,9 +1318,7 @@
       "tosPrivacy": "Privacy Policy"
     },
     "inAppBrowser": {
-      "notice": "For the best experience, open Lomissa in your browser to use Google Sign-in.",
-      "openButton": "Open in browser",
-      "copied": "Link copied — paste in your browser"
+      "opensInBrowser": "Opens in your browser"
     },
     "checkEmail": {
       "heading": "Check your email",
@@ -1336,6 +1334,9 @@
       "invalidCredentials": "Invalid email or password. Please try again.",
       "genericError": "Something went wrong. Please try again."
     }
+  },
+  "AuthGoogle": {
+    "loading": "Redirecting to Google..."
   },
   "Categories": {
     "all": "All",
