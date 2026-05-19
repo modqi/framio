@@ -36,10 +36,6 @@ export default function Home() {
           .hero-left { padding: 100px 24px 60px !important; }
           .hero-right { display: none !important; }
           .hero-buttons { flex-wrap: wrap !important; justify-content: flex-start !important; }
-          .forphoto-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-          .trust-stats { flex-direction: column !important; gap: 24px !important; }
-          .trust-stat-item { flex-direction: row !important; align-items: center !important; gap: 16px !important; }
-          .trust-stat-divider { display: none !important; }
           .trust-bar-inner { flex-direction: column !important; gap: 10px !important; text-align: center !important; }
           .trust-bar-dot { display: none !important; }
         }
@@ -207,54 +203,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-      {/* For photographers */}
-      <section style={{backgroundColor: "#1A0E06", padding: "100px 48px"}}>
-        <div className="forphoto-grid" style={{maxWidth: "1100px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px", alignItems: "center"}}>
-
-          {/* Left — pitch */}
-          <div>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("forPhotographers.label")}</p>
-            <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(32px, 4vw, 56px)", fontWeight: "400", fontStyle: "italic", color: "#FDFBF8", margin: "0 0 20px", letterSpacing: "-0.02em", lineHeight: "1.1"}}>
-              {t("forPhotographers.heading")}
-            </h2>
-            <p style={{fontSize: "14px", color: "#DDD0C0", margin: "0 0 48px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "420px"}}>
-              {t("forPhotographers.description")}
-            </p>
-            <div className="trust-stats" style={{display: "flex", alignItems: "stretch"}}>
-              {[
-                { value: t("forPhotographers.stat1Value"), label: t("forPhotographers.stat1Label") },
-                { value: t("forPhotographers.stat2Value"), label: t("forPhotographers.stat2Label") },
-                { value: t("forPhotographers.stat3Value"), label: t("forPhotographers.stat3Label") },
-              ].map((stat, i) => (
-                <div key={i} className="trust-stat-item" style={{display: "flex", alignItems: "center"}}>
-                  <div style={{paddingRight: i < 2 ? "32px" : "0"}}>
-                    <div style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "40px", fontWeight: "300", color: "#C8622A", lineHeight: "1", marginBottom: "4px"}}>{stat.value}</div>
-                    <div style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{stat.label}</div>
-                  </div>
-                  {i < 2 && <div className="trust-stat-divider" style={{width: "1px", height: "48px", background: "#3A2A1E", marginRight: "32px", flexShrink: 0}} />}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right — CTA card */}
-          <div style={{background: "#221510", borderRadius: "16px", padding: "40px", border: "1px solid #3A2A1E"}}>
-            <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "26px", fontWeight: "300", fontStyle: "italic", color: "#FDFBF8", margin: "0 0 12px", lineHeight: "1.4"}}>
-              {t("forPhotographers.quote")}
-            </p>
-            <p style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", fontWeight: "300", margin: "0 0 36px", lineHeight: "1.7"}}>
-              {t("forPhotographers.quoteNote")}
-            </p>
-            <a href="/signup?role=photographer" style={{display: "block", textAlign: "center", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", marginBottom: "12px"}}>
-              {t("forPhotographers.cta")}
-            </a>
-            <p style={{fontSize: "12px", color: "#7A5C44", textAlign: "center", margin: "0", fontFamily: "'Jost', sans-serif"}}>
-              {t("forPhotographers.ctaNote")}
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer style={{backgroundColor: "#FDFBF8", padding: "48px", borderTop: "1px solid #E2D5C8"}}>

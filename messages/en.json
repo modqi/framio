@@ -46,21 +46,6 @@
       "reviewsTitle": "Verified reviews",
       "reviewsDesc": "Every review comes from a real client who completed a real session. No fake ratings."
     },
-    "forPhotographers": {
-      "label": "FOR PHOTOGRAPHERS",
-      "heading": "Turn your passion into income",
-      "description": "Lomissa connects you with clients who are ready to book. No subscriptions — just a simple commission when you get paid.",
-      "stat1Value": "Free",
-      "stat1Label": "To join Lomissa",
-      "stat2Value": "10%",
-      "stat2Label": "Commission only",
-      "stat3Value": "3 days",
-      "stat3Label": "Average response time",
-      "quote": "Join the photography marketplace launching worldwide",
-      "quoteNote": "Be among the first photographers on Lomissa.",
-      "cta": "Apply to join",
-      "ctaNote": "Applications reviewed within 3 days"
-    },
     "footer": {
       "tagline": "The photography marketplace connecting clients with hand-picked photographers worldwide.",
       "platformLabel": "PLATFORM",
