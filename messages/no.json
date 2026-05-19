@@ -11,6 +11,7 @@
       "badge": "NÅ TILGJENGELIG OVER HELE VERDEN",
       "headline": "Øyeblikket ditt fortjener den perfekte fotografen",
       "description": "Lomissa er en fotografimarkedsplass som kobler kunder med profesjonelle fotografer. Bla gjennom, bestill og motta bildene dine — alt på ett sted.",
+      "googleDescription": "Vi bruker Google-kontoen din til å opprette profilen din, administrere bestillingene dine og sende deg viktige varsler om øktene og fotoleveransene dine. Vi deler aldri dataene dine med tredjeparter.",
       "cta": "Finn en fotograf",
       "ctaSecondary": "Bli med som fotograf",
       "trust": "HÅNDPLUKKET · ØYEBLIKKELIG BESTILLING · SIKRE BETALINGER"
@@ -69,6 +70,7 @@
       "legalLabel": "JURIDISK",
       "privacyPolicy": "Personvernregler",
       "termsOfService": "Vilkår for bruk",
+      "dataUsage": "Når du logger inn med Google, får vi tilgang til navnet og e-postadressen din for å opprette Lomissa-kontoen din. Vi har ikke tilgang til Gmail, kontakter eller andre Google-tjenester.",
       "photographersLabel": "FOTOGRAFER",
       "applyToJoin": "Søk om å bli med",
       "taglineBottom": "Laget med ❤️ for fotografer overalt"
