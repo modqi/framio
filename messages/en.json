@@ -351,7 +351,8 @@
     "donePhotographer": {
       "badge": "APPLICATION RECEIVED",
       "heading": "Thank you, {name}!",
-      "description": "We have received your application. Our team will review your portfolio and get back to you within 3 business days.",
+      "description": "Your application is with us — and we're genuinely excited to look through your work. You're applying to join something built for photographers who care about their craft.",
+      "reviewNote": "✓ We review every application personally and respond within 3 business days.",
       "step1": "We review your portfolio and experience",
       "step2": "We check your Instagram and website",
       "step3": "You receive an email with our decision",

@@ -351,7 +351,8 @@
     "donePhotographer": {
       "badge": "SØKNAD MOTTATT",
       "heading": "Takk, {name}!",
-      "description": "Vi har mottatt søknaden din. Teamet vårt vil gjennomgå porteføljen din og komme tilbake til deg innen 3 virkedager.",
+      "description": "Søknaden din er hos oss — og vi er genuint glade for å se arbeidet ditt. Du søker om å bli en del av noe som er bygget for fotografer som bryr seg om håndverket sitt.",
+      "reviewNote": "✓ Vi vurderer hver søknad personlig og svarer innen 3 virkedager.",
       "step1": "Vi gjennomgår porteføljen og erfaringen din",
       "step2": "Vi sjekker Instagram og nettstedet ditt",
       "step3": "Du mottar en e-post med vår beslutning",

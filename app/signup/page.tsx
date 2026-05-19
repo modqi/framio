@@ -127,21 +127,24 @@ export default function Signup() {
 
   if (done && role === "photographer") {
     return (
-      <main style={{minHeight: "100vh", backgroundColor: "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "center"}}>
-        <div style={{backgroundColor: "#FDFBF8", borderRadius: "16px", padding: "48px 32px", border: "0.5px solid #E2D5C8", textAlign: "center", maxWidth: "480px"}}>
-          <div style={{marginBottom: "24px"}}><ReviewStarIcon size={56} color="#C8622A"/></div>
-          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("donePhotographer.badge")}</p>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: "400", fontStyle: "italic", color: "#1A0E06", margin: "0 0 16px"}}>{t("donePhotographer.heading", { name })}</h1>
-          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 24px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("donePhotographer.description")}</p>
-          <div style={{backgroundColor: "#F5EFE4", borderRadius: "8px", padding: "16px", marginBottom: "24px", textAlign: "left"}}>
+      <main style={{minHeight: "100vh", backgroundColor: "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px"}}>
+        <div style={{backgroundColor: "#FDFBF8", borderRadius: "16px", padding: "48px 36px", border: "0.5px solid #E2D5C8", textAlign: "center", maxWidth: "500px", width: "100%"}}>
+          <div style={{width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#FBF0EA", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px"}}>
+            <ReviewStarIcon size={32} color="#C8622A"/>
+          </div>
+          <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 14px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("donePhotographer.badge")}</p>
+          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", fontStyle: "italic", color: "#1A0E06", margin: "0 0 16px", lineHeight: "1.1"}}>{t("donePhotographer.heading", { name })}</h1>
+          <p style={{fontSize: "14px", color: "#7A5C44", margin: "0 0 20px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("donePhotographer.description")}</p>
+          <p style={{fontSize: "12px", color: "#C8622A", margin: "0 0 28px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("donePhotographer.reviewNote")}</p>
+          <div style={{backgroundColor: "#F5EFE4", borderRadius: "10px", padding: "18px", marginBottom: "28px", textAlign: "left"}}>
             {[t("donePhotographer.step1"), t("donePhotographer.step2"), t("donePhotographer.step3"), t("donePhotographer.step4")].map((step, i) => (
-              <div key={i} style={{display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: i < 3 ? "10px" : "0"}}>
-                <span style={{fontSize: "12px", color: "#C8622A", flexShrink: 0, fontWeight: "600", fontFamily: "'Jost', sans-serif"}}>0{i + 1}</span>
-                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{step}</span>
+              <div key={i} style={{display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: i < 3 ? "12px" : "0"}}>
+                <span style={{fontSize: "11px", color: "#C8622A", flexShrink: 0, fontWeight: "600", fontFamily: "'Jost', sans-serif", marginTop: "1px"}}>0{i + 1}</span>
+                <span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", lineHeight: "1.6"}}>{step}</span>
               </div>
             ))}
           </div>
-          <a href="/" style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "12px 32px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("donePhotographer.backToLomissa")}</a>
+          <a href="/" style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "13px 36px", borderRadius: "999px", textDecoration: "none", display: "inline-block", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.04em"}}>{t("donePhotographer.backToLomissa")}</a>
         </div>
       </main>
     );
@@ -302,9 +305,6 @@ export default function Signup() {
           {/* PHOTOGRAPHER FORM */}
           {role === "photographer" && (
             <div style={{display: "flex", flexDirection: "column", gap: "14px"}}>
-              <div style={{backgroundColor: "#F5EFE4", borderRadius: "10px", padding: "11px 14px", border: "0.5px solid #E2D5C8"}}>
-                <p style={{fontSize: "12px", color: "#C8622A", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("form.photoReviewNote")}</p>
-              </div>
               <div className="photo-inner-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px"}}>
                 <div>
                   <label style={labelStyle}>{t("form.nameLabelRequired")}</label>
