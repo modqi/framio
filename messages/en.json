@@ -11,7 +11,6 @@
       "badge": "NOW LAUNCHING WORLDWIDE",
       "headline": "Your moment deserves the perfect photographer",
       "description": "Lomissa is a photography marketplace connecting clients with professional photographers. Browse, book, and receive your photos — all in one place.",
-      "googleDescription": "We use your Google account to create your profile, manage your bookings, and send you important notifications about your sessions and photo deliveries. We never share your data with third parties.",
       "cta": "Find a photographer",
       "ctaSecondary": "Join as photographer",
       "trust": "HAND-PICKED · INSTANT BOOKING · SECURE PAYMENTS"
@@ -1033,6 +1032,10 @@
     "title": "Privacy Policy",
     "lastUpdated": "Last updated: April 2026",
     "legalNotice": "",
+    "googleSignIn": {
+      "title": "Google Sign-in",
+      "content": "When you sign in with Google, we access your name and email address only to create your Lomissa account. We do not access your Gmail, contacts, calendar, or any other Google services. We never sell or share your personal data with third parties."
+    },
     "footer": {
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
@@ -1286,6 +1289,7 @@
     "loginHeading": "Log in",
     "signupHeading": "Create account",
     "googleLogin": "Continue with Google",
+    "googleDataNote": "We only access your name and email address",
     "divider": "or",
     "emailLabel": "Email address",
     "passwordLabel": "Password",

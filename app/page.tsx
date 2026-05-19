@@ -67,11 +67,8 @@ export default function Home() {
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px, 4.5vw, 72px)", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em", lineHeight: "1.05"}}>
             {t("hero.headline")}
           </h1>
-          <p style={{fontSize: "15px", color: "#7A5C44", margin: "0 0 16px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "440px"}}>
+          <p style={{fontSize: "15px", color: "#7A5C44", margin: "0 0 40px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "440px"}}>
             {t("hero.description")}
-          </p>
-          <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 40px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "440px"}}>
-            {t("hero.googleDescription")}
           </p>
           <div className="hero-buttons" style={{display: "flex", gap: "12px", marginBottom: "32px"}}>
             <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)", whiteSpace: "nowrap"}}>

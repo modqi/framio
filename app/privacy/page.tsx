@@ -25,6 +25,11 @@ const sections = [
     content: "We share your data only with the services necessary to operate Lomissa. These include Supabase for secure database storage, Stripe for payment processing, Cloudinary for photo storage, and Resend for email notifications. All these services comply with GDPR and maintain strict data security standards."
   },
   {
+    key: "googleSignIn",
+    title: "Google Sign-in",
+    content: "When you sign in with Google, we access your name and email address only to create your Lomissa account. We do not access your Gmail, contacts, calendar, or any other Google services. We never sell or share your personal data with third parties."
+  },
+  {
     key: "gdpr",
     title: "Your rights under GDPR",
     content: "As a user in Norway or the European Union you have the right to access the personal data we hold about you, correct any inaccurate data, request deletion of your data, object to how we process your data, and request a copy of your data in a portable format. To exercise any of these rights please contact us at privacy@lomissa.com."
