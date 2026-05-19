@@ -290,11 +290,11 @@ export default function Signup() {
               <button onClick={handleClientSignup} disabled={loading} style={{width: "100%", backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginTop: "6px", fontFamily: "'Jost', sans-serif"}}>
                 {loading ? t("form.submittingClient") : t("form.submitClient")}
               </button>
-              <p style={{fontSize: "11px", color: "#DDD0C0", textAlign: "center", lineHeight: "1.7", fontFamily: "'Jost', sans-serif"}}>
+              <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", lineHeight: "1.6", fontFamily: "'Jost', sans-serif", margin: "0"}}>
                 {t("form.tosText")}{" "}
-                <a href="/terms" style={{color: "#7A5C44", textDecoration: "none"}}>{t("form.tosTerms")}</a>
+                <a href="/terms" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosTerms")}</a>
                 {" "}{t("form.tosAnd")}{" "}
-                <a href="/privacy" style={{color: "#7A5C44", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
+                <a href="/privacy" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
               </p>
               <p style={{fontSize: "12px", color: "#7A5C44", textAlign: "center", margin: "4px 0 0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
                 {t("form.wantToJoinAsPhotographer")}{" "}<a href="/signup?role=photographer" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.applyHere")}</a>
@@ -389,11 +389,11 @@ export default function Signup() {
               <button onClick={handlePhotographerApply} disabled={loading} style={{width: "100%", backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "13px", padding: "14px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", marginTop: "6px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.04em"}}>
                 {loading ? t("form.submittingPhotographer") : t("form.submitPhotographer")}
               </button>
-              <p style={{fontSize: "11px", color: "#DDD0C0", textAlign: "center", lineHeight: "1.7", fontFamily: "'Jost', sans-serif"}}>
-                {t("form.tosText")}{" "}
-                <a href="/terms" style={{color: "#7A5C44", textDecoration: "none"}}>{t("form.tosTerms")}</a>
+              <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", lineHeight: "1.6", fontFamily: "'Jost', sans-serif", margin: "0"}}>
+                {t("form.tosTextPhotographer")}{" "}
+                <a href="/terms" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosTerms")}</a>
                 {" "}{t("form.tosAnd")}{" "}
-                <a href="/privacy" style={{color: "#7A5C44", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
+                <a href="/privacy" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
               </p>
             </div>
           )}

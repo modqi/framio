@@ -16,7 +16,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [tosChecked, setTosChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +33,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       setEmail("");
       setPassword("");
       setName("");
-      setTosChecked(false);
       setError("");
       setCheckEmail(false);
       setShowPassword(false);
@@ -119,7 +117,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     e.preventDefault();
     if (!name) { setError(t("errors.nameRequired")); return; }
     if (!password || password.length < 8) { setError(t("errors.passwordLength")); return; }
-    if (!tosChecked) { setError(t("errors.tosRequired")); return; }
     setLoading(true);
     setError("");
 
@@ -147,7 +144,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setStep("email");
     setPassword("");
     setName("");
-    setTosChecked(false);
     setError("");
     setShowPassword(false);
     setTimeout(() => inputRef.current?.focus(), 80);
@@ -345,24 +341,16 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                 <label style={labelCss}>{t("passwordLabel")}</label>
                 {passwordField("new-password")}
               </div>
-              <label style={{display: "flex", alignItems: "flex-start", gap: "10px", cursor: "pointer"}}>
-                <input
-                  type="checkbox"
-                  checked={tosChecked}
-                  onChange={(e) => setTosChecked(e.target.checked)}
-                  style={{marginTop: "3px", accentColor: "#C8622A", flexShrink: 0, width: "14px", height: "14px"}}
-                />
-                <span style={{fontSize: "12px", color: "#7A5C44", fontFamily: "'Jost', sans-serif", lineHeight: "1.6", fontWeight: "300"}}>
-                  {t("step2.tosText")}{" "}
-                  <a href="/terms" target="_blank" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosTerms")}</a>
-                  {" "}{t("step2.tosAnd")}{" "}
-                  <a href="/privacy" target="_blank" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosPrivacy")}</a>
-                </span>
-              </label>
               {error && errorLine(error)}
               <button type="submit" disabled={loading} style={submitBtn(loading)}>
                 {loading ? t("step2.signupSubmitting") : t("step2.signupSubmit")}
               </button>
+              <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", fontFamily: "'Jost', sans-serif", margin: "0", lineHeight: "1.6"}}>
+                {t("step2.consentSignup")}{" "}
+                <a href="/terms" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosTerms")}</a>
+                {" "}{t("step2.tosAnd")}{" "}
+                <a href="/privacy" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosPrivacy")}</a>
+              </p>
             </form>
           </>
         )}
