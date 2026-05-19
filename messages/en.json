@@ -1317,13 +1317,6 @@
       "tosAnd": "and",
       "tosPrivacy": "Privacy Policy"
     },
-    "inAppBrowser": {
-      "opensInBrowser": "Opens in your browser",
-      "shareTitle": "Sign in to Lomissa",
-      "shareText": "Continue with Google Sign-in",
-      "copied": "Link copied! Open Safari and paste the link to continue with Google.",
-      "fallback": "Please copy this link and open it in Safari: lomissa.com/auth/google"
-    },
     "checkEmail": {
       "heading": "Check your email",
       "description": "We sent a confirmation link to {email}. Click it to activate your account."
@@ -1338,10 +1331,6 @@
       "invalidCredentials": "Invalid email or password. Please try again.",
       "genericError": "Something went wrong. Please try again."
     }
-  },
-  "AuthGoogle": {
-    "loading": "Redirecting to Google...",
-    "error": "Something went wrong. Please try again."
   },
   "Categories": {
     "all": "All",

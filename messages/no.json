@@ -1317,13 +1317,6 @@
       "tosAnd": "og",
       "tosPrivacy": "Personvernerklæringen"
     },
-    "inAppBrowser": {
-      "opensInBrowser": "Åpnes i nettleseren din",
-      "shareTitle": "Logg inn på Lomissa",
-      "shareText": "Fortsett med Google-innlogging",
-      "copied": "Lenke kopiert! Åpne Safari og lim inn lenken for å fortsette med Google.",
-      "fallback": "Kopier denne lenken og åpne den i Safari: lomissa.com/auth/google"
-    },
     "checkEmail": {
       "heading": "Sjekk e-posten din",
       "description": "Vi sendte en bekreftelseslenke til {email}. Klikk på den for å aktivere kontoen din."
@@ -1338,10 +1331,6 @@
       "invalidCredentials": "Ugyldig e-post eller passord. Prøv igjen.",
       "genericError": "Noe gikk galt. Prøv igjen."
     }
-  },
-  "AuthGoogle": {
-    "loading": "Omdirigerer til Google...",
-    "error": "Noe gikk galt. Prøv igjen."
   },
   "Categories": {
     "all": "Alle",

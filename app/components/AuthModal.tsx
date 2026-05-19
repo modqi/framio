@@ -1,7 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-
-const GOOGLE_AUTH_URL = "https://www.lomissa.com/auth/google";
 import { supabase } from "../../lib/supabase";
 import { useTranslations } from "../../lib/i18n";
 
@@ -23,12 +21,11 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
-  const [isInAppBrowser, setIsInAppBrowser] = useState(false);
-  const [inAppState, setInAppState] = useState<"default" | "copied" | "fallback">("default");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setIsInAppBrowser(/Instagram|FBAN|FBAV|FB_IAB|FB4A|FBIOS/.test(navigator.userAgent));
+    const isInAppBrowser = /Instagram|FBAN|FBAV|FB_IAB|FB4A|FBIOS/.test(navigator.userAgent);
+    if (isInAppBrowser) console.warn("[AuthModal] In-app browser detected");
   }, []);
 
   useEffect(() => {
@@ -42,7 +39,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       setCheckEmail(false);
       setShowPassword(false);
       setLoading(false);
-      setInAppState("default");
       setTimeout(() => inputRef.current?.focus(), 80);
     }
   }, [open]);
@@ -68,34 +64,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
-  };
-
-  const handleGoogleInAppBrowser = async () => {
-    // Step 1 — native share sheet (cleanest on iPhone, lets the OS open in Safari)
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({
-          title: t("inAppBrowser.shareTitle"),
-          text: t("inAppBrowser.shareText"),
-          url: GOOGLE_AUTH_URL,
-        });
-        return;
-      } catch {
-        // AbortError (user cancelled) or NotAllowedError — fall through
-      }
-    }
-
-    // Step 2 — window.open (works on Android; usually blocked in iOS in-app browsers)
-    const popup = window.open(GOOGLE_AUTH_URL, "_blank");
-    if (popup) return;
-
-    // Step 3 — clipboard copy as last resort
-    try {
-      await navigator.clipboard.writeText(GOOGLE_AUTH_URL);
-      setInAppState("copied");
-    } catch {
-      setInAppState("fallback");
-    }
   };
 
   const handleEmailContinue = async (e: React.FormEvent) => {
@@ -243,40 +211,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     </button>
   );
 
-  const googleSvg = (
-    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-  );
-
-  const inAppGoogleBtn = (
-    <div style={{marginBottom: "20px"}}>
-      {inAppState === "default" && (
-        <>
-          <button type="button" onClick={handleGoogleInAppBrowser} style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", border: "1px solid #E2D5C8", borderRadius: "999px", padding: "12px 20px", backgroundColor: "#fff", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontSize: "14px", fontWeight: "500", color: "#1A0E06", marginBottom: "6px"}}>
-            {googleSvg}
-            {t("googleLogin")}
-          </button>
-          <p style={{textAlign: "center", fontSize: "12px", color: "#C4907A", fontFamily: "'Jost', sans-serif", margin: "0"}}>
-            {t("inAppBrowser.opensInBrowser")}
-          </p>
-        </>
-      )}
-      {inAppState === "copied" && (
-        <div style={{backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "10px", padding: "14px 16px"}}>
-          <p style={{fontSize: "13px", color: "#15803d", fontFamily: "'Jost', sans-serif", margin: "0", lineHeight: "1.6"}}>
-            {t("inAppBrowser.copied")}
-          </p>
-        </div>
-      )}
-      {inAppState === "fallback" && (
-        <div style={{backgroundColor: "#FBF0EA", border: "1px solid #E8C8B0", borderRadius: "10px", padding: "14px 16px"}}>
-          <p style={{fontSize: "13px", color: "#1A0E06", fontFamily: "'Jost', sans-serif", margin: "0", lineHeight: "1.6"}}>
-            {t("inAppBrowser.fallback")}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-
   const divider = (
     <div style={{display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px"}}>
       <div style={{flex: 1, height: "1px", backgroundColor: "#E2D5C8"}}/>
@@ -343,7 +277,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
         {step === "email" && (
           <>
             {heading(t("heading"))}
-            {isInAppBrowser ? inAppGoogleBtn : googleBtn}
+            {googleBtn}
             {divider}
             <form onSubmit={handleEmailContinue} style={{display: "flex", flexDirection: "column", gap: "14px"}}>
               <div>
