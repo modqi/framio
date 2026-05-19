@@ -223,8 +223,8 @@ export default function Home() {
             <div>
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.legalLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="https://www.lomissa.com/privacy" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.privacyPolicy")}</a>
-                <a href="https://www.lomissa.com/terms" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.termsOfService")}</a>
+                <a href="https://www.lomissa.com/privacy-policy" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.privacyPolicy")}</a>
+                <a href="https://www.lomissa.com/terms-of-service" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.termsOfService")}</a>
               </div>
             </div>
             <div>

@@ -348,9 +348,9 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               </button>
               <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", fontFamily: "'Jost', sans-serif", margin: "0", lineHeight: "1.6"}}>
                 {t("step2.consentSignup")}{" "}
-                <a href="/terms" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosTerms")}</a>
+                <a href="/terms-of-service" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosTerms")}</a>
                 {" "}{t("step2.tosAnd")}{" "}
-                <a href="/privacy" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosPrivacy")}</a>
+                <a href="/privacy-policy" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosPrivacy")}</a>
               </p>
             </form>
           </>

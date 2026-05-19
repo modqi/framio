@@ -292,9 +292,9 @@ export default function Signup() {
               </button>
               <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", lineHeight: "1.6", fontFamily: "'Jost', sans-serif", margin: "0"}}>
                 {t("form.tosText")}{" "}
-                <a href="/terms" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosTerms")}</a>
+                <a href="/terms-of-service" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosTerms")}</a>
                 {" "}{t("form.tosAnd")}{" "}
-                <a href="/privacy" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
+                <a href="/privacy-policy" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
               </p>
               <p style={{fontSize: "12px", color: "#7A5C44", textAlign: "center", margin: "4px 0 0", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>
                 {t("form.wantToJoinAsPhotographer")}{" "}<a href="/signup?role=photographer" style={{color: "#C8622A", textDecoration: "none", fontWeight: "500"}}>{t("form.applyHere")}</a>
@@ -391,9 +391,9 @@ export default function Signup() {
               </button>
               <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", lineHeight: "1.6", fontFamily: "'Jost', sans-serif", margin: "0"}}>
                 {t("form.tosTextPhotographer")}{" "}
-                <a href="/terms" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosTerms")}</a>
+                <a href="/terms-of-service" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosTerms")}</a>
                 {" "}{t("form.tosAnd")}{" "}
-                <a href="/privacy" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
+                <a href="/privacy-policy" style={{color: "#C8622A", textDecoration: "none"}}>{t("form.tosPrivacy")}</a>
               </p>
             </div>
           )}
