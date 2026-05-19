@@ -322,7 +322,7 @@
       "tosAnd": "and",
       "tosPrivacy": "Privacy Policy",
       "photoReviewNote": "✓ We review every application personally and respond within 3 business days.",
-      "locationLabel": "Location",
+      "locationLabel": "Location *",
       "locationPlaceholder": "e.g. Bergen, Norway",
       "categoriesLabel": "Photography specialties (select all that apply) *",
       "otherSpecialtyLabel": "Please describe your specialty",

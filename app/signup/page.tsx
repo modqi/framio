@@ -67,7 +67,7 @@ export default function Signup() {
   };
 
   const handlePhotographerApply = async () => {
-    if (!name || !email || !password || selectedCategories.length === 0 || !about) {
+    if (!name || !email || !password || !location || selectedCategories.length === 0 || !about) {
       setError(t("errors.fillRequired")); return;
     }
     if (password.length < 8) { setError(t("errors.passwordLength")); return; }
