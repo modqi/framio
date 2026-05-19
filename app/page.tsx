@@ -275,8 +275,8 @@ export default function Home() {
             <div>
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.legalLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/privacy" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Privacy Policy</a>
-                <a href="/terms" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Terms of Service</a>
+                <a href="/privacy" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.privacyPolicy")}</a>
+                <a href="/terms" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.termsOfService")}</a>
               </div>
             </div>
             <div>
@@ -289,7 +289,7 @@ export default function Home() {
           </div>
         </div>
         <div style={{maxWidth: "1100px", margin: "32px auto 0", paddingTop: "32px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
-          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+          <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
           <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("footer.taglineBottom")}</p>
         </div>
       </footer>
