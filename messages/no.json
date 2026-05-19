@@ -1318,7 +1318,11 @@
       "tosPrivacy": "Personvernerklæringen"
     },
     "inAppBrowser": {
-      "opensInBrowser": "Åpnes i nettleseren din"
+      "opensInBrowser": "Åpnes i nettleseren din",
+      "shareTitle": "Logg inn på Lomissa",
+      "shareText": "Fortsett med Google-innlogging",
+      "copied": "Lenke kopiert! Åpne Safari og lim inn lenken for å fortsette med Google.",
+      "fallback": "Kopier denne lenken og åpne den i Safari: lomissa.com/auth/google"
     },
     "checkEmail": {
       "heading": "Sjekk e-posten din",
@@ -1336,7 +1340,8 @@
     }
   },
   "AuthGoogle": {
-    "loading": "Omdirigerer til Google..."
+    "loading": "Omdirigerer til Google...",
+    "error": "Noe gikk galt. Prøv igjen."
   },
   "Categories": {
     "all": "Alle",
