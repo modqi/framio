@@ -223,8 +223,8 @@ export default function Home() {
             <div>
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.legalLabel")}</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="https://www.lomissa.com/privacy-policy" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.privacyPolicy")}</a>
-                <a href="https://www.lomissa.com/terms-of-service" style={{fontSize: "13px", color: "#1A0E06", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>{t("footer.termsOfService")}</a>
+                <a href="/privacy-policy" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>Privacy Policy</a>
+                <a href="/terms-of-service" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>Terms of Service</a>
               </div>
             </div>
             <div>
