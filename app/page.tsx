@@ -2,16 +2,8 @@ import Logo from "./components/Logo";
 import NavbarClient from "./components/NavbarClient";
 import FooterAuthButtons from "./components/FooterAuthButtons";
 import HomeFeaturedPhotographers from "./components/HomeFeaturedPhotographers";
+import HomeStaticSections from "./components/HomeStaticSections";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
-import en from "@/messages/en.json";
-
-const home = (en as any).Home;
-function t(key: string): string {
-  const parts = key.split(".");
-  let val: any = home;
-  for (const p of parts) val = val?.[p];
-  return typeof val === "string" ? val : key;
-}
 
 export default async function Home() {
   const supabase = createServerSupabaseClient();
@@ -45,106 +37,10 @@ export default async function Home() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="hero-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh", paddingTop: "65px"}}>
+      {/* Hero, Trust bar, How it works — locale-aware client component */}
+      <HomeStaticSections />
 
-        {/* Left — content */}
-        <div className="hero-left" style={{padding: "80px 56px", display: "flex", flexDirection: "column", justifyContent: "center", borderRight: "1px solid #E2D5C8"}}>
-          <div style={{display: "inline-block", backgroundColor: "rgba(184,85,40,0.08)", border: "1px solid rgba(184,85,40,0.2)", borderRadius: "999px", padding: "6px 16px", marginBottom: "32px", alignSelf: "flex-start"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("hero.badge")}</p>
-          </div>
-          <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(40px, 4.5vw, 72px)", fontWeight: "300", fontStyle: "italic", color: "#1A0E06", margin: "0 0 24px", letterSpacing: "-0.02em", lineHeight: "1.05"}}>
-            {t("hero.headline")}
-          </h1>
-          <p style={{fontSize: "15px", color: "#7A5C44", margin: "0 0 40px", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300", maxWidth: "440px"}}>
-            {t("hero.description")}
-          </p>
-          <div className="hero-buttons" style={{display: "flex", gap: "12px", marginBottom: "32px"}}>
-            <a href="/photographers" style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", letterSpacing: "0.05em", boxShadow: "0 4px 20px rgba(184,85,40,0.3)", whiteSpace: "nowrap"}}>
-              {t("hero.cta")}
-            </a>
-            <a href="/signup?role=photographer" style={{color: "#1A0E06", fontSize: "14px", padding: "14px 32px", borderRadius: "999px", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500", border: "1px solid #1A0E06", whiteSpace: "nowrap"}}>
-              {t("hero.ctaSecondary")}
-            </a>
-          </div>
-          <p style={{fontSize: "11px", color: "#DDD0C0", margin: "0", letterSpacing: "0.12em", fontFamily: "'Jost', sans-serif"}}>
-            {t("hero.trust")}
-          </p>
-        </div>
-
-        {/* Right — decorative card collage */}
-        <div className="hero-right" style={{backgroundColor: "#F5EFE4", display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 56px", position: "relative", overflow: "hidden"}}>
-          <div style={{position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 70% 30%, rgba(184,85,40,0.07) 0%, transparent 55%)", pointerEvents: "none"}} />
-          <div style={{position: "relative", width: "260px", height: "360px"}}>
-            {/* Back card */}
-            <div style={{position: "absolute", inset: 0, background: "#DDD0C0", borderRadius: "12px", transform: "rotate(5deg) translateY(14px) translateX(10px)", boxShadow: "0 8px 32px rgba(28,16,9,0.10)"}} />
-            {/* Middle card */}
-            <div style={{position: "absolute", inset: 0, background: "#EDE3D1", borderRadius: "12px", transform: "rotate(-3deg) translateY(7px)", boxShadow: "0 8px 32px rgba(28,16,9,0.08)"}} />
-            {/* Front card */}
-            <div style={{position: "absolute", inset: 0, background: "#FDFBF8", borderRadius: "12px", border: "1px solid #E2D5C8", boxShadow: "0 12px 40px rgba(28,16,9,0.12)", overflow: "hidden", display: "flex", flexDirection: "column"}}>
-              <div style={{flex: 1, backgroundImage: "repeating-linear-gradient(-45deg,#E2D5C8,#E2D5C8 5px,#EDE3D1 5px,#EDE3D1 12px)", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                <span style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "80px", fontWeight: "300", color: "#C8622A", opacity: 0.3}}>L</span>
-              </div>
-              <div style={{padding: "16px 18px", borderTop: "1px solid #E2D5C8"}}>
-                <div style={{display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px"}}>
-                  <div style={{width: "6px", height: "6px", borderRadius: "50%", background: "#C8622A", flexShrink: 0}} />
-                  <div style={{height: "8px", width: "90px", background: "#E2D5C8", borderRadius: "4px"}} />
-                </div>
-                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                  <div style={{height: "6px", width: "56px", background: "#F0EAE0", borderRadius: "4px"}} />
-                  <div style={{height: "6px", width: "38px", background: "#E8A97E", borderRadius: "4px", opacity: 0.55}} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust bar */}
-      <section style={{backgroundColor: "#1A0E06", padding: "18px 48px"}}>
-        <div className="trust-bar-inner" style={{maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap"}}>
-          {[
-            t("trustBar.item1"),
-            t("trustBar.item2"),
-            t("trustBar.item3"),
-            t("trustBar.item4"),
-          ].map((item, i, arr) => (
-            <span key={i} style={{display: "flex", alignItems: "center"}}>
-              <span style={{fontSize: "11px", color: "#DDD0C0", letterSpacing: "0.12em", fontFamily: "'Jost', sans-serif", fontWeight: "400", whiteSpace: "nowrap"}}>{item}</span>
-              {i < arr.length - 1 && (
-                <span className="trust-bar-dot" style={{color: "#3A2A1E", margin: "0 20px", fontSize: "16px", lineHeight: "1"}}>·</span>
-              )}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section style={{backgroundColor: "#F5EFE4", padding: "100px 48px"}}>
-        <div style={{maxWidth: "1000px", margin: "0 auto"}}>
-          <div style={{textAlign: "center", marginBottom: "72px"}}>
-            <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 16px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("howItWorks.label")}</p>
-            <h2 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 4vw, 48px)", fontWeight: "400", color: "#1A0E06", margin: "0", letterSpacing: "-0.02em"}}>
-              {t("howItWorks.heading")}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              { number: "01", title: t("howItWorks.step1Title"), desc: t("howItWorks.step1Desc") },
-              { number: "02", title: t("howItWorks.step2Title"), desc: t("howItWorks.step2Desc") },
-              { number: "03", title: t("howItWorks.step3Title"), desc: t("howItWorks.step3Desc") },
-            ].map((step) => (
-              <div key={step.number}>
-                <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "48px", fontWeight: "300", color: "#E2D5C8", margin: "0 0 20px", letterSpacing: "-0.04em", lineHeight: "1"}}>{step.number}</p>
-                <h3 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{step.title}</h3>
-                <p style={{fontSize: "14px", color: "#7A5C44", margin: "0", lineHeight: "1.8", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured photographers — client island (needs useCurrency) */}
+      {/* Featured photographers — locale-aware, receives server-fetched data */}
       <HomeFeaturedPhotographers photographers={photographers} />
 
       {/* Footer */}
@@ -152,27 +48,27 @@ export default async function Home() {
         <div style={{maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "32px"}}>
           <div>
             <Logo size="md" asLink={false} />
-            <p style={{fontSize: "12px", color: "#7A5C44", margin: "16px 0 0", maxWidth: "280px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("footer.tagline")}</p>
+            <p style={{fontSize: "12px", color: "#7A5C44", margin: "16px 0 0", maxWidth: "280px", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>The photography marketplace connecting clients with hand-picked photographers worldwide.</p>
           </div>
           <div style={{display: "flex", gap: "48px", flexWrap: "wrap"}}>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.platformLabel")}</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PLATFORM</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/photographers" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.findPhotographers")}</a>
+                <a href="/photographers" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Find photographers</a>
                 <FooterAuthButtons />
               </div>
             </div>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.legalLabel")}</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>LEGAL</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
                 <a href="/privacy-policy" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>Privacy Policy</a>
                 <a href="/terms-of-service" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>Terms of Service</a>
               </div>
             </div>
             <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("footer.photographersLabel")}</p>
+              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PHOTOGRAPHERS</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/signup?role=photographer" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.applyToJoin")}</a>
+                <a href="/signup?role=photographer" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>Apply to join</a>
                 <a href="mailto:hello@lomissa.com" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>hello@lomissa.com</a>
               </div>
             </div>
@@ -180,10 +76,10 @@ export default async function Home() {
         </div>
         <div style={{maxWidth: "1100px", margin: "32px auto 0", paddingTop: "32px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
           <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
-          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("footer.taglineBottom")}</p>
+          <p style={{fontSize: "12px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>Made with ❤️ for photographers everywhere</p>
         </div>
         <div style={{maxWidth: "1100px", margin: "20px auto 0", paddingTop: "20px", borderTop: "1px solid #F0EAE0"}}>
-          <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{t("footer.dataUsage")}</p>
+          <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", lineHeight: "1.7", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>When you sign in with Google, we access your name and email address to create your Lomissa account. We do not access your Gmail, contacts, or any other Google services.</p>
         </div>
       </footer>
     </main>

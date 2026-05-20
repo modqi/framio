@@ -8,18 +8,18 @@
       "joinAsPhotographer": "Bli fotograf"
     },
     "hero": {
-      "badge": "NÅ TILGJENGELIG OVER HELE VERDEN",
+      "badge": "LANSERER NÅ GLOBALT",
       "headline": "Øyeblikket ditt fortjener den perfekte fotografen",
       "description": "Lomissa er en fotografimarkedsplass som kobler kunder med profesjonelle fotografer. Bla gjennom, bestill og motta bildene dine — alt på ett sted.",
       "cta": "Finn en fotograf",
-      "ctaSecondary": "Bli med som fotograf",
-      "trust": "HÅNDPLUKKET · ØYEBLIKKELIG BESTILLING · SIKRE BETALINGER"
+      "ctaSecondary": "Bli fotograf",
+      "trust": "HÅNDPLUKKET · UMIDDELBAR BESTILLING · SIKRE BETALINGER"
     },
     "trustBar": {
       "item1": "Håndplukkede fotografer",
       "item2": "Sikre betalinger",
       "item3": "Fotolevering inkludert",
-      "item4": "Lanseres nå over hele verden"
+      "item4": "Lanserer nå globalt"
     },
     "howItWorks": {
       "label": "SLIK FUNGERER DET",
