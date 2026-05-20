@@ -3,6 +3,7 @@ import NavbarClient from "./components/NavbarClient";
 import FooterAuthButtons from "./components/FooterAuthButtons";
 import HomeFeaturedPhotographers from "./components/HomeFeaturedPhotographers";
 import HomeStaticSections from "./components/HomeStaticSections";
+import HomeFooterLegal from "./components/HomeFooterLegal";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 
 export default async function Home() {
@@ -58,13 +59,7 @@ export default async function Home() {
                 <FooterAuthButtons />
               </div>
             </div>
-            <div>
-              <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>LEGAL</p>
-              <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                <a href="/privacy-policy" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>Privacy Policy</a>
-                <a href="/terms-of-service" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "underline", fontFamily: "'Jost', sans-serif", fontWeight: "400"}}>Terms of Service</a>
-              </div>
-            </div>
+            <HomeFooterLegal />
             <div>
               <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>PHOTOGRAPHERS</p>
               <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
