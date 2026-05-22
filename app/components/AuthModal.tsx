@@ -154,8 +154,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const backdrop: React.CSSProperties = {
     position: "fixed", inset: 0, zIndex: 1000,
     backgroundColor: "rgba(26,14,6,0.55)", backdropFilter: "blur(4px)",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    padding: "16px",
+    display: "flex", alignItems: "flex-start", justifyContent: "center",
+    padding: "5vh 16px 16px",
   };
 
   const card: React.CSSProperties = {
@@ -164,7 +164,24 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     padding: "40px 36px 32px",
     position: "relative",
     boxShadow: "0 24px 80px rgba(26,14,6,0.18)",
+    maxHeight: "90vh",
+    overflowY: "auto",
   };
+
+  const mobileStyles = (
+    <style>{`
+      @media (max-width: 480px) {
+        .auth-modal-card {
+          padding: 20px 20px 24px !important;
+          border-radius: 12px !important;
+        }
+        .auth-modal-card h2 {
+          font-size: 24px !important;
+          margin-bottom: 16px !important;
+        }
+      }
+    `}</style>
+  );
 
   const inputCss: React.CSSProperties = {
     width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px",
@@ -245,7 +262,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   if (checkEmail) {
     return (
       <div style={backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
-        <div style={card}>
+        {mobileStyles}
+        <div style={card} className="auth-modal-card">
           {closeBtn}
           <div style={{textAlign: "center", padding: "16px 0"}}>
             <div style={{width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "#FBF0EA", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px"}}>
@@ -266,7 +284,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
   return (
     <div style={backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div style={card}>
+      {mobileStyles}
+      <div style={card} className="auth-modal-card">
         {closeBtn}
 
         {/* ── STEP 1: EMAIL ── */}
