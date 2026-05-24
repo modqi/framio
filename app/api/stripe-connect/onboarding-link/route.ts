@@ -26,23 +26,23 @@ export async function POST(request: NextRequest) {
 
   try {
     const { data: { user } } = await anonClient.auth.getUser(token);
-    if (!user || user.user_metadata?.role !== "photographer") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const serviceClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    // Single query: authorizes access AND fetches needed data.
+    // user_metadata is user-writable and cannot be trusted for authorization.
     const { data: photographer } = await serviceClient
       .from("photographers")
       .select("stripe_account_id, stripe_onboarding_completed, email, name")
       .eq("user_id", user.id)
-      .single();
+      .maybeSingle();
 
     if (!photographer) {
-      return NextResponse.json({ error: "Photographer record not found" }, { status: 404 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     if (photographer.stripe_onboarding_completed) {

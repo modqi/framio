@@ -11,16 +11,13 @@ export async function POST(request: NextRequest) {
   );
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (user.user_metadata?.role !== "photographer") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
 
   const serviceClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Verify the photographer row exists in the DB — JWT metadata can be stale
+  // Verify the photographer row exists in the DB — user_metadata is user-writable and cannot be trusted
   const { data: photographerRow } = await serviceClient
     .from("photographers")
     .select("id")

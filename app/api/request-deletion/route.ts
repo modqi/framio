@@ -6,11 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const serviceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 const esc = (s: unknown): string =>
   String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -30,6 +25,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const serviceClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
   // Block if a pending request already exists
   const { data: existing } = await serviceClient
     .from("account_deletion_requests")
@@ -42,8 +42,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "already_pending" }, { status: 409 });
   }
 
-  const userRole: "client" | "photographer" =
-    user.user_metadata?.role === "photographer" ? "photographer" : "client";
+  // Determine role from DB — user_metadata is user-writable and cannot be trusted
+  const { data: pgRow } = await serviceClient
+    .from("photographers")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const userRole: "client" | "photographer" = pgRow ? "photographer" : "client";
   const userName = user.user_metadata?.name || "User";
   const userEmail = user.email!;
   const idColumn = userRole === "client" ? "client_id" : "photographer_id";

@@ -19,9 +19,18 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (user.user_metadata?.role !== "photographer") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const serviceClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  // Verify the user has an approved photographer record — user_metadata is user-writable and cannot be trusted
+  const { data: pgRow } = await serviceClient
+    .from("photographers")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!pgRow) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();
   const { isDelivery, bookingId } = body as { isDelivery?: boolean; bookingId?: string };
@@ -31,10 +40,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "bookingId is required for delivery uploads" }, { status: 400 });
     }
 
-    const serviceClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const { data: booking } = await serviceClient
       .from("bookings")
       .select("photographer_id")

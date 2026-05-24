@@ -12,7 +12,11 @@ export default function AuthCallback() {
       }
       const role = session.user.user_metadata?.role;
       if (!role) {
-        await supabase.auth.updateUser({ data: { role: "client" } });
+        // Assign role server-side so the write comes from the service role, not the user's own session
+        await fetch("/api/auth/set-client-role", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
         window.location.href = "/dashboard";
         return;
       }
