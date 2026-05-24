@@ -8,11 +8,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const serviceClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 function extractPublicId(url: string): string {
   const clean = url.split("?")[0];
   const match = clean.match(/\/image\/(?:upload|authenticated)\/(?:[^/]+\/)*v\d+\/(.+)$/);
@@ -37,6 +32,11 @@ export async function GET(
   );
   const { data: { user } } = await anonClient.auth.getUser(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const serviceClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
   const deliveryId = typeof params?.then === "function"
     ? (await params).deliveryId
@@ -71,14 +71,11 @@ export async function GET(
   for (const photo of photos || []) {
     if (photo.storage_path) {
       // New Supabase Storage photo — three URLs: thumbnail, full view, download
-      const [thumbResult, fullResult, dlResult] = await Promise.all([
+      const [thumbResult, fullResult] = await Promise.all([
         serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn, {
           transform: { width: 600, height: 600, resize: "cover", quality: 80 },
         }),
         serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn),
-        serviceClient.storage.from("deliveries").createSignedUrl(photo.storage_path, storageExpiresIn, {
-          download: photo.filename || true,
-        }),
       ]);
 
       if (thumbResult.data?.signedUrl) {
@@ -89,9 +86,8 @@ export async function GET(
       if (fullResult.data?.signedUrl) {
         fullUrls[photo.id] = fullResult.data.signedUrl;
       }
-      if (dlResult.data?.signedUrl) {
-        downloadUrls[photo.id] = dlResult.data.signedUrl;
-      }
+      // Proxy route strips EXIF before delivery; never expose raw storage paths
+      downloadUrls[photo.id] = `/api/deliveries/${deliveryId}/download/${photo.id}`;
     } else if (photo.cloudinary_url) {
       // Legacy Cloudinary photo — existing logic unchanged; full res for both grid and lightbox
       const publicId = photo.cloudinary_public_id || extractPublicId(photo.cloudinary_url);

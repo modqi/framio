@@ -18,7 +18,7 @@ export default function PhotoGallery({ params }: { params: any }) {
   const [booking, setBooking] = useState<any>(null);
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lightbox, setLightbox] = useState<{ view: string; dl: string } | null>(null);
+  const [lightbox, setLightbox] = useState<{ view: string; dl: string; filename: string } | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [approving, setApproving] = useState(false);
   const [approveSuccess, setApproveSuccess] = useState(false);
@@ -28,6 +28,7 @@ export default function PhotoGallery({ params }: { params: any }) {
   const [downloadUrls, setDownloadUrls] = useState<Record<string, string>>({});
   const [urlsExpiresAt, setUrlsExpiresAt] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [accessToken, setAccessToken] = useState("");
 
   useEffect(() => {
     const resolve = async () => {
@@ -86,6 +87,7 @@ export default function PhotoGallery({ params }: { params: any }) {
 
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token ?? "";
+      setAccessToken(token);
 
       const dlRes = await fetch(`/api/photo-deliveries?bookingId=${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -172,21 +174,39 @@ export default function PhotoGallery({ params }: { params: any }) {
     }
   };
 
-  const handleDownloadSelected = () => {
+  const downloadFile = async (url: string, filename: string) => {
+    if (url.startsWith("/api/")) {
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    } else {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.target = "_blank";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
+  const handleDownloadSelected = async () => {
     const photos = allPhotos.filter((p: any) => selected.has(p.id));
-    photos.forEach((photo: any, i: number) => {
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
       const url = downloadUrls[photo.id];
-      if (!url) return;
-      // Stagger downloads to avoid browser popup blockers
-      setTimeout(() => {
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = photo.filename || `photo-${i + 1}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }, i * 300);
-    });
+      if (!url) continue;
+      if (i > 0) await new Promise(r => setTimeout(r, 300));
+      await downloadFile(url, photo.filename || `photo-${i + 1}.jpg`);
+    }
   };
 
   if (loading) return (
@@ -283,7 +303,7 @@ export default function PhotoGallery({ params }: { params: any }) {
                       outline: isSelected ? "2px solid #C8622A" : "none",
                       outlineOffset: "2px",
                     }}
-                    onClick={() => setLightbox({ view: fullUrl, dl: dlUrl })}
+                    onClick={() => setLightbox({ view: fullUrl, dl: dlUrl, filename: photo.filename || "photo.jpg" })}
                   >
                     {/* Selection overlay tint */}
                     {isSelected && (
@@ -322,24 +342,21 @@ export default function PhotoGallery({ params }: { params: any }) {
                     </button>
 
                     {/* Individual download button */}
-                    <a
-                      href={dlUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={e => e.stopPropagation()}
+                    <button
+                      onClick={e => { e.stopPropagation(); downloadFile(dlUrl, photo.filename || "photo.jpg"); }}
                       style={{
                         position: "absolute", bottom: "8px", right: "8px", zIndex: 3,
                         backgroundColor: "rgba(0,0,0,0.55)", color: "#fff",
                         borderRadius: "6px", padding: "5px 10px",
                         fontSize: "11px", fontFamily: "'Jost', sans-serif",
-                        textDecoration: "none", backdropFilter: "blur(4px)",
+                        border: "none", cursor: "pointer", backdropFilter: "blur(4px)",
                         opacity: 0, transition: "opacity 0.15s",
                       }}
                       className="photo-dl-btn"
                       title="Download"
                     >
                       {t("delivery.save")}
-                    </a>
+                    </button>
                   </div>
                 );
               })}
@@ -361,16 +378,13 @@ export default function PhotoGallery({ params }: { params: any }) {
             onClick={e => e.stopPropagation()}
           />
           <div style={{position: "absolute", top: "20px", right: "20px", display: "flex", gap: "10px"}}>
-            <a
-              href={lightbox.dl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={e => e.stopPropagation()}
-              style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", backdropFilter: "blur(4px)"}}
+            <button
+              onClick={e => { e.stopPropagation(); downloadFile(lightbox.dl, lightbox.filename); }}
+              style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)"}}
               title="Download"
             >
               ↓
-            </a>
+            </button>
             <button
               onClick={() => setLightbox(null)}
               style={{background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: "40px", height: "40px", borderRadius: "50%", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center"}}
