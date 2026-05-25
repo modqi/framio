@@ -155,7 +155,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     position: "fixed", inset: 0, zIndex: 1000,
     backgroundColor: "rgba(26,14,6,0.55)", backdropFilter: "blur(4px)",
     display: "flex", alignItems: "flex-start", justifyContent: "center",
-    padding: "5vh 16px 16px",
+    padding: "5vh 16px 24px",
+    overflowY: "auto",   // backdrop is the scroll container — card renders at natural height
   };
 
   const card: React.CSSProperties = {
@@ -164,13 +165,15 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     padding: "40px 36px 32px",
     position: "relative",
     boxShadow: "0 24px 80px rgba(26,14,6,0.18)",
-    maxHeight: "90vh",
-    overflowY: "auto",
+    flexShrink: 0,       // prevent flex from compressing the card
   };
 
   const mobileStyles = (
     <style>{`
       @media (max-width: 480px) {
+        .auth-modal-backdrop {
+          padding: 3vh 12px 20px !important;
+        }
         .auth-modal-card {
           padding: 20px 20px 24px !important;
           border-radius: 12px !important;
@@ -261,7 +264,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
   if (checkEmail) {
     return (
-      <div style={backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div style={backdrop} className="auth-modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
         {mobileStyles}
         <div style={card} className="auth-modal-card">
           {closeBtn}
@@ -283,7 +286,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   // ─── main modal ──────────────────────────────────────────────────────────────
 
   return (
-    <div style={backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div style={backdrop} className="auth-modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       {mobileStyles}
       <div style={card} className="auth-modal-card">
         {closeBtn}
