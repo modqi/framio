@@ -1433,9 +1433,9 @@
       "signupSubmitting": "Oppretter konto…",
       "consentSignup": "Ved å opprette en konto godtar du våre",
       "tosText": "Jeg godtar",
-      "tosTerms": "Vilkårene for bruk",
+      "tosTerms": "Vilkår for bruk",
       "tosAnd": "og",
-      "tosPrivacy": "Personvernerklæringen"
+      "tosPrivacy": "Personvernregler"
     },
     "checkEmail": {
       "heading": "Sjekk e-posten din",

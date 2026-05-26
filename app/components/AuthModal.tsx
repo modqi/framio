@@ -348,11 +348,11 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               <button type="submit" disabled={loading} style={submitBtn(loading)}>
                 {loading ? t("step2.signupSubmitting") : t("step2.signupSubmit")}
               </button>
-              <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", fontFamily: "'Jost', sans-serif", margin: "0", lineHeight: "1.6"}}>
+              <p style={{fontSize: "11px", color: "#7A5C44", textAlign: "center", fontFamily: "'Jost', sans-serif", margin: "0", lineHeight: "1.5"}}>
                 {t("step2.consentSignup")}{" "}
-                <a href="/terms-of-service" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosTerms")}</a>
+                <a href="/terms-of-service" target="_blank" rel="noopener" style={{color: "#C8622A", textDecoration: "underline"}}>{t("step2.tosTerms")}</a>
                 {" "}{t("step2.tosAnd")}{" "}
-                <a href="/privacy-policy" style={{color: "#C8622A", textDecoration: "none"}}>{t("step2.tosPrivacy")}</a>
+                <a href="/privacy-policy" target="_blank" rel="noopener" style={{color: "#C8622A", textDecoration: "underline"}}>{t("step2.tosPrivacy")}</a>
               </p>
             </form>
           </>
