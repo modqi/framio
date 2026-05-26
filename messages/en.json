@@ -1015,11 +1015,76 @@
     "nav": { "backHome": "← Back to home" },
     "badge": "LEGAL",
     "title": "Privacy Policy",
-    "lastUpdated": "Last updated: April 2026",
-    "legalNotice": "",
-    "googleSignIn": {
-      "title": "Google Sign-in",
-      "content": "When you sign in with Google, we access your name and email address only to create your Lomissa account. We do not access your Gmail, contacts, calendar, or any other Google services. We never sell or share your personal data with third parties."
+    "lastUpdated": "Last updated: May 2026",
+    "sections": {
+      "s1": {
+        "title": "Who We Are",
+        "body": "Lomissa is a photography marketplace connecting clients with professional photographers worldwide. We are the data controller for personal data collected through lomissa.com. This privacy policy explains what data we collect, why we collect it, and how we use and protect it."
+      },
+      "s2": {
+        "title": "What Data We Collect",
+        "intro": "Depending on how you use Lomissa, we may collect:",
+        "item0": "Account information: name, email address, and password when you register",
+        "item1": "Booking details: session date, location, package selected, and messages exchanged with photographers",
+        "item2": "Payment data: billing details handled by Stripe (we never store full card numbers)",
+        "item3": "Usage data: device type, browser, pages visited, and interaction timestamps via analytics"
+      },
+      "s3": {
+        "title": "How We Use Your Data",
+        "body": "We use your data to operate the platform: process bookings, facilitate payments, send transactional emails, and provide customer support. We may also use aggregated, anonymised data to improve our services. We do not sell your personal data to third parties, and we do not use it for targeted advertising."
+      },
+      "s4": {
+        "title": "Legal Basis for Processing",
+        "intro": "We process your personal data on the following legal bases:",
+        "item0": "Contract: to fulfil your booking and deliver the services you requested",
+        "item1": "Legitimate interests: to prevent fraud, maintain platform security, and improve our services",
+        "item2": "Legal obligation: to comply with tax, accounting, and other applicable regulations",
+        "item3": "Consent: for optional communications such as newsletters (you may withdraw consent at any time)"
+      },
+      "s5": {
+        "title": "Data Retention",
+        "body": "We retain your account data for as long as your account is active. Booking records are kept for seven years to comply with Norwegian accounting legislation. If you request account deletion, your personal information is anonymised within 30 days, subject to any legal retention obligations. Anonymised data may be retained for statistical purposes."
+      },
+      "s6": {
+        "title": "Who We Share Data With",
+        "intro": "",
+        "item0": "Stripe – payment processing and Connect payouts (Stripe Privacy Policy applies)",
+        "item1": "Supabase – database and authentication infrastructure",
+        "item2": "Cloudinary – image hosting and delivery"
+      },
+      "s7": {
+        "title": "International Transfers",
+        "body": "Some of our service providers operate outside the European Economic Area. Where data is transferred outside the EEA, we ensure appropriate safeguards are in place, such as Standard Contractual Clauses approved by the European Commission. Stripe, Supabase, and Cloudinary all maintain Data Processing Agreements compliant with GDPR."
+      },
+      "s8": {
+        "title": "Data Security",
+        "body": "We take the security of your data seriously. All data is transmitted over HTTPS, passwords are hashed, and access to production systems is restricted. Payment data is handled exclusively by Stripe and never passes through our servers. We conduct regular security reviews and promptly address any vulnerabilities identified."
+      },
+      "s9": {
+        "title": "Your Rights",
+        "intro": "Under GDPR, you have the following rights regarding your personal data:",
+        "item0": "Access, rectification, erasure, restriction, portability, and the right to object — contact us at hello@lomissa.com to exercise these rights",
+        "item1": "Right to lodge a complaint with your national supervisory authority (in Norway: Datatilsynet, datatilsynet.no)"
+      },
+      "s10": {
+        "title": "Cookies",
+        "body": "Lomissa uses essential cookies required for authentication and session management. We do not use advertising or tracking cookies. By using the platform, you consent to the use of these essential cookies. You may disable cookies in your browser settings, though this may affect platform functionality."
+      },
+      "s11": {
+        "title": "Children's Privacy",
+        "body": "Lomissa is not intended for use by individuals under the age of 16. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it promptly."
+      },
+      "s12": {
+        "title": "Changes to This Policy",
+        "body": "We may update this privacy policy from time to time to reflect changes in our services or legal requirements. We will notify you of significant changes by email or by displaying a notice on the platform. The date at the top of this page indicates when the policy was last revised. Continued use of Lomissa after changes take effect constitutes your acceptance of the updated policy."
+      },
+      "s13": {
+        "title": "Contact Us",
+        "body": "If you have any questions about this privacy policy or wish to exercise your rights, please get in touch:",
+        "emailLabel": "Email",
+        "addressLabel": "Address",
+        "address": "Bergen, Norway"
+      }
     },
     "footer": {
       "privacy": "Privacy Policy",

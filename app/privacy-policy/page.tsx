@@ -3,109 +3,136 @@ import { useTranslations } from "../../lib/i18n";
 import Logo from "../components/Logo";
 import GlobeModal from "../components/GlobeModal";
 
-const sections = [
-  {
-    key: "whoWeAre",
-    title: "Who we are",
-    content: "Lomissa is a photography marketplace that connects clients with professional photographers. Our website is lomissa.com. When we refer to 'Lomissa', 'we', 'us' or 'our' in this policy, we mean the Lomissa platform operated from Norway."
-  },
-  {
-    key: "whatWeCollect",
-    title: "What data we collect",
-    content: "We collect information you provide directly to us when you create an account, make a booking or apply as a photographer. This includes your name, email address, location, and payment information processed securely through Stripe. We also collect photos you upload to your portfolio, booking details, messages sent through the platform, and reviews you leave."
-  },
-  {
-    key: "howWeUse",
-    title: "How we use your data",
-    content: "We use your data to operate the Lomissa platform — to process bookings, send email notifications about your bookings, display photographer profiles to potential clients, process payments securely, and improve our service. We do not sell your personal data to third parties. We do not use your data for advertising purposes."
-  },
-  {
-    key: "whoWeShare",
-    title: "Who we share your data with",
-    content: "We share your data only with the services necessary to operate Lomissa. These include Supabase for secure database storage, Stripe for payment processing, Cloudinary for photo storage, and Resend for email notifications. All these services comply with GDPR and maintain strict data security standards."
-  },
-  {
-    key: "googleSignIn",
-    title: "Google Sign-in",
-    content: "When you sign in with Google, we access your name and email address only to create your Lomissa account. We do not access your Gmail, contacts, calendar, or any other Google services. We never sell or share your personal data with third parties."
-  },
-  {
-    key: "gdpr",
-    title: "Your rights under GDPR",
-    content: "As a user in Norway or the European Union you have the right to access the personal data we hold about you, correct any inaccurate data, request deletion of your data, object to how we process your data, and request a copy of your data in a portable format. To exercise any of these rights please contact us at privacy@lomissa.com."
-  },
-  {
-    key: "storage",
-    title: "Data storage and security",
-    content: "Your data is stored securely on servers located in Frankfurt, Germany through our database provider Supabase. All data is encrypted in transit and at rest. Payment information is never stored on our servers — it is handled entirely by Stripe, which is PCI DSS compliant."
-  },
-  {
-    key: "photos",
-    title: "Photos and portfolio content",
-    content: "Photos you upload to your Lomissa portfolio are stored securely through Cloudinary and displayed on your public profile. You retain full ownership of all photos you upload. By uploading photos you grant Lomissa a licence to display them on the platform. You can delete your photos at any time from your dashboard."
-  },
-  {
-    key: "cookies",
-    title: "Cookies",
-    content: "Lomissa uses essential cookies only — these are necessary for the platform to function, such as keeping you logged in. We do not use advertising cookies or tracking cookies. We do not share cookie data with third parties."
-  },
-  {
-    key: "children",
-    title: "Children",
-    content: "Lomissa is not intended for use by anyone under the age of 18. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data please contact us immediately."
-  },
-  {
-    key: "changes",
-    title: "Changes to this policy",
-    content: "We may update this privacy policy from time to time. We will notify you of any significant changes by email. The date at the top of this page shows when the policy was last updated."
-  },
-  {
-    key: "contact",
-    title: "Contact us",
-    content: "If you have any questions about this privacy policy or how we handle your data please contact us at privacy@lomissa.com. We aim to respond to all privacy enquiries within 48 hours."
-  },
+type SectionDef =
+  | { key: string; type: "body" }
+  | { key: string; type: "list"; items: number }
+  | { key: string; type: "contact" };
+
+const sectionDefs: SectionDef[] = [
+  { key: "s1",  type: "body"    },
+  { key: "s2",  type: "list",  items: 4 },
+  { key: "s3",  type: "body"   },
+  { key: "s4",  type: "list",  items: 4 },
+  { key: "s5",  type: "body"   },
+  { key: "s6",  type: "list",  items: 3 },
+  { key: "s7",  type: "body"   },
+  { key: "s8",  type: "body"   },
+  { key: "s9",  type: "list",  items: 2 },
+  { key: "s10", type: "body"   },
+  { key: "s11", type: "body"   },
+  { key: "s12", type: "body"   },
+  { key: "s13", type: "contact" },
 ];
 
 export default function Privacy() {
   const t = useTranslations("Privacy");
-  const legalNotice = t("legalNotice");
+
+  const bodyStyle: React.CSSProperties = {
+    fontSize: "15px", color: "#7A5C44", margin: "0",
+    lineHeight: "1.9", fontFamily: "'Jost', sans-serif", fontWeight: "300",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: "11px", color: "#C8622A", fontFamily: "'Jost', sans-serif",
+    fontWeight: "500", letterSpacing: "0.1em",
+  };
+
+  const h2Style: React.CSSProperties = {
+    fontFamily: "'Fraunces', Georgia, serif", fontSize: "18px",
+    fontWeight: "500", color: "#1A0E06", margin: "0 0 12px",
+  };
 
   return (
-    <main className="min-h-screen" style={{backgroundColor: "#FDFBF8"}}>
+    <main className="min-h-screen" style={{ backgroundColor: "#FDFBF8" }}>
 
-      <nav style={{borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)"}} className="flex items-center justify-between px-8 py-4">
+      <nav style={{ borderBottom: "1px solid #E2D5C8", backgroundColor: "rgba(253,251,248,0.96)", backdropFilter: "blur(12px)" }} className="flex items-center justify-between px-8 py-4">
         <Logo size="sm" />
-        <div className="flex items-center gap-3"><GlobeModal /><a href="/" style={{fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.backHome")}</a></div>
+        <div className="flex items-center gap-3">
+          <GlobeModal />
+          <a href="/" style={{ fontSize: "13px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif" }}>
+            {t("nav.backHome")}
+          </a>
+        </div>
       </nav>
 
-      <div style={{maxWidth: "720px", margin: "0 auto", padding: "64px 32px"}}>
-
-        <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("badge")}</p>
-        <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(32px, 5vw, 52px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em"}}>{t("title")}</h1>
-        <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 56px", fontFamily: "'Jost', sans-serif"}}>{t("lastUpdated")}</p>
-
-        {legalNotice && (
-          <div style={{backgroundColor: "#FBF0EA", border: "1px solid #E8A97E", borderRadius: "8px", padding: "12px 16px", marginBottom: "40px"}}>
-            <p style={{fontSize: "13px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif", fontStyle: "italic"}}>{legalNotice}</p>
-          </div>
-        )}
-
-        {sections.map((section) => (
-          <div key={section.key} style={{marginBottom: "40px", paddingBottom: "40px", borderBottom: "1px solid #E2D5C8"}}>
-            <h2 style={{fontFamily: "'Fraunces', Georgia, serif", fontSize: "18px", fontWeight: "500", color: "#1A0E06", margin: "0 0 12px"}}>{section.title}</h2>
-            <p style={{fontSize: "15px", color: "#7A5C44", margin: "0", lineHeight: "1.9", fontFamily: "'Jost', sans-serif", fontWeight: "300"}}>{section.content}</p>
-          </div>
-        ))}
-
+      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "64px 32px 0" }}>
+        <p style={{ fontSize: "11px", color: "#C8622A", margin: "0 0 12px", letterSpacing: "0.2em", fontFamily: "'Jost', sans-serif", fontWeight: "500" }}>
+          {t("badge")}
+        </p>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(32px, 5vw, 52px)", fontWeight: "400", color: "#1A0E06", margin: "0 0 8px", letterSpacing: "-0.02em" }}>
+          {t("title")}
+        </h1>
+        <p style={{ fontSize: "13px", color: "#7A5C44", margin: "0 0 56px", fontFamily: "'Jost', sans-serif" }}>
+          {t("lastUpdated")}
+        </p>
       </div>
 
-      <footer style={{backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"}}>
+      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 32px 64px" }}>
+        {sectionDefs.map((def, i) => {
+          const isLast = i === sectionDefs.length - 1;
+
+          let content: React.ReactNode;
+          if (def.type === "body") {
+            content = <p style={bodyStyle}>{t(`sections.${def.key}.body`)}</p>;
+          } else if (def.type === "list") {
+            const intro = t(`sections.${def.key}.intro`);
+            content = (
+              <>
+                {intro && (
+                  <p style={{ ...bodyStyle, marginBottom: "12px" }}>{intro}</p>
+                )}
+                <ul style={{ margin: 0, padding: "0 0 0 20px" }}>
+                  {Array.from({ length: def.items }, (_, j) => (
+                    <li key={j} style={{ ...bodyStyle, marginBottom: "6px" }}>
+                      {t(`sections.${def.key}.item${j}`)}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            );
+          } else {
+            content = (
+              <>
+                <p style={{ ...bodyStyle, marginBottom: "16px" }}>{t("sections.s13.body")}</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <p style={bodyStyle}>
+                    <span style={labelStyle}>{t("sections.s13.emailLabel")}:</span>{" "}
+                    <a href="mailto:hello@lomissa.com" style={{ color: "#C8622A", textDecoration: "none" }}>
+                      hello@lomissa.com
+                    </a>
+                  </p>
+                  <p style={bodyStyle}>
+                    <span style={labelStyle}>{t("sections.s13.addressLabel")}:</span>{" "}
+                    {t("sections.s13.address")}
+                  </p>
+                </div>
+              </>
+            );
+          }
+
+          return (
+            <div
+              key={def.key}
+              style={{
+                marginBottom: isLast ? "0" : "40px",
+                paddingBottom: isLast ? "0" : "40px",
+                borderBottom: isLast ? "none" : "1px solid #E2D5C8",
+              }}
+            >
+              <h2 style={h2Style}>{t(`sections.${def.key}.title`)}</h2>
+              {content}
+            </div>
+          );
+        })}
+      </div>
+
+      <footer style={{ backgroundColor: "#FDFBF8", padding: "32px 48px", borderTop: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
         <Logo size="sm" asLink={false} />
-        <div style={{display: "flex", gap: "24px"}}>
-          <a href="/privacy-policy" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.privacy")}</a>
-          <a href="/terms-of-service" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("footer.terms")}</a>
+        <div style={{ display: "flex", gap: "24px" }}>
+          <a href="/privacy-policy" style={{ fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif" }}>{t("footer.privacy")}</a>
+          <a href="/terms-of-service" style={{ fontSize: "12px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif" }}>{t("footer.terms")}</a>
         </div>
-        <p style={{fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif"}}>© 2026 Lomissa. All rights reserved.</p>
+        <p style={{ fontSize: "12px", color: "#7A5C44", margin: "0", fontFamily: "'Jost', sans-serif" }}>© 2026 Lomissa. All rights reserved.</p>
       </footer>
 
     </main>

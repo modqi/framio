@@ -1015,11 +1015,76 @@
     "nav": { "backHome": "← Tilbake til forsiden" },
     "badge": "JURIDISK",
     "title": "Personvernerklæring",
-    "lastUpdated": "Sist oppdatert: april 2026",
-    "legalNotice": "Juridisk innhold er foreløpig kun tilgjengelig på engelsk.",
-    "googleSignIn": {
-      "title": "Google-innlogging",
-      "content": "Når du logger inn med Google, får vi kun tilgang til navnet og e-postadressen din for å opprette Lomissa-kontoen din. Vi har ikke tilgang til Gmail, kontakter, kalender eller andre Google-tjenester. Vi selger eller deler aldri personopplysningene dine med tredjeparter."
+    "lastUpdated": "Sist oppdatert: mai 2026",
+    "sections": {
+      "s1": {
+        "title": "Hvem vi er",
+        "body": "Lomissa er en fotografimarkedsplass som knytter klienter med profesjonelle fotografer over hele verden. Vi er behandlingsansvarlig for personopplysninger samlet inn via lomissa.com. Denne personvernerklæringen forklarer hvilke data vi samler inn, hvorfor vi samler dem inn, og hvordan vi bruker og beskytter dem."
+      },
+      "s2": {
+        "title": "Hvilke data vi samler inn",
+        "intro": "Avhengig av hvordan du bruker Lomissa, kan vi samle inn:",
+        "item0": "Kontoinformasjon: navn, e-postadresse og passord når du registrerer deg",
+        "item1": "Bestillingsdetaljer: dato for økt, sted, valgt pakke og meldinger utvekslet med fotografer",
+        "item2": "Betalingsdata: faktureringsinformasjon håndtert av Stripe (vi lagrer aldri hele kortnummer)",
+        "item3": "Bruksdata: enhetstype, nettleser, besøkte sider og interaksjonstidsstempler via analyse"
+      },
+      "s3": {
+        "title": "Hvordan vi bruker dataene dine",
+        "body": "Vi bruker dataene dine til å drive plattformen: behandle bestillinger, gjennomføre betalinger, sende transaksjons-e-poster og gi kundestøtte. Vi kan også bruke aggregerte, anonymiserte data til å forbedre tjenestene våre. Vi selger ikke personopplysningene dine til tredjeparter, og vi bruker dem ikke til målrettet annonsering."
+      },
+      "s4": {
+        "title": "Rettslig grunnlag for behandling",
+        "intro": "Vi behandler dine personopplysninger på følgende rettslige grunnlag:",
+        "item0": "Avtale: for å oppfylle bestillingen din og levere de tjenestene du har bedt om",
+        "item1": "Berettiget interesse: for å forhindre svindel, opprettholde plattformsikkerhet og forbedre tjenestene våre",
+        "item2": "Rettslig forpliktelse: for å overholde skatte-, regnskaps- og andre gjeldende forskrifter",
+        "item3": "Samtykke: for valgfrie kommunikasjoner som nyhetsbrev (du kan trekke tilbake samtykket når som helst)"
+      },
+      "s5": {
+        "title": "Lagring av data",
+        "body": "Vi beholder kontodataene dine så lenge kontoen din er aktiv. Bestillingsregistre oppbevares i syv år i samsvar med norsk regnskapslovgivning. Hvis du ber om sletting av kontoen, anonymiseres dine personopplysninger innen 30 dager, med forbehold om eventuelle rettslige oppbevaringsforpliktelser. Anonymiserte data kan beholdes til statistiske formål."
+      },
+      "s6": {
+        "title": "Hvem vi deler data med",
+        "intro": "",
+        "item0": "Stripe – betalingsbehandling og Connect-utbetalinger (Stripes personvernregler gjelder)",
+        "item1": "Supabase – database- og autentiseringsinfrastruktur",
+        "item2": "Cloudinary – bildehosting og levering"
+      },
+      "s7": {
+        "title": "Internasjonale overføringer",
+        "body": "Noen av tjenesteleverandørene våre opererer utenfor Det europeiske økonomiske samarbeidsområdet (EØS). Der data overføres utenfor EØS, sikrer vi at passende sikkerhetstiltak er på plass, slik som Standard Contractual Clauses godkjent av EU-kommisjonen. Stripe, Supabase og Cloudinary opprettholder alle databehandleravtaler i samsvar med GDPR."
+      },
+      "s8": {
+        "title": "Datasikkerhet",
+        "body": "Vi tar sikkerheten til dataene dine på alvor. All data overføres via HTTPS, passord hashes og tilgang til produksjonssystemer er begrenset. Betalingsdata håndteres utelukkende av Stripe og passerer aldri gjennom serverne våre. Vi gjennomfører regelmessige sikkerhetsgjennomganger og adresserer raskt eventuelle sårbarheter som identifiseres."
+      },
+      "s9": {
+        "title": "Dine rettigheter",
+        "intro": "Under GDPR har du følgende rettigheter angående dine personopplysninger:",
+        "item0": "Innsyn, retting, sletting, begrensning, portabilitet og rett til å protestere — kontakt oss på hello@lomissa.com for å utøve disse rettighetene",
+        "item1": "Rett til å klage til din nasjonale tilsynsmyndighet (i Norge: Datatilsynet, datatilsynet.no)"
+      },
+      "s10": {
+        "title": "Informasjonskapsler",
+        "body": "Lomissa bruker nødvendige informasjonskapsler som kreves for autentisering og øktadministrasjon. Vi bruker ikke reklame- eller sporingsinfokapsler. Ved å bruke plattformen samtykker du til bruk av disse nødvendige informasjonskapslene. Du kan deaktivere informasjonskapsler i nettleserinnstillingene dine, men dette kan påvirke plattformfunksjonaliteten."
+      },
+      "s11": {
+        "title": "Barns personvern",
+        "body": "Lomissa er ikke beregnet på bruk av personer under 16 år. Vi samler ikke bevisst inn personopplysninger fra barn. Hvis du tror at et barn har gitt oss personopplysninger, vennligst kontakt oss, og vi vil slette dem umiddelbart."
+      },
+      "s12": {
+        "title": "Endringer i denne erklæringen",
+        "body": "Vi kan oppdatere denne personvernerklæringen fra tid til annen for å gjenspeile endringer i tjenestene våre eller lovkrav. Vi vil varsle deg om vesentlige endringer via e-post eller ved å vise et varsel på plattformen. Datoen øverst på denne siden angir når erklæringen sist ble revidert. Fortsatt bruk av Lomissa etter at endringer trer i kraft, utgjør din aksept av den oppdaterte erklæringen."
+      },
+      "s13": {
+        "title": "Kontakt oss",
+        "body": "Hvis du har spørsmål om denne personvernerklæringen eller ønsker å utøve dine rettigheter, ta gjerne kontakt:",
+        "emailLabel": "E-post",
+        "addressLabel": "Adresse",
+        "address": "Bergen, Norge"
+      }
     },
     "footer": {
       "privacy": "Personvern",
