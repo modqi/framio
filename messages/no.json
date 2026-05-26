@@ -1003,9 +1003,69 @@
   "Terms": {
     "nav": { "backHome": "← Tilbake til forsiden" },
     "badge": "JURIDISK",
-    "title": "Tjenestevilkår",
-    "lastUpdated": "Sist oppdatert: april 2026",
-    "legalNotice": "Juridisk innhold er foreløpig kun tilgjengelig på engelsk.",
+    "title": "Vilkår for bruk",
+    "lastUpdated": "Sist oppdatert: mai 2026",
+    "sections": {
+      "s1": {
+        "title": "1. Aksept av vilkår",
+        "body": "Ved å bruke Lomissa (lomissa.com), som drives fra Bergen, Norge, godtar du å være bundet av disse vilkårene for bruk. Vilkårene gjelder for alle registrerte brukere, inkludert klienter som søker fotografitjenester (Klienter) og fagfolk som tilbyr sine tjenester (Fotografer). Hvis du ikke godtar disse vilkårene, kan du ikke bruke plattformen."
+      },
+      "s2": {
+        "title": "2. Lomissas rolle",
+        "body": "Lomissa er utelukkende en digital markedsplass designet for å knytte klienter med uavhengige fotografer. Vi er ikke et fotografibyrå, og vi ansetter ikke fotografene. Vi tilbyr den teknologiske infrastrukturen for søk, kommunikasjon, sikker fillevering og betalingsbehandling. Den faktiske fotografitjenesten er en direkte kontrakt mellom klienten og fotografen."
+      },
+      "s3": {
+        "title": "3. Bestillinger, betalinger og escrow",
+        "intro": "For å skape tillit og sikkerhet for begge parter, opererer Lomissa et sikkert escrow-betalingssystem drevet av Stripe Connect.",
+        "item0": "Forhåndsbetaling: Når en klient bestiller en økt, autoriseres og belastes hele øktavgiften på forhånd.",
+        "item1": "Escrow-hold: Disse midlene oppbevares sikkert på en digital escrow-konto og overføres ikke umiddelbart til fotografen.",
+        "item2": "Frigjøring av midler: Midlene (minus Lomissas 10% provisjon) frigjøres kun til fotografens tilkoblede Stripe-konto etter at høyoppløselige bilder er offisielt levert via Lomissa-plattformen, og den standard 7-dagers tvisteperioden har gått uten at klienten har reist en gyldig innvending."
+      },
+      "s4": {
+        "title": "4. Avbestillinger, tvister og refusjoner",
+        "intro": "",
+        "item0": "Avbestillinger: Hvis en klient avbestiller en bestilling før økten, bestemmes refusjonsbeløpet av fotografens angitte avbestillingspolicy. Tredjepartsgebyrer for betalingsbehandling (f.eks. Stripe-gebyrer) er imidlertid ikke refunderbare og trekkes fra eventuell refusjon til klienten.",
+        "item1": "Tvisteperiode: Etter at fotografen leverer de endelige bildene via plattformen, har klienten nøyaktig 7 dager til å gjennomgå arbeidet. Hvis arbeidet er alvorlig mangelfullt, ikke levert eller bryter med det avtalte omfanget, kan klienten reise en formell tvist gjennom plattformen.",
+        "item2": "Tvisteløsning: Under en tvist forblir escrow-midlene frosset. Lomissa-administrasjonen vil gjennomgå revisjonslogger, kommunikasjon og leveringsfiler for å ta en bindende beslutning om enten å frigjøre midlene til fotografen eller utstede en refusjon til klienten. Lomissas avgjørelse i en tvist er endelig."
+      },
+      "s5": {
+        "title": "5. Fotografers forpliktelser og provisjon",
+        "intro": "Ved å bli med i Lomissa som fotograf, godtar du å:",
+        "item0": "Levere profesjonelle tjenester som annonsert på profilen din.",
+        "item1": "Levere alle endelige høyoppløselige filer direkte via Lomissas sikre leveringssystem. Å omgå plattformen for levering vil forhindre at escrow-midlene dine frigjøres.",
+        "item2": "Betale 10% provisjon på alle fullførte bestillinger, som automatisk trekkes fra den endelige utbetalingen for å dekke plattformdrift, escrow-administrasjon og støtte."
+      },
+      "s6": {
+        "title": "6. Omgåelse av plattformen",
+        "body": "Du kan ikke bruke Lomissa til å komme i kontakt med en klient eller fotograf og deretter fullføre bestillingen eller betalingen utenfor plattformen for å unngå 10% provisjon. Å engasjere seg i gebyrunnvikelse eller omgåelse er et vesentlig brudd på disse vilkårene og vil resultere i umiddelbar og permanent oppsigelse av kontoen din."
+      },
+      "s7": {
+        "title": "7. Innhold, eierskap og immaterialrett",
+        "intro": "",
+        "item0": "Porteføljeinnhold: Fotografer beholder fullt opphavsrett til alle bilder de laster opp. Ved å laste opp bilder til den offentlige profilen din, gir du Lomissa en ikke-eksklusiv, verdensomspennende lisens til å vise disse bildene på plattformen og i markedsføringsmateriell for å markedsføre tjenestene dine.",
+        "item1": "Leverte bilder: Bruksrettigheter for de endelige bildene som er levert til klienten, bestemmes av avtalen mellom klienten og fotografen. Lomissa gjør ikke krav på eierskap over private leveringsfiler.",
+        "item2": "Originalitet: Du kan bare laste opp bilder du personlig har tatt og har lovlig rett til å vise."
+      },
+      "s8": {
+        "title": "8. Anmeldelser og atferd",
+        "body": "Klienter kan legge igjen anmeldelser etter en fullført bestilling. Anmeldelser må være sannferdige, respektfulle og basert på faktisk erfaring. Vi forbeholder oss retten til å fjerne anmeldelser som inneholder hatefulle ytringer, trakassering eller beviselig falsk informasjon. Trakassering, diskriminering eller fornærmende atferd overfor en bruker eller plattformadministrator vil resultere i umiddelbar kontosuspensjon."
+      },
+      "s9": {
+        "title": "9. Ansvarsbegrensning",
+        "body": "Lomissa er ikke juridisk ansvarlig for kvaliteten, sikkerheten eller lovligheten av de leverte fotografitjenestene. Vi er ikke ansvarlige for skader, tapte arrangementer eller tap som skyldes en fotografs manglende ytelse eller en klients manglende oppmøte. Lomissas totale ansvar overfor deg for ethvert krav som oppstår fra din bruk av plattformen er strengt begrenset til beløpet av provisjonsgebyrer som Lomissa beholdt fra transaksjonene dine de tre (3) månedene før kravet."
+      },
+      "s10": {
+        "title": "10. Gjeldende lov og jurisdiksjon",
+        "body": "Disse vilkårene for bruk er underlagt norsk lov. Eventuelle juridiske tvister som oppstår fra disse vilkårene eller din bruk av Lomissa-plattformen, skal være underlagt eksklusiv jurisdiksjon til domstolene i Bergen, Norge."
+      },
+      "s11": {
+        "title": "11. Kontaktinformasjon",
+        "body": "For spørsmål om disse vilkårene, tvister eller plattformstøtte, kontakt oss på:",
+        "emailLabel": "E-post",
+        "addressLabel": "Adresse",
+        "address": "Bergen, Norge"
+      }
+    },
     "footer": {
       "privacy": "Personvern",
       "terms": "Tjenestevilkår"

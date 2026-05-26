@@ -1004,8 +1004,68 @@
     "nav": { "backHome": "← Back to home" },
     "badge": "LEGAL",
     "title": "Terms of Service",
-    "lastUpdated": "Last updated: April 2026",
-    "legalNotice": "",
+    "lastUpdated": "Last updated: May 2026",
+    "sections": {
+      "s1": {
+        "title": "1. Acceptance of Terms",
+        "body": "By accessing or using Lomissa (lomissa.com), operated from Bergen, Norway, you agree to be bound by these Terms of Service. These terms apply to all registered users, including clients seeking photography services (Clients) and professionals offering their services (Photographers). If you do not agree to these terms, you may not use the platform."
+      },
+      "s2": {
+        "title": "2. The Role of Lomissa",
+        "body": "Lomissa is purely a digital marketplace designed to connect Clients with independent Photographers. We are not a photography agency, and we do not employ the Photographers. We provide the technological infrastructure for discovery, communication, secure file delivery, and payment processing. The actual photography service is a direct contract between the Client and the Photographer."
+      },
+      "s3": {
+        "title": "3. Bookings, Payments, and Escrow",
+        "intro": "To build trust and ensure security for both parties, Lomissa operates a secure escrow payment system powered by Stripe Connect.",
+        "item0": "Upfront Payment: When a Client books a session, the full session fee is authorized and captured upfront.",
+        "item1": "Escrow Hold: These funds are held securely in a digital escrow account and are not immediately transferred to the Photographer.",
+        "item2": "Release of Funds: The funds (minus Lomissa's 10% commission) are only released to the Photographer's connected Stripe account after the high-resolution photos have been officially delivered through the Lomissa platform, and the standard 7-day Dispute Window has passed without the Client raising a valid issue."
+      },
+      "s4": {
+        "title": "4. Cancellations, Disputes, and Refunds",
+        "intro": "",
+        "item0": "Cancellations: If a Client cancels a booking prior to the session, the refund amount is determined by the Photographer's stated cancellation policy. However, third-party payment processing fees (e.g., Stripe processing fees) are non-refundable and will be deducted from any refund issued to the Client.",
+        "item1": "Dispute Window: After the Photographer delivers the final photos via the platform, the Client has exactly 7 days to review the work. If the work is severely deficient, undelivered, or violates the agreed-upon scope, the Client may raise a formal dispute through the platform.",
+        "item2": "Dispute Resolution: During a dispute, the escrow funds remain frozen. Lomissa administration will review platform audit logs, communications, and delivery files to make a binding decision to either release the funds to the Photographer or issue a refund to the Client. Lomissa's decision in a dispute is final."
+      },
+      "s5": {
+        "title": "5. Photographer Obligations and Commission",
+        "intro": "By joining Lomissa as a Photographer, you agree to:",
+        "item0": "Provide professional services as advertised on your profile.",
+        "item1": "Deliver all final high-resolution files directly through Lomissa's secure delivery system. Bypassing the platform for delivery will prevent your escrow funds from being released.",
+        "item2": "Pay a 10% commission on all completed bookings, which is automatically deducted from the final payout to cover platform operations, escrow management, and support."
+      },
+      "s6": {
+        "title": "6. Platform Circumvention",
+        "body": "You may not use Lomissa to connect with a Client or Photographer and then complete the booking or payment outside of the platform to avoid the 10% commission. Engaging in fee avoidance or circumvention is a material breach of these terms and will result in the immediate and permanent termination of your account."
+      },
+      "s7": {
+        "title": "7. Content, Ownership, and Intellectual Property",
+        "intro": "",
+        "item0": "Portfolio Content: Photographers retain full copyright of all photos they upload. By uploading images to your public profile, you grant Lomissa a non-exclusive, worldwide license to display these images on the platform and in our marketing materials to promote your services.",
+        "item1": "Delivered Photos: The usage rights for the final photos delivered to the Client are determined by the agreement between the Client and the Photographer. Lomissa claims no ownership over private delivery files.",
+        "item2": "Originality: You may only upload photos that you have personally taken and have the legal right to display."
+      },
+      "s8": {
+        "title": "8. Reviews and Conduct",
+        "body": "Clients may leave reviews following a completed booking. Reviews must be truthful, respectful, and based on actual experience. We reserve the right to remove reviews that contain hate speech, harassment, or provably false information. Harassment, discrimination, or abusive behavior toward any user or platform administrator will result in immediate account suspension."
+      },
+      "s9": {
+        "title": "9. Limitation of Liability",
+        "body": "Lomissa is not legally responsible for the quality, safety, or legality of the photography services provided. We are not liable for any damages, missed events, or losses resulting from a Photographer's failure to perform or a Client's failure to attend. In any event, Lomissa's total liability to you for any claim arising from your use of the platform is strictly limited to the amount of commission fees Lomissa retained from your transactions in the three (3) months prior to the claim."
+      },
+      "s10": {
+        "title": "10. Governing Law and Jurisdiction",
+        "body": "These Terms of Service are governed by the laws of Norway. Any legal disputes arising from these terms or your use of the Lomissa platform shall be subject to the exclusive jurisdiction of the courts located in Bergen, Norway."
+      },
+      "s11": {
+        "title": "11. Contact Information",
+        "body": "For questions regarding these Terms, disputes, or platform support, please contact us at:",
+        "emailLabel": "Email",
+        "addressLabel": "Address",
+        "address": "Bergen, Norway"
+      }
+    },
     "footer": {
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
