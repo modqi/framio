@@ -11,11 +11,18 @@ import { useTranslations } from "../../lib/i18n";
 import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
 
 export default function Signup() {
-  const [role, setRole] = useState("client");
+  const [role, setRole] = useState("photographer");
+  const [redirecting, setRedirecting] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("role") === "photographer") setRole("photographer");
+    if (params.get("role") === "photographer") {
+      setRole("photographer");
+      setRedirecting(false);
+    } else {
+      // Client signup now uses the AuthModal on the homepage.
+      window.location.replace("/?auth=signup");
+    }
   }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -110,6 +117,8 @@ export default function Signup() {
     fontSize: "11px", color: "#7A5C44", display: "block",
     marginBottom: "5px", fontFamily: "'Jost', sans-serif", letterSpacing: "0.05em",
   };
+
+  if (redirecting) return null;
 
   if (done && role === "client") {
     return (

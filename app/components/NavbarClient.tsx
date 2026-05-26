@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GlobeModal from "./GlobeModal";
 import AuthModal from "./AuthModal";
 import { useTranslations } from "@/lib/i18n";
@@ -7,6 +7,18 @@ import { useTranslations } from "@/lib/i18n";
 export default function NavbarClient() {
   const [open, setOpen] = useState(false);
   const t = useTranslations("Home");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("auth") === "login" || params.get("auth") === "signup") {
+      setOpen(true);
+      // Clean the param so a refresh doesn't re-open the modal.
+      const url = new URL(window.location.href);
+      url.searchParams.delete("auth");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
+
   return (
     <>
       <GlobeModal />
