@@ -70,28 +70,19 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setLoading(true);
     setError("");
 
-    // Probe whether the email exists by attempting sign-in with a dummy password.
-    // "Invalid login credentials" / "Email not confirmed" → user exists → login step.
-    // Any other error (user_not_found, etc.) → new user → signup step.
-    const { error: probeErr } = await supabase.auth.signInWithPassword({
-      email,
-      password: `chk_${Date.now()}_${Math.random()}`,
-    });
-
-    setLoading(false);
-
-    if (!probeErr) {
-      // Astronomically unlikely with a random password, but handle gracefully.
-      const { data: { session } } = await supabase.auth.getSession();
-      redirectByRole(session?.user?.user_metadata?.role);
-      return;
-    }
-
-    const msg = probeErr.message.toLowerCase();
-    if (msg.includes("invalid login credentials") || msg.includes("email not confirmed")) {
-      setStep("login");
-    } else {
-      setStep("signup");
+    try {
+      const res = await fetch("/api/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("check failed");
+      const { exists } = await res.json();
+      setStep(exists ? "login" : "signup");
+    } catch {
+      setError(t("errors.genericError"));
+    } finally {
+      setLoading(false);
     }
     setTimeout(() => inputRef.current?.focus(), 80);
   };
