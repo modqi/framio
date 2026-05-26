@@ -156,7 +156,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     backgroundColor: "rgba(26,14,6,0.55)", backdropFilter: "blur(4px)",
     display: "flex", alignItems: "flex-start", justifyContent: "center",
     padding: "5vh 16px 24px",
-    overflowY: "auto",   // backdrop is the scroll container — card renders at natural height
   };
 
   const card: React.CSSProperties = {
@@ -165,26 +164,9 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     padding: "40px 36px 32px",
     position: "relative",
     boxShadow: "0 24px 80px rgba(26,14,6,0.18)",
-    flexShrink: 0,       // prevent flex from compressing the card
+    maxHeight: "88vh",
+    overflowY: "auto",
   };
-
-  const mobileStyles = (
-    <style>{`
-      @media (max-width: 480px) {
-        .auth-modal-backdrop {
-          padding: 3vh 12px 20px !important;
-        }
-        .auth-modal-card {
-          padding: 20px 20px 24px !important;
-          border-radius: 12px !important;
-        }
-        .auth-modal-card h2 {
-          font-size: 24px !important;
-          margin-bottom: 16px !important;
-        }
-      }
-    `}</style>
-  );
 
   const inputCss: React.CSSProperties = {
     width: "100%", border: "1px solid #E2D5C8", borderRadius: "8px",
@@ -264,8 +246,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
   if (checkEmail) {
     return (
-      <div style={backdrop} className="auth-modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
-        {mobileStyles}
+      <div style={backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
         <div style={card} className="auth-modal-card">
           {closeBtn}
           <div style={{textAlign: "center", padding: "16px 0"}}>
@@ -286,8 +267,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   // ─── main modal ──────────────────────────────────────────────────────────────
 
   return (
-    <div style={backdrop} className="auth-modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      {mobileStyles}
+    <div style={backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div style={card} className="auth-modal-card">
         {closeBtn}
 

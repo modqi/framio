@@ -52,3 +52,15 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
 }
+
+/* AuthModal mobile overrides */
+@media (max-width: 480px) {
+  .auth-modal-card {
+    padding: 20px 20px 24px !important;
+    border-radius: 12px !important;
+  }
+  .auth-modal-card h2 {
+    font-size: 24px !important;
+    margin-bottom: 16px !important;
+  }
+}
