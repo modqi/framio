@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
               ` : ""}
             </div>
             <div style="text-align: center; margin-bottom: 32px;">
-              <a href="https://lomissa.com/studio-access"
+              <a href="https://www.lomissa.com/admin"
                  style="background: #1a1a1a; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
                 Review application →
               </a>

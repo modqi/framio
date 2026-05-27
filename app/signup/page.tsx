@@ -138,8 +138,20 @@ export default function Signup() {
     return (
       <main style={{minHeight: "100vh", backgroundColor: "#FDFBF8", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px"}}>
         <div style={{backgroundColor: "#FDFBF8", borderRadius: "16px", padding: "48px 36px", border: "0.5px solid #E2D5C8", textAlign: "center", maxWidth: "500px", width: "100%"}}>
-          <div style={{width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#FBF0EA", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px"}}>
-            <ReviewStarIcon size={32} color="#C8622A"/>
+          <div style={{width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#F5EFE4", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px"}}>
+            <svg width="32" height="32" viewBox="-15 -15 30 30" aria-hidden="true">
+              <circle cx="0" cy="0" r="5" fill="#C8622A" />
+              {([-60, -30, 0, 30, 60] as const).map((deg) => {
+                const rad = (deg * Math.PI) / 180;
+                return (
+                  <line key={deg}
+                    x1={Math.sin(rad) * 9}  y1={-Math.cos(rad) * 9}
+                    x2={Math.sin(rad) * 14} y2={-Math.cos(rad) * 14}
+                    stroke="#C8622A" strokeWidth="1.8" strokeLinecap="round"
+                  />
+                );
+              })}
+            </svg>
           </div>
           <p style={{fontSize: "11px", color: "#C8622A", margin: "0 0 14px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("donePhotographer.badge")}</p>
           <h1 style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: "400", fontStyle: "italic", color: "#1A0E06", margin: "0 0 16px", lineHeight: "1.1"}}>{t("donePhotographer.heading", { name })}</h1>

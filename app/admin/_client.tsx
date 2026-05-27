@@ -343,7 +343,7 @@ export default function AdminPanel() {
         <div className="flex items-center gap-4">
           <a href="/" style={{fontSize: "12px", color: "#7A5C44", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("nav.viewSite")}</a>
           <button
-            onClick={() => supabase.auth.signOut().then(() => window.location.href = "/studio-access")}
+            onClick={() => supabase.auth.signOut().then(() => window.location.href = "/admin")}
             style={{fontSize: "12px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "6px 16px", borderRadius: "999px", backgroundColor: "transparent", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}
           >
             {t("nav.signOut")}
