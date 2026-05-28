@@ -322,7 +322,10 @@
       "portfolioLabel": "Portfolio link",
       "portfolioPlaceholder": "https://your-portfolio.com",
       "aboutLabel": "About you and your photography style *",
-      "aboutPlaceholder": "Tell us about your experience, your style and why you want to join Lomissa..."
+      "aboutPlaceholder": "Tell us about your experience, your style and why you want to join Lomissa...",
+      "phoneLabelRequired": "Phone number *",
+      "phonePlaceholder": "12 34 56 78",
+      "phoneSearchPlaceholder": "Search country"
     },
     "experience": {
       "lessThan1": "Less than 1 year",
@@ -352,7 +355,8 @@
       "fillAll": "Please fill in all fields.",
       "passwordLength": "Password must be at least 8 characters.",
       "fillRequired": "Please fill in all required fields.",
-      "securityCheck": "Security check failed. Please try again."
+      "securityCheck": "Security check failed. Please try again.",
+      "phoneInvalid": "Enter a valid phone number (min. 6 digits)."
     }
   },
   "Join": {

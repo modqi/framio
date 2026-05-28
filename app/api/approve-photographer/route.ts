@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
     const email    = str(body.email, 254);
     const name     = str(body.name, 100);
     const location = str(body.location, 200);
-    const specialty = str(body.specialty, 100);
+    const specialty    = str(body.specialty, 100);
+    const phone_number = str(body.phone_number, 30);
 
     if (!email || !name) {
       return NextResponse.json({ error: "email and name are required" }, { status: 400 });
@@ -70,6 +71,7 @@ export async function POST(request: NextRequest) {
       location: location || "",
       specialty: specialty || "",
       price: "Price on request",
+      ...(phone_number ? { phone_number } : {}),
     }, { onConflict: "user_id" });
 
     // Create a Stripe Express account so this photographer can receive payouts

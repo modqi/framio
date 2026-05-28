@@ -44,10 +44,22 @@ export async function POST(req: NextRequest) {
   const email    = str(body.email, 200);
   const location = str(body.location, 200);
   const about    = str(body.about, 1000);
+  const phone    = str(body.phone_number, 30);
   const specialties: unknown = body.specialties;
 
   if (!name || !email || !location || !about) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  // Phone is required and must contain only valid phone characters
+  if (!phone) {
+    return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
+  }
+  if (!/^[\d\s+\-()]+$/.test(phone)) {
+    return NextResponse.json({ error: "Invalid phone number" }, { status: 400 });
+  }
+  if (phone.replace(/\D/g, "").length < 6) {
+    return NextResponse.json({ error: "Phone number too short" }, { status: 400 });
   }
 
   if (!Array.isArray(specialties) || specialties.length === 0) {
@@ -68,6 +80,7 @@ export async function POST(req: NextRequest) {
     name,
     email,
     location,
+    phone_number: phone,
     specialty: (specialties as string[]).join(", "),
     experience: str(body.experience, 100) || null,
     instagram:  str(body.instagram, 100) || null,

@@ -9,6 +9,7 @@ import { ReviewStarIcon } from "../components/Icons";
 import GlobeModal from "../components/GlobeModal";
 import { useTranslations } from "../../lib/i18n";
 import { CATEGORIES, CATEGORY_KEY } from "../../lib/categories";
+import PhoneInput from "../components/PhoneInput";
 
 export default function Signup() {
   const [role, setRole] = useState("photographer");
@@ -39,6 +40,7 @@ export default function Signup() {
   const [location, setLocation] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [experience, setExperience] = useState("");
+  const [phone, setPhone] = useState("");
   const [instagram, setInstagram] = useState("");
   const [portfolio, setPortfolio] = useState("");
   const [about, setAbout] = useState("");
@@ -73,9 +75,10 @@ export default function Signup() {
   };
 
   const handlePhotographerApply = async () => {
-    if (!name || !email || !password || !location || selectedCategories.length === 0 || !about) {
+    if (!name || !email || !password || !location || selectedCategories.length === 0 || !about || !phone) {
       setError(t("errors.fillRequired")); return;
     }
+    if (phone.replace(/\D/g, "").length < 6) { setError(t("errors.phoneInvalid")); return; }
     if (password.length < 8) { setError(t("errors.passwordLength")); return; }
     setLoading(true); setError("");
     if (!await verifyTurnstile()) { setLoading(false); return; }
@@ -87,7 +90,7 @@ export default function Signup() {
     const appRes = await fetch("/api/submit-application", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, location, specialties: selectedCategories, experience: experience || null, instagram: instagram || null, portfolio_link: portfolio || null, about }),
+      body: JSON.stringify({ name, email, location, phone_number: phone, specialties: selectedCategories, experience: experience || null, instagram: instagram || null, portfolio_link: portfolio || null, about }),
     });
     if (!appRes.ok) {
       const appData = await appRes.json().catch(() => ({}));
@@ -338,6 +341,16 @@ export default function Signup() {
                   <label style={labelStyle}>{t("form.emailLabelRequired")}</label>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={inputStyle}/>
                 </div>
+              </div>
+              <div>
+                <label style={labelStyle}>{t("form.phoneLabelRequired")}</label>
+                <PhoneInput
+                  value={phone}
+                  onChange={setPhone}
+                  placeholder={t("form.phonePlaceholder")}
+                  searchPlaceholder={t("form.phoneSearchPlaceholder")}
+                  inputStyle={inputStyle}
+                />
               </div>
               <div>
                 <label style={labelStyle}>{t("form.passwordLabelRequired")}</label>

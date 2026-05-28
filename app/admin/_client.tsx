@@ -122,6 +122,7 @@ export default function AdminPanel() {
         name: app.name,
         location: app.location,
         specialty: app.specialty,
+        phone_number: app.phone_number || null,
         price: "Price on request",
       }),
     });
@@ -469,7 +470,7 @@ export default function AdminPanel() {
                         <div style={{display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center"}}>
                           <span style={{fontSize: "13px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{app.email}</span>
                           {app.location && <><span style={{color: "#DDD0C0"}}>·</span><span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{app.location}</span></>}
-                          {app.phone && <><span style={{color: "#DDD0C0"}}>·</span><span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{app.phone}</span></>}
+                          {app.phone_number && <><span style={{color: "#DDD0C0"}}>·</span><span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{app.phone_number}</span></>}
                         </div>
                       </div>
 
