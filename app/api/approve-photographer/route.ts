@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const str = (v: unknown, max: number) => (typeof v === "string" ? v.slice(0, max).trim() : "");
-    const email    = str(body.email, 254);
-    const name     = str(body.name, 100);
-    const location = str(body.location, 200);
+    const email        = str(body.email, 254);
+    const name         = str(body.name, 100);
+    const location     = str(body.location, 200);
     const specialty    = str(body.specialty, 100);
     const phone_number = str(body.phone_number, 30);
 
@@ -71,55 +71,72 @@ export async function POST(request: NextRequest) {
     }
     const user = found;
 
+    // 1. Update role
     await serviceClient.auth.admin.updateUserById(user.id, {
       user_metadata: { role: "photographer", name },
     });
 
+    // 2. Invalidate existing sessions immediately after the role change.
+    //    Runs before Stripe so it always fires even if Stripe fails, ensuring
+    //    the old JWT (which may carry role: "client" or "pending_photographer")
+    //    is never used after this point.
+    await serviceClient.auth.admin.signOut(user.id, "global");
+
+    // 3. Create/update the photographers row
     await serviceClient.from("photographers").upsert({
       user_id: user.id,
       name,
       email,
-      location: location || "",
+      location:  location  || "",
       specialty: specialty || "",
       price: "Price on request",
       ...(phone_number ? { phone_number } : {}),
     }, { onConflict: "user_id" });
 
-    // Create a Stripe Express account so this photographer can receive payouts
-    const account = await stripe.accounts.create({
-      type: "express",
-      email,
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true },
-      },
-      metadata: { user_id: user.id },
-    });
-
-    await serviceClient
+    // 4. Reuse an existing Stripe Express account if a previous approval
+    //    attempt already created one — prevents duplicate accounts on retry.
+    const { data: existingRow } = await serviceClient
       .from("photographers")
-      .update({ stripe_account_id: account.id })
-      .eq("user_id", user.id);
+      .select("stripe_account_id")
+      .eq("user_id", user.id)
+      .single();
 
+    let stripeAccountId = existingRow?.stripe_account_id as string | null;
+
+    if (!stripeAccountId) {
+      const account = await stripe.accounts.create({
+        type: "express",
+        email,
+        capabilities: {
+          card_payments: { requested: true },
+          transfers:     { requested: true },
+        },
+        metadata: { user_id: user.id },
+      });
+      stripeAccountId = account.id;
+
+      await serviceClient
+        .from("photographers")
+        .update({ stripe_account_id: stripeAccountId })
+        .eq("user_id", user.id);
+    }
+
+    // 5. Generate a fresh onboarding link (always — links are single-use / expire)
     const base = process.env.NEXT_PUBLIC_BASE_URL!;
-    const state = generateStateToken(user.id, account.id);
+    const state = generateStateToken(user.id, stripeAccountId);
     const accountLink = await stripe.accountLinks.create({
-      account: account.id,
+      account:     stripeAccountId,
       refresh_url: `${base}/photographer-dashboard`,
-      return_url: `${base}/api/stripe-connect/callback?account=${account.id}&state=${encodeURIComponent(state)}`,
+      return_url:  `${base}/api/stripe-connect/callback?account=${stripeAccountId}&state=${encodeURIComponent(state)}`,
       type: "account_onboarding",
     });
 
-    // Invalidate existing sessions so the photographer's next login issues a
-    // fresh JWT containing role: "photographer" rather than "pending_photographer".
-    await serviceClient.auth.admin.signOut(user.id, "global");
-
     await logAudit(serviceClient, {
-      action: "photographer_approved",
-      actorId: caller.id,
-      actorEmail: caller.email,
-      bookingId: null,
-      stripeId: account.id,
+      action:      "photographer_approved",
+      actorId:     caller.id,
+      actorEmail:  caller.email,
+      bookingId:   null,
+      stripeId:    stripeAccountId,
       meta: { photographer_user_id: user.id, photographer_email: email, photographer_name: name },
     });
 
