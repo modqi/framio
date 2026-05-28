@@ -5,7 +5,7 @@ import Stripe from "stripe";
 import { logAudit } from "@/lib/audit";
 
 function generateStateToken(userId: string, accountId: string): string {
-  const expiry = Math.floor(Date.now() / 1000) + 15 * 60;
+  const expiry = Math.floor(Date.now() / 1000) + 30 * 60;
   const payload = Buffer.from(`${userId}:${accountId}:${expiry}`).toString("base64url");
   const hmac = crypto
     .createHmac("sha256", process.env.SUPABASE_SERVICE_ROLE_KEY!)
