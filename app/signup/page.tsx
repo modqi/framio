@@ -38,7 +38,6 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [otherSpecialty, setOtherSpecialty] = useState("");
   const [experience, setExperience] = useState("");
   const [instagram, setInstagram] = useState("");
   const [portfolio, setPortfolio] = useState("");
@@ -85,13 +84,17 @@ export default function Signup() {
       options: { data: { role: "pending_photographer", name, specialties: selectedCategories }, emailRedirectTo: "https://lomissa.com/auth/confirm" },
     });
     if (signupError) { setError(signupError.message); setLoading(false); return; }
-    const { error: appError } = await supabase.from("applications").insert({
-      name, email, location,
-      specialty: selectedCategories.join(", "),
-      other_specialty: selectedCategories.includes("Other") ? otherSpecialty.trim() || null : null,
-      experience, instagram, portfolio_link: portfolio, about, status: "pending",
+    const appRes = await fetch("/api/submit-application", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, location, specialties: selectedCategories, experience: experience || null, instagram: instagram || null, portfolio_link: portfolio || null, about }),
     });
-    if (appError) { setError("Something went wrong. Please try again."); setLoading(false); return; }
+    if (!appRes.ok) {
+      const appData = await appRes.json().catch(() => ({}));
+      setError(appData.error || "Something went wrong. Please try again.");
+      setLoading(false);
+      return;
+    }
     await fetch("/api/send-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -372,19 +375,12 @@ export default function Signup() {
                         onClick={() => {
                           const nowSelected = !sel;
                           setSelectedCategories(prev => nowSelected ? [...prev, cat] : prev.filter(c => c !== cat));
-                          if (cat === "Other" && !nowSelected) setOtherSpecialty("");
                         }}
                         style={{padding: "5px 12px", borderRadius: "999px", border: `0.5px solid ${sel ? "#C8622A" : "#E2D5C8"}`, backgroundColor: sel ? "#C8622A" : "#FDFBF8", color: sel ? "#FDFBF8" : "#7A5C44", fontSize: "11px", cursor: "pointer", fontFamily: "'Jost', sans-serif", fontWeight: sel ? "500" : "400"}}
                       >{tCat(CATEGORY_KEY[cat])}</button>
                     );
                   })}
                 </div>
-                {selectedCategories.includes("Other") && (
-                  <div style={{marginTop: "10px"}}>
-                    <label style={labelStyle}>{t("form.otherSpecialtyLabel")}</label>
-                    <input type="text" value={otherSpecialty} onChange={(e) => setOtherSpecialty(e.target.value)} placeholder={t("form.otherSpecialtyPlaceholder")} maxLength={80} style={inputStyle}/>
-                  </div>
-                )}
               </div>
               <div>
                 <label style={labelStyle}>{t("form.instagramLabel")}</label>

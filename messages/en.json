@@ -1464,11 +1464,23 @@
     "weddings": "Weddings",
     "portraits": "Portraits",
     "family_newborn": "Family & Newborn",
-    "real_estate": "Real Estate",
-    "products": "Products",
+    "maternity": "Maternity",
     "events": "Events",
+    "corporate_headshots": "Corporate & Headshots",
+    "boudoir": "Boudoir",
+    "products": "Products",
+    "food": "Food",
+    "real_estate": "Real Estate",
+    "architecture": "Architecture",
     "fashion": "Fashion",
-    "artistic": "Artistic",
-    "other": "Other"
+    "automotive": "Automotive",
+    "drone_aerial": "Drone & Aerial",
+    "sports": "Sports",
+    "pets_animals": "Pets & Animals",
+    "concerts_music": "Concerts & Music",
+    "travel": "Travel",
+    "nature_landscape": "Nature & Landscape",
+    "street_documentary": "Street & Documentary",
+    "artistic_fine_art": "Artistic & Fine Art"
   }
 }
