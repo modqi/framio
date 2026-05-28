@@ -129,9 +129,12 @@ export default function AdminPanel() {
 
     const result = await response.json();
     if (result.success) {
-      await fetch("/api/send-email", {
+      const emailRes = await fetch("/api/send-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
         body: JSON.stringify({
           photographerName: app.name,
           photographerEmail: app.email,
@@ -143,6 +146,10 @@ export default function AdminPanel() {
           onboardingUrl: result.onboardingUrl,
         }),
       });
+      if (!emailRes.ok) {
+        const emailErr = await emailRes.json().catch(() => ({}));
+        console.error("Failed to send approval email:", emailRes.status, emailErr);
+      }
     }
   };
 
@@ -204,9 +211,13 @@ export default function AdminPanel() {
     setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: "rejected" } : a));
     setStats(prev => ({ ...prev, pendingApplications: prev.pendingApplications - 1 }));
 
-    await fetch("/api/send-email", {
+    const { data: { session: rejectSession } } = await supabase.auth.getSession();
+    const emailRes = await fetch("/api/send-email", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${rejectSession?.access_token ?? ""}`,
+      },
       body: JSON.stringify({
         photographerName: app.name,
         photographerEmail: app.email,
@@ -219,6 +230,10 @@ export default function AdminPanel() {
         price: "Application",
       }),
     });
+    if (!emailRes.ok) {
+      const emailErr = await emailRes.json().catch(() => ({}));
+      console.error("Failed to send rejection email:", emailRes.status, emailErr);
+    }
   };
 
   if (loading) return (
