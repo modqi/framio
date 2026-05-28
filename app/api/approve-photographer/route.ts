@@ -1,7 +1,18 @@
+import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { logAudit } from "@/lib/audit";
+
+function generateStateToken(userId: string, accountId: string): string {
+  const expiry = Math.floor(Date.now() / 1000) + 15 * 60;
+  const payload = Buffer.from(`${userId}:${accountId}:${expiry}`).toString("base64url");
+  const hmac = crypto
+    .createHmac("sha256", process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    .update(payload)
+    .digest("base64url");
+  return `${payload}.${hmac}`;
+}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -91,10 +102,11 @@ export async function POST(request: NextRequest) {
       .eq("user_id", user.id);
 
     const base = process.env.NEXT_PUBLIC_BASE_URL!;
+    const state = generateStateToken(user.id, account.id);
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
       refresh_url: `${base}/photographer-dashboard`,
-      return_url: `${base}/api/stripe-connect/callback?account=${account.id}&userId=${user.id}`,
+      return_url: `${base}/api/stripe-connect/callback?account=${account.id}&state=${encodeURIComponent(state)}`,
       type: "account_onboarding",
     });
 
