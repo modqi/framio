@@ -123,7 +123,6 @@ export default function AdminPanel() {
         location: app.location,
         specialty: app.specialty,
         phone_number: app.phone_number || null,
-        price: "Price on request",
       }),
     });
 

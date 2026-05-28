@@ -22,7 +22,6 @@ const serviceClient = createClient(
 );
 
 export async function POST(request: NextRequest) {
-  // Verify the caller is an authenticated admin
   const token = request.headers.get("authorization")?.replace("Bearer ", "").trim();
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -57,6 +56,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "email and name are required" }, { status: 400 });
     }
 
+    // 1. Pull the full application record so we can copy bio/instagram/website
+    //    into the photographers row without relying on the admin panel to pass them.
+    const { data: application } = await serviceClient
+      .from("applications")
+      .select("about, instagram, portfolio_link")
+      .eq("email", email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!application) {
+      console.warn(`[approve-photographer] No application found for ${email} — bio/instagram/website will be empty`);
+    }
+
+    // 2. Find the auth user by email
     let found: any = null;
     let page = 1;
     while (!found) {
@@ -71,30 +85,41 @@ export async function POST(request: NextRequest) {
     }
     const user = found;
 
-    // 1. Update role
+    // 3. Update role to "photographer"
     await serviceClient.auth.admin.updateUserById(user.id, {
       user_metadata: { role: "photographer", name },
     });
 
-    // 2. Invalidate existing sessions immediately after the role change.
-    //    Runs before Stripe so it always fires even if Stripe fails, ensuring
-    //    the old JWT (which may carry role: "client" or "pending_photographer")
-    //    is never used after this point.
+    // 4. Invalidate all existing sessions immediately after the role change so
+    //    the old JWT (role: "client" or "pending_photographer") can never be used
+    //    again. Must run before Stripe so it fires even if Stripe fails.
     await serviceClient.auth.admin.signOut(user.id, "global");
 
-    // 3. Create/update the photographers row
-    await serviceClient.from("photographers").upsert({
-      user_id: user.id,
+    // 5. Create the photographers row with all fields from the application.
+    //    Error is checked explicitly — a silent failure here breaks everything
+    //    downstream (storage signatures, Cloudinary uploads, dashboard ownership checks).
+    const { error: upsertError } = await serviceClient.from("photographers").upsert({
+      user_id:   user.id,
       name,
       email,
-      location:  location  || "",
+      location:  location || "",
       specialty: specialty || "",
-      price: "Price on request",
+      bio:       application?.about       || null,
+      instagram: application?.instagram   || null,
+      website:   application?.portfolio_link || null,
       ...(phone_number ? { phone_number } : {}),
     }, { onConflict: "user_id" });
 
-    // 4. Reuse an existing Stripe Express account if a previous approval
-    //    attempt already created one — prevents duplicate accounts on retry.
+    if (upsertError) {
+      console.error("[approve-photographer] photographers upsert failed:", upsertError);
+      return NextResponse.json(
+        { error: `Failed to create photographer record: ${upsertError.message}` },
+        { status: 500 }
+      );
+    }
+
+    // 6. Reuse an existing Stripe Express account if a previous approval attempt
+    //    already created one — prevents duplicate accounts on retry.
     const { data: existingRow } = await serviceClient
       .from("photographers")
       .select("stripe_account_id")
@@ -121,7 +146,7 @@ export async function POST(request: NextRequest) {
         .eq("user_id", user.id);
     }
 
-    // 5. Generate a fresh onboarding link (always — links are single-use / expire)
+    // 7. Generate a fresh onboarding link (always — links are single-use / expire)
     const base = process.env.NEXT_PUBLIC_BASE_URL!;
     const state = generateStateToken(user.id, stripeAccountId);
     const accountLink = await stripe.accountLinks.create({
@@ -132,11 +157,11 @@ export async function POST(request: NextRequest) {
     });
 
     await logAudit(serviceClient, {
-      action:      "photographer_approved",
-      actorId:     caller.id,
-      actorEmail:  caller.email,
-      bookingId:   null,
-      stripeId:    stripeAccountId,
+      action:     "photographer_approved",
+      actorId:    caller.id,
+      actorEmail: caller.email,
+      bookingId:  null,
+      stripeId:   stripeAccountId,
       meta: { photographer_user_id: user.id, photographer_email: email, photographer_name: name },
     });
 
