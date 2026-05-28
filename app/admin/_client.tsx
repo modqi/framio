@@ -321,6 +321,8 @@ export default function AdminPanel() {
     fontFamily: "'Jost', sans-serif",
   });
 
+  const isSafeUrl = (url: string) => /^https?:\/\//i.test(url);
+
   const statusBadge = (status: string): React.CSSProperties => ({
     fontSize: "11px",
     padding: "4px 12px",
@@ -443,39 +445,88 @@ export default function AdminPanel() {
             ) : (
               <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
                 {applications.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((app) => (
-                  <div key={app.id} style={{border: "1px solid #E2D5C8", borderRadius: "12px", padding: "20px", backgroundColor: "#FDFBF8"}}>
-                    <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px"}}>
+                  <div key={app.id} style={{border: `1px solid ${app.status === "pending" ? "#C8622A" : "#E2D5C8"}`, borderRadius: "12px", backgroundColor: "#FDFBF8", overflow: "hidden"}}>
+
+                    {/* Header */}
+                    <div style={{padding: "18px 24px 16px", borderBottom: "1px solid #E2D5C8", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px", flexWrap: "wrap"}}>
                       <div>
-                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "20px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{app.name}</p>
-                        <p style={{fontSize: "13px", color: "#7A5C44", margin: "0 0 8px", fontFamily: "'Jost', sans-serif"}}>{app.email} — {app.location}</p>
-                        <div style={{display: "flex", gap: "8px", flexWrap: "wrap"}}>
-                          {app.specialty && <span style={{fontSize: "11px", color: "#C8622A", border: "1px solid #E2D5C8", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.specialty}</span>}
-                          {app.experience && <span style={{fontSize: "11px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "2px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.experience}</span>}
-                        </div>
+                        <p style={{fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "22px", fontWeight: "500", color: "#1A0E06", margin: "0 0 4px"}}>{app.name}</p>
+                        {app.created_at && (
+                          <p style={{fontSize: "11px", color: "#DDD0C0", margin: "0", fontFamily: "'Jost', sans-serif"}}>
+                            {t("applications.applied", { date: new Date(app.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) } as any)}
+                          </p>
+                        )}
                       </div>
                       <span style={statusBadge(app.status)}>{app.status}</span>
                     </div>
-                    {app.about && (
-                      <p style={{fontSize: "14px", color: "#7A5C44", margin: "12px 0", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.7"}}>"{app.about}"</p>
-                    )}
-                    <div style={{display: "flex", gap: "16px", flexWrap: "wrap", marginTop: "8px"}}>
-                      {app.instagram && (
-                        <a href={`https://instagram.com/${app.instagram}`} target="_blank" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>@{app.instagram} ↗</a>
-                      )}
-                      {app.portfolio_link && (
-                        <a href={app.portfolio_link} target="_blank" style={{fontSize: "12px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif"}}>{t("applications.portfolio")}</a>
-                      )}
-                    </div>
-                    {app.status === "pending" && (
-                      <div style={{display: "flex", gap: "8px", marginTop: "16px"}}>
-                        <button onClick={() => handleApprove(app)} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "12px", padding: "8px 20px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
-                          {t("applications.approve")}
-                        </button>
-                        <button onClick={() => handleReject(app)} style={{backgroundColor: "transparent", color: "#dc2626", fontSize: "12px", padding: "8px 20px", border: "1px solid #fce8e8", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
-                          {t("applications.reject")}
-                        </button>
+
+                    {/* Body */}
+                    <div style={{padding: "18px 24px", display: "flex", flexDirection: "column", gap: "16px"}}>
+
+                      {/* Contact */}
+                      <div>
+                        <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("applications.contactSection")}</p>
+                        <div style={{display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center"}}>
+                          <span style={{fontSize: "13px", color: "#1A0E06", fontFamily: "'Jost', sans-serif"}}>{app.email}</span>
+                          {app.location && <><span style={{color: "#DDD0C0"}}>·</span><span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{app.location}</span></>}
+                          {app.phone && <><span style={{color: "#DDD0C0"}}>·</span><span style={{fontSize: "13px", color: "#7A5C44", fontFamily: "'Jost', sans-serif"}}>{app.phone}</span></>}
+                        </div>
                       </div>
-                    )}
+
+                      {/* Professional */}
+                      <div>
+                        <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("applications.professionalSection")}</p>
+                        <div style={{display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "10px"}}>
+                          {app.specialty && app.specialty.split(", ").map((s: string) => (
+                            <span key={s} style={{fontSize: "11px", color: "#C8622A", border: "1px solid #E8C9B8", padding: "3px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif", backgroundColor: "#FBF0EA"}}>{s}</span>
+                          ))}
+                          {app.experience && <span style={{fontSize: "11px", color: "#7A5C44", border: "1px solid #E2D5C8", padding: "3px 10px", borderRadius: "999px", fontFamily: "'Jost', sans-serif"}}>{app.experience}</span>}
+                        </div>
+                        <div style={{display: "flex", gap: "16px", flexWrap: "wrap"}}>
+                          {app.instagram && (
+                            <a href={`https://instagram.com/${app.instagram.replace(/^@/, "")}`} target="_blank" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                              @{app.instagram.replace(/^@/, "")} ↗
+                            </a>
+                          )}
+                          {app.portfolio_link && isSafeUrl(app.portfolio_link) && (
+                            <a href={app.portfolio_link} target="_blank" rel="noopener" style={{fontSize: "13px", color: "#C8622A", textDecoration: "none", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>
+                              {t("applications.website")}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* About */}
+                      {app.about && (
+                        <div>
+                          <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("applications.aboutSection")}</p>
+                          <p style={{fontSize: "14px", color: "#4A3020", fontStyle: "italic", fontFamily: "'Cormorant Garamond', Georgia, serif", lineHeight: "1.75", margin: "0", paddingLeft: "12px", borderLeft: "2px solid #E2D5C8"}}>"{app.about}"</p>
+                        </div>
+                      )}
+
+                      {/* Portfolio photo thumbnail */}
+                      {app.portfolio_photo && isSafeUrl(app.portfolio_photo) && (
+                        <div>
+                          <p style={{fontSize: "10px", color: "#C8622A", margin: "0 0 8px", letterSpacing: "0.15em", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("applications.portfolioPhoto")}</p>
+                          <a href={app.portfolio_photo} target="_blank" rel="noopener" style={{display: "inline-block"}}>
+                            <img src={app.portfolio_photo} alt={app.name} style={{width: "140px", height: "90px", objectFit: "cover", borderRadius: "6px", border: "1px solid #E2D5C8", display: "block"}} />
+                          </a>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      {app.status === "pending" && (
+                        <div style={{display: "flex", gap: "8px", paddingTop: "4px"}}>
+                          <button onClick={() => handleApprove(app)} style={{backgroundColor: "#1A0E06", color: "#FDFBF8", fontSize: "12px", padding: "9px 22px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif"}}>
+                            {t("applications.approve")}
+                          </button>
+                          <button onClick={() => handleReject(app)} style={{backgroundColor: "transparent", color: "#dc2626", fontSize: "12px", padding: "9px 22px", border: "1px solid #fce8e8", borderRadius: "999px", cursor: "pointer", fontFamily: "'Jost', sans-serif"}}>
+                            {t("applications.reject")}
+                          </button>
+                        </div>
+                      )}
+
+                    </div>
                   </div>
                 ))}
               </div>

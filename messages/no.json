@@ -1192,7 +1192,14 @@
       "noApplications": "Ingen søknader ennå",
       "portfolio": "Portefølje ↗",
       "approve": "Godkjenn ✓",
-      "reject": "Avvis ✗"
+      "reject": "Avvis ✗",
+      "applied": "Søkt {date}",
+      "contactSection": "KONTAKT",
+      "professionalSection": "FAGLIG",
+      "aboutSection": "OM",
+      "website": "Nettsted ↗",
+      "phone": "Telefon",
+      "portfolioPhoto": "Porteføljebilder"
     },
     "photographers": {
       "sectionTitle": "ALLE FOTOGRAFER — {count} TOTALT",
