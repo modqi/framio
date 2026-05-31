@@ -6,6 +6,7 @@ import { CameraIcon, CalendarIcon, MessageIcon, ProfileIcon, PortfolioIcon, Pack
 import GlobeModal from "../components/GlobeModal";
 import { useCurrency } from "../../lib/currency-context";
 import { useTranslations } from "../../lib/i18n";
+import { useLocale } from "../../lib/locale-context";
 
 const parsePrice = (price: unknown): number => {
   const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
@@ -22,6 +23,7 @@ const fmtMoney = (amount: number, currency = "usd"): string => {
 
 export default function PhotographerDashboard() {
   const { convertPrice } = useCurrency();
+  const { locale } = useLocale();
   const t = useTranslations("PhotographerDashboard");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -202,37 +204,36 @@ export default function PhotographerDashboard() {
     setCancellingDeletion(false);
   };
 
+  // Accept/decline now go through /api/respond-booking (service role): the route
+  // verifies ownership, uses an optimistic lock, refunds the client on decline,
+  // and sends the confirmation/decline emails server-side.
   const handleBookingStatus = async (id: string, status: string) => {
+    const action = status === "confirmed" ? "accept" : "decline";
+    const newStatus = status === "confirmed" ? "confirmed" : "declined";
     setProcessingId(id);
     setActionError("");
-    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
-    if (error) {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/respond-booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ bookingId: id, action, locale }),
+      });
+      if (!res.ok) {
+        setActionError(t("errors.updateFailed"));
+        setProcessingId(null);
+        return;
+      }
+    } catch {
       setActionError(t("errors.updateFailed"));
       setProcessingId(null);
       return;
     }
-    setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
+    setBookings(prev => prev.map(b => b.id === id ? { ...b, status: newStatus } : b));
     setProcessingId(null);
-
-    if (status === "confirmed") {
-      const booking = bookings.find(b => b.id === id);
-      if (booking?.client_email) {
-        fetch("/api/send-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "booking_confirmed",
-            clientEmail: booking.client_email,
-            clientName: booking.client_name,
-            photographerName: booking.photographer_name,
-            sessionType: booking.session_type,
-            date: booking.date,
-            location: booking.location,
-            price: booking.price,
-          }),
-        });
-      }
-    }
   };
 
   const getStatusStyle = (status: string) => {

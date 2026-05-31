@@ -79,18 +79,8 @@ export default function LeaveReview() {
     if (error) {
       setError(t("errors.genericError"));
     } else {
-      const { data: allReviews } = await supabase
-        .from("reviews")
-        .select("rating")
-        .eq("photographer_id", booking.photographer_id);
-
-      if (allReviews && allReviews.length > 0) {
-        const avg = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / allReviews.length;
-        await supabase
-          .from("photographers")
-          .update({ rating: Math.round(avg * 10) / 10, reviews_count: allReviews.length })
-          .eq("user_id", booking.photographer_id);
-      }
+      // Photographer rating/reviews_count is recomputed by the DB trigger
+      // trg_recompute_rating (AFTER INSERT ON reviews) — no client-side write.
       setDone(true);
     }
     setSaving(false);

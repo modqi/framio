@@ -1,4 +1,22 @@
 {
+  "Emails": {
+    "footer": "© 2026 Lomissa. Alle rettigheter reservert.",
+    "declineClient": {
+      "subject": "Forespørselen din til {photographer} ble avslått",
+      "label": "BESTILLING AVSLÅTT",
+      "heading": "Bestillingsforespørselen din ble avslått",
+      "body": "Dessverre kunne ikke {photographer} ta imot bestillingsforespørselen din for {session}{date}.",
+      "refund": "Full refusjon er utstedt og vil vises på kontoen din innen 5–10 virkedager.",
+      "cta": "Finn en annen fotograf →"
+    },
+    "declinePhotographer": {
+      "subject": "Du avslo en bestillingsforespørsel fra {client}",
+      "label": "BESTILLING AVSLÅTT",
+      "heading": "Bestillingsforespørsel avslått",
+      "body": "Du avslo bestillingsforespørselen fra {client} for {session}{date}. Klienten har fått full refusjon.",
+      "note": "Rask respons på forespørsler bidrar til å holde responsraten din høy."
+    }
+  },
   "Home": {
     "nav": {
       "photographers": "Fotografer",

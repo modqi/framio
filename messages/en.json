@@ -1,4 +1,22 @@
 {
+  "Emails": {
+    "footer": "© 2026 Lomissa. All rights reserved.",
+    "declineClient": {
+      "subject": "Your booking request to {photographer} was declined",
+      "label": "BOOKING DECLINED",
+      "heading": "Your booking request was declined",
+      "body": "Unfortunately, {photographer} was unable to accept your booking request for {session}{date}.",
+      "refund": "A full refund has been issued and will appear in your account within 5–10 business days.",
+      "cta": "Find another photographer →"
+    },
+    "declinePhotographer": {
+      "subject": "You declined a booking request from {client}",
+      "label": "BOOKING DECLINED",
+      "heading": "Booking request declined",
+      "body": "You declined the booking request from {client} for {session}{date}. The client has been fully refunded.",
+      "note": "Responding promptly to requests helps keep your response rate high."
+    }
+  },
   "Home": {
     "nav": {
       "photographers": "Photographers",
