@@ -560,6 +560,11 @@
       "resume": "Fortsett oppsett →",
       "loading": "Laster…"
     },
+    "packagesBanner": {
+      "title": "Legg til en pakke for å gå live",
+      "desc": "Legg til minst én pakke for å vises i søk og begynne å motta bestillinger.",
+      "cta": "Legg til en pakke →"
+    },
     "deletion": {
       "bannerTitle": "Kontoen din er planlagt for sletting",
       "bannerDesc": "Alle data vil bli permanent slettet {date}.",

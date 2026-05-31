@@ -560,6 +560,11 @@
       "resume": "Resume setup →",
       "loading": "Loading…"
     },
+    "packagesBanner": {
+      "title": "Add a package to go live",
+      "desc": "Add at least one package to appear in search and start receiving bookings.",
+      "cta": "Add a package →"
+    },
     "deletion": {
       "bannerTitle": "Your account is scheduled for deletion",
       "bannerDesc": "All data will be permanently deleted on {date}.",

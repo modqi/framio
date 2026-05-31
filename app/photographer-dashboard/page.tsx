@@ -31,6 +31,7 @@ export default function PhotographerDashboard() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState("");
   const [stripeOnboarded, setStripeOnboarded] = useState<boolean | null>(null);
+  const [hasPackages, setHasPackages] = useState<boolean | null>(null);
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [connectIncomplete, setConnectIncomplete] = useState(false);
@@ -93,6 +94,7 @@ export default function PhotographerDashboard() {
         setStripeOnboarded(photographerRow?.stripe_onboarding_completed ?? false);
 
         const hasPackages = (photographerRow?.photographer_packages?.length ?? 0) > 0;
+        setHasPackages(hasPackages);
         const doneBooleans = [
           !!photographerRow?.profile_photo,
           !!meta?.bio,
@@ -346,6 +348,25 @@ export default function PhotographerDashboard() {
               {connectError}
             </p>
           )}
+        </div>
+      )}
+
+      {/* Packages notice — shown until the photographer has at least one package.
+          Photographers only appear on the /photographers browse page with ≥1 package. */}
+      {hasPackages === false && (
+        <div style={{backgroundColor: "#FBF0EA", borderBottom: "1px solid #E8C4AC", borderLeft: "3px solid #C8622A", padding: "16px 32px"}}>
+          <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap"}}>
+            <div>
+              <p style={{fontSize: "13px", color: "#8F3A14", margin: "0 0 2px", fontFamily: "'Jost', sans-serif", fontWeight: "500"}}>{t("packagesBanner.title")}</p>
+              <p style={{fontSize: "12px", color: "#A86B4C", margin: "0", fontFamily: "'Jost', sans-serif"}}>{t("packagesBanner.desc")}</p>
+            </div>
+            <a
+              href="/photographer-dashboard/packages"
+              style={{backgroundColor: "#C8622A", color: "#FDFBF8", fontSize: "12px", padding: "10px 24px", border: "none", borderRadius: "999px", cursor: "pointer", fontWeight: "500", fontFamily: "'Jost', sans-serif", flexShrink: 0, textDecoration: "none", display: "inline-block"}}
+            >
+              {t("packagesBanner.cta")}
+            </a>
+          </div>
         </div>
       )}
 
